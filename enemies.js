@@ -310,19 +310,12 @@ function spawnPassenger(boss) {
 function spawnCorruptedEnemy(tower) {
     const road = document.getElementById('road');
     const slotRect = tower.slotElement.getBoundingClientRect();
-    const roadRect = road.getBoundingClientRect();
     
-    // 슬롯의 중앙 위치를 road 기준 픽셀로 변환
-    // X축은 % 단위이므로 road 너비 대비 비율로 계산
+    // 슬롯의 가로 위치를 유지하되 시작점(y=0)에서 생성
     const gameWidth = gameContainer.offsetWidth;
     const centerX = slotRect.left + slotRect.width / 2;
-    const roadCenterX = roadRect.left + roadRect.width / 2;
-    
-    // road의 중앙이 50%임. (centerX - roadRect.left) / roadRect.width * 100 ?
-    // 아니면 gameContainer 기준으로 계산하는 것이 script.js의 progress 로직과 맞음.
     const gameRect = gameContainer.getBoundingClientRect();
     const relX = (centerX - gameRect.left) / gameWidth * 100;
-    const relY = (slotRect.top + slotRect.height / 2) - gameRect.top;
 
     const enemyDiv = document.createElement('div');
     enemyDiv.classList.add('enemy', 'corrupted');
@@ -337,16 +330,16 @@ function spawnCorruptedEnemy(tower) {
     
     road.appendChild(enemyDiv);
     
-    // 초기 위치 설정
+    // 초기 위치 설정 (시작점 y=0)
     enemyDiv.style.left = `${relX}%`;
-    enemyDiv.style.top = `${relY}px`;
+    enemyDiv.style.top = `0px`;
 
     const enemy = {
         element: enemyDiv,
         initialX: relX,
         x: relX,
-        y: relY,
-        baseSpeed: 0.5, // 타락한 유닛은 천천히 이동
+        y: 0, // 시작점부터 시작
+        baseSpeed: 0.5, // 타락한 유령은 천천히 이동
         speed: 0.5,
         maxHp: tower.data.hp || (tower.data.damage * 10), // 공격력에 비례한 체력 또는 기본값
         hp: tower.data.hp || (tower.data.damage * 10),
