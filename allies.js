@@ -183,7 +183,12 @@ function summonTower(targetSlot) {
 function showUnitInfo(tower) {
     const unitInfoDisplay = document.getElementById('unit-info');
     const data = tower.data;
-    let titleHtml = `<span style="color: #ffd700; font-weight: bold; font-size: 12px;">${data.name}</span>`;
+    
+    // 1. Title section (Name only)
+    let titleHtml = `<div style="color: #ffd700; font-weight: bold; font-size: 13px; margin-bottom: 4px;">${data.name}</div>`;
+    
+    // 2. Buttons section
+    let buttonsHtml = `<div id="info-buttons-container" style="margin-bottom: 6px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;">`;
 
     // Add promotion button for Apprentice Exorcist
     if (data.type === 'apprentice') {
@@ -191,51 +196,15 @@ function showUnitInfo(tower) {
         const btnClass = canAfford ? 'active' : 'locked';
         const btnText = canAfford ? `Promote` : `🔒 LACK`;
         
-        titleHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">${btnText}</span>`;
-    } else if (data.upgrades) {
-        // Master class promotion buttons
-        const canAfford = money >= masterJobCost;
-        const btnClass = canAfford ? 'active' : 'locked';
-        
-        let upgradeBtns = `<div class="master-btn-container">`;
-        data.upgrades.forEach((uType, idx) => {
-            const uData = unitTypes.find(u => u.type === uType);
-            const btnId = `master-btn-${idx}`;
-            upgradeBtns += `<div id="${btnId}" class="job-btn ${btnClass}" data-type="${uType}">
-                ${uData.name}
-            </div>`;
-        });
-        upgradeBtns += `</div>`;
-        
-        // Add buttons below description
-        setTimeout(() => { // Add after DOM rendering
-            const container = document.createElement('div');
-            container.innerHTML = upgradeBtns;
-            unitInfoDisplay.appendChild(container);
-
-            // Connect events
-            data.upgrades.forEach((uType, idx) => {
-                const btn = document.getElementById(`master-btn-${idx}`);
-                if (btn) {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (money >= masterJobCost) {
-                            performMasterJobChange(tower, uType);
-                            showUnitInfo(tower);
-                        } else {
-                            alert("Not enough soul energy!");
-                        }
-                    });
-                }
-            });
-        }, 0);
+        buttonsHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">${btnText}</span>`;
     }
 
     // [Corruption] (Sell) button - only for Tier 1-3
     if (data.tier < 4) {
-        const sellRefund = Math.floor(tower.spentSE * 0.7);
-        titleHtml += `<span id="info-sell-btn" class="job-btn active" style="margin-left: 5px;">[Corrupt]</span>`;
+        buttonsHtml += `<span id="info-sell-btn" class="job-btn active">[Corrupt]</span>`;
     }
+    
+    buttonsHtml += `</div>`;
 
     // Abyss Promotion button
     const abyssMapping = {
@@ -252,23 +221,59 @@ function showUnitInfo(tower) {
     };
 
     let abyssType = null;
+    let abyssBtnHtml = '';
     if (data.tier === 3) {
         abyssType = abyssMapping[data.type];
         if (abyssType) {
             const uData = unitTypes.find(u => u.type === abyssType);
             const canAfford = typeof corruptedShards !== 'undefined' && corruptedShards >= 50;
             const btnClass = canAfford ? 'active' : 'locked';
-            titleHtml += `<div style="margin-top: 5px;"><span id="info-abyss-btn" class="job-btn ${btnClass}">Ascend to ${uData.name}</span></div>`;
+            abyssBtnHtml = `<div style="margin-bottom: 6px;"><span id="info-abyss-btn" class="job-btn ${btnClass}">Ascend to ${uData.name}</span></div>`;
         }
     }
 
+    // Render basic info
     unitInfoDisplay.innerHTML = `
-        <div style="margin-bottom: 6px;">${titleHtml}</div>
+        ${titleHtml}
+        ${buttonsHtml}
+        ${abyssBtnHtml}
         <div style="font-size: 9px; color: #bbb;">ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>
         <div style="color: #888; font-size: 9px; margin-top: 4px; line-height: 1.2;">${data.desc}</div>
     `;
 
-    // Connect button events
+    // Master class promotion buttons (Special handling as they are multiple)
+    if (data.upgrades) {
+        const canAfford = money >= masterJobCost;
+        const btnClass = canAfford ? 'active' : 'locked';
+        
+        const upgradeContainer = document.createElement('div');
+        upgradeContainer.className = "master-btn-container";
+        upgradeContainer.style.marginBottom = "6px";
+        
+        data.upgrades.forEach((uType, idx) => {
+            const uData = unitTypes.find(u => u.type === uType);
+            const btn = document.createElement('div');
+            btn.id = `master-btn-${idx}`;
+            btn.className = `job-btn ${btnClass}`;
+            btn.innerText = uData.name;
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (money >= masterJobCost) {
+                    performMasterJobChange(tower, uType);
+                    showUnitInfo(tower);
+                } else {
+                    alert("Not enough soul energy!");
+                }
+            });
+            upgradeContainer.appendChild(btn);
+        });
+        
+        // Insert after the buttons container
+        const buttonsContainer = document.getElementById('info-buttons-container');
+        buttonsContainer.after(upgradeContainer);
+    }
+
+    // Connect standard button events
     const jobBtn = document.getElementById('info-job-btn');
     if (jobBtn) {
         jobBtn.addEventListener('click', function(e) {
@@ -439,7 +444,7 @@ function updateSummonButtonState() {
         costDiv.innerText = "MAX";
     } else if (money < towerCost) {
         towerCard.classList.add('locked');
-        costDiv.innerText = "LACK";
+        costDiv.innerText = "50 Energy"; // Changed from LACK to keep cost visible
     } else {
         towerCard.classList.remove('locked');
         costDiv.innerText = "50 Energy";
