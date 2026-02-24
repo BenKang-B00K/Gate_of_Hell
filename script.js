@@ -1,15 +1,5 @@
 /* script.js */
-const gameContainer = document.getElementById('game-container');
-const road = document.getElementById('road');
-
-let money = 100;
-let damageMultiplier = 1.0; // Ally attack power multiplier
-let critChance = 0; // Critical hit chance
 let spawnInterval = 2000; // Enemy spawn interval (Initial value 2s)
-
-let isTimeFrozen = false;
-let timeFreezeEndTime = 0;
-window.sealedGhostCount = 0;
 
 // Apply damage function (Handles shared damage)
 function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze = false) {
@@ -419,11 +409,11 @@ function gameLoop() {
         if (enemy.y >= targetY) {
             // [Abyss] Gatekeeper of the Void
             const hasVoidGatekeeper = towers.some(t => t.data.type === 'void_gatekeeper');
-            if (hasVoidGatekeeper && window.sealedGhostCount < 30) {
+            if (hasVoidGatekeeper && sealedGhostCount < 30) {
                 enemy.y = targetY - 5;
                 enemy.element.style.top = `${enemy.y}px`;
-                window.sealedGhostCount++;
-                if (window.sealedGhostCount === 30) {
+                sealedGhostCount++;
+                if (sealedGhostCount === 30) {
                     const portal = document.getElementById('portal');
                     if (portal) portal.style.border = '2px solid red';
                 }
@@ -1105,7 +1095,11 @@ function shoot(tower, target, startX, startY) {
 }
 
 // Game Start
-initStage();
-initAllies();
-updateSummonButtonState();
-gameLoop();
+document.addEventListener('DOMContentLoaded', () => {
+    gameContainer = document.getElementById('game-container');
+    road = document.getElementById('road');
+    initStage();
+    initAllies();
+    updateSummonButtonState();
+    gameLoop();
+});

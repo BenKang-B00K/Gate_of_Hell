@@ -1,16 +1,22 @@
 /* enemies.js */
+let gameContainer;
+let road;
 
-// Enemy-related global variables
+// Global state and variables
 const enemies = []; // Enemy list
+const towers = []; // Tower list
+const slots = []; // Slot elements storage
 const walls = []; // Necromancer wall list
 const groundEffects = []; // Ground effect list (AOE)
 const friendlySkeletons = []; // Ally skeleton soldier list
 const friendlyGhosts = []; // Forsaken King ally ghosts
 
 let stage = 1;
-let money = 100; // Moved for better accessibility if needed
-let corruptedShards = 0; // Track corrupted shards for debuffs
-let totalCorruptedCount = 0; // Total times a unit was corrupted
+let money = 100;
+let damageMultiplier = 1.0;
+let critChance = 0;
+let corruptedShards = 0;
+let totalCorruptedCount = 0;
 let totalStageEnemies = 0;
 let currentStageSpawned = 0;
 let lastSpawnTime = 0;
@@ -18,8 +24,13 @@ let isStageStarting = false;
 let isBossStage = false;
 let bossSpawned = false;
 let bossInstance = null;
-let globalSpeedFactor = 1.0; // Enemy speed multiplier
-let treasureChance = 0.01; // Treasure ghost spawn probability (Base 1%)
+let globalSpeedFactor = 1.0;
+let treasureChance = 0.01;
+
+let isTimeFrozen = false;
+let timeFreezeEndTime = 0;
+let sealedGhostCount = 0;
+let draggedUnit = null; // Currently dragged unit
 
 // Calculate debuff multipliers based on corrupted shards
 function getCorruptionMultipliers() {
@@ -85,9 +96,7 @@ function initStage() {
     bossInstance = null;
     
     // Unseal Gatekeeper
-    if (typeof window.sealedGhostCount !== 'undefined') {
-        window.sealedGhostCount = 0; 
-    }
+    sealedGhostCount = 0; 
 
     if (isBossStage) {
         totalStageEnemies = 999; 
@@ -329,6 +338,7 @@ function spawnPassenger(boss) {
         parentBoss: boss,    
         offsetX: offsetX,
         offsetY: offsetY,
+        reward: 5,           // Add default reward
         invincible: true     
     };
     enemies.push(enemy);

@@ -1,10 +1,5 @@
 /* allies.js */
 
-// Ally-related global variables
-const towers = []; // Tower list
-const slots = []; // Slot elements storage
-let draggedUnit = null; // Currently dragged unit
-
 const towerCost = 50;
 const jobChangeCost = 100; // Promotion cost
 const masterJobCost = 200; // Master promotion cost
