@@ -1,14 +1,48 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hello World</title>
-  <link href='/style.css' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>명계의 수호자 (가제)</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Hello, world!</h1>
-  <button onclick="console.log('hello');">Press me</button>
-  <script defer type="text/javascript" src="/main.js"></script>
+
+    <div id="game-container">
+        <div id="status-bar">
+            STAGE: <span id="stage-display">1</span> | SE: <span id="se-display">100</span>
+        </div>
+        <div id="frozen-overlay"></div>
+        <div id="game-layout">
+            <div id="left-slots" class="slot-area"></div>
+            <div id="road">
+                <div id="stage-info"></div>
+                <div id="portal"></div>
+                <div id="start-timer"></div>
+            </div>
+            <div id="right-slots" class="slot-area"></div>
+        </div>
+
+        <div id="bottom-panel">
+            <div id="unit-info">유닛을 선택하여 정보를 확인하세요.</div>
+            <div id="control-panel">
+                <div id="tower-card" class="tower-card">
+                    <div>퇴마사</div>
+                    <div>50 SE</div>
+                </div>
+                <!-- 다른 기능 추가용 자리 -->
+                <div class="tower-card placeholder">
+                    <div>?</div>
+                </div>
+                <div class="tower-card placeholder">
+                    <div>?</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="enemies.js"></script>
+    <script src="allies.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
