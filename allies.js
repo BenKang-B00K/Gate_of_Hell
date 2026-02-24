@@ -43,7 +43,18 @@ const unitTypes = [
     { type: 'wraithlord', name: 'Wraith Lord', tier: 3, damage: 40, range: 130, cooldown: 1200, desc: "[Master] Reanimates killed enemies as ally skeleton soldiers." },
     { type: 'cursedshaman', name: 'Cursed Shaman', tier: 3, damage: 20, range: 130, cooldown: 1500, desc: "[Master] Curses a wide area to permanently reduce enemies' maximum HP." },
     { type: 'rampart', name: 'Holy Rampart', tier: 3, damage: 40, range: 120, cooldown: 1500, desc: "[Master] When placed near the gate, returns enemies reaching the gate to the start (up to 5 times)." },
-    { type: 'judgment', name: 'Knight of Judgment', tier: 3, damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack." }
+    { type: 'judgment', name: 'Knight of Judgment', tier: 3, damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack." },
+    // Abyss Classes (Tier 4)
+    { type: 'warden', name: 'Warden of the Abyss', tier: 4, damage: 50, range: 200, cooldown: 15000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing DOT." },
+    { type: 'cursed_talisman', name: 'Cursed Sect', tier: 4, damage: 45, range: 150, cooldown: 1500, desc: "[Abyss] Attacks mark enemies. They explode on death for Max HP damage." },
+    { type: 'asura', name: 'Hell Crushing Asura', tier: 4, damage: 30, range: 120, cooldown: 500, desc: "[Abyss] 12 strikes to 2 targets. Knocks them back to start." },
+    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', tier: 4, damage: 150, range: 9999, cooldown: 3000, desc: "[Abyss] Infinite range piercing arrow that ricochets." },
+    { type: 'cocytus', name: 'Ruler of Cocytus', tier: 4, damage: 10, range: 200, cooldown: 30000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
+    { type: 'purgatory', name: 'Eternal Purgatory Fire', tier: 4, damage: 10, range: 150, cooldown: 1000, desc: "[Abyss] Turns its horizontal row into permanent hellfire (Slow & % DMG)." },
+    { type: 'reaper', name: 'Nightmare Reaper', tier: 4, damage: 0, range: 0, cooldown: 5000, desc: "[Abyss] Hidden. Every 5s, instakills highest HP non-boss ghost for 3x SE." },
+    { type: 'doom_guide', name: 'Guide of Doom', tier: 4, damage: 20, range: 150, cooldown: 1000, desc: "[Abyss] Inverts portal. Escaping ghosts give 90% SE instead of failing." },
+    { type: 'forsaken_king', name: 'King of the Forsaken', tier: 4, damage: 50, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts at stage start based on total Corrupted units." },
+    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals the portal until 30 ghosts gather." }
 ];
 
 // Slot creation function
@@ -224,9 +235,36 @@ function showUnitInfo(tower) {
         }, 0);
     }
 
-    // [Corruption] (Sell) button
-    const sellRefund = Math.floor(tower.spentSE * 0.7);
-    titleHtml += `<span id="info-sell-btn" class="job-btn active" style="background: linear-gradient(to bottom, #8b0000, #4a0000); margin-left: 5px;">[Corrupt] (+${sellRefund} SE)</span>`;
+    // [Corruption] (Sell) button - only for Tier 1-3
+    if (data.tier < 4) {
+        const sellRefund = Math.floor(tower.spentSE * 0.7);
+        titleHtml += `<span id="info-sell-btn" class="job-btn active" style="background: linear-gradient(to bottom, #8b0000, #4a0000); margin-left: 5px;">[Corrupt] (+${sellRefund} SE)</span>`;
+    }
+
+    // Abyss Promotion button
+    const abyssMapping = {
+        'executor': 'warden', 'binder': 'warden',
+        'grandsealer': 'cursed_talisman', 'flamemaster': 'cursed_talisman',
+        'vajra': 'asura', 'saint': 'asura',
+        'voidsniper': 'piercing_shadow', 'thousandhand': 'piercing_shadow',
+        'absolutezero': 'cocytus', 'permafrost': 'cocytus',
+        'hellfire': 'purgatory', 'phoenix': 'purgatory',
+        'abyssal': 'reaper', 'spatial': 'reaper',
+        'seer': 'doom_guide', 'commander': 'doom_guide',
+        'wraithlord': 'forsaken_king', 'cursedshaman': 'forsaken_king',
+        'rampart': 'void_gatekeeper', 'judgment': 'void_gatekeeper'
+    };
+
+    let abyssType = null;
+    if (data.tier === 3) {
+        abyssType = abyssMapping[data.type];
+        if (abyssType) {
+            const uData = unitTypes.find(u => u.type === abyssType);
+            const canAfford = typeof corruptedShards !== 'undefined' && corruptedShards >= 50;
+            const btnClass = canAfford ? 'active' : 'locked';
+            titleHtml += `<div style="margin-top: 5px;"><span id="info-abyss-btn" class="job-btn ${btnClass}" style="background: linear-gradient(to bottom, #4b0082, #1a0033); display: block; text-align: center;">Abyss: ${uData.name} (50 Shards)</span></div>`;
+        }
+    }
 
     unitInfoDisplay.innerHTML = `
         <div style="margin-bottom: 4px;">${titleHtml}</div>
@@ -254,6 +292,19 @@ function showUnitInfo(tower) {
             unitInfoDisplay.innerHTML = "Select a unit to view information.";
         });
     }
+
+    const abyssBtn = document.getElementById('info-abyss-btn');
+    if (abyssBtn && abyssType) {
+        abyssBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (typeof corruptedShards !== 'undefined' && corruptedShards >= 50) {
+                performAbyssJobChange(tower, abyssType);
+                showUnitInfo(tower);
+            } else {
+                alert("Not enough Corrupted Shards! (Need 50)");
+            }
+        });
+    }
 }
 
 // Sell tower (Corruption)
@@ -275,7 +326,9 @@ function sellTower(tower) {
     if (idx > -1) towers.splice(idx, 1);
 
     // Create [Corrupted Unit] (becomes an enemy)
-    spawnCorruptedEnemy(tower);
+    if (typeof window.spawnCorruptedEnemy === 'function') {
+        window.spawnCorruptedEnemy(tower);
+    }
 }
 
 // Perform job change
@@ -337,6 +390,39 @@ function performMasterJobChange(tower, newTypeStr) {
     // Effect
     unitElement.style.transform = "scale(1.5)";
     setTimeout(() => unitElement.style.transform = "scale(1)", 300);
+}
+
+// Perform Abyss job change
+function performAbyssJobChange(tower, newTypeStr) {
+    if (typeof corruptedShards === 'undefined' || corruptedShards < 50) return;
+    
+    corruptedShards -= 50;
+    const shardsDisplay = document.getElementById('shards-display');
+    if (shardsDisplay) shardsDisplay.innerText = corruptedShards;
+
+    const newType = unitTypes.find(u => u.type === newTypeStr);
+    const unitElement = tower.element;
+
+    // Replace class
+    unitElement.className = `unit abyss ${newType.type}`; 
+    unitElement.title = newType.name;
+
+    // Update data
+    tower.data = newType;
+    tower.range = newType.range;
+    tower.cooldown = newType.cooldown;
+
+    // Visual effect
+    unitElement.style.transform = "scale(1.8)";
+    unitElement.style.boxShadow = "0 0 30px #9400d3";
+    setTimeout(() => unitElement.style.transform = "scale(1)", 500);
+
+    // Initializations for specific Abyss abilities
+    if (newType.type === 'purgatory') {
+        tower.hasCreatedRow = false;
+    } else if (newType.type === 'reaper') {
+        unitElement.style.opacity = 0.3; // Hidden appearance
+    }
 }
 
 // Update summon button state

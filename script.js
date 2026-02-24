@@ -7,9 +7,19 @@ let damageMultiplier = 1.0; // Ally attack power multiplier
 let critChance = 0; // Critical hit chance
 let spawnInterval = 2000; // Enemy spawn interval (Initial value 2s)
 
+let isTimeFrozen = false;
+let timeFreezeEndTime = 0;
+window.sealedGhostCount = 0;
+
 // Apply damage function (Handles shared damage)
-function applyDamage(target, amount, sourceTower, isShared = false) {
+function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze = false) {
     if (!target || target.hp <= 0) return;
+
+    // [Abyss] Ruler of Cocytus: Accumulate damage during time freeze
+    if (isTimeFrozen && !ignoreFreeze && !target.isBoss) {
+        target.accumulatedDamage = (target.accumulatedDamage || 0) + amount;
+        return;
+    }
 
     target.hp -= amount;
 
@@ -34,15 +44,30 @@ function gameLoop() {
     const targetY = roadRect.height - 60; // Portal reach Y position
     const gameWidth = gameContainer.offsetWidth;
 
+    const nowTime = Date.now();
+
+    // --- Time Freeze End ---
+    if (isTimeFrozen && nowTime > timeFreezeEndTime) {
+        isTimeFrozen = false;
+        enemies.forEach(e => {
+            if (e.accumulatedDamage) {
+                applyDamage(e, e.accumulatedDamage * 2, null, false, true); // ignoreFreeze = true
+                e.accumulatedDamage = 0;
+            }
+        });
+        const frozenOverlay = document.getElementById('frozen-overlay');
+        if (frozenOverlay) frozenOverlay.style.opacity = 0;
+    }
+
     // Reset enemy status (Statuses recalculated every frame)
     enemies.forEach(e => {
         e.isSilenced = false; // Silence only maintained while on the zone
         e.inBlizzard = false; // Blizzard effect reset
+        e.inPurgatory = false; // Purgatory effect reset
         if(e.element) e.element.classList.remove('silenced');
     });
 
     // --- Wall Management ---
-    const nowTime = Date.now();
     for (let i = walls.length - 1; i >= 0; i--) {
         if (nowTime > walls[i].endTime) {
             walls[i].element.remove();
@@ -93,6 +118,14 @@ function gameLoop() {
                     e.inBlizzard = true;
                 }
             });
+        } else if (effect.type === 'purgatory_row') {
+            // [Abyss] Eternal Purgatory Fire
+            enemies.forEach(e => {
+                if (Math.abs(e.y - effect.y) < 30) {
+                    e.inPurgatory = true;
+                    applyDamage(e, (e.maxHp * 0.05) / 60, null); // 5% max HP per sec
+                }
+            });
         }
     }
 
@@ -119,6 +152,26 @@ function gameLoop() {
             
             skel.element.remove();
             friendlySkeletons.splice(i, 1);
+        }
+    }
+
+    // --- Friendly Ghosts (Forsaken King) ---
+    if (typeof friendlyGhosts !== 'undefined') {
+        for (let i = friendlyGhosts.length - 1; i >= 0; i--) {
+            const ghost = friendlyGhosts[i];
+            ghost.y -= ghost.speed; 
+            if (ghost.y < 0) {
+                ghost.element.remove();
+                friendlyGhosts.splice(i, 1);
+                continue;
+            }
+            ghost.element.style.top = `${ghost.y}px`;
+            const hitEnemy = enemies.find(e => Math.abs(e.y - ghost.y) < 20 && Math.abs(e.x - ghost.x) < 10 && e.hp > 0);
+            if (hitEnemy) {
+                applyDamage(hitEnemy, ghost.maxHp, null); 
+                ghost.element.remove();
+                friendlyGhosts.splice(i, 1);
+            }
         }
     }
 
@@ -278,6 +331,26 @@ function gameLoop() {
     for (let i = enemies.length - 1; i >= 0; i--) {
         const enemy = enemies[i];
 
+        // [Abyss] Ruler of Cocytus: Skip movement if time frozen
+        if (isTimeFrozen && !enemy.isBoss) {
+            continue;
+        }
+
+        // [Abyss] Warden of the Abyss: Pulled to center
+        if (enemy.isPulled) {
+            if (nowTime > enemy.pullEndTime) {
+                enemy.isPulled = false;
+            } else {
+                const centerY = gameContainer.offsetHeight / 2;
+                enemy.y += (centerY - enemy.y) * 0.05;
+                enemy.x += (50 - enemy.x) * 0.05;
+                applyDamage(enemy, (enemy.maxHp * 0.05) / 60, null); // 5% max HP per sec DOT
+                enemy.element.style.top = `${enemy.y}px`;
+                enemy.element.style.left = `${enemy.x}%`;
+                continue; // Skip regular movement
+            }
+        }
+
         // [Class Characteristic] Fire Mage: Burn damage (1% MaxHP per sec)
         if (enemy.isBurning) {
             if (Date.now() > enemy.burnEndTime) {
@@ -344,6 +417,27 @@ function gameLoop() {
 
         // Portal Reach Confirmation
         if (enemy.y >= targetY) {
+            // [Abyss] Gatekeeper of the Void
+            const hasVoidGatekeeper = towers.some(t => t.data.type === 'void_gatekeeper');
+            if (hasVoidGatekeeper && window.sealedGhostCount < 30) {
+                enemy.y = targetY - 5;
+                enemy.element.style.top = `${enemy.y}px`;
+                window.sealedGhostCount++;
+                if (window.sealedGhostCount === 30) {
+                    const portal = document.getElementById('portal');
+                    if (portal) portal.style.border = '2px solid red';
+                }
+                continue;
+            }
+
+            // [Abyss] Guide of Doom
+            const hasDoomGuide = towers.some(t => t.data.type === 'doom_guide');
+            if (hasDoomGuide) {
+                money += Math.floor((enemy.reward || 10) * 0.9);
+                const seDisplay = document.getElementById('se-display');
+                if (seDisplay) seDisplay.innerText = money;
+            }
+
             // [Master] Holy Rampart: Gate Defense (Indices 27~29, 57~59)
             const rampart = towers.find(t => {
                 if (t.data.type !== 'rampart' || (t.charges || 0) <= 0) return false;
@@ -376,8 +470,77 @@ function gameLoop() {
     // 2. Tower Attack Processing
     const now = Date.now();
     towers.forEach(tower => {
+        if (tower.data.type === 'void_gatekeeper') return; // Cannot attack
+
         // Cannot attack if feared or frozen
         if (tower.isFeared || tower.isFrozenTomb) return;
+
+        // [Abyss] Warden of the Abyss: Pull ability (15s cooldown)
+        if (tower.data.type === 'warden' && now - (tower.lastShot || 0) > tower.cooldown) {
+            tower.lastShot = now;
+            enemies.forEach(e => {
+                if (!e.isBoss) {
+                    e.isPulled = true;
+                    e.pullEndTime = now + 5000;
+                }
+            });
+            // Visual effect
+            const bh = document.createElement('div');
+            bh.style.cssText = 'position:absolute; left:50%; top:50%; width:150px; height:150px; background:radial-gradient(circle, #000, #4b0082, transparent); border-radius:50%; transform:translate(-50%,-50%); z-index:5;';
+            gameContainer.appendChild(bh);
+            setTimeout(() => bh.remove(), 5000);
+            return;
+        }
+
+        // [Abyss] Ruler of Cocytus: Time Freeze (30s cooldown)
+        if (tower.data.type === 'cocytus' && now - (tower.lastShot || 0) > tower.cooldown) {
+            tower.lastShot = now;
+            isTimeFrozen = true;
+            timeFreezeEndTime = now + 10000;
+            const frozenOverlay = document.getElementById('frozen-overlay');
+            if (frozenOverlay) {
+                frozenOverlay.style.background = 'radial-gradient(circle, transparent 50%, rgba(138, 43, 226, 0.4) 100%)';
+                frozenOverlay.style.opacity = 1;
+            }
+            return;
+        }
+
+        // [Abyss] Nightmare Reaper: Instakill (5s cooldown)
+        if (tower.data.type === 'reaper' && now - (tower.lastShot || 0) > tower.cooldown) {
+            const valid = enemies.filter(e => !e.isBoss && e.hp > 0).sort((a,b) => b.hp - a.hp);
+            if (valid.length > 0) {
+                const target = valid[0];
+                target.reward = (target.reward || 10) * 3; // 3x SE
+                applyDamage(target, target.hp + 9999, tower);
+                tower.lastShot = now;
+                // Visual effect
+                const scythe = document.createElement('div');
+                scythe.innerText = "🗡️";
+                scythe.style.cssText = `position:absolute; left:${target.x}%; top:${target.y}px; font-size:30px; transform:translate(-50%,-50%); z-index:20;`;
+                gameContainer.appendChild(scythe);
+                setTimeout(() => scythe.remove(), 300);
+            }
+            return;
+        }
+
+        // [Abyss] Eternal Purgatory Fire: Permanent Row
+        if (tower.data.type === 'purgatory' && !tower.hasCreatedRow) {
+            tower.hasCreatedRow = true;
+            const towerRect = tower.slotElement.getBoundingClientRect();
+            const gameRect = gameContainer.getBoundingClientRect();
+            const rowY = (towerRect.top + towerRect.height / 2) - gameRect.top;
+            
+            const pZone = document.createElement('div');
+            pZone.style.cssText = `position:absolute; left:0; width:100%; height:60px; top:${rowY - 30}px; background:linear-gradient(to bottom, transparent, rgba(139,0,0,0.5), transparent); pointer-events:none; z-index:4;`;
+            gameContainer.appendChild(pZone);
+
+            groundEffects.push({
+                type: 'purgatory_row',
+                y: rowY,
+                element: pZone,
+                endTime: Infinity
+            });
+        }
 
         // Attack speed calculation (Base + Buff)
         let speedMult = 1.0 + (tower.speedBonus || 0);
@@ -390,6 +553,54 @@ function gameLoop() {
             const towerRect = tower.slotElement.getBoundingClientRect();
             const towerX = towerRect.left + towerRect.width / 2;
             const towerY = towerRect.top + towerRect.height / 2;
+
+            // [Abyss] Hell Crushing Asura
+            if (tower.data.type === 'asura') {
+                const effectiveRange = tower.range + (tower.rangeBonus || 0);
+                const validEnemies = enemies.filter(e => !e.isPhasing && !e.invincible && Math.sqrt(Math.pow((e.element.getBoundingClientRect().left + e.element.getBoundingClientRect().width / 2) - towerX, 2) + Math.pow((e.element.getBoundingClientRect().top + e.element.getBoundingClientRect().height / 2) - towerY, 2)) <= effectiveRange).sort((a,b) => b.y - a.y);
+                
+                if (validEnemies.length > 0) {
+                    const targets = validEnemies.slice(0, 2);
+                    targets.forEach(t => {
+                        for(let i=0; i<12; i++) {
+                            setTimeout(() => {
+                                if (t && t.hp > 0) applyDamage(t, tower.data.damage, tower);
+                            }, i * 50);
+                        }
+                        // Knockback to start
+                        if (!t.isBoss) {
+                            t.y = 0;
+                            if(t.element) t.element.style.top = '0px';
+                        }
+                    });
+                    tower.lastShot = now;
+                }
+                return;
+            }
+
+            // [Abyss] Soul Piercing Shadow
+            if (tower.data.type === 'piercing_shadow') {
+                const targets = enemies.filter(e => !e.isPhasing && !e.invincible);
+                if (targets.length > 0) {
+                    targets.forEach((t, idx) => {
+                        setTimeout(() => {
+                            if (t && t.hp > 0) {
+                                applyDamage(t, tower.data.damage, tower);
+                                // Visual projectile effect bouncing
+                                const p = document.createElement('div');
+                                p.classList.add('projectile');
+                                p.style.backgroundColor = '#4b0082';
+                                p.style.left = t.element.style.left;
+                                p.style.top = t.element.style.top;
+                                gameContainer.appendChild(p);
+                                setTimeout(() => p.remove(), 100);
+                            }
+                        }, idx * 50); // Ricochet delay
+                    });
+                    tower.lastShot = now;
+                }
+                return;
+            }
 
             // [Master] Thousand-Hand Archer: Multi-shot (6 shots, up to 4 targets)
             if (tower.data.type === 'thousandhand') {

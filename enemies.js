@@ -5,10 +5,12 @@ const enemies = []; // Enemy list
 const walls = []; // Necromancer wall list
 const groundEffects = []; // Ground effect list (AOE)
 const friendlySkeletons = []; // Ally skeleton soldier list
+const friendlyGhosts = []; // Forsaken King ally ghosts
 
 let stage = 1;
 let money = 100; // Moved for better accessibility if needed
 let corruptedShards = 0; // Track corrupted shards for debuffs
+let totalCorruptedCount = 0; // Total times a unit was corrupted
 let totalStageEnemies = 0;
 let currentStageSpawned = 0;
 let lastSpawnTime = 0;
@@ -81,6 +83,11 @@ function initStage() {
     isBossStage = (stage % 10 === 0); // Boss stage every 10 levels
     bossSpawned = false;
     bossInstance = null;
+    
+    // Unseal Gatekeeper
+    if (typeof window.sealedGhostCount !== 'undefined') {
+        window.sealedGhostCount = 0; 
+    }
 
     if (isBossStage) {
         totalStageEnemies = 999; 
@@ -109,6 +116,18 @@ function initStage() {
         } else {
             clearInterval(timerInterval);
             timerElement.innerText = "START!";
+            
+            // [Master] King of the Forsaken logic
+            if (typeof towers !== 'undefined') {
+                const forsakenKings = towers.filter(t => t.data.type === 'forsaken_king');
+                if (forsakenKings.length > 0) {
+                    const spawnCount = Math.floor(totalCorruptedCount / 2);
+                    for(let i=0; i<spawnCount; i++) {
+                        spawnFriendlyGhost();
+                    }
+                }
+            }
+
             setTimeout(() => {
                 timerElement.style.display = 'none';
                 isStageStarting = false;
@@ -317,6 +336,7 @@ function spawnPassenger(boss) {
 
 // [Corruption] System: Ally becomes an enemy
 function spawnCorruptedEnemy(tower) {
+    totalCorruptedCount++;
     const road = document.getElementById('road');
     const slotRect = tower.slotElement.getBoundingClientRect();
     
@@ -360,9 +380,64 @@ function spawnCorruptedEnemy(tower) {
     enemies.push(enemy);
 }
 
+// Spawns a friendly ghost (Forsaken King ability)
+function spawnFriendlyGhost() {
+    const road = document.getElementById('road');
+    const ghostDiv = document.createElement('div');
+    ghostDiv.classList.add('friendly-ghost');
+    road.appendChild(ghostDiv);
+    
+    const randomX = Math.random() * 80 + 10;
+    ghostDiv.style.left = `${randomX}%`;
+    
+    // Start at bottom
+    const roadRect = road.getBoundingClientRect();
+    const startY = roadRect.height - 60;
+    ghostDiv.style.top = `${startY}px`;
+
+    friendlyGhosts.push({
+        element: ghostDiv,
+        x: randomX, 
+        y: startY, 
+        speed: 0.5, // Slow speed moving UP
+        maxHp: 500
+    });
+}
+
 // Handle enemy death
 function handleEnemyDeath(target, killer = null) {
     if (target.hp > 0) return;
+
+    // Cursed Sect: Explosion on death
+    if (target.isCursedMark) {
+        const explosion = document.createElement('div');
+        explosion.style.position = 'absolute';
+        explosion.style.left = target.element.style.left;
+        explosion.style.top = target.element.style.top;
+        explosion.style.width = '120px'; explosion.style.height = '120px';
+        explosion.style.background = 'radial-gradient(circle, #2e003e, transparent)';
+        explosion.style.transform = 'translate(-50%, -50%)';
+        explosion.style.zIndex = '19';
+        explosion.style.borderRadius = '50%';
+        explosion.style.opacity = '0.8';
+        gameContainer.appendChild(explosion);
+        setTimeout(() => explosion.remove(), 400);
+
+        const gameW = gameContainer.offsetWidth;
+        const tX = (target.x / 100) * gameW;
+        const tY = target.y;
+
+        enemies.forEach(e => {
+            if (e === target || e.hp <= 0) return;
+            const eX = (e.x / 100) * gameW;
+            const dist = Math.sqrt(Math.pow(eX - tX, 2) + Math.pow(e.y - tY, 2));
+            if (dist < 100) { 
+                if (typeof window.applyDamage === 'function') {
+                    window.applyDamage(e, target.maxHp * 0.5, null); // 50% max HP damage
+                }
+            }
+        });
+    }
 
     // Hellfire Alchemist: Explosion on death
     if (target.isHellfireBurn) {
@@ -388,7 +463,9 @@ function handleEnemyDeath(target, killer = null) {
             const eX = (e.x / 100) * gameW;
             const dist = Math.sqrt(Math.pow(eX - tX, 2) + Math.pow(e.y - tY, 2));
             if (dist < 80) { 
-                applyDamage(e, 30, null); 
+                if (typeof window.applyDamage === 'function') {
+                    window.applyDamage(e, 30, null); 
+                }
                 e.isBurning = true;
                 e.burnEndTime = Date.now() + 3000;
                 e.isHellfireBurn = true; 
@@ -449,16 +526,20 @@ function handleEnemyDeath(target, killer = null) {
 
         // Corruption reward: Corrupted Shards
         if (target.isCorrupted) {
-            corruptedShards += 1;
-            const shardsDisplay = document.getElementById('shards-display');
-            if (shardsDisplay) shardsDisplay.innerText = corruptedShards;
-            alert("💠 Obtained a [Corrupted Shard]!");
+            if (corruptedShards < 99) {
+                corruptedShards += 1;
+                const shardsDisplay = document.getElementById('shards-display');
+                if (shardsDisplay) shardsDisplay.innerText = corruptedShards;
+                alert("💠 Obtained a [Corrupted Shard]!");
+            }
         }
 
         // SE Reward
         money += target.reward;
         const seDisplay = document.getElementById('se-display');
         if(seDisplay) seDisplay.innerText = money;
-        updateSummonButtonState();
+        if (typeof window.updateSummonButtonState === 'function') {
+            window.updateSummonButtonState();
+        }
     }
 }

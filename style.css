@@ -766,3 +766,37 @@ body {
     filter: sepia(1) hue-rotate(250deg) saturate(3);
     border: 1px dashed #800080;
 }
+
+/* Abyss Classes (Tier 4) */
+.unit.abyss {
+    box-shadow: 0 0 30px #9400d3;
+    animation: abyssPulse 2s infinite alternate;
+}
+
+@keyframes abyssPulse {
+    from { box-shadow: 0 0 15px #4b0082; transform: scale(1); }
+    to { box-shadow: 0 0 30px #9400d3, 0 0 10px #fff; transform: scale(1.05); }
+}
+
+.unit.warden { background-color: #2a0052; border: 2px solid #8a2be2; }
+.unit.cursed_talisman { background-color: #3b0000; border: 2px solid #ff4500; }
+.unit.asura { background-color: #520000; border: 2px solid #b22222; }
+.unit.piercing_shadow { background-color: #002200; border: 2px solid #32cd32; }
+.unit.cocytus { background-color: #001a33; border: 2px solid #00ffff; }
+.unit.purgatory { background-color: #4a0a0a; border: 2px solid #ff8c00; }
+.unit.reaper { background-color: #000000; border: 2px dotted #4b0082; }
+.unit.doom_guide { background-color: #1a0033; border: 2px dashed #9932cc; }
+.unit.forsaken_king { background-color: #111111; border: 2px double #00ff00; }
+.unit.void_gatekeeper { background-color: #222222; border: 2px solid #aaaaaa; }
+
+/* Friendly Ghost */
+.friendly-ghost {
+    position: absolute;
+    width: 20px; height: 20px;
+    background: radial-gradient(circle, #8a2be2, #4b0082);
+    border-radius: 50%;
+    box-shadow: 0 0 10px #8a2be2;
+    z-index: 11;
+    opacity: 0.8;
+}
+
