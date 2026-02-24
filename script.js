@@ -3,6 +3,7 @@ const gameContainer = document.getElementById('game-container');
 const road = document.getElementById('road');
 
 let money = 100;
+let corruptedShards = 0;
 let damageMultiplier = 1.0; // 아군 공격력 배율
 let critChance = 0; // 치명타 확률
 let spawnInterval = 2000; // 적 스폰 간격 (초기값 2초)

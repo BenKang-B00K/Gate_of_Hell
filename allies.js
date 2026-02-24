@@ -167,7 +167,8 @@ function summonTower(targetSlot) {
         slotElement: targetSlot, 
         range: selectedUnit.range,
         cooldown: selectedUnit.cooldown,
-        lastShot: 0
+        lastShot: 0,
+        spentSE: towerCost // 소모된 SE 추적
     });
     updateSummonButtonState();
 }
@@ -184,7 +185,7 @@ function showUnitInfo(tower) {
         const btnClass = canAfford ? 'active' : 'locked';
         const btnText = canAfford ? `전직 (${jobChangeCost})` : `🔒 SE 부족 (${jobChangeCost})`;
         
-        titleHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">${btnText}</span>`;
+        titleHtml += `<span id="info-job-btn" class="job-btn active" style="background: linear-gradient(to bottom, #4CAF50, #2E7D32);">${btnText}</span>`;
     } else if (data.upgrades) {
         // 마스터 클래스 전직 버튼 (좌/우)
         const canAfford = money >= masterJobCost;
@@ -224,6 +225,10 @@ function showUnitInfo(tower) {
         }, 0);
     }
 
+    // [타락] (판매) 버튼 추가
+    const sellRefund = Math.floor(tower.spentSE * 0.7);
+    titleHtml += `<span id="info-sell-btn" class="job-btn active" style="background: linear-gradient(to bottom, #8b0000, #4a0000); margin-left: 5px;">[타락] (+${sellRefund} SE)</span>`;
+
     unitInfoDisplay.innerHTML = `
         <div style="margin-bottom: 4px;">${titleHtml}</div>
         <div>공격력: ${data.damage} | 사거리: ${data.range} | 쿨타임: ${(data.cooldown/1000).toFixed(1)}s</div>
@@ -241,6 +246,37 @@ function showUnitInfo(tower) {
             }
         });
     }
+
+    const sellBtn = document.getElementById('info-sell-btn');
+    if (sellBtn) {
+        sellBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sellTower(tower);
+            unitInfoDisplay.innerHTML = "유닛을 선택하여 정보를 확인하세요.";
+        });
+    }
+}
+
+// 타워 판매 (타락)
+function sellTower(tower) {
+    const sellRefund = Math.floor(tower.spentSE * 0.7);
+    money += sellRefund;
+    document.getElementById('se-display').innerText = money;
+    updateSummonButtonState();
+
+    const slot = tower.slotElement;
+    const unitElement = tower.element;
+
+    // 슬롯 해제
+    slot.classList.remove('occupied');
+    unitElement.remove();
+
+    // 타워 배열에서 제거
+    const idx = towers.indexOf(tower);
+    if (idx > -1) towers.splice(idx, 1);
+
+    // [타락한 유닛] 생성 (적이 됨)
+    spawnCorruptedEnemy(tower);
 }
 
 // 전직 수행
@@ -270,6 +306,7 @@ function performJobChange(unitElement) {
         tower.data = newType;
         tower.range = newType.range;
         tower.cooldown = newType.cooldown;
+        tower.spentSE += jobChangeCost; // 소모 SE 추가
     }
 }
 
@@ -291,6 +328,7 @@ function performMasterJobChange(tower, newTypeStr) {
     tower.data = newType;
     tower.range = newType.range;
     tower.cooldown = newType.cooldown;
+    tower.spentSE += masterJobCost; // 소모 SE 추가
 
     // [마스터] 신성한 성벽: 방어 횟수 초기화
     if (newType.type === 'rampart') {
