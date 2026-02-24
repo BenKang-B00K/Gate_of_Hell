@@ -169,43 +169,11 @@ function updateGauges() {
     const seFill = document.getElementById('se-gauge-fill');
     const seText = document.getElementById('se-display-text');
     if (seFill && seText) {
-        // Max cap for display (e.g., 1000 SE for 100% fill)
+        // Max cap for display (e.g., 1000 Soul Energy for 100% fill)
         const displayMax = 1000;
         const sePercent = Math.min((money / displayMax) * 100, 100);
         seFill.style.width = `${sePercent}%`;
-        seText.innerText = money;
-    }
-}
-
-// Update All Gauges (Soul Energy & Corrupted Shards)
-function updateGauges() {
-    // Shard Gauge
-    const shardFill = document.getElementById('shard-gauge-fill');
-    const shardText = document.getElementById('shards-display-text');
-    const debuffDesc = document.getElementById('active-debuffs');
-    
-    if (shardFill && shardText && debuffDesc) {
-        const shardPercent = (corruptedShards / 99) * 100;
-        shardFill.style.width = `${shardPercent}%`;
-        shardText.innerText = `${corruptedShards} / 99`;
-
-        let desc = "Normal Souls";
-        if (corruptedShards >= 50) desc = "⚠️ 70% HP, +2% SPD (FATAL)";
-        else if (corruptedShards >= 41) desc = "🔥 +2% HP/shard, +0.02% SPD/shard";
-        else if (corruptedShards >= 21) desc = "🌑 +1.5% HP/shard, +0.01% SPD/shard";
-        else if (corruptedShards >= 1) desc = "☁️ +1% HP/shard";
-        debuffDesc.innerText = `Current Debuff: ${desc}`;
-    }
-
-    // Soul Energy Gauge
-    const seFill = document.getElementById('se-gauge-fill');
-    const seText = document.getElementById('se-display-text');
-    if (seFill && seText) {
-        // Max cap for display (e.g., 1000 SE for 100% fill)
-        const displayMax = 1000;
-        const sePercent = Math.min((money / displayMax) * 100, 100);
-        seFill.style.width = `${sePercent}%`;
-        seText.innerText = money;
+        seText.innerText = Math.floor(money); // Ensure floor
     }
 }
 
@@ -216,11 +184,14 @@ function updateStageInfo() {
     
     if (stageDisplay) stageDisplay.innerText = stage;
     if (enemiesLeft) {
-        // Total remaining = (Not yet spawned) + (Currently alive on screen)
         const remainingToSpawn = Math.max(0, totalStageEnemies - currentStageSpawned);
         enemiesLeft.innerText = remainingToSpawn + enemies.length;
     }
 }
+
+// Attach to window for other scripts
+window.updateGauges = updateGauges;
+window.updateStageInfo = updateStageInfo;
 
 // Spawn wave
 function spawnWave() {
@@ -274,6 +245,7 @@ function spawnBoss() {
         speed: data.speed * speedMult,
         maxHp: data.hp * hpMult,
         hp: data.hp * hpMult,
+        reward: 500,         // Add reward for boss
         isBoss: true,
         data: data,
         lastAbilityTime: Date.now()

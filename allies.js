@@ -429,7 +429,10 @@ function performAbyssJobChange(tower, newTypeStr) {
 // Update summon button state
 function updateSummonButtonState() {
     const towerCard = document.getElementById('tower-card');
+    if (!towerCard) return;
+    
     const costDiv = towerCard.querySelector('div:last-child');
+    if (!costDiv) return;
     
     if (towers.length >= maxTowers) {
         towerCard.classList.add('locked');
@@ -442,6 +445,9 @@ function updateSummonButtonState() {
         costDiv.innerText = "50 Energy";
     }
 }
+
+// Attach to window for other scripts
+window.updateSummonButtonState = updateSummonButtonState;
 
 // Initialize allies
 function initAllies() {

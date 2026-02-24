@@ -381,9 +381,9 @@ body {
 #gauges-container {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     padding: 0 5px;
     box-sizing: border-box;
 }
@@ -397,8 +397,8 @@ body {
 .gauge-header {
     display: flex;
     justify-content: space-between;
-    font-size: 9px;
-    margin-bottom: 2px;
+    font-size: 8px;
+    margin-bottom: 1px;
     font-weight: bold;
     text-transform: uppercase;
 }
@@ -409,7 +409,7 @@ body {
 
 .gauge-bar-bg {
     width: 100%;
-    height: 6px;
+    height: 5px;
     background-color: #111;
     border: 1px solid #333;
     border-radius: 3px;
@@ -434,9 +434,9 @@ body {
 }
 
 #active-debuffs {
-    font-size: 8px;
+    font-size: 7px;
     color: #777;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     text-align: center;
     font-style: italic;
 }
@@ -445,7 +445,7 @@ body {
 .job-btn {
     display: inline-block;
     padding: 2px 8px;
-    font-size: 9px; /* Shrunk further */
+    font-size: 9px;
     border-radius: 12px;
     cursor: pointer;
     border: 1px solid rgba(255,255,255,0.2);
@@ -495,16 +495,18 @@ body {
 
 /* Unit Info Panel refinements */
 #unit-info {
-    background: rgba(20, 20, 20, 0.8);
-    border: 1px solid #333;
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 8px;
-    font-size: 10px;
+    background: rgba(15, 15, 15, 0.9);
+    border: 1px solid #222;
+    border-radius: 4px;
+    padding: 6px;
+    margin-bottom: 6px;
+    font-size: 9px;
     color: #eee;
     text-align: center;
-    min-height: 60px;
-    box-shadow: inset 0 0 10px #000;
+    min-height: 50px;
+    flex: 1;
+    overflow-y: auto;
+    box-shadow: inset 0 0 15px #000;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -515,6 +517,42 @@ body {
 #status-bar { display: none; }
 #shard-info { display: none; }
 
+#control-panel {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+/* 퇴마사 카드 (드래그 앤 드롭 소스) */
+.tower-card {
+    pointer-events: auto; 
+    width: 55px;
+    height: 70px;
+    background: linear-gradient(135deg, #003366, #001133);
+    border: 2px solid #00e5ff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer; 
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+    color: #00e5ff;
+    font-size: 10px;
+    user-select: none;
+    z-index: 100;
+    flex-shrink: 0; 
+}
+
+.tower-card.locked {
+    filter: grayscale(100%);
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #555;
+    box-shadow: none;
+}
 
 /* Abyss Classes (Tier 4) */
 .unit.abyss {
@@ -549,3 +587,71 @@ body {
     opacity: 0.8;
 }
 
+/* 배치된 유닛 (시각적 표현) */
+.unit {
+    width: 70%;
+    height: 70%;
+    background-color: #00e5ff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00e5ff;
+    cursor: grab; /* 유닛 드래그 가능 표시 */
+    z-index: 15;
+}
+
+.unit:active {
+    cursor: grabbing;
+}
+
+/* 하단 UI 패널 (30%) */
+#bottom-panel {
+    position: relative; 
+    height: 30%;
+    background: linear-gradient(to bottom, #1a0505, #000000);
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+}
+
+/* 유닛 클래스별 스타일 */
+.unit.apprentice { background-color: #00e5ff; box-shadow: 0 0 10px #00e5ff; }
+.unit.chainer { background-color: #9370db; box-shadow: 0 0 10px #9370db; border: 2px solid #4b0082; }
+.unit.talisman { background-color: #ffa500; box-shadow: 0 0 10px #ffa500; border: 2px solid #8b4500; }
+.unit.monk { background-color: #a52a2a; box-shadow: 0 0 10px #a52a2a; border: 2px solid #800000; }
+.unit.archer { background-color: #228b22; box-shadow: 0 0 10px #228b22; border: 2px solid #006400; }
+.unit.ice { background-color: #00ffff; box-shadow: 0 0 10px #00ffff; border: 2px solid #008b8b; }
+.unit.fire { background-color: #ff4500; box-shadow: 0 0 10px #ff4500; border: 2px solid #8b0000; }
+.unit.assassin { background-color: #333333; box-shadow: 0 0 10px #000000; border: 2px solid #000000; }
+.unit.tracker { background-color: #ffffff; box-shadow: 0 0 10px #ffffff; border: 2px solid #cccccc; }
+.unit.necromancer { background-color: #4b0082; box-shadow: 0 0 10px #4b0082; border: 2px solid #800080; }
+.unit.guardian { background-color: #ffd700; box-shadow: 0 0 15px #ffd700; border: 2px solid #daa520; }
+
+/* Master classes */
+.unit.executor { background-color: #483d8b; box-shadow: 0 0 20px #483d8b; border: 2px solid #fff; }
+.unit.binder { background-color: #8b008b; box-shadow: 0 0 20px #8b008b; border: 2px solid #fff; }
+.unit.grandsealer { background-color: #191970; box-shadow: 0 0 20px #191970; border: 2px solid #fff; }
+.unit.flamemaster { background-color: #ff4500; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff; }
+.unit.vajra { background-color: #b8860b; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
+.unit.saint { background-color: #8b4513; box-shadow: 0 0 20px #cd853f; border: 2px solid #fff; }
+.unit.voidsniper { background-color: #006400; box-shadow: 0 0 20px #00ff00; border: 2px solid #fff; }
+.unit.thousandhand { background-color: #32cd32; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
+.unit.absolutezero { background-color: #008b8b; box-shadow: 0 0 20px #00ffff; border: 2px solid #fff; }
+.unit.permafrost { background-color: #f0ffff; box-shadow: 0 0 20px #87ceeb; border: 2px solid #fff; }
+.unit.hellfire { background-color: #8b0000; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff; }
+.unit.phoenix { background-color: #ff8c00; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
+.unit.abyssal { background-color: #2e003e; box-shadow: 0 0 20px #800080; border: 2px solid #fff; }
+.unit.spatial { background-color: #1a1a1a; box-shadow: 0 0 20px #c0c0c0; border: 2px solid #fff; }
+.unit.clone { opacity: 0.6; filter: grayscale(100%); }
+.unit.seer { background-color: #9932cc; box-shadow: 0 0 20px #e6e6fa; border: 2px solid #fff; }
+.unit.commander { background-color: #dc143c; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
+.unit.wraithlord { background-color: #000000; box-shadow: 0 0 20px #00ff00; border: 2px solid #fff; }
+.unit.cursedshaman { background-color: #483d8b; box-shadow: 0 0 20px #708090; border: 2px solid #fff; }
+.unit.rampart { background-color: #f5f5f5; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
+.unit.judgment { background-color: #daa520; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff; }
+
+/* 상태이상 효과 */
+.enemy.slowed { filter: hue-rotate(90deg); }
+.enemy.burning { filter: sepia(1) saturate(5) hue-rotate(-50deg); }
+.enemy.stunned { filter: grayscale(100%) brightness(1.5); animation: shake 0.2s infinite; }
+.enemy.cursed { filter: sepia(1) hue-rotate(250deg) saturate(3); border: 1px dashed #800080; }
