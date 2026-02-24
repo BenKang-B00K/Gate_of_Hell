@@ -7,6 +7,8 @@ const groundEffects = []; // Ground effect list (AOE)
 const friendlySkeletons = []; // Ally skeleton soldier list
 
 let stage = 1;
+let money = 100; // Moved for better accessibility if needed
+let corruptedShards = 0; // Track corrupted shards for debuffs
 let totalStageEnemies = 0;
 let currentStageSpawned = 0;
 let lastSpawnTime = 0;
@@ -16,6 +18,28 @@ let bossSpawned = false;
 let bossInstance = null;
 let globalSpeedFactor = 1.0; // Enemy speed multiplier
 let treasureChance = 0.01; // Treasure ghost spawn probability (Base 1%)
+
+// Calculate debuff multipliers based on corrupted shards
+function getCorruptionMultipliers() {
+    let hpMult = 1.0;
+    let speedMult = 1.0;
+    const s = corruptedShards;
+
+    if (s >= 50) {
+        hpMult = 1.70; // Fixed +70%
+        speedMult = 1.02; // Fixed +2%
+    } else if (s >= 41) {
+        hpMult = 1 + (s * 0.02); // +2% per shard
+        speedMult = 1 + (s * 0.0002); // +0.02% per shard
+    } else if (s >= 21) {
+        hpMult = 1 + (s * 0.015); // +1.5% per shard
+        speedMult = 1 + (s * 0.0001); // +0.01% per shard
+    } else if (s >= 1) {
+        hpMult = 1 + (s * 0.01); // +1% per shard
+    }
+    
+    return { hpMult, speedMult };
+}
 
 // Enemy data (Categorized)
 const enemyCategories = {
@@ -144,15 +168,17 @@ function spawnBoss() {
     enemyDiv.style.left = '50%';
     enemyDiv.style.top = '0px';
 
+    const { hpMult, speedMult } = getCorruptionMultipliers();
+
     const boss = {
         element: enemyDiv,
         initialX: 50,
         x: 50,
         y: 0,
-        baseSpeed: data.speed,
-        speed: data.speed,
-        maxHp: data.hp,
-        hp: data.hp,
+        baseSpeed: data.speed * speedMult,
+        speed: data.speed * speedMult,
+        maxHp: data.hp * hpMult,
+        hp: data.hp * hpMult,
         isBoss: true,
         data: data,
         lastAbilityTime: Date.now()
@@ -235,16 +261,18 @@ function spawnEnemy() {
     enemyDiv.style.left = `${randomX}%`;
     enemyDiv.style.top = '0px';
 
+    const { hpMult, speedMult } = getCorruptionMultipliers();
+
     const enemy = {
         element: enemyDiv,
         initialX: randomX,
         x: randomX,
         y: 0,
-        baseSpeed: selectedType.speed,
-        speed: selectedType.speed,
-        maxHp: selectedType.hp,
+        baseSpeed: selectedType.speed * speedMult,
+        speed: selectedType.speed * speedMult,
+        maxHp: selectedType.hp * hpMult,
         defense: selectedType.defense || 0,
-        hp: selectedType.hp,
+        hp: selectedType.hp * hpMult,
         reward: selectedType.reward || 10,
         type: selectedType.type,
         isPhasing: false,
@@ -266,14 +294,17 @@ function spawnPassenger(boss) {
     const offsetX = (Math.random() - 0.5) * 30; 
     const offsetY = (Math.random() - 0.5) * 40;
 
+    const { hpMult, speedMult } = getCorruptionMultipliers();
+
     const enemy = {
         element: enemyDiv,
         initialX: boss.x,
         x: boss.x,
         y: boss.y,
-        baseSpeed: 1.5,
-        speed: 1.5,
-        hp: 100,
+        baseSpeed: 1.5 * speedMult,
+        speed: 1.5 * speedMult,
+        maxHp: 100 * hpMult,
+        hp: 100 * hpMult,
         type: 'normal',
         isBoarded: true,     
         parentBoss: boss,    
@@ -309,15 +340,18 @@ function spawnCorruptedEnemy(tower) {
     enemyDiv.style.left = `${relX}%`;
     enemyDiv.style.top = `0px`;
 
+    const { hpMult, speedMult } = getCorruptionMultipliers();
+    const hpValue = (tower.data.hp || (tower.data.damage * 10)) * hpMult;
+
     const enemy = {
         element: enemyDiv,
         initialX: relX,
         x: relX,
         y: 0,
-        baseSpeed: 0.5, 
-        speed: 0.5,
-        maxHp: tower.data.hp || (tower.data.damage * 10), 
-        hp: tower.data.hp || (tower.data.damage * 10),
+        baseSpeed: 0.5 * speedMult, 
+        speed: 0.5 * speedMult,
+        maxHp: hpValue, 
+        hp: hpValue,
         defense: 5,
         reward: 0, 
         type: 'corrupted',

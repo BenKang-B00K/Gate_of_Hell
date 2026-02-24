@@ -3,7 +3,6 @@ const gameContainer = document.getElementById('game-container');
 const road = document.getElementById('road');
 
 let money = 100;
-let corruptedShards = 0;
 let damageMultiplier = 1.0; // Ally attack power multiplier
 let critChance = 0; // Critical hit chance
 let spawnInterval = 2000; // Enemy spawn interval (Initial value 2s)
