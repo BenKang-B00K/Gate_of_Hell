@@ -651,6 +651,7 @@ body {
 
 /* 하단 UI 패널 (30%) */
 #bottom-panel {
+    position: relative; /* 파편 정보 위치 기준 */
     height: 30%;
     background: linear-gradient(to bottom, #1a0505, #000000);
     padding: 10px;
@@ -658,6 +659,18 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 50;
+}
+
+/* 타락한 파편 조각 정보 */
+#shard-info {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 9px;
+    color: #ff4500;
+    font-weight: bold;
+    text-shadow: 0 0 3px #000;
+    pointer-events: none;
 }
 
 /* 유닛 정보 패널 */
