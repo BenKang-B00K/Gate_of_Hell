@@ -9,9 +9,18 @@
 <body>
 
     <div id="game-container">
-        <div id="status-bar">
-            STAGE: <span id="stage-display">1</span> | SE: <span id="se-display">100</span>
+        <!-- Top UI: Soul Energy & Stage -->
+        <div id="top-ui">
+            <div id="soul-energy-container">
+                <span class="label">SOUL ENERGY</span>
+                <span id="se-display">100</span>
+            </div>
+            <div id="stage-container">
+                <span class="label">STAGE</span>
+                <span id="stage-display">1</span>
+            </div>
         </div>
+
         <div id="frozen-overlay"></div>
         <div id="game-layout">
             <div id="left-slots" class="slot-area"></div>
@@ -24,7 +33,18 @@
         </div>
 
         <div id="bottom-panel">
-            <div id="shard-info">Corrupted Shards: <span id="shards-display">0</span></div>
+            <!-- Corrupted Shards Gauge -->
+            <div id="shard-gauge-container">
+                <div class="gauge-header">
+                    <span>Corrupted Shards</span>
+                    <span id="shards-display-text">0 / 99</span>
+                </div>
+                <div class="gauge-bar-bg">
+                    <div id="shard-gauge-fill"></div>
+                </div>
+                <div id="active-debuffs">Normal Souls</div>
+            </div>
+
             <div id="unit-info">Select a unit to view information.</div>
             <div id="control-panel">
                 <div id="tower-card" class="tower-card">

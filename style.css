@@ -343,429 +343,164 @@ body {
     border: 2px solid #555 !important;
 }
 
-/* 전직 버튼 (INFO 패널용) */
+/* Top UI: Soul Energy & Stage */
+#top-ui {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    box-sizing: border-box;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    z-index: 100;
+}
+
+#soul-energy-container, #stage-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#soul-energy-container .label, #stage-container .label {
+    font-size: 9px;
+    color: #00e5ff;
+    letter-spacing: 1px;
+}
+
+#se-display {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+#stage-display {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff4500;
+    text-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+}
+
+/* Corrupted Shards Gauge */
+#shard-gauge-container {
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 0 5px;
+    box-sizing: border-box;
+}
+
+.gauge-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #ff4500;
+    margin-bottom: 3px;
+    font-weight: bold;
+}
+
+.gauge-bar-bg {
+    width: 100%;
+    height: 8px;
+    background-color: #222;
+    border: 1px solid #444;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px #000;
+}
+
+#shard-gauge-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #4a0000, #ff0000);
+    box-shadow: 0 0 10px #ff0000;
+    transition: width 0.3s ease;
+}
+
+#active-debuffs {
+    font-size: 9px;
+    color: #aaa;
+    margin-top: 3px;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Redesign Unit Info Buttons */
 .job-btn {
     display: inline-block;
-    margin-left: 8px;
     padding: 2px 8px;
-    font-size: 11px;
-    border-radius: 4px;
+    font-size: 9px; /* Shrunk further */
+    border-radius: 12px;
     cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.3);
-    vertical-align: middle;
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.2s;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
+
 .job-btn.active {
     background: linear-gradient(to bottom, #4CAF50, #2E7D32);
     color: white;
-    box-shadow: 0 0 5px #4CAF50;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
-.job-btn.locked {
-    background: #333;
-    color: #888;
-    border-color: #555;
-    cursor: not-allowed;
+
+.job-btn.active:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
 }
-/* 마스터 전직 버튼 컨테이너 */
+
+#info-sell-btn {
+    background: linear-gradient(to bottom, #ef5350, #b71c1c) !important;
+}
+
+#info-abyss-btn {
+    padding: 4px 12px;
+    border-radius: 15px;
+    margin-top: 5px;
+}
+
+/* Master buttons size fix */
 .master-btn-container {
+    margin-top: 6px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     gap: 5px;
 }
 
-/* 상태이상: 역병 (공격 속도 감소) */
-.card-slot.plagued {
-    background-color: rgba(0, 100, 0, 0.6);
-    box-shadow: inset 0 0 20px #00ff00;
-}
-/* 상태이상: 침묵 (특수 능력 불가) */
-.enemy.silenced { border: 2px dotted #191970; }
-
-@keyframes goldPulse {
-    from { box-shadow: 0 0 10px #ffd700; }
-    to { box-shadow: 0 0 20px #ffd700, 0 0 10px #ffffff; }
-}
-
-/* 발사체 */
-.projectile {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background-color: #ffff00;
-    border-radius: 50%;
-    box-shadow: 0 0 3px #ffff00;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 20;
-    transition: all 0.2s linear; /* 날아가는 애니메이션 */
-}
-
-/* 루시퍼 (Lv.40 보스) */
-.enemy.lucifer {
-    width: 70px;
-    height: 70px;
-    background: radial-gradient(circle, #ffffff, #a5f2f3, #00008b);
-    box-shadow: 0 0 30px #00ffff, 0 0 10px #ffffff;
-    border: 2px solid #ffffff;
-    z-index: 17;
-}
-
-/* 상태이상: 절대영도 (영구 동결) */
-.unit.frozen-tomb {
-    filter: brightness(1.2) sepia(1) hue-rotate(170deg) saturate(5);
-    box-shadow: 0 0 15px #00ffff;
-    border: 3px solid #00ffff !important;
-}
-.unit.frozen-tomb::after {
-    content: '❄️';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-}
-
-/* 화면 전체 얼어붙는 효과 */
-#frozen-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle, transparent 50%, rgba(0, 255, 255, 0.3) 100%);
-    pointer-events: none;
-    z-index: 90;
-    opacity: 0;
-    transition: opacity 2s;
-}
-
-@keyframes shake {
-    0% { transform: translate(1px, 1px) rotate(0deg); }
-    10% { transform: translate(-1px, -2px) rotate(-1deg); }
-    20% { transform: translate(-3px, 0px) rotate(1deg); }
-    30% { transform: translate(3px, 2px) rotate(0deg); }
-    40% { transform: translate(1px, -1px) rotate(1deg); }
-    50% { transform: translate(-1px, 2px) rotate(-1deg); }
-    60% { transform: translate(-3px, 1px) rotate(0deg); }
-    70% { transform: translate(3px, 1px) rotate(-1deg); }
-    80% { transform: translate(-1px, -1px) rotate(1deg); }
-    90% { transform: translate(1px, 2px) rotate(0deg); }
-    100% { transform: translate(1px, -2px) rotate(-1deg); }
-}
-
-/* 배치된 유닛 (시각적 표현) */
-.unit {
-    width: 70%;
-    height: 70%;
-    background-color: #00e5ff;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #00e5ff;
-    cursor: grab; /* 유닛 드래그 가능 표시 */
-    z-index: 15;
-}
-
-/* 유닛 클래스별 스타일 */
-.unit.apprentice { /* 견습 퇴마사 (기존) */
-    background-color: #00e5ff; box-shadow: 0 0 10px #00e5ff;
-}
-.unit.chainer { /* 영혼 사슬꾼 (보라색) */
-    background-color: #9370db; box-shadow: 0 0 10px #9370db;
-    border: 2px solid #4b0082;
-}
-.unit.talisman { /* 부적 술사 (주황색) */
-    background-color: #ffa500; box-shadow: 0 0 10px #ffa500;
-    border: 2px solid #8b4500;
-}
-.unit.monk { /* 철퇴 승려 (갈색/붉은색) */
-    background-color: #a52a2a; box-shadow: 0 0 10px #a52a2a;
-    border: 2px solid #800000;
-}
-.unit.archer { /* 신궁 퇴마사 (녹색) */
-    background-color: #228b22; box-shadow: 0 0 10px #228b22;
-    border: 2px solid #006400;
-}
-.unit.ice { /* 빙결 도사 (하늘색) */
-    background-color: #00ffff; box-shadow: 0 0 10px #00ffff;
-    border: 2px solid #008b8b;
-}
-.unit.fire { /* 화염 마법사 (빨간색) */
-    background-color: #ff4500; box-shadow: 0 0 10px #ff4500;
-    border: 2px solid #8b0000;
-}
-.unit.assassin { /* 그림자 자객 (검정) */
-    background-color: #333333; box-shadow: 0 0 10px #000000;
-    border: 2px solid #000000;
-}
-.unit.tracker { /* 영적 탐지기 (흰색) */
-    background-color: #ffffff; box-shadow: 0 0 10px #ffffff;
-    border: 2px solid #cccccc;
-}
-.unit.necromancer { /* 강령술사 (진한 보라) */
-    background-color: #4b0082; box-shadow: 0 0 10px #4b0082;
-    border: 2px solid #800080;
-}
-.unit.guardian { /* 성역 수호자 (황금) */
-    background-color: #ffd700; box-shadow: 0 0 15px #ffd700;
-    border: 2px solid #daa520;
-}
-/* 마스터 클래스 스타일 */
-.unit.executor { /* 명계의 집행관 (어두운 청색) */
-    background-color: #483d8b; box-shadow: 0 0 20px #483d8b; border: 2px solid #fff;
-}
-.unit.binder { /* 영혼 구속자 (자주색) */
-    background-color: #8b008b; box-shadow: 0 0 20px #8b008b; border: 2px solid #fff;
-}
-.unit.grandsealer { /* 대봉인사 (남색) */
-    background-color: #191970; box-shadow: 0 0 20px #191970; border: 2px solid #fff;
-}
-.unit.flamemaster { /* 화염 부적 명장 (진한 주황/빨강) */
-    background-color: #ff4500; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff;
-}
-.unit.vajra { /* 금강역사 (금색/강철) */
-    background-color: #b8860b; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff;
-}
-.unit.saint { /* 진동의 성자 (땅색) */
-    background-color: #8b4513; box-shadow: 0 0 20px #cd853f; border: 2px solid #fff;
-}
-.unit.voidsniper { /* 허공의 저격수 (짙은 녹색/검정) */
-    background-color: #006400; box-shadow: 0 0 20px #00ff00; border: 2px solid #fff;
-}
-.unit.thousandhand { /* 천수 궁수 (밝은 녹색/금색) */
-    background-color: #32cd32; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff;
-}
-.unit.absolutezero { /* 절대영도 마법사 (진한 청록) */
-    background-color: #008b8b; box-shadow: 0 0 20px #00ffff; border: 2px solid #fff;
-}
-.unit.permafrost { /* 만년설의 신녀 (흰색/하늘색) */
-    background-color: #f0ffff; box-shadow: 0 0 20px #87ceeb; border: 2px solid #fff;
-}
-.unit.hellfire { /* 지옥불 연금술사 (검붉은색) */
-    background-color: #8b0000; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff;
-}
-.unit.phoenix { /* 불사조 소환사 (주황/금색) */
-    background-color: #ff8c00; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff;
-}
-.unit.abyssal { /* 심연의 살귀 (검정/보라) */
-    background-color: #2e003e; box-shadow: 0 0 20px #800080; border: 2px solid #fff;
-}
-.unit.spatial { /* 공간 참격자 (검정/은색) */
-    background-color: #1a1a1a; box-shadow: 0 0 20px #c0c0c0; border: 2px solid #fff;
-}
-.unit.clone { /* 분신 */
-    opacity: 0.6;
-    filter: grayscale(100%);
-}
-.unit.seer { /* 진실의 구도자 (밝은 보라/눈) */
-    background-color: #9932cc; box-shadow: 0 0 20px #e6e6fa; border: 2px solid #fff;
-}
-.unit.commander { /* 전장의 지휘관 (붉은색/금장) */
-    background-color: #dc143c; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff;
-}
-.unit.wraithlord { /* 망령 군주 (검정/녹색) */
-    background-color: #000000; box-shadow: 0 0 20px #00ff00; border: 2px solid #fff;
-}
-.unit.cursedshaman { /* 저주받은 주술사 (보라/회색) */
-    background-color: #483d8b; box-shadow: 0 0 20px #708090; border: 2px solid #fff;
-}
-.unit.rampart { /* 신성한 성벽 (백금색) */
-    background-color: #f5f5f5; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff;
-}
-.unit.judgment { /* 심판의 기사 (붉은 금색) */
-    background-color: #daa520; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff;
-}
-
-/* 아군 해골 병사 */
-.friendly-skeleton {
-    position: absolute;
-    width: 12px; height: 12px;
-    background: radial-gradient(circle, #ffffff, #a9a9a9);
-    border: 1px solid #000;
-    border-radius: 50%;
-    box-shadow: 0 0 5px #ffffff;
-    z-index: 11;
-}
-
-/* 신성 데미지 이펙트 */
-.holy-flash {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(255, 255, 224, 0.5);
-    z-index: 80;
-    pointer-events: none;
-    animation: flash 0.2s ease-out;
-}
-@keyframes flash {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-/* 지면 효과 (장판) */
-.zone-seal {
-    position: absolute;
-    background: radial-gradient(circle, rgba(0,0,139,0.3), transparent);
-    border: 2px solid rgba(0,0,139,0.6);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 4;
-    animation: pulseZone 2s infinite;
-}
-.zone-fire {
-    position: absolute;
-    background: radial-gradient(circle, rgba(255,69,0,0.4), transparent);
-    border: 2px solid rgba(255,69,0,0.6);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 4;
-}
-.zone-blizzard {
-    position: absolute;
-    background: radial-gradient(circle, rgba(224, 255, 255, 0.6), transparent);
-    border: 1px solid rgba(135, 206, 235, 0.5);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 4;
-}
-@keyframes pulseZone {
-    0% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-    100% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.95); }
-}
-
-/* 영혼 연결 상태 */
-.enemy.soul-linked { border: 2px dashed #8b008b; }
-
-/* 강령술사 벽 */
-.spirit-wall {
-    position: absolute;
-    width: 40px;
-    height: 10px;
-    background-color: rgba(138, 43, 226, 0.7);
-    box-shadow: 0 0 10px #8a2be2;
-    border-radius: 5px;
-    z-index: 12;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-}
-
-.unit:active {
-    cursor: grabbing;
-}
-
-/* 하단 UI 패널 (30%) */
-#bottom-panel {
-    position: relative; /* 파편 정보 위치 기준 */
-    height: 30%;
-    background: linear-gradient(to bottom, #1a0505, #000000);
-    padding: 10px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    z-index: 50;
-}
-
-/* 타락한 파편 조각 정보 */
-#shard-info {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 9px;
-    color: #ff4500;
-    font-weight: bold;
-    text-shadow: 0 0 3px #000;
-    pointer-events: none;
-}
-
-/* 유닛 정보 패널 */
-#unit-info {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #555;
-    border-radius: 3px ;
-    padding: 8px;
-    margin-bottom: 10px;
+.master-btn-container .job-btn {
+    flex: 1;
+    margin: 0 2px;
+    padding: 3px 1px;
     font-size: 8px;
-    color: #ddd;
+    line-height: 1.1;
+}
+
+/* Unit Info Panel refinements */
+#unit-info {
+    background: rgba(20, 20, 20, 0.8);
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 8px;
+    font-size: 10px;
+    color: #eee;
     text-align: center;
-    min-height: 45px;
+    min-height: 60px;
+    box-shadow: inset 0 0 10px #000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-#control-panel {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    flex: 1; /* 남은 공간 채우기 */
-    overflow-x: auto; /* 가로 스크롤 가능 */
-}
+/* Remove old status bar */
+#status-bar { display: none; }
+#shard-info { display: none; }
 
-/* 퇴마사 카드 (드래그 앤 드롭 소스) */
-.tower-card {
-    pointer-events: auto; /* 버튼만 클릭 가능하게 */
-    width: 60px;
-    height: 80px;
-    background: linear-gradient(135deg, #003366, #001133);
-    border: 2px solid #00e5ff;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer; /* 클릭 가능 표시 */
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
-    color: #00e5ff;
-    font-size: 12px;
-    user-select: none;
-    z-index: 100;
-    flex-shrink: 0; /* 크기 줄어들지 않게 */
-}
-
-.tower-card:active {
-    transform: scale(0.95);
-}
-
-/* 잠긴 카드 (소환 불가) */
-.tower-card.locked {
-    filter: grayscale(100%);
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* 빈 슬롯 (기능 추가용) */
-.tower-card.placeholder {
-    border: 2px dashed #555;
-    background: rgba(255, 255, 255, 0.05);
-    color: #555;
-    cursor: default;
-    box-shadow: none;
-}
-
-/* 상단 상태창 (SE 자원 등) */
-#status-bar {
-    position: absolute;
-    top: 450px;
-    left: 5px;
-    font-size: 7%;
-    font-weight: bold;
-    color: #ffd700;
-    text-shadow: 0 0 3px #000;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 3px 6px;
-    border-radius: 4px;
-    z-index: 60;
-    pointer-events: none;
-}
-
-/* 상태이상 효과 */
-.enemy.slowed { filter: hue-rotate(90deg); }
-.enemy.burning { filter: sepia(1) saturate(5) hue-rotate(-50deg); }
-.enemy.stunned {
-    filter: grayscale(100%) brightness(1.5);
-    animation: shake 0.2s infinite;
-}
-.enemy.cursed {
-    filter: sepia(1) hue-rotate(250deg) saturate(3);
-    border: 1px dashed #800080;
-}
 
 /* Abyss Classes (Tier 4) */
 .unit.abyss {

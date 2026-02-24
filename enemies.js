@@ -414,6 +414,27 @@ function spawnFriendlyGhost() {
     });
 }
 
+// Update Corrupted Shards UI
+function updateShardUI() {
+    const fill = document.getElementById('shard-gauge-fill');
+    const text = document.getElementById('shards-display-text');
+    const debuffDesc = document.getElementById('active-debuffs');
+    
+    if (!fill || !text || !debuffDesc) return;
+
+    const percentage = (corruptedShards / 99) * 100;
+    fill.style.width = `${percentage}%`;
+    text.innerText = `${corruptedShards} / 99`;
+
+    let desc = "Normal Souls";
+    if (corruptedShards >= 50) desc = "⚠️ 70% HP, +2% SPD (FATAL)";
+    else if (corruptedShards >= 41) desc = "🔥 +2% HP/shard, +0.02% SPD/shard";
+    else if (corruptedShards >= 21) desc = "🌑 +1.5% HP/shard, +0.01% SPD/shard";
+    else if (corruptedShards >= 1) desc = "☁️ +1% HP/shard";
+    
+    debuffDesc.innerText = `Current Debuff: ${desc}`;
+}
+
 // Handle enemy death
 function handleEnemyDeath(target, killer = null) {
     if (target.hp > 0) return;
@@ -538,8 +559,7 @@ function handleEnemyDeath(target, killer = null) {
         if (target.isCorrupted) {
             if (corruptedShards < 99) {
                 corruptedShards += 1;
-                const shardsDisplay = document.getElementById('shards-display');
-                if (shardsDisplay) shardsDisplay.innerText = corruptedShards;
+                updateShardUI();
                 alert("💠 Obtained a [Corrupted Shard]!");
             }
         }

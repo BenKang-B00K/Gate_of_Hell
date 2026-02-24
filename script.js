@@ -1101,5 +1101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initStage();
     initAllies();
     updateSummonButtonState();
+    if (typeof updateShardUI === 'function') {
+        updateShardUI();
+    }
     gameLoop();
 });

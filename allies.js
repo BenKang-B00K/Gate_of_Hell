@@ -182,15 +182,15 @@ function summonTower(targetSlot) {
 function showUnitInfo(tower) {
     const unitInfoDisplay = document.getElementById('unit-info');
     const data = tower.data;
-    let titleHtml = `<span style="color: #ffd700; font-weight: bold;">${data.name}</span>`;
+    let titleHtml = `<span style="color: #ffd700; font-weight: bold; font-size: 12px;">${data.name}</span>`;
 
     // Add promotion button for Apprentice Exorcist
     if (data.type === 'apprentice') {
         const canAfford = money >= jobChangeCost;
         const btnClass = canAfford ? 'active' : 'locked';
-        const btnText = canAfford ? `Promote (${jobChangeCost})` : `🔒 Not enough SE (${jobChangeCost})`;
+        const btnText = canAfford ? `Promote` : `🔒 LACK`;
         
-        titleHtml += `<span id="info-job-btn" class="job-btn active" style="background: linear-gradient(to bottom, #4CAF50, #2E7D32);">${btnText}</span>`;
+        titleHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">${btnText}</span>`;
     } else if (data.upgrades) {
         // Master class promotion buttons
         const canAfford = money >= masterJobCost;
@@ -200,8 +200,8 @@ function showUnitInfo(tower) {
         data.upgrades.forEach((uType, idx) => {
             const uData = unitTypes.find(u => u.type === uType);
             const btnId = `master-btn-${idx}`;
-            upgradeBtns += `<div id="${btnId}" class="job-btn ${btnClass}" style="flex:1; margin:0 2px;" data-type="${uType}">
-                ${uData.name}<br>(${masterJobCost})
+            upgradeBtns += `<div id="${btnId}" class="job-btn ${btnClass}" data-type="${uType}">
+                ${uData.name}
             </div>`;
         });
         upgradeBtns += `</div>`;
@@ -233,7 +233,7 @@ function showUnitInfo(tower) {
     // [Corruption] (Sell) button - only for Tier 1-3
     if (data.tier < 4) {
         const sellRefund = Math.floor(tower.spentSE * 0.7);
-        titleHtml += `<span id="info-sell-btn" class="job-btn active" style="background: linear-gradient(to bottom, #8b0000, #4a0000); margin-left: 5px;">[Corrupt] (+${sellRefund} SE)</span>`;
+        titleHtml += `<span id="info-sell-btn" class="job-btn active" style="margin-left: 5px;">[Corrupt]</span>`;
     }
 
     // Abyss Promotion button
@@ -257,14 +257,14 @@ function showUnitInfo(tower) {
             const uData = unitTypes.find(u => u.type === abyssType);
             const canAfford = typeof corruptedShards !== 'undefined' && corruptedShards >= 50;
             const btnClass = canAfford ? 'active' : 'locked';
-            titleHtml += `<div style="margin-top: 5px;"><span id="info-abyss-btn" class="job-btn ${btnClass}" style="background: linear-gradient(to bottom, #4b0082, #1a0033); display: block; text-align: center;">Abyss: ${uData.name} (50 Shards)</span></div>`;
+            titleHtml += `<div style="margin-top: 5px;"><span id="info-abyss-btn" class="job-btn ${btnClass}">Ascend to ${uData.name}</span></div>`;
         }
     }
 
     unitInfoDisplay.innerHTML = `
-        <div style="margin-bottom: 4px;">${titleHtml}</div>
-        <div>ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>
-        <div style="color: #aaa; font-size: 11px; margin-top: 4px;">${data.desc}</div>
+        <div style="margin-bottom: 6px;">${titleHtml}</div>
+        <div style="font-size: 9px; color: #bbb;">ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>
+        <div style="color: #888; font-size: 9px; margin-top: 4px; line-height: 1.2;">${data.desc}</div>
     `;
 
     // Connect button events
@@ -392,8 +392,9 @@ function performAbyssJobChange(tower, newTypeStr) {
     if (typeof corruptedShards === 'undefined' || corruptedShards < 50) return;
     
     corruptedShards -= 50;
-    const shardsDisplay = document.getElementById('shards-display');
-    if (shardsDisplay) shardsDisplay.innerText = corruptedShards;
+    if (typeof updateShardUI === 'function') {
+        updateShardUI();
+    }
 
     const newType = unitTypes.find(u => u.type === newTypeStr);
     const unitElement = tower.element;
