@@ -450,6 +450,9 @@ function gameLoop() {
 
             enemy.element.remove();
             enemies.splice(i, 1);
+            if (typeof updateStageInfo === 'function') {
+                updateStageInfo();
+            }
             continue;
         }
 
@@ -1101,8 +1104,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initStage();
     initAllies();
     updateSummonButtonState();
-    if (typeof updateShardUI === 'function') {
-        updateShardUI();
+    if (typeof updateGauges === 'function') {
+        updateGauges();
     }
     gameLoop();
 });

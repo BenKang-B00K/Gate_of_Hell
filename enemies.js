@@ -145,14 +145,81 @@ function initStage() {
     }, 1000);
 }
 
+// Update All Gauges (Soul Energy & Corrupted Shards)
+function updateGauges() {
+    // Shard Gauge
+    const shardFill = document.getElementById('shard-gauge-fill');
+    const shardText = document.getElementById('shards-display-text');
+    const debuffDesc = document.getElementById('active-debuffs');
+    
+    if (shardFill && shardText && debuffDesc) {
+        const shardPercent = (corruptedShards / 99) * 100;
+        shardFill.style.width = `${shardPercent}%`;
+        shardText.innerText = `${corruptedShards} / 99`;
+
+        let desc = "Normal Souls";
+        if (corruptedShards >= 50) desc = "⚠️ 70% HP, +2% SPD (FATAL)";
+        else if (corruptedShards >= 41) desc = "🔥 +2% HP/shard, +0.02% SPD/shard";
+        else if (corruptedShards >= 21) desc = "🌑 +1.5% HP/shard, +0.01% SPD/shard";
+        else if (corruptedShards >= 1) desc = "☁️ +1% HP/shard";
+        debuffDesc.innerText = `Current Debuff: ${desc}`;
+    }
+
+    // Soul Energy Gauge
+    const seFill = document.getElementById('se-gauge-fill');
+    const seText = document.getElementById('se-display-text');
+    if (seFill && seText) {
+        // Max cap for display (e.g., 1000 SE for 100% fill)
+        const displayMax = 1000;
+        const sePercent = Math.min((money / displayMax) * 100, 100);
+        seFill.style.width = `${sePercent}%`;
+        seText.innerText = money;
+    }
+}
+
+// Update All Gauges (Soul Energy & Corrupted Shards)
+function updateGauges() {
+    // Shard Gauge
+    const shardFill = document.getElementById('shard-gauge-fill');
+    const shardText = document.getElementById('shards-display-text');
+    const debuffDesc = document.getElementById('active-debuffs');
+    
+    if (shardFill && shardText && debuffDesc) {
+        const shardPercent = (corruptedShards / 99) * 100;
+        shardFill.style.width = `${shardPercent}%`;
+        shardText.innerText = `${corruptedShards} / 99`;
+
+        let desc = "Normal Souls";
+        if (corruptedShards >= 50) desc = "⚠️ 70% HP, +2% SPD (FATAL)";
+        else if (corruptedShards >= 41) desc = "🔥 +2% HP/shard, +0.02% SPD/shard";
+        else if (corruptedShards >= 21) desc = "🌑 +1.5% HP/shard, +0.01% SPD/shard";
+        else if (corruptedShards >= 1) desc = "☁️ +1% HP/shard";
+        debuffDesc.innerText = `Current Debuff: ${desc}`;
+    }
+
+    // Soul Energy Gauge
+    const seFill = document.getElementById('se-gauge-fill');
+    const seText = document.getElementById('se-display-text');
+    if (seFill && seText) {
+        // Max cap for display (e.g., 1000 SE for 100% fill)
+        const displayMax = 1000;
+        const sePercent = Math.min((money / displayMax) * 100, 100);
+        seFill.style.width = `${sePercent}%`;
+        seText.innerText = money;
+    }
+}
+
 // Update stage information display
 function updateStageInfo() {
-    const info = document.getElementById('stage-info');
     const stageDisplay = document.getElementById('stage-display');
-    if (info) {
-        info.innerText = `STAGE ${stage}\nEnemies Left: ${totalStageEnemies - currentStageSpawned} / ${totalStageEnemies}`;
-    }
+    const enemiesLeft = document.getElementById('enemies-left');
+    
     if (stageDisplay) stageDisplay.innerText = stage;
+    if (enemiesLeft) {
+        // Total remaining = (Not yet spawned) + (Currently alive on screen)
+        const remainingToSpawn = Math.max(0, totalStageEnemies - currentStageSpawned);
+        enemiesLeft.innerText = remainingToSpawn + enemies.length;
+    }
 }
 
 // Spawn wave
@@ -414,27 +481,6 @@ function spawnFriendlyGhost() {
     });
 }
 
-// Update Corrupted Shards UI
-function updateShardUI() {
-    const fill = document.getElementById('shard-gauge-fill');
-    const text = document.getElementById('shards-display-text');
-    const debuffDesc = document.getElementById('active-debuffs');
-    
-    if (!fill || !text || !debuffDesc) return;
-
-    const percentage = (corruptedShards / 99) * 100;
-    fill.style.width = `${percentage}%`;
-    text.innerText = `${corruptedShards} / 99`;
-
-    let desc = "Normal Souls";
-    if (corruptedShards >= 50) desc = "⚠️ 70% HP, +2% SPD (FATAL)";
-    else if (corruptedShards >= 41) desc = "🔥 +2% HP/shard, +0.02% SPD/shard";
-    else if (corruptedShards >= 21) desc = "🌑 +1.5% HP/shard, +0.01% SPD/shard";
-    else if (corruptedShards >= 1) desc = "☁️ +1% HP/shard";
-    
-    debuffDesc.innerText = `Current Debuff: ${desc}`;
-}
-
 // Handle enemy death
 function handleEnemyDeath(target, killer = null) {
     if (target.hp > 0) return;
@@ -527,6 +573,7 @@ function handleEnemyDeath(target, killer = null) {
     if (idx > -1) {
         target.element.remove();
         enemies.splice(idx, 1);
+        updateStageInfo(); // Update enemy counter
         
         // Boss death rewards
         if (target.isBoss) {
@@ -559,15 +606,14 @@ function handleEnemyDeath(target, killer = null) {
         if (target.isCorrupted) {
             if (corruptedShards < 99) {
                 corruptedShards += 1;
-                updateShardUI();
+                updateGauges();
                 alert("💠 Obtained a [Corrupted Shard]!");
             }
         }
 
         // SE Reward
         money += target.reward;
-        const seDisplay = document.getElementById('se-display');
-        if(seDisplay) seDisplay.innerText = money;
+        updateGauges();
         if (typeof window.updateSummonButtonState === 'function') {
             window.updateSummonButtonState();
         }

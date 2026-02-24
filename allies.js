@@ -46,8 +46,8 @@ const unitTypes = [
     { type: 'piercing_shadow', name: 'Soul Piercing Shadow', tier: 4, damage: 150, range: 9999, cooldown: 3000, desc: "[Abyss] Infinite range piercing arrow that ricochets." },
     { type: 'cocytus', name: 'Ruler of Cocytus', tier: 4, damage: 10, range: 200, cooldown: 30000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
     { type: 'purgatory', name: 'Eternal Purgatory Fire', tier: 4, damage: 10, range: 150, cooldown: 1000, desc: "[Abyss] Turns its horizontal row into permanent hellfire (Slow & % DMG)." },
-    { type: 'reaper', name: 'Nightmare Reaper', tier: 4, damage: 0, range: 0, cooldown: 5000, desc: "[Abyss] Hidden. Every 5s, instakills highest HP non-boss ghost for 3x SE." },
-    { type: 'doom_guide', name: 'Guide of Doom', tier: 4, damage: 20, range: 150, cooldown: 1000, desc: "[Abyss] Inverts portal. Escaping ghosts give 90% SE instead of failing." },
+    { type: 'reaper', name: 'Nightmare Reaper', tier: 4, damage: 0, range: 0, cooldown: 5000, desc: "[Abyss] Hidden. Every 5s, instakills highest HP non-boss ghost for 3x Soul Energy." },
+    { type: 'doom_guide', name: 'Guide of Doom', tier: 4, damage: 20, range: 150, cooldown: 1000, desc: "[Abyss] Inverts portal. Escaping ghosts give 90% Soul Energy instead of failing." },
     { type: 'forsaken_king', name: 'King of the Forsaken', tier: 4, damage: 50, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts at stage start based on total Corrupted units." },
     { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals the portal until 30 ghosts gather." }
 ];
@@ -132,10 +132,11 @@ function drop(e) {
 }
 
 function summonTower(targetSlot) {
-    const seDisplay = document.getElementById('se-display');
     // Consume resource
     money -= towerCost;
-    seDisplay.innerText = money;
+    if (typeof updateGauges === 'function') {
+        updateGauges();
+    }
 
     // Summon always starts as Apprentice Exorcist
     const selectedUnit = unitTypes[0];
@@ -306,7 +307,9 @@ function showUnitInfo(tower) {
 function sellTower(tower) {
     const sellRefund = Math.floor(tower.spentSE * 0.7);
     money += sellRefund;
-    document.getElementById('se-display').innerText = money;
+    if (typeof updateGauges === 'function') {
+        updateGauges();
+    }
     updateSummonButtonState();
 
     const slot = tower.slotElement;
@@ -328,14 +331,15 @@ function sellTower(tower) {
 
 // Perform job change
 function performJobChange(unitElement) {
-    const seDisplay = document.getElementById('se-display');
     if (money < jobChangeCost) {
         alert("Not enough soul energy!");
         return;
     }
     
     money -= jobChangeCost;
-    seDisplay.innerText = money;
+    if (typeof updateGauges === 'function') {
+        updateGauges();
+    }
     updateSummonButtonState();
     
     // Random promotion (Random among Tier 2 classes)
@@ -359,9 +363,10 @@ function performJobChange(unitElement) {
 
 // Perform master job change
 function performMasterJobChange(tower, newTypeStr) {
-    const seDisplay = document.getElementById('se-display');
     money -= masterJobCost;
-    seDisplay.innerText = money;
+    if (typeof updateGauges === 'function') {
+        updateGauges();
+    }
     updateSummonButtonState();
 
     const newType = unitTypes.find(u => u.type === newTypeStr);
@@ -392,8 +397,8 @@ function performAbyssJobChange(tower, newTypeStr) {
     if (typeof corruptedShards === 'undefined' || corruptedShards < 50) return;
     
     corruptedShards -= 50;
-    if (typeof updateShardUI === 'function') {
-        updateShardUI();
+    if (typeof updateGauges === 'function') {
+        updateGauges();
     }
 
     const newType = unitTypes.find(u => u.type === newTypeStr);
@@ -434,7 +439,7 @@ function updateSummonButtonState() {
         costDiv.innerText = "LACK";
     } else {
         towerCard.classList.remove('locked');
-        costDiv.innerText = "50 SE";
+        costDiv.innerText = "50 Energy";
     }
 }
 

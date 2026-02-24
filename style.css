@@ -343,86 +343,100 @@ body {
     border: 2px solid #555 !important;
 }
 
-/* Top UI: Soul Energy & Stage */
-#top-ui {
+/* Thematic Header (Top Center) */
+#thematic-header {
     position: absolute;
-    top: 0;
-    width: 100%;
-    height: 50px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 15px;
-    box-sizing: border-box;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    text-align: center;
     z-index: 100;
+    pointer-events: none;
 }
 
-#soul-energy-container, #stage-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#soul-energy-container .label, #stage-container .label {
-    font-size: 9px;
-    color: #00e5ff;
-    letter-spacing: 1px;
-}
-
-#se-display {
-    font-size: 20px;
-    font-weight: bold;
-    color: #ffd700;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-}
-
-#stage-display {
-    font-size: 20px;
+#stage-count {
+    font-size: 14px;
     font-weight: bold;
     color: #ff4500;
-    text-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+    text-shadow: 0 0 10px rgba(255, 69, 0, 0.8), 0 0 2px #000;
+    letter-spacing: 2px;
+    animation: textBreathing 3s infinite alternate ease-in-out;
 }
 
-/* Corrupted Shards Gauge */
-#shard-gauge-container {
+@keyframes textBreathing {
+    from { opacity: 0.8; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); text-shadow: 0 0 15px rgba(255, 69, 0, 1), 0 0 5px #fff; }
+}
+
+#enemy-counter {
+    font-size: 11px;
+    color: #00e5ff;
+    margin-top: 2px;
+    text-shadow: 0 0 5px rgba(0, 229, 255, 0.5), 0 0 2px #000;
+    font-style: italic;
+}
+
+/* Dual Gauges (Bottom Panel) */
+#gauges-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     padding: 0 5px;
     box-sizing: border-box;
+}
+
+.gauge-half {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .gauge-header {
     display: flex;
     justify-content: space-between;
-    font-size: 10px;
-    color: #ff4500;
-    margin-bottom: 3px;
+    font-size: 9px;
+    margin-bottom: 2px;
     font-weight: bold;
+    text-transform: uppercase;
 }
+
+.gauge-header span:first-child { color: #aaa; }
+.gauge-half:first-child .gauge-header span:last-child { color: #ffd700; } /* SE color */
+.gauge-half:last-child .gauge-header span:last-child { color: #ff4500; } /* Shards color */
 
 .gauge-bar-bg {
     width: 100%;
-    height: 8px;
-    background-color: #222;
-    border: 1px solid #444;
-    border-radius: 4px;
+    height: 6px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 3px;
     overflow: hidden;
-    box-shadow: inset 0 0 5px #000;
+    box-shadow: inset 0 0 3px #000;
+}
+
+#se-gauge-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #8b8000, #ffd700);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+    transition: width 0.3s ease;
 }
 
 #shard-gauge-fill {
     width: 0%;
     height: 100%;
     background: linear-gradient(90deg, #4a0000, #ff0000);
-    box-shadow: 0 0 10px #ff0000;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
     transition: width 0.3s ease;
 }
 
 #active-debuffs {
-    font-size: 9px;
-    color: #aaa;
-    margin-top: 3px;
+    font-size: 8px;
+    color: #777;
+    margin-bottom: 6px;
     text-align: center;
     font-style: italic;
 }
