@@ -550,7 +550,7 @@ function resetUnitInfo() {
     const unitInfoDisplay = document.getElementById('unit-info');
     if (unitInfoDisplay) {
         unitInfoDisplay.innerHTML = `
-            <div style="color: #444; font-weight: bold; letter-spacing: 1px; font-size: 10px; line-height: 1.4;">
+            <div class="divine-glow" style="font-size: 10px; line-height: 1.4;">
                 GUARDIAN<br>
                 of the<br>
                 UNDERWORLD

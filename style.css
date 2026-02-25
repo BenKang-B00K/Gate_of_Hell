@@ -481,24 +481,38 @@ body {
     line-height: 1.1;
 }
 
-/* Unit Info Panel refinements */
+/* Unit Info Panel refinements - Divine Theme */
 #unit-info {
-    background: rgba(15, 15, 15, 0.9);
-    border: 1px solid #222;
+    background: linear-gradient(145deg, #1a1a00, #000);
+    border: 1px solid #ffd700;
     border-radius: 4px;
     padding: 4px 6px;
     font-size: 9px;
-    color: #eee;
+    color: #fff;
     text-align: center;
     flex: 1;
     overflow-y: auto;
-    box-shadow: inset 0 0 15px #000;
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Default Logo Text Glow */
+.divine-glow {
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ff8c00;
+    font-weight: bold;
+    letter-spacing: 2px;
+    animation: divinePulse 2s infinite alternate;
+}
+
+@keyframes divinePulse {
+    from { opacity: 0.8; text-shadow: 0 0 5px #ffd700; }
+    to { opacity: 1; text-shadow: 0 0 15px #ffd700, 0 0 25px #ff8c00; }
 }
 
 #unit-info::-webkit-scrollbar {
