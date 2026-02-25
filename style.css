@@ -505,12 +505,23 @@ body {
     font-size: 18px;
     pointer-events: auto; /* Ensure unit is interactive */
     -webkit-user-drag: element; /* Support for some browsers */
+    user-drag: element;
     /* Text outline for the icon */
     text-shadow: 
         -1px -1px 0 #000,  
          1px -1px 0 #000,
         -1px  1px 0 #000,  
          1px  1px 0 #000;
+}
+
+/* Ensure children don't steal the drag event */
+.unit * {
+    pointer-events: none;
+}
+
+/* Re-enable pointer events for specific buttons */
+.unit .unit-overlay-btn {
+    pointer-events: auto;
 }
 
 .unit.selected {

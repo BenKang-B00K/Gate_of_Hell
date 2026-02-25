@@ -175,6 +175,7 @@ function summonTower(targetSlot) {
     // Cooldown overlay
     const cdOverlay = document.createElement('div');
     cdOverlay.className = 'cooldown-overlay';
+    cdOverlay.style.pointerEvents = 'none';
     unit.appendChild(cdOverlay);
 
     // Unit drag start event
@@ -530,6 +531,7 @@ function performJobChange(unitElement) {
     
     const cdOverlay = document.createElement('div');
     cdOverlay.className = 'cooldown-overlay';
+    cdOverlay.style.pointerEvents = 'none';
     unitElement.appendChild(cdOverlay);
 
     recordUnlock(newType.type);
@@ -564,6 +566,7 @@ function performMasterJobChange(tower, newTypeStr) {
     
     const cdOverlay = document.createElement('div');
     cdOverlay.className = 'cooldown-overlay';
+    cdOverlay.style.pointerEvents = 'none';
     unitElement.appendChild(cdOverlay);
 
     recordUnlock(newType.type);
@@ -604,6 +607,7 @@ function performAbyssJobChange(tower, newTypeStr) {
     
     const cdOverlay = document.createElement('div');
     cdOverlay.className = 'cooldown-overlay';
+    cdOverlay.style.pointerEvents = 'none';
     unitElement.appendChild(cdOverlay);
 
     recordUnlock(newType.type);
