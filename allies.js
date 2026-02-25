@@ -158,32 +158,74 @@ function summonTower(targetSlot) {
     cdOverlay.style.pointerEvents = 'none';
     unit.appendChild(cdOverlay);
 
-    // Unit click event (promotion menu & range display & selection & move)
+    // Unit click and drag event (promotion menu & range display & selection & move)
+    let longPressTimeout;
+    let dragStartTime;
+    
+    unit.addEventListener('mousedown', function(e) {
+        if (e.button !== 0) return; // Only left click
+        dragStartTime = Date.now();
+        
+        // Long press detection
+        longPressTimeout = setTimeout(() => {
+            if (!isMovingUnit) {
+                isMovingUnit = true;
+                draggedUnit = this;
+                
+                // Visual feedback
+                document.querySelectorAll('.unit').forEach(u => {
+                    u.classList.remove('selected');
+                    u.classList.remove('move-ready');
+                });
+                this.classList.add('selected');
+                this.classList.add('move-ready');
+                
+                const tower = towers.find(t => t.element === this);
+                if (tower) {
+                    showUnitInfo(tower);
+                    showRangeIndicator(tower);
+                }
+            }
+        }, 400); // 0.4s for long press
+    });
+
+    unit.addEventListener('mouseup', function(e) {
+        clearTimeout(longPressTimeout);
+    });
+
+    unit.addEventListener('mouseleave', function(e) {
+        clearTimeout(longPressTimeout);
+    });
+
     unit.addEventListener('click', function(e) {
         e.stopPropagation();
         
-        // Handle Move (Second click on a selected unit)
-        if (this.classList.contains('selected') && !isMovingUnit) {
-            isMovingUnit = true;
-            draggedUnit = this;
-            this.classList.add('move-ready');
-            return;
-        }
+        // If it was a long press, it might have already triggered move-ready
+        // If it was just a quick click:
+        if (Date.now() - dragStartTime < 400) {
+            // Handle Move (Second click on a selected unit - original double-click logic)
+            if (this.classList.contains('selected') && !isMovingUnit) {
+                isMovingUnit = true;
+                draggedUnit = this;
+                this.classList.add('move-ready');
+                return;
+            }
 
-        // Handle selection
-        document.querySelectorAll('.unit').forEach(u => {
-            u.classList.remove('selected');
-            u.classList.remove('move-ready');
-        });
-        this.classList.add('selected');
-        isMovingUnit = false;
-        draggedUnit = null;
+            // Handle selection (first click)
+            document.querySelectorAll('.unit').forEach(u => {
+                u.classList.remove('selected');
+                u.classList.remove('move-ready');
+            });
+            this.classList.add('selected');
+            isMovingUnit = false;
+            draggedUnit = null;
 
-        // Display info
-        const tower = towers.find(t => t.element === this);
-        if (tower) {
-            showUnitInfo(tower);
-            showRangeIndicator(tower);
+            // Display info
+            const tower = towers.find(t => t.element === this);
+            if (tower) {
+                showUnitInfo(tower);
+                showRangeIndicator(tower);
+            }
         }
     });
     
