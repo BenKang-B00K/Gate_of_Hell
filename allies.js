@@ -620,8 +620,11 @@ function renderBestiary() {
 
         const item = document.createElement('div');
         item.className = 'bestiary-item';
-        item.title = `[Special Trait]\n${enemy.desc}`; // Hover tooltip for trait
         item.innerHTML = `
+            <div class="specter-tooltip">
+                <strong style="color:#ffd700;">[TRAIT]</strong><br>
+                ${enemy.desc}
+            </div>
             <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${enemy.icon}</div>
             <div class="bestiary-info">
                 <div class="bestiary-name">${dispName}</div>

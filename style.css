@@ -686,6 +686,7 @@ body {
 }
 
 .bestiary-item {
+    position: relative; /* For tooltip positioning */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -695,6 +696,46 @@ body {
     border: 1px solid #333;
     text-align: center;
     transition: transform 0.2s, border-color 0.2s;
+}
+
+/* Custom Speech Bubble Tooltip */
+.specter-tooltip {
+    visibility: hidden;
+    width: 140px;
+    background-color: #222;
+    color: #00e5ff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 100;
+    bottom: 110%; /* Position above the card */
+    left: 50%;
+    margin-left: -70px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border: 1px solid #00e5ff;
+    font-size: 9px;
+    line-height: 1.3;
+    pointer-events: none;
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+}
+
+/* Tooltip Arrow */
+.specter-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #00e5ff transparent transparent transparent;
+}
+
+.bestiary-item:hover .specter-tooltip {
+    visibility: visible;
+    opacity: 1;
 }
 
 .bestiary-item:hover {
