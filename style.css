@@ -404,7 +404,10 @@ body {
 }
 
 .gauge-header span:first-child { color: #aaa; }
-.gauge-half:first-child .gauge-header span:last-child { color: #ffd700; } /* SE color */
+.gauge-half:first-child .gauge-header span:last-child { 
+    color: #00e5ff; 
+    text-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+} /* SE neon color */
 .gauge-half:last-child .gauge-header span:last-child { color: #ff4500; } /* Shards color */
 
 .gauge-bar-bg {
