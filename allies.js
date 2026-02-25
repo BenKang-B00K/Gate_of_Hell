@@ -9,7 +9,13 @@ const maxTowers = 12; // Maximum summon count
 const unlockedUnits = new Set(['apprentice']);
 
 function recordUnlock(type) {
-    unlockedUnits.add(type);
+    if (!unlockedUnits.has(type)) {
+        unlockedUnits.add(type);
+        const data = unitTypes.find(u => u.type === type);
+        if (data && type !== 'apprentice') {
+            alert(`🆕 NEW CLASS UNLOCKED!\n\n[${data.name}]\n${data.desc}`);
+        }
+    }
 }
 
 // Ally unit data
@@ -178,10 +184,14 @@ function summonTower(targetSlot) {
         e.dataTransfer.effectAllowed = "move";
     });
 
-    // Unit click event (promotion menu & range display)
+    // Unit click event (promotion menu & range display & selection)
     unit.addEventListener('click', function(e) {
         e.stopPropagation();
         
+        // Handle selection
+        document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected'));
+        this.classList.add('selected');
+
         // Display info
         const tower = towers.find(t => t.element === this);
         if (tower) {
@@ -284,7 +294,7 @@ function updateUnitOverlayButtons(tower) {
         corruptBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const shardCount = data.tier;
-            if (confirm(`Do you want to corrupt this unit?\n\nReturns:\n💰 ${Math.floor(tower.spentSE * 0.7)} SE\n💠 ${shardCount} Corrupted Shard(s)`)) {
+            if (confirm(`Do you want to corrupt this unit?\n\nRewards upon defeat:\n💰 ${Math.floor(tower.spentSE * 0.7)} SE\n💠 ${shardCount} Corrupted Shard(s)`)) {
                 sellTower(tower);
                 resetUnitInfo();
             }
@@ -669,6 +679,13 @@ function initAllies() {
     createSlots('right-slots', 30);
 
     initRecordsUI();
+
+    // Deselect units when clicking background
+    document.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.unit') && !e.target.closest('.unit-overlay-btn')) {
+            document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected'));
+        }
+    });
 }
 
 // --- Exorcism Records UI Logic ---

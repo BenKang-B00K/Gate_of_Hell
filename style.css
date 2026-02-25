@@ -10,6 +10,7 @@ body {
     height: 100vh;
     font-family: 'Malgun Gothic', sans-serif;
     overflow: hidden;
+    user-select: none;
 }
 
 /* 게임 전체 컨테이너 (16:9 비율) */
@@ -517,7 +518,7 @@ body {
     height: 12px;
     background: rgba(0, 0, 0, 0.8);
     border-radius: 50%;
-    display: flex;
+    display: none; /* Hidden by default */
     justify-content: center;
     align-items: center;
     font-size: 8px;
@@ -526,6 +527,10 @@ body {
     border: 1px solid #fff;
     pointer-events: auto;
     transition: transform 0.1s;
+}
+
+.unit.selected .unit-overlay-btn {
+    display: flex; /* Show when unit is selected */
 }
 
 .unit-overlay-btn:hover {
