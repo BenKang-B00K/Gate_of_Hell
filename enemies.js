@@ -245,8 +245,10 @@ function spawnWave() {
     let min = 2, max = 10;
     if (isBossStage) {
         min = 5; max = 10;
-    } else if (stage <= 10) { 
-        min = 1; max = 4; 
+    } else if (stage <= 5) { 
+        min = 1; max = 2; 
+    } else if (stage <= 10) {
+        min = 1; max = 3;
     }
     
     let count = Math.floor(Math.random() * (max - min + 1)) + min;
