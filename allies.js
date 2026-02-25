@@ -312,7 +312,8 @@ function showUnitInfo(tower) {
     if (sellBtn) {
         sellBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            if (confirm(`Do you want to corrupt this unit and return ${Math.floor(tower.spentSE * 0.7)} SE?`)) {
+            const shardCount = data.tier;
+            if (confirm(`Do you want to corrupt this unit? \n\nReturns: \n💰 ${Math.floor(tower.spentSE * 0.7)} SE \n💠 ${shardCount} Corrupted Shard(s)`)) {
                 sellTower(tower);
                 resetUnitInfo();
             }
@@ -388,7 +389,24 @@ function showEnemyInfo(enemyData) {
     // Clear existing timeout
     if (infoResetTimeout) clearTimeout(infoResetTimeout);
 
-    const name = enemyData.name || enemyData.type.toUpperCase();
+    // Enemy Name Mapping
+    const enemyNames = {
+        'normal': 'Whispering Soul',
+        'tank': 'Ironclad Wraith',
+        'runner': 'Haste-Cursed Shadow',
+        'greedy': 'Gluttonous Poltergeist',
+        'dimension': 'Void-Step Phantasm',
+        'deceiver': 'Siren of Despair',
+        'boar': 'Feral Revenant',
+        'frost': 'Cocytus Drifter',
+        'lightspeed': 'Ethereal Streak',
+        'heavy': 'Grave-Bound Behemoth',
+        'lava': 'Magma-Veined Terror',
+        'burning': 'Eternal Zealot',
+        'gold': 'Gilded Apparition'
+    };
+
+    const name = enemyData.name || enemyNames[enemyData.type] || enemyData.type.toUpperCase();
     const lore = enemyData.lore || "A lost soul wandering the abyss.";
 
     unitInfoDisplay.innerHTML = `
@@ -406,10 +424,28 @@ function showEnemyInfo(enemyData) {
 // Attach to window
 window.showEnemyInfo = showEnemyInfo;
 
+function resetUnitInfo() {
+    const unitInfoDisplay = document.getElementById('unit-info');
+    if (unitInfoDisplay) {
+        unitInfoDisplay.innerHTML = `
+            <div style="color: #444; font-weight: bold; letter-spacing: 1px; font-size: 10px; line-height: 1.4;">
+                GUARDIAN<br>
+                of the<br>
+                UNDERWORLD
+            </div>`;
+    }
+}
+
 // Sell tower (Corruption)
 function sellTower(tower) {
+    const data = tower.data;
     const sellRefund = Math.floor(tower.spentSE * 0.7);
     money += sellRefund;
+
+    // Dynamic Shard Return: Tier 1=1, Tier 2=2, Tier 3=3
+    const shardRefund = data.tier;
+    corruptedShards = Math.min(99, corruptedShards + shardRefund);
+
     if (typeof updateGauges === 'function') {
         updateGauges();
     }
