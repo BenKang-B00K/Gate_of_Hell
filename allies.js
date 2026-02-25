@@ -549,7 +549,7 @@ window.showEnemyInfo = showEnemyInfo;
 function sellTower(tower) {
     const data = tower.data;
     const sellRefund = Math.floor(tower.spentSE * 0.7);
-    money += sellRefund;
+    money = Math.min(1000, money + sellRefund);
 
     // Dynamic Shard Return: Tier 1=1, Tier 2=2, Tier 3=3
     const shardRefund = data.tier;

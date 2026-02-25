@@ -655,7 +655,11 @@ function handleEnemyDeath(target, killer = null) {
         }
 
         // SE Reward
-        money += target.reward;
+        let reward = target.reward;
+        if (killer && killer.data && killer.data.type === 'abyssal') {
+            reward = Math.floor(reward * 1.5);
+        }
+        money = Math.min(1000, money + reward);
         updateGauges();
         if (typeof window.updateSummonButtonState === 'function') {
             window.updateSummonButtonState();

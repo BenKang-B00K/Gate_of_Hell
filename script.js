@@ -207,7 +207,8 @@ function gameLoop() {
             // Normal stage: Spawn if no enemies or interval passed
             if (enemies.length === 0 || Date.now() - lastSpawnTime > spawnInterval) {
                 spawnWave();
-                                    spawnInterval = Math.random() * (2000 - 800) + 800; // 0.8 ~ 2.0s random            }
+                spawnInterval = Math.random() * (2000 - 800) + 800; // 0.8 ~ 2.0s random
+            }
         } else if (enemies.length === 0) {
             // Stage Clear (All enemies defeated)
             stage++;
@@ -446,7 +447,7 @@ function gameLoop() {
             // [Abyss] Guide of Doom
             const hasDoomGuide = towers.some(t => t.data.type === 'doom_guide');
             if (hasDoomGuide) {
-                money += Math.floor((enemy.reward || 10) * 0.9);
+                money = Math.min(1000, money + Math.floor((enemy.reward || 10) * 0.9));
                 const seDisplay = document.getElementById('se-display');
                 if (seDisplay) seDisplay.innerText = money;
             }
