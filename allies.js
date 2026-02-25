@@ -44,12 +44,17 @@ function recordUnlock(type, isEnemy = false) {
             // Full Name Mapping for Popup
             const enemyNames = {
                 'normal': 'Whispering Soul',
+                'mist': 'Wandering Mist',
+                'memory': 'Faded Memory',
+                'shade': 'Flickering Shade',
                 'tank': 'Ironclad Wraith',
                 'runner': 'Haste-Cursed Shadow',
                 'greedy': 'Gluttonous Poltergeist',
+                'mimic': 'Mimic Soul',
                 'dimension': 'Void-Step Phantasm',
                 'deceiver': 'Siren of Despair',
                 'boar': 'Feral Revenant',
+                'soul_eater': 'Soul Eater',
                 'frost': 'Cocytus Drifter',
                 'lightspeed': 'Ethereal Streak',
                 'heavy': 'Grave-Bound Behemoth',
@@ -62,7 +67,7 @@ function recordUnlock(type, isEnemy = false) {
             };
 
             if (modal && header && icon && name && desc) {
-                header.innerText = "👻 NEW SPECTER ENCOUNTERED!";
+                header.innerText = `${enemyData.icon} NEW SPECTER ENCOUNTERED!`;
                 header.style.color = "#ff4500";
                 icon.innerText = enemyData.icon;
                 const hpVal = Math.floor(enemyData.hp || (enemyData.type === 'normal' ? 110 : 0));
@@ -1013,9 +1018,9 @@ function renderBestiary() {
         'bringer_of_doom': 'Bringer of Doom'
     };
 
-    // 1. Render Basic Souls Section
+    // 1. Render Basic Specters Section
     const basicHeader = document.createElement('h3');
-    basicHeader.innerText = "Basic Souls";
+    basicHeader.innerText = "Basic Specters";
     basicHeader.style.cssText = "grid-column: 1 / -1; color: #00e5ff; border-bottom: 1px solid #333; margin: 10px 0; font-size: 14px;";
     bestiaryTab.appendChild(basicHeader);
 
@@ -1101,7 +1106,31 @@ function renderBestiary() {
 
     // Render Specialized Section
     bestiaryTab.appendChild(specHeader);
-    allEnemyTypes.filter(e => !basicTypes.includes(e.type)).forEach(renderItem);
+    const specializedTypes = allEnemyTypes.filter(e => !basicTypes.includes(e.type) && e.type !== 'gold');
+    specializedTypes.forEach(renderItem);
+
+    // 2.2 Render Treasure Specters Section
+    const treasureHeader = document.createElement('h3');
+    treasureHeader.innerText = "Treasure Specters";
+    treasureHeader.style.cssText = "grid-column: 1 / -1; color: #ffd700; border-bottom: 1px solid #b8860b; margin: 20px 0 10px 0; font-size: 14px;";
+    bestiaryTab.appendChild(treasureHeader);
+
+    const treasureTypes = allEnemyTypes.filter(e => e.type === 'gold');
+    treasureTypes.forEach(renderItem);
+
+    // 2.5 Render Corrupted Specters Section
+    const corruptedHeader = document.createElement('h3');
+    corruptedHeader.innerText = "Corrupted Specters";
+    corruptedHeader.style.cssText = "grid-column: 1 / -1; color: #ff0000; border-bottom: 1px solid #4a0000; margin: 20px 0 10px 0; font-size: 14px;";
+    bestiaryTab.appendChild(corruptedHeader);
+
+    // These are from corruptedTypes in enemies.js
+    const corruptedTypesList = [
+        { type: 'defiled_apprentice', icon: '🥀', desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3).", effectiveness: "Holy attacks and high DPS." },
+        { type: 'abyssal_acolyte', icon: '🌑', desc: "A servant of the void. Reduces hit source's damage by 4 (Max 3 stacks).", effectiveness: "Switching targets or pure damage." },
+        { type: 'bringer_of_doom', icon: '⛓️‍💥', desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7.", effectiveness: "Kill as fast as possible!" }
+    ];
+    corruptedTypesList.forEach(renderItem);
 
     // 3. Render Bosses Section
     const bossHeader = document.createElement('h3');
@@ -1143,165 +1172,182 @@ function renderPromotionTree() {
 
     const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
 
-    const paths = [
-        { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'], abyss: 'warden' },
-        { name: 'Talismanist', type: 'talisman', masters: ['grandsealer', 'flamemaster'], abyss: 'cursed_talisman' },
-        { name: 'Mace Monk', type: 'monk', masters: ['vajra', 'saint'], abyss: 'asura' },
-        { name: 'Divine Archer', type: 'archer', masters: ['voidsniper', 'thousandhand'], abyss: 'piercing_shadow' },
-        { name: 'Ice Daoist', type: 'ice', masters: ['absolutezero', 'permafrost'], abyss: 'cocytus' },
-        { name: 'Fire Mage', type: 'fire', masters: ['hellfire', 'phoenix'], abyss: 'purgatory' },
-        { name: 'Shadow Assassin', type: 'assassin', masters: ['abyssal', 'spatial'], abyss: 'reaper' },
-        { name: 'Soul Tracker', type: 'tracker', masters: ['seer', 'commander'], abyss: 'doom_guide' },
-        { name: 'Necromancer', type: 'necromancer', masters: ['wraithlord', 'cursedshaman'], abyss: 'forsaken_king' },
-        { name: 'Sanctuary Guardian', type: 'guardian', masters: ['rampart', 'judgment'], abyss: 'void_gatekeeper' },
-        { name: 'Exorcist Knight', type: 'knight', masters: ['paladin', 'crusader'], abyss: 'eternal_wall' }
-    ];
+    const pathGroups = {
+        'Attack Paths': [
+            { name: 'Talismanist', type: 'talisman', masters: ['grandsealer', 'flamemaster'], abyss: 'cursed_talisman' },
+            { name: 'Divine Archer', type: 'archer', masters: ['voidsniper', 'thousandhand'], abyss: 'piercing_shadow' },
+            { name: 'Fire Mage', type: 'fire', masters: ['hellfire', 'phoenix'], abyss: 'purgatory' },
+            { name: 'Shadow Assassin', type: 'assassin', masters: ['abyssal', 'spatial'], abyss: 'reaper' },
+            { name: 'Exorcist Knight', type: 'knight', masters: ['paladin', 'crusader'], abyss: 'eternal_wall' }
+        ],
+        'Support Paths': [
+            { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'], abyss: 'warden' },
+            { name: 'Mace Monk', type: 'monk', masters: ['vajra', 'saint'], abyss: 'asura' },
+            { name: 'Ice Daoist', type: 'ice', masters: ['absolutezero', 'permafrost'], abyss: 'cocytus' },
+            { name: 'Soul Tracker', type: 'tracker', masters: ['seer', 'commander'], abyss: 'doom_guide' },
+            { name: 'Necromancer', type: 'necromancer', masters: ['wraithlord', 'cursedshaman'], abyss: 'forsaken_king' }
+        ],
+        'Special Paths': [
+            { name: 'Sanctuary Guardian', type: 'guardian', masters: ['rampart', 'judgment'], abyss: 'void_gatekeeper' }
+        ]
+    };
 
-    const treeContainer = document.createElement('div');
-    treeContainer.className = 'tree-main-container';
-    treeContainer.style.display = 'flex';
-    treeContainer.style.flexDirection = 'column';
-    treeContainer.style.gap = '6px';
-
-    paths.forEach(p => {
-        const pathRow = document.createElement('div');
-        // Adjusted grid columns: wider columns for full names
-        pathRow.style.display = 'grid';
-        pathRow.style.gridTemplateColumns = '70px 12px 85px 12px 105px 12px 105px';
-        pathRow.style.alignItems = 'center';
-        pathRow.style.justifyContent = 'center';
-        pathRow.style.gap = '3px';
-        pathRow.style.borderBottom = '1px solid #222';
-        pathRow.style.paddingBottom = '4px';
-
-        // 1. Tier 1 (Apprentice)
-        const t1Node = document.createElement('div');
-        const t1Unlocked = unlockedUnits.has('apprentice');
-        t1Node.className = `unit-node tier1 ${t1Unlocked ? '' : 'locked'}`;
-        t1Node.style.position = 'relative';
-        t1Node.style.fontSize = '7px';
-        t1Node.style.padding = '2px 4px';
-        t1Node.style.minWidth = 'auto';
+    Object.keys(pathGroups).forEach(groupName => {
+        const groupHeader = document.createElement('h3');
+        let groupColor = "#ff4500";
+        if (groupName.includes('Support')) groupColor = "#00e5ff";
+        if (groupName.includes('Special')) groupColor = "#ffd700";
         
-        let t1RoleColor = '#00ff00'; // Green for basic
+        groupHeader.innerText = groupName;
+        groupHeader.style.cssText = `color: ${groupColor}; border-bottom: 1px solid #333; margin: 15px 0 8px 0; font-size: 14px; text-align: center;`;
+        treeTab.appendChild(groupHeader);
 
-        t1Node.innerHTML = `
-            <div class="custom-tooltip">
-                <strong style="color:#00e5ff; font-size: 9px;">${apprenticeData.name}</strong><br>
-                <span style="color:${t1RoleColor}; font-size: 8px; font-weight: bold;">[${apprenticeData.role}]</span><br>
-                <span style="font-size: 8px;">${apprenticeData.desc}</span>
-            </div>
-            ${t1Unlocked ? apprenticeData.icon : '❓'} ${t1Unlocked ? 'Apprentice' : 'Locked'}`;
+        const treeContainer = document.createElement('div');
+        treeContainer.className = 'tree-main-container';
+        treeContainer.style.display = 'flex';
+        treeContainer.style.flexDirection = 'column';
+        treeContainer.style.gap = '6px';
 
-        // Arrow 1
-        const arrow1 = document.createElement('div');
-        arrow1.innerText = '→';
-        arrow1.style.fontSize = '8px';
-        arrow1.style.textAlign = 'center';
+        pathGroups[groupName].forEach(p => {
+            const pathRow = document.createElement('div');
+            // Adjusted grid columns: wider columns for full names
+            pathRow.style.display = 'grid';
+            pathRow.style.gridTemplateColumns = '70px 12px 85px 12px 105px 12px 105px';
+            pathRow.style.alignItems = 'center';
+            pathRow.style.justifyContent = 'center';
+            pathRow.style.gap = '3px';
+            pathRow.style.borderBottom = '1px solid #222';
+            pathRow.style.paddingBottom = '4px';
 
-        // 2. Tier 2
-        const t2Data = unitTypes.find(u => u.type === p.type);
-        const t2Unlocked = unlockedUnits.has(p.type);
-        const t2Node = document.createElement('div');
-        t2Node.className = `unit-node tier2 ${t2Unlocked ? '' : 'locked'}`;
-        t2Node.style.position = 'relative';
-        t2Node.style.fontSize = '7px';
-        t2Node.style.padding = '2px 4px';
-        t2Node.style.minWidth = 'auto';
-        
-        let t2RoleColor = '#ff4500';
-        if (t2Data.role === 'Support') t2RoleColor = '#00e5ff';
-        else if (t2Data.role === 'Special') t2RoleColor = '#ffd700';
+            // 1. Tier 1 (Apprentice)
+            const t1Node = document.createElement('div');
+            const t1Unlocked = unlockedUnits.has('apprentice');
+            t1Node.className = `unit-node tier1 ${t1Unlocked ? '' : 'locked'}`;
+            t1Node.style.position = 'relative';
+            t1Node.style.fontSize = '7px';
+            t1Node.style.padding = '2px 4px';
+            t1Node.style.minWidth = 'auto';
+            
+            let t1RoleColor = '#00ff00'; // Green for basic
 
-        t2Node.innerHTML = `
-            <div class="custom-tooltip">
-                <strong style="color:#9370db; font-size: 9px;">${t2Data.name}</strong><br>
-                <span style="color:${t2RoleColor}; font-size: 8px; font-weight: bold;">[${t2Data.role}]</span><br>
-                <span style="font-size: 8px;">${t2Data.desc}</span>
-            </div>
-            ${t2Unlocked ? t2Data.icon : '❓'} ${t2Unlocked ? p.name : 'Unknown'}`;
-        
-        // Arrow 2
-        const arrow2 = document.createElement('div');
-        arrow2.innerText = '→';
-        arrow2.style.fontSize = '8px';
-        arrow2.style.textAlign = 'center';
+            t1Node.innerHTML = `
+                <div class="custom-tooltip">
+                    <strong style="color:#00e5ff; font-size: 9px;">${apprenticeData.name}</strong><br>
+                    <span style="color:${t1RoleColor}; font-size: 8px; font-weight: bold;">[${apprenticeData.role}]</span><br>
+                    <span style="font-size: 8px;">${apprenticeData.desc}</span>
+                </div>
+                ${t1Unlocked ? apprenticeData.icon : '❓'} ${t1Unlocked ? 'Apprentice' : 'Locked'}`;
 
-        // 3. Tier 3 (Masters)
-        const mastersDiv = document.createElement('div');
-        mastersDiv.style.display = 'flex';
-        mastersDiv.style.flexDirection = 'column';
-        mastersDiv.style.gap = '2px';
+            // Arrow 1
+            const arrow1 = document.createElement('div');
+            arrow1.innerText = '→';
+            arrow1.style.fontSize = '8px';
+            arrow1.style.textAlign = 'center';
 
-        p.masters.forEach(m => {
-            const mData = unitTypes.find(u => u.type === m);
-            const mUnlocked = unlockedUnits.has(m);
-            const mNode = document.createElement('div');
-            mNode.className = `unit-node tier3 ${mUnlocked ? '' : 'locked'}`;
-            mNode.style.fontSize = '7px';
-            mNode.style.position = 'relative';
-            mNode.style.padding = '2px 4px';
-            mNode.style.minWidth = 'auto';
-            if (mData) {
-                let mRoleColor = '#ff4500';
-                if (mData.role === 'Support') mRoleColor = '#00e5ff';
-                else if (mData.role === 'Special') mRoleColor = '#ffd700';
+            // 2. Tier 2
+            const t2Data = unitTypes.find(u => u.type === p.type);
+            const t2Unlocked = unlockedUnits.has(p.type);
+            const t2Node = document.createElement('div');
+            t2Node.className = `unit-node tier2 ${t2Unlocked ? '' : 'locked'}`;
+            t2Node.style.position = 'relative';
+            t2Node.style.fontSize = '7px';
+            t2Node.style.padding = '2px 4px';
+            t2Node.style.minWidth = 'auto';
+            
+            let t2RoleColor = '#ff4500';
+            if (t2Data.role === 'Support') t2RoleColor = '#00e5ff';
+            else if (t2Data.role === 'Special') t2RoleColor = '#ffd700';
 
-                mNode.innerHTML = `
-                    <div class="custom-tooltip">
-                        <strong style="color:#ffd700; font-size: 9px;">${mData.name}</strong><br>
-                        <span style="color:${mRoleColor}; font-size: 8px; font-weight: bold;">[${mData.role}]</span><br>
-                        <span style="font-size: 8px;">${mData.desc}</span>
+            t2Node.innerHTML = `
+                <div class="custom-tooltip">
+                    <strong style="color:#9370db; font-size: 9px;">${t2Data.name}</strong><br>
+                    <span style="color:${t2RoleColor}; font-size: 8px; font-weight: bold;">[${t2Data.role}]</span><br>
+                    <span style="font-size: 8px;">${t2Data.desc}</span>
+                </div>
+                ${t2Unlocked ? t2Data.icon : '❓'} ${t2Unlocked ? p.name : 'Unknown'}`;
+            
+            // Arrow 2
+            const arrow2 = document.createElement('div');
+            arrow2.innerText = '→';
+            arrow2.style.fontSize = '8px';
+            arrow2.style.textAlign = 'center';
+
+            // 3. Tier 3 (Masters)
+            const mastersDiv = document.createElement('div');
+            mastersDiv.style.display = 'flex';
+            mastersDiv.style.flexDirection = 'column';
+            mastersDiv.style.gap = '2px';
+
+            p.masters.forEach(m => {
+                const mData = unitTypes.find(u => u.type === m);
+                const mUnlocked = unlockedUnits.has(m);
+                const mNode = document.createElement('div');
+                mNode.className = `unit-node tier3 ${mUnlocked ? '' : 'locked'}`;
+                mNode.style.fontSize = '7px';
+                mNode.style.position = 'relative';
+                mNode.style.padding = '2px 4px';
+                mNode.style.minWidth = 'auto';
+                if (mData) {
+                    let mRoleColor = '#ff4500';
+                    if (mData.role === 'Support') mRoleColor = '#00e5ff';
+                    else if (mData.role === 'Special') mRoleColor = '#ffd700';
+
+                    mNode.innerHTML = `
+                        <div class="custom-tooltip">
+                            <strong style="color:#ffd700; font-size: 9px;">${mData.name}</strong><br>
+                            <span style="color:${mRoleColor}; font-size: 8px; font-weight: bold;">[${mData.role}]</span><br>
+                            <span style="font-size: 8px;">${mData.desc}</span>
+                        </div>
+                        ${mUnlocked ? mData.icon : '❓'} ${mUnlocked ? mData.name : 'Master Locked'}`;
+                } else {
+                    mNode.innerText = m;
+                }
+                mastersDiv.appendChild(mNode);
+            });
+
+            // Arrow 3
+            const arrow3 = document.createElement('div');
+            arrow3.innerText = '→';
+            arrow3.style.fontSize = '8px';
+            arrow3.style.textAlign = 'center';
+
+            // 4. Tier 4 (Abyss)
+            const aData = unitTypes.find(u => u.type === p.abyss);
+            const aUnlocked = unlockedUnits.has(p.abyss);
+            const abyssNode = document.createElement('div');
+            abyssNode.className = `unit-node tier4 ${aUnlocked ? '' : 'locked'}`;
+            abyssNode.style.fontSize = '7px';
+            abyssNode.style.position = 'relative';
+            abyssNode.style.padding = '2px 4px';
+            abyssNode.style.minWidth = 'auto';
+            if (aData) {
+                let aRoleColor = '#ff4500';
+                if (aData.role === 'Support') aRoleColor = '#00e5ff';
+                else if (aData.role === 'Special') aRoleColor = '#ffd700';
+
+                abyssNode.innerHTML = `
+                    <div class="custom-tooltip" style="border-color:#9400d3;">
+                        <strong style="color:#9400d3; font-size: 9px;">${aData.name}</strong><br>
+                        <span style="color:${aRoleColor}; font-size: 8px; font-weight: bold;">[${aData.role}]</span><br>
+                        <span style="font-size: 8px;">${aData.desc}</span>
                     </div>
-                    ${mUnlocked ? mData.icon : '❓'} ${mUnlocked ? mData.name : 'Master Locked'}`;
+                    ${aUnlocked ? aData.icon : '❓'} ${aUnlocked ? aData.name : 'Abyss Locked'}`;
             } else {
-                mNode.innerText = m;
+                abyssNode.innerText = p.abyss;
             }
-            mastersDiv.appendChild(mNode);
+
+            pathRow.appendChild(t1Node);
+            pathRow.appendChild(arrow1);
+            pathRow.appendChild(t2Node);
+            pathRow.appendChild(arrow2);
+            pathRow.appendChild(mastersDiv);
+            pathRow.appendChild(arrow3);
+            pathRow.appendChild(abyssNode);
+            treeContainer.appendChild(pathRow);
         });
 
-        // Arrow 3
-        const arrow3 = document.createElement('div');
-        arrow3.innerText = '→';
-        arrow3.style.fontSize = '8px';
-        arrow3.style.textAlign = 'center';
-
-        // 4. Tier 4 (Abyss)
-        const aData = unitTypes.find(u => u.type === p.abyss);
-        const aUnlocked = unlockedUnits.has(p.abyss);
-        const abyssNode = document.createElement('div');
-        abyssNode.className = `unit-node tier4 ${aUnlocked ? '' : 'locked'}`;
-        abyssNode.style.fontSize = '7px';
-        abyssNode.style.position = 'relative';
-        abyssNode.style.padding = '2px 4px';
-        abyssNode.style.minWidth = 'auto';
-        if (aData) {
-            let aRoleColor = '#ff4500';
-            if (aData.role === 'Support') aRoleColor = '#00e5ff';
-            else if (aData.role === 'Special') aRoleColor = '#ffd700';
-
-            abyssNode.innerHTML = `
-                <div class="custom-tooltip" style="border-color:#9400d3;">
-                    <strong style="color:#9400d3; font-size: 9px;">${aData.name}</strong><br>
-                    <span style="color:${aRoleColor}; font-size: 8px; font-weight: bold;">[${aData.role}]</span><br>
-                    <span style="font-size: 8px;">${aData.desc}</span>
-                </div>
-                ${aUnlocked ? aData.icon : '❓'} ${aUnlocked ? aData.name : 'Abyss Locked'}`;
-        } else {
-            abyssNode.innerText = p.abyss;
-        }
-
-        pathRow.appendChild(t1Node);
-        pathRow.appendChild(arrow1);
-        pathRow.appendChild(t2Node);
-        pathRow.appendChild(arrow2);
-        pathRow.appendChild(mastersDiv);
-        pathRow.appendChild(arrow3);
-        pathRow.appendChild(abyssNode);
-        treeContainer.appendChild(pathRow);
+        treeTab.appendChild(treeContainer);
     });
-
-    treeTab.appendChild(treeContainer);
 }
 
 function initTutorial() {

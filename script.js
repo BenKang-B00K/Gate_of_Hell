@@ -446,22 +446,21 @@ function gameLoop() {
         const targetX = enemy.targetX || 50; 
 
         if (enemy.type === 'boar') {
-            // Boar logic: horizontal bounce
-            if (enemy.bouncesLeft > 0) {
-                enemy.x += enemy.vx;
+            // Boar logic: horizontal bounce spread across the road
+            const horizontalFactor = 0.6; // Ratio of horizontal to vertical speed
+            if (enemy.y < targetY * 0.85) {
+                enemy.x += (enemy.vxSign || 1) * enemy.speed * horizontalFactor;
                 // Boundary check (10% to 90%)
                 if (enemy.x <= 10) {
                     enemy.x = 10;
-                    enemy.vx = Math.abs(enemy.vx); // Move right
-                    enemy.bouncesLeft--;
+                    enemy.vxSign = 1; // Bounce right
                 } else if (enemy.x >= 90) {
                     enemy.x = 90;
-                    enemy.vx = -Math.abs(enemy.vx); // Move left
-                    enemy.bouncesLeft--;
+                    enemy.vxSign = -1; // Bounce left
                 }
             } else {
-                // After bouncing, steer towards targetX
-                enemy.x += (targetX - enemy.x) * 0.05;
+                // Final dash: steer towards targetX near the portal
+                enemy.x += (targetX - enemy.x) * 0.1;
             }
         } else {
             // Default linear or wavy movement

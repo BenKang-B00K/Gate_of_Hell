@@ -464,5 +464,33 @@ function createKnightEffect(x, y, container) {
     setTimeout(() => effect.remove(), 300);
 }
 
+/**
+ * Visual effect when Soul Energy is gained.
+ */
+function createSEGainEffect(x, y, amount, container) {
+    const effect = document.createElement('div');
+    effect.className = 'se-gain-effect';
+    effect.style.left = `${x}px`;
+    effect.style.top = `${y}px`;
+    effect.innerText = `+${Math.floor(amount)} SE`;
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 600);
+}
+
+/**
+ * Visual effect when a Corrupted Shard is gained.
+ */
+function createCSGainEffect(x, y, amount, container) {
+    const effect = document.createElement('div');
+    effect.className = 'cs-gain-effect';
+    effect.style.left = `${x}px`;
+    effect.style.top = `${y}px`;
+    effect.innerText = `+${amount} CS`;
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 600);
+}
+
+
+
 
 // Add more unit effects here as needed

@@ -83,12 +83,12 @@ function getStageMultipliers() {
 // Enemy data (Categorized)
 const enemyCategories = {
     basic: [
-        { type: 'normal', icon: '👻', speed: 1.5, hp: 110, defense: 0, probability: 0.2, reward: 5, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
-        { type: 'mist', icon: '🌫️', speed: 1.3, hp: 140, defense: 0, probability: 0.2, reward: 5, desc: "A spectral fog that drifts slowly. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Condensation of thousands of tiny, forgotten sorrows." },
-        { type: 'memory', icon: '👣', speed: 1.7, hp: 90, defense: 0, probability: 0.2, reward: 5, desc: "A faint trace of a once-living being. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Not even a full soul, just the impression left by a strong desire to live." },
+        { type: 'normal', icon: '👻', speed: 1.5, hp: 110, defense: 0, probability: 0.35, reward: 5, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
+        { type: 'mist', icon: '🌫️', speed: 1.3, hp: 140, defense: 0, probability: 0.15, reward: 5, desc: "A spectral fog that drifts slowly. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Condensation of thousands of tiny, forgotten sorrows." },
+        { type: 'memory', icon: '👣', speed: 1.7, hp: 90, defense: 0, probability: 0.15, reward: 5, desc: "A faint trace of a once-living being. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Not even a full soul, just the impression left by a strong desire to live." },
         { type: 'shade', icon: '👤', speed: 2.2, hp: 60, defense: 0, probability: 0.1, reward: 4, desc: "A weak but fast spirit that moves in a blurring motion.", effectiveness: "Rapid-fire units.", lore: "The faintest remains of a soul, barely holding onto existence." },
         { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.15, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
-        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.15, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
+        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.1, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
     ],
     pattern: [
         { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.3, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
@@ -454,7 +454,9 @@ function spawnEnemy() {
 
     let probs = { basic: 0.96, pattern: 0.01, enhanced: 0.01, armoured: 0.01, treasure: treasureChance };
     
-    if (stage >= 51) {
+    if (stage === 1) {
+        probs = { basic: 1.0, pattern: 0, enhanced: 0, armoured: 0, treasure: 0 };
+    } else if (stage >= 51) {
         probs = { basic: 0.30, pattern: 0.23, enhanced: 0.23, armoured: 0.23, treasure: treasureChance };
     } else if (stage >= 31) {
         probs = { basic: 0.55, pattern: 0.14, enhanced: 0.15, armoured: 0.15, treasure: treasureChance };
@@ -554,8 +556,7 @@ function spawnEnemy() {
 
     // Special initialization for Boar (Feral Revenant)
     if (selectedType.type === 'boar') {
-        enemy.vx = Math.random() < 0.5 ? -1.5 : 1.5; // Initial horizontal direction/speed
-        enemy.bouncesLeft = Math.floor(Math.random() * 3) + 2; // 2, 3, or 4 bounces
+        enemy.vxSign = Math.random() < 0.5 ? -1 : 1; 
     }
 
     enemies.push(enemy);
@@ -846,6 +847,15 @@ function handleEnemyDeath(target, killer = null) {
                 corruptedShards += 1;
                 updateGauges();
                 
+                // Trigger CS Gain Effect
+                if (typeof createCSGainEffect === 'function' && target.element) {
+                    const rect = target.element.getBoundingClientRect();
+                    const gameRect = gameContainer.getBoundingClientRect();
+                    const x = (rect.left + rect.width / 2) - gameRect.left;
+                    const y = (rect.top + rect.height / 2) - gameRect.top;
+                    createCSGainEffect(x, y, 1, gameContainer);
+                }
+
                 const tutorialToggle = document.getElementById('tutorial-toggle');
                 if (tutorialToggle && tutorialToggle.checked) {
                     alert("💠 Obtained a [Corrupted Shard]!");
@@ -860,6 +870,16 @@ function handleEnemyDeath(target, killer = null) {
         }
         money = Math.min(1000, money + reward);
         updateGauges();
+
+        // Trigger SE Gain Effect
+        if (typeof createSEGainEffect === 'function' && target.element) {
+            const rect = target.element.getBoundingClientRect();
+            const gameRect = gameContainer.getBoundingClientRect();
+            const x = (rect.left + rect.width / 2) - gameRect.left;
+            const y = (rect.top + rect.height / 2) - gameRect.top;
+            createSEGainEffect(x, y, reward, gameContainer);
+        }
+
         if (typeof window.updateSummonButtonState === 'function') {
             window.updateSummonButtonState();
         }

@@ -458,6 +458,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    position: relative; /* Position reference for active-debuffs */
 }
 
 .gauge-header {
@@ -487,6 +488,17 @@ body {
     color: #ff4500; 
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 } /* Shards color */
+
+#active-debuffs {
+    position: absolute;
+    bottom: -10px; /* Position below the gauge bar */
+    right: 0;
+    font-size: 6.5px;
+    color: #ff0000;
+    text-align: right;
+    font-style: italic;
+    white-space: nowrap;
+}
 
 .gauge-icon {
     font-size: 12px; /* Increased from default header size */
@@ -535,14 +547,6 @@ body {
     font-weight: bold;
     text-transform: uppercase;
     margin-bottom: 5px; /* Set to 5px spacing */
-}
-
-#active-debuffs {
-    font-size: 7px;
-    color: #ff0000;
-    margin-bottom: 0px; /* Removed margin-bottom */
-    text-align: center;
-    font-style: italic;
 }
 
 /* Redesign Unit Info Buttons */
@@ -1785,6 +1789,34 @@ input:checked + .slider:before {
     0% { transform: translate(-50%, -20%) scale(0.5); opacity: 0; }
     50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; filter: sepia(1); }
     100% { transform: translate(-50%, -50%) scale(1); opacity: 0; filter: brightness(0); }
+}
+
+/* --- SE Gain Effect --- */
+.se-gain-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+    color: #00e5ff;
+    font-weight: bold;
+    font-size: 10px;
+    text-shadow: 0 0 5px #00e5ff, 0 0 2px #000;
+    animation: seFloatUp 0.6s ease-out forwards;
+}
+
+@keyframes seFloatUp {
+    0% { transform: translate(-50%, 0); opacity: 1; }
+    100% { transform: translate(-50%, -40px); opacity: 0; }
+}
+
+.cs-gain-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+    color: #ff0000;
+    font-weight: bold;
+    font-size: 10px;
+    text-shadow: 0 0 5px #ff0000, 0 0 2px #000;
+    animation: seFloatUp 0.6s ease-out forwards;
 }
 
 @keyframes apprenticeSpark {
