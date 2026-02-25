@@ -71,6 +71,35 @@ function gameLoop() {
         e.inBlizzard = false; // Blizzard effect reset
         e.inPurgatory = false; // Purgatory effect reset
         if(e.element) e.element.classList.remove('silenced');
+
+        // [Corrupted Ability] Betrayer's Blade: Periodic stealth
+        if (e.type === 'betrayer_blade') {
+            const cycle = (nowTime % 3000); 
+            e.isStealthed = (cycle < 1000); // 1s stealth every 3s
+            if (e.element) e.element.style.opacity = e.isStealthed ? 0.1 : 1;
+        }
+    });
+
+    // Reset tower speed bonus (Recalculated every frame)
+    towers.forEach(t => {
+        t.speedBonus = 0;
+        t.rangeBonus = 0;
+
+        // [Corrupted Ability] Frost-Bitten Outcast: Nearby slow aura
+        const gameW = gameContainer.offsetWidth;
+        const tRect = t.slotElement.getBoundingClientRect();
+        const tX = tRect.left + tRect.width / 2;
+        const tY = tRect.top + tRect.height / 2;
+
+        enemies.forEach(e => {
+            if (e.type === 'frost_outcast' && e.hp > 0) {
+                const exPx = (e.x / 100) * gameW;
+                const dist = Math.sqrt(Math.pow(exPx - tX, 2) + Math.pow(e.y - tY, 2));
+                if (dist < 120) {
+                    t.speedBonus -= 0.2; // -20% Attack speed
+                }
+            }
+        });
     });
 
     // --- Wall Management ---
@@ -471,6 +500,11 @@ function gameLoop() {
                 const amplitude = 8; // Wave width (8% of road)
                 const frequency = 0.04; // Wave tightness
                 baseX += Math.sin(enemy.y * frequency) * amplitude;
+            } else if (['normal', 'mist', 'memory', 'shade', 'tank'].includes(enemy.type)) {
+                // Subtle swaying for basic types to make the path feel longer
+                const swayAmplitude = 3; // 3% sway
+                enemy.swayPhase = (enemy.swayPhase || 0) + (enemy.swaySpeed || 0.03);
+                baseX += Math.sin(enemy.swayPhase) * swayAmplitude;
             }
             enemy.x = baseX;
         }
@@ -887,6 +921,28 @@ function shoot(tower, target, startX, startY) {
         // Trigger visual attack effect
         if (typeof createAttackEffect === 'function') {
             createAttackEffect(tower.data.type, target, gameContainer);
+        }
+
+        // [Corrupted Ability] Cursed Vajra: Counter-stun attacker (15% chance)
+        if (target.type === 'cursed_vajra' && Math.random() < 0.15) {
+            tower.isStunned = true; 
+            tower.stunEndTime = Date.now() + 1000;
+            if (tower.element) tower.element.classList.add('feared'); // Reuse feared visual
+            setTimeout(() => {
+                tower.isStunned = false;
+                if (tower.element) tower.element.classList.remove('feared');
+            }, 1000);
+        }
+
+        // [Corrupted Ability] Void-Piercing Shade: Dodge long-range attacks (50% chance if range > 150)
+        if (target.type === 'void_piercer' && tower.range > 150 && Math.random() < 0.5) {
+            // Visual dodge effect
+            const dodge = document.createElement('div');
+            dodge.innerText = "DODGE";
+            dodge.style.cssText = `position:absolute; left:${target.x}%; top:${target.y - 20}px; color:#aaa; font-size:8px; font-weight:bold; transform:translateX(-50%); animation:fadeOut 0.5s forwards;`;
+            gameContainer.appendChild(dodge);
+            setTimeout(() => dodge.remove(), 500);
+            return; // No damage
         }
 
         // [Enemy Ability] Mimic Soul: Blink forward when hit (20% chance)

@@ -111,9 +111,14 @@ const enemyCategories = {
         { type: 'gold', icon: '💎', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300, desc: "A rare spirit that grants a massive amount of Soul Energy upon defeat.", effectiveness: "Rapid-fire assassins to bypass high defense.", lore: "The residual essence of a king's hoard, still sparkling with the vanity of the past." } 
     ],
     corrupted: [
-        { type: 'defiled_apprentice', icon: '🥀', speed: 0.6, hp: 400, defense: 5, probability: 0, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3, lasts 5s, No refresh while active).", effectiveness: "Avoid using high-tier units to minimize curse risk.", lore: "One moment of weakness, one forbidden scroll, and a soul is lost forever to the shadows." },
-        { type: 'abyssal_acolyte', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, probability: 0, desc: "A servant of the void. Reduces hit source's damage by 4 per hit (Max 3 stacks, resets on hit, lasts 2s).", effectiveness: "Burst damage or stuns to prevent stack accumulation.", lore: "The shadow arms are not theirs; they are the grip of the abyss pulling them deeper." },
-        { type: 'bringer_of_doom', icon: '⛓️‍💥', speed: 0.3, hp: 3000, defense: 30, probability: 0, desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7.", effectiveness: "Kill as far from the portal as possible to protect inner slots.", lore: "Where they walk, the ground itself weeps. No sanctity remains in their wake." }
+        { type: 'defiled_apprentice', icon: '🥀', speed: 0.6, hp: 400, defense: 5, probability: 0, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3, lasts 5s).", effectiveness: "Holy attacks and high DPS.", lore: "One moment of weakness, one forbidden scroll, and a soul is lost forever." },
+        { type: 'abyssal_acolyte', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, probability: 0, desc: "A servant of the void. Reduces hit source's damage by 4 per hit (Max 3 stacks).", effectiveness: "Burst damage or stuns.", lore: "The shadow arms are the grip of the abyss pulling them deeper." },
+        { type: 'bringer_of_doom', icon: '⛓️‍💥', speed: 0.3, hp: 3000, defense: 30, probability: 0, desc: "[Master Corruption] Permanently reduces damage of 2 random slots by 7.", effectiveness: "Kill as fast as possible!", lore: "Where they walk, the ground itself weeps. No sanctity remains." },
+        { type: 'cursed_vajra', icon: '🏮', speed: 0.5, hp: 1500, defense: 20, probability: 0, desc: "A fallen monk. 15% chance to stun the attacker for 1s when hit.", effectiveness: "Long-range units.", lore: "His mace, once used to protect, now only seeks to crush the living." },
+        { type: 'void_piercer', icon: '🏹', speed: 1.2, hp: 600, defense: 5, probability: 0, desc: "A traitorous archer. Gains 50% dodge chance against long-range units.", effectiveness: "Short-range units.", lore: "The arrows of light have turned into shards of pure nothingness." },
+        { type: 'frost_outcast', icon: '❄️', speed: 0.7, hp: 800, defense: 10, probability: 0, desc: "A cursed daoist. Emits a cold aura that slows nearby allies' attack speed by 20%.", effectiveness: "Kill from outside its aura range.", lore: "Her heart was frozen long before she entered the abyss." },
+        { type: 'ember_hatred', icon: '☄️', speed: 0.8, hp: 700, defense: 0, probability: 0, desc: "A hateful mage. Explodes on death, speeding up nearby enemies by 50% for 3s.", effectiveness: "Kill when isolated.", lore: "Fueling the fire with the very hatred that consumed his life." },
+        { type: 'betrayer_blade', icon: '🗡️', speed: 1.8, hp: 500, defense: 5, probability: 0, desc: "A shadow traitor. Occasionally vanishes, forcing attackers to lose target.", effectiveness: "AOE or rapid-fire units.", lore: "The shadow he hid in became his master, and finally, his prison." }
     ]
 };
 
@@ -528,7 +533,7 @@ function spawnEnemy() {
     road.appendChild(enemyDiv);
     const randomX = Math.random() * 80 + 10;
     enemyDiv.style.left = `${randomX}%`;
-    enemyDiv.style.top = '0px';
+    enemyDiv.style.top = '-40px';
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
@@ -539,7 +544,9 @@ function spawnEnemy() {
         initialX: randomX,
         x: randomX,
         targetX: Math.random() * 50 + 25, // Narrower range (25% to 75%) to fit portal arch
-        y: 0,
+        y: -40, // Spawn higher up inside the mist
+        swayPhase: Math.random() * Math.PI * 2, // Random starting phase for swaying
+        swaySpeed: 0.02 + Math.random() * 0.03, // Unique swaying speed
         baseSpeed: selectedType.speed * speedMult * speedStageMult,
         speed: selectedType.speed * speedMult * speedStageMult,
         maxHp: selectedType.hp * hpMult * hpStageMult,
@@ -605,10 +612,15 @@ function spawnPassenger(boss) {
 const corruptedTypes = {
     1: { type: 'defiled_apprentice', name: 'Defiled Apprentice', icon: '🥀', speed: 0.6, hp: 400, defense: 5, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3)." },
     2: { type: 'abyssal_acolyte', name: 'Abyssal Acolyte', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, desc: "A servant of the void. Reduces hit source's damage by 4 (Max 3 stacks)." },
-    3: { type: 'bringer_of_doom', name: 'Bringer of Doom', icon: '⛓️‍💥', speed: 0.3, hp: 3000, defense: 30, desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7." }
+    3: { type: 'bringer_of_doom', name: 'Bringer of Doom', icon: '⛓️‍💥', speed: 0.3, hp: 3000, defense: 30, desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7." },
+    'cursed_vajra': { type: 'cursed_vajra', name: 'Cursed Vajra', icon: '🏮', speed: 0.5, hp: 1500, defense: 20, desc: "A fallen monk. 15% chance to stun the attacker for 1s when hit." },
+    'void_piercer': { type: 'void_piercer', name: 'Void-Piercing Shade', icon: '🏹', speed: 1.2, hp: 600, defense: 5, desc: "A traitorous archer. Gains 50% dodge chance against long-range units." },
+    'frost_outcast': { type: 'frost_outcast', name: 'Frost-Bitten Outcast', icon: '❄️', speed: 0.7, hp: 800, defense: 10, desc: "A cursed daoist. Emits a cold aura that slows nearby allies' attack speed by 20%." },
+    'ember_hatred': { type: 'ember_hatred', name: 'Embers of Hatred', icon: '☄️', speed: 0.8, hp: 700, defense: 0, desc: "A hateful mage. Explodes on death, speeding up nearby enemies by 50% for 3s." },
+    'betrayer_blade': { type: 'betrayer_blade', name: "Betrayer's Blade", icon: '🗡️', speed: 1.8, hp: 500, defense: 5, desc: "A shadow traitor. Occasionally vanishes, forcing attackers to lose target." }
 };
 
-function spawnCorruptedEnemy(tower) {
+function spawnCorruptedEnemy(tower, forcedType = null) {
     totalCorruptedCount++;
     const road = document.getElementById('road');
     const slotRect = tower.slotElement.getBoundingClientRect();
@@ -619,10 +631,13 @@ function spawnCorruptedEnemy(tower) {
     const relX = (centerX - gameRect.left) / gameWidth * 100;
 
     const tier = Math.min(tower.data.tier, 3);
-    const data = corruptedTypes[tier];
+    const data = forcedType ? corruptedTypes[forcedType] : corruptedTypes[tier];
+
+    if (!data) return;
 
     if (typeof recordUnlock === 'function') {
         recordUnlock(data.type, true);
+    }
     }
 
     const enemyDiv = document.createElement('div');
@@ -782,6 +797,35 @@ function handleEnemyDeath(target, killer = null) {
                 e.burnEndTime = Date.now() + 3000;
                 e.isHellfireBurn = true; 
                 if(e.element) e.element.classList.add('burning');
+            }
+        });
+    }
+
+    // [Corrupted Ability] Embers of Hatred: Explosion on death
+    if (target.type === 'ember_hatred') {
+        const explosion = document.createElement('div');
+        explosion.style.position = 'absolute';
+        explosion.style.left = target.element.style.left;
+        explosion.style.top = target.element.style.top;
+        explosion.style.width = '150px'; explosion.style.height = '150px';
+        explosion.style.background = 'radial-gradient(circle, rgba(255, 69, 0, 0.6), transparent)';
+        explosion.style.transform = 'translate(-50%, -50%)';
+        explosion.style.zIndex = '19';
+        explosion.style.borderRadius = '50%';
+        gameContainer.appendChild(explosion);
+        setTimeout(() => explosion.remove(), 500);
+
+        const gameW = gameContainer.offsetWidth;
+        const tX = (target.x / 100) * gameW;
+        const tY = target.y;
+
+        enemies.forEach(e => {
+            if (e === target || e.hp <= 0) return;
+            const eX = (e.x / 100) * gameW;
+            const dist = Math.sqrt(Math.pow(eX - tX, 2) + Math.pow(e.y - tY, 2));
+            if (dist < 100) { 
+                e.speed *= 1.5; // 50% Speed boost
+                setTimeout(() => { e.speed = e.baseSpeed; }, 3000);
             }
         });
     }

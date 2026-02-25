@@ -63,7 +63,12 @@ function recordUnlock(type, isEnemy = false) {
                 'gold': 'Gilded Apparition',
                 'defiled_apprentice': 'Defiled Apprentice',
                 'abyssal_acolyte': 'Abyssal Acolyte',
-                'bringer_of_doom': 'Bringer of Doom'
+                'bringer_of_doom': 'Bringer of Doom',
+                'cursed_vajra': 'Cursed Vajra',
+                'void_piercer': 'Void-Piercing Shade',
+                'frost_outcast': 'Frost-Bitten Outcast',
+                'ember_hatred': 'Embers of Hatred',
+                'betrayer_blade': "Betrayer's Blade"
             };
 
             if (modal && header && icon && name && desc) {
@@ -623,7 +628,12 @@ function showEnemyInfo(enemyData) {
         'gold': 'Gilded Apparition',
         'defiled_apprentice': 'Defiled Apprentice',
         'abyssal_acolyte': 'Abyssal Acolyte',
-        'bringer_of_doom': 'Bringer of Doom'
+        'bringer_of_doom': 'Bringer of Doom',
+        'cursed_vajra': 'Cursed Vajra',
+        'void_piercer': 'Void-Piercing Shade',
+        'frost_outcast': 'Frost-Bitten Outcast',
+        'ember_hatred': 'Embers of Hatred',
+        'betrayer_blade': "Betrayer's Blade"
     };
 
     const name = enemyData.name || enemyNames[enemyData.type] || enemyData.type.toUpperCase();
@@ -672,7 +682,18 @@ function sellTower(tower) {
 
     // Create [Corrupted Unit] (becomes an enemy)
     if (typeof window.spawnCorruptedEnemy === 'function') {
-        window.spawnCorruptedEnemy(tower);
+        let corruptedType = 'defiled_apprentice'; // Default
+        
+        // Map based on unit type
+        if (data.type === 'monk' || data.type === 'vajra' || data.type === 'saint') corruptedType = 'cursed_vajra';
+        else if (data.type === 'archer' || data.type === 'voidsniper' || data.type === 'thousandhand') corruptedType = 'void_piercer';
+        else if (data.type === 'ice' || data.type === 'absolutezero' || data.type === 'permafrost') corruptedType = 'frost_outcast';
+        else if (data.type === 'fire' || data.type === 'hellfire' || data.type === 'phoenix') corruptedType = 'ember_hatred';
+        else if (data.type === 'assassin' || data.type === 'abyssal' || data.type === 'spatial') corruptedType = 'betrayer_blade';
+        else if (data.tier >= 3) corruptedType = 'abyssal_acolyte'; // High tier default
+        if (data.tier === 4) corruptedType = 'bringer_of_doom'; // Abyss tier special
+
+        window.spawnCorruptedEnemy(tower, corruptedType);
     }
 }
 
@@ -1015,7 +1036,12 @@ function renderBestiary() {
         'gold': 'Gilded Apparition',
         'defiled_apprentice': 'Defiled Apprentice',
         'abyssal_acolyte': 'Abyssal Acolyte',
-        'bringer_of_doom': 'Bringer of Doom'
+        'bringer_of_doom': 'Bringer of Doom',
+        'cursed_vajra': 'Cursed Vajra',
+        'void_piercer': 'Void-Piercing Shade',
+        'frost_outcast': 'Frost-Bitten Outcast',
+        'ember_hatred': 'Embers of Hatred',
+        'betrayer_blade': "Betrayer's Blade"
     };
 
     // 1. Render Basic Specters Section
@@ -1128,7 +1154,12 @@ function renderBestiary() {
     const corruptedTypesList = [
         { type: 'defiled_apprentice', icon: '🥀', desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3).", effectiveness: "Holy attacks and high DPS." },
         { type: 'abyssal_acolyte', icon: '🌑', desc: "A servant of the void. Reduces hit source's damage by 4 (Max 3 stacks).", effectiveness: "Switching targets or pure damage." },
-        { type: 'bringer_of_doom', icon: '⛓️‍💥', desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7.", effectiveness: "Kill as fast as possible!" }
+        { type: 'bringer_of_doom', icon: '⛓️‍💥', desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7.", effectiveness: "Kill as fast as possible!" },
+        { type: 'cursed_vajra', icon: '🏮', desc: "A fallen monk. 15% chance to stun the attacker for 1s when hit.", effectiveness: "Long-range units." },
+        { type: 'void_piercer', icon: '🏹', desc: "A traitorous archer. Gains 50% dodge chance against long-range units.", effectiveness: "Short-range units." },
+        { type: 'frost_outcast', icon: '❄️', desc: "A cursed daoist. Emits a cold aura that slows nearby allies' attack speed by 20%.", effectiveness: "Kill from outside its aura range." },
+        { type: 'ember_hatred', icon: '☄️', desc: "A hateful mage. Explodes on death, speeding up nearby enemies by 50% for 3s.", effectiveness: "Kill when isolated." },
+        { type: 'betrayer_blade', icon: '🗡️', desc: "A shadow traitor. Occasionally vanishes, forcing attackers to lose target.", effectiveness: "AOE or rapid-fire units." }
     ];
     corruptedTypesList.forEach(renderItem);
 
