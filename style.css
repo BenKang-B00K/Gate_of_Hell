@@ -668,12 +668,19 @@ body {
     padding: 15px;
 }
 
-.tab-pane { display: none; }
-.tab-pane.active { display: block; }
+.tab-pane { display: none !important; }
+.tab-pane.active { display: block !important; }
 
 /* Bestiary Styles - Card Grid */
+#bestiary-tab.active {
+    display: grid !important;
+}
+
+#tree-tab.active {
+    display: block !important;
+}
+
 #bestiary-tab {
-    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 10px;
 }
