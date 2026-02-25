@@ -65,7 +65,7 @@ function recordUnlock(type, isEnemy = false) {
                 header.innerText = "👻 NEW SPECTER ENCOUNTERED!";
                 header.style.color = "#ff4500";
                 icon.innerText = enemyData.icon;
-                const hpVal = Math.floor(enemyData.hp || (enemyData.type === 'normal' ? 100 : 0));
+                const hpVal = Math.floor(enemyData.hp || (enemyData.type === 'normal' ? 110 : 0));
                 const fullName = enemyData.name || enemyNames[enemyData.type] || (enemyData.type.charAt(0).toUpperCase() + enemyData.type.slice(1));
                 name.innerHTML = `${fullName} <span style="font-size:10px; color:#aaa;">(HP: ${hpVal})</span>`;
                 desc.innerText = enemyData.desc || enemyData.lore;
