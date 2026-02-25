@@ -13,7 +13,18 @@ function recordUnlock(type) {
         unlockedUnits.add(type);
         const data = unitTypes.find(u => u.type === type);
         if (data && type !== 'apprentice') {
-            alert(`🆕 NEW CLASS UNLOCKED!\n\n[${data.name}]\n${data.desc}`);
+            const modal = document.getElementById('unlock-modal');
+            const icon = document.getElementById('unlock-icon');
+            const name = document.getElementById('unlock-name');
+            const desc = document.getElementById('unlock-desc');
+            
+            if (modal && icon && name && desc) {
+                icon.innerText = data.icon;
+                name.innerText = data.name;
+                desc.innerText = data.desc;
+                modal.style.display = 'flex';
+                isPaused = true; // Pause game while modal is open
+            }
         }
     }
 }
@@ -740,6 +751,18 @@ function initAllies() {
     createSlots('right-slots', 30);
 
     initRecordsUI();
+
+    // New Class Unlock Modal Close
+    const closeUnlockBtn = document.getElementById('close-unlock');
+    if (closeUnlockBtn) {
+        closeUnlockBtn.addEventListener('click', () => {
+            const modal = document.getElementById('unlock-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                isPaused = false; // Resume game
+            }
+        });
+    }
 
     // Deselect units when clicking background
     document.addEventListener('mousedown', (e) => {
