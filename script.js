@@ -480,6 +480,19 @@ function gameLoop() {
     // 2. Tower Attack Processing
     const now = Date.now();
     towers.forEach(tower => {
+        // Update Cooldown Overlay
+        const overlay = tower.element.querySelector('.cooldown-overlay');
+        if (overlay) {
+            let speedMult = 1.0 + (tower.speedBonus || 0);
+            if (tower.slotElement.classList.contains('plagued')) speedMult *= 0.6;
+            const currentCooldown = tower.cooldown / speedMult;
+            
+            const elapsed = now - (tower.lastShot || 0);
+            const ratio = Math.min(1, elapsed / currentCooldown);
+            const degree = (1 - ratio) * 360;
+            overlay.style.background = `conic-gradient(rgba(0, 0, 0, 0.6) ${degree}deg, transparent 0deg)`;
+        }
+
         if (tower.data.type === 'void_gatekeeper') return; // Cannot attack
 
         // Cannot attack if feared or frozen

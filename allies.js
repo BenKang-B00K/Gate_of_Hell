@@ -163,6 +163,11 @@ function summonTower(targetSlot) {
     unit.innerText = selectedUnit.icon; // Set icon
     unit.draggable = true; // Enable dragging
 
+    // Cooldown overlay
+    const cdOverlay = document.createElement('div');
+    cdOverlay.className = 'cooldown-overlay';
+    unit.appendChild(cdOverlay);
+
     // Unit drag start event
     unit.addEventListener('dragstart', function(e) {
         draggedUnit = this;
@@ -489,6 +494,11 @@ function performJobChange(unitElement) {
     unitElement.classList.add(newType.type);
     unitElement.title = newType.name;
     unitElement.innerText = newType.icon; // Update icon
+    
+    const cdOverlay = document.createElement('div');
+    cdOverlay.className = 'cooldown-overlay';
+    unitElement.appendChild(cdOverlay);
+
     recordUnlock(newType.type);
     
     // Update tower data
@@ -516,6 +526,11 @@ function performMasterJobChange(tower, newTypeStr) {
     unitElement.className = `unit ${newType.type}`; // Overwrite existing classes
     unitElement.title = newType.name;
     unitElement.innerText = newType.icon; // Update icon
+    
+    const cdOverlay = document.createElement('div');
+    cdOverlay.className = 'cooldown-overlay';
+    unitElement.appendChild(cdOverlay);
+
     recordUnlock(newType.type);
 
     // Update data
@@ -550,6 +565,11 @@ function performAbyssJobChange(tower, newTypeStr) {
     unitElement.className = `unit abyss ${newType.type}`; 
     unitElement.title = newType.name;
     unitElement.innerText = newType.icon; // Update icon
+    
+    const cdOverlay = document.createElement('div');
+    cdOverlay.className = 'cooldown-overlay';
+    unitElement.appendChild(cdOverlay);
+
     recordUnlock(newType.type);
 
     // Update data
@@ -579,7 +599,7 @@ function updateSummonButtonState() {
     const costDiv = towerCard.querySelector('div:last-child');
     if (!nameDiv || !costDiv) return;
     
-    nameDiv.innerText = "Summon / Exorcist";
+    nameDiv.innerHTML = "Summon<br>Exorcist";
 
     if (towers.length >= maxTowers) {
         towerCard.classList.add('locked');

@@ -658,15 +658,28 @@ body {
     padding: 10px;
     background: #222;
     display: flex;
-    justify-content: space-between;
+    justify-content: center; /* Center Title */
     align-items: center;
     border-bottom: 1px solid #333;
+    position: relative;
 }
 
 #records-header h2 { margin: 0; color: #ffd700; font-size: 18px; }
 
 #close-records {
     background: none; border: none; color: #fff; font-size: 20px; cursor: pointer;
+    position: absolute; /* Keep button on right while title is centered */
+    right: 10px;
+}
+
+/* Unit Cooldown Overlay */
+.cooldown-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(rgba(0, 0, 0, 0.6) 0deg, transparent 0deg);
+    pointer-events: none;
+    z-index: 5;
 }
 
 #records-tabs {
