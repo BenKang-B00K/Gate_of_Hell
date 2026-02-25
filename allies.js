@@ -833,6 +833,16 @@ function initAllies() {
         });
     }
 
+    // Top Left Restart Button
+    const restartBtnTop = document.getElementById('restart-btn-top');
+    if (restartBtnTop) {
+        restartBtnTop.addEventListener('click', () => {
+            if (confirm("Are you sure you want to restart the descent?")) {
+                location.reload();
+            }
+        });
+    }
+
     // Deselect units when clicking background
     document.addEventListener('mousedown', (e) => {
         if (!e.target.closest('.unit') && !e.target.closest('.unit-overlay-btn')) {
