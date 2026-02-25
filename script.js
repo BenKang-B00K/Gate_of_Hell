@@ -441,10 +441,40 @@ function gameLoop() {
             }
         }
 
-        // Move X-axis towards individual targetX based on progress
+        // Move X-axis
         const progress = Math.min(enemy.y / targetY, 1);
         const targetX = enemy.targetX || 50; 
-        enemy.x = enemy.initialX + (targetX - enemy.initialX) * progress;
+
+        if (enemy.type === 'boar') {
+            // Boar logic: horizontal bounce
+            if (enemy.bouncesLeft > 0) {
+                enemy.x += enemy.vx;
+                // Boundary check (10% to 90%)
+                if (enemy.x <= 10) {
+                    enemy.x = 10;
+                    enemy.vx = Math.abs(enemy.vx); // Move right
+                    enemy.bouncesLeft--;
+                } else if (enemy.x >= 90) {
+                    enemy.x = 90;
+                    enemy.vx = -Math.abs(enemy.vx); // Move left
+                    enemy.bouncesLeft--;
+                }
+            } else {
+                // After bouncing, steer towards targetX
+                enemy.x += (targetX - enemy.x) * 0.05;
+            }
+        } else {
+            // Default linear or wavy movement
+            let baseX = enemy.initialX + (targetX - enemy.initialX) * progress;
+
+            // Wavy movement for specific types
+            if (enemy.type === 'runner' || enemy.type === 'dimension') {
+                const amplitude = 8; // Wave width (8% of road)
+                const frequency = 0.04; // Wave tightness
+                baseX += Math.sin(enemy.y * frequency) * amplitude;
+            }
+            enemy.x = baseX;
+        }
 
         // Apply visual position immediately
         enemy.element.style.top = `${enemy.y}px`;

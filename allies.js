@@ -1,8 +1,8 @@
 /* allies.js */
 
 let towerCost = 40;
-const jobChangeCost = 100; // Promotion cost
-const masterJobCost = 200; // Master promotion cost
+const jobChangeCost = 200; // Increased from 100
+const masterJobCost = 500; // Increased from 200
 const maxTowers = 12; // Maximum summon count
 
 // Track unlocked classes for Records
@@ -105,53 +105,53 @@ function recordUnlock(type, isEnemy = false) {
 
 // Ally unit data
 const unitTypes = [
-    { type: 'apprentice', name: 'Apprentice Exorcist', role: '공격형', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 833, desc: "An apprentice with basic exorcism abilities." },
-    { type: 'chainer', name: 'Soul Chainer', role: '지원형', tier: 2, icon: '⛓️', damage: 15, range: 130, cooldown: 1000, desc: "Uses soul chains to slow down enemies.", upgrades: ['executor', 'binder'] },
-    { type: 'talisman', name: 'Talismanist', role: '공격형', tier: 2, icon: '📜', damage: 25, range: 120, cooldown: 1500, desc: "Throws exploding talismans to deal area damage.", upgrades: ['grandsealer', 'flamemaster'] },
-    { type: 'monk', name: 'Mace Monk', role: '지원형', tier: 2, icon: '⛪', damage: 40, range: 100, cooldown: 1200, desc: "Knocks back enemies with a powerful mace.", upgrades: ['vajra', 'saint'] },
-    { type: 'archer', name: 'Divine Archer', role: '공격형', tier: 2, icon: '🏹', damage: 80, range: 250, cooldown: 1500, desc: "Has the longest range and snipes single targets.", upgrades: ['voidsniper', 'thousandhand'] },
-    { type: 'ice', name: 'Ice Daoist', role: '지원형', tier: 2, icon: '❄️', damage: 20, range: 130, cooldown: 1000, desc: "Slows down ghosts with cold energy. (10% speed reduction)", upgrades: ['absolutezero', 'permafrost'] },
-    { type: 'fire', name: 'Fire Mage', role: '공격형', tier: 2, icon: '🔥', damage: 10, range: 120, cooldown: 1000, desc: "Burns ghosts to deal damage based on max HP per second.", upgrades: ['hellfire', 'phoenix'] },
-    { type: 'assassin', name: 'Shadow Assassin', role: '공격형', tier: 2, icon: '🗡️', damage: 20, range: 100, cooldown: 300, desc: "Attacks very quickly, ignoring enemy defense.", upgrades: ['abyssal', 'spatial'] },
-    { type: 'tracker', name: 'Soul Tracker', role: '지원형', tier: 2, icon: '👁️', damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies (up, down, left, right).", upgrades: ['seer', 'commander'] },
-    { type: 'necromancer', name: 'Necromancer', role: '지원형', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Chance to summon spirit walls that block enemy paths (30% chance on hit).", upgrades: ['wraithlord', 'cursedshaman'] },
-    { type: 'guardian', name: 'Sanctuary Guardian', role: '특수형', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit (5% chance).", upgrades: ['rampart', 'judgment'] },
-    { type: 'knight', name: 'Exorcist Knight', role: '공격형', tier: 2, icon: '⚔️', damage: 45, range: 110, cooldown: 1000, desc: "A disciplined warrior with balanced stats.", upgrades: ['paladin', 'crusader'] },
+    { type: 'apprentice', name: 'Apprentice Exorcist', role: 'Attack', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 833, desc: "An apprentice with basic exorcism abilities." },
+    { type: 'chainer', name: 'Soul Chainer', role: 'Support', tier: 2, icon: '⛓️', damage: 15, range: 130, cooldown: 1000, desc: "Uses soul chains to slow down enemies.", upgrades: ['executor', 'binder'] },
+    { type: 'talisman', name: 'Talismanist', role: 'Attack', tier: 2, icon: '📜', damage: 25, range: 120, cooldown: 1500, desc: "Throws exploding talismans to deal area damage.", upgrades: ['grandsealer', 'flamemaster'] },
+    { type: 'monk', name: 'Mace Monk', role: 'Support', tier: 2, icon: '⛪', damage: 40, range: 100, cooldown: 1200, desc: "Knocks back enemies with a powerful mace.", upgrades: ['vajra', 'saint'] },
+    { type: 'archer', name: 'Divine Archer', role: 'Attack', tier: 2, icon: '🏹', damage: 80, range: 250, cooldown: 1500, desc: "Has the longest range and snipes single targets.", upgrades: ['voidsniper', 'thousandhand'] },
+    { type: 'ice', name: 'Ice Daoist', role: 'Support', tier: 2, icon: '❄️', damage: 20, range: 130, cooldown: 1000, desc: "Slows down ghosts with cold energy. (10% speed reduction)", upgrades: ['absolutezero', 'permafrost'] },
+    { type: 'fire', name: 'Fire Mage', role: 'Attack', tier: 2, icon: '🔥', damage: 10, range: 120, cooldown: 1000, desc: "Burns ghosts to deal damage based on max HP per second.", upgrades: ['hellfire', 'phoenix'] },
+    { type: 'assassin', name: 'Shadow Assassin', role: 'Attack', tier: 2, icon: '🗡️', damage: 20, range: 100, cooldown: 300, desc: "Attacks very quickly, ignoring enemy defense.", upgrades: ['abyssal', 'spatial'] },
+    { type: 'tracker', name: 'Soul Tracker', role: 'Support', tier: 2, icon: '👁️', damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies (up, down, left, right).", upgrades: ['seer', 'commander'] },
+    { type: 'necromancer', name: 'Necromancer', role: 'Support', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Chance to summon spirit walls that block enemy paths (30% chance on hit).", upgrades: ['wraithlord', 'cursedshaman'] },
+    { type: 'guardian', name: 'Sanctuary Guardian', role: 'Special', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit (5% chance).", upgrades: ['rampart', 'judgment'] },
+    { type: 'knight', name: 'Exorcist Knight', role: 'Attack', tier: 2, icon: '⚔️', damage: 45, range: 110, cooldown: 1000, desc: "A disciplined warrior with balanced stats.", upgrades: ['paladin', 'crusader'] },
     // Master Classes
-    { type: 'paladin', name: 'Holy Paladin', role: '공격형', tier: 3, icon: '⛪', damage: 55, range: 130, cooldown: 1000, desc: "[Master] Every 5th attack deals 3x damage and stuns.", upgrades: ['eternal_wall'] },
-    { type: 'crusader', name: 'Blood Crusader', role: '공격형', tier: 3, icon: '🚩', damage: 80, range: 120, cooldown: 1500, desc: "[Master] Attacks deal bonus damage based on enemy's missing HP.", upgrades: ['eternal_wall'] },
-    { type: 'executor', name: 'Underworld Executor', role: '특수형', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] 10% chance to return enemies near the gate to the starting point.", upgrades: ['warden'] },
-    { type: 'binder', name: 'Soul Binder', role: '지원형', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links up to 5 enemies to share 50% of damage taken.", upgrades: ['warden'] },
-    { type: 'grandsealer', name: 'Grand Sealer', role: '지원형', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Attaches large talismans to neutralize enemy special abilities.", upgrades: ['cursed_talisman'] },
-    { type: 'flamemaster', name: 'Fire Talisman Master', role: '공격형', tier: 3, icon: '🌋', damage: 35, range: 130, cooldown: 1500, desc: "[Master] Leaves persistent flames where talismans explode.", upgrades: ['cursed_talisman'] },
-    { type: 'vajra', name: 'Vajrapani', role: '특수형', tier: 3, icon: '🔱', damage: 50, range: 100, cooldown: 1200, desc: "[Master] Knocks enemies off-screen on critical hit (100% on crit).", upgrades: ['asura'] },
-    { type: 'saint', name: 'Saint of Vibration', role: '지원형', tier: 3, icon: '🔔', damage: 45, range: 100, cooldown: 1500, desc: "[Master] Attacks stun enemies in a wide area (100% on hit).", upgrades: ['asura'] },
-    { type: 'voidsniper', name: 'Void Sniper', role: '공격형', tier: 3, icon: '🎯', damage: 120, range: 9999, cooldown: 2000, desc: "[Master] Prioritizes sniping the enemy closest to the gate.", upgrades: ['piercing_shadow'] },
-    { type: 'thousandhand', name: 'Thousand-Hand Archer', role: '공격형', tier: 3, icon: '🍃', damage: 40, range: 250, cooldown: 1500, desc: "[Master] Fires 6 arrows at once to attack up to 4 enemies.", upgrades: ['piercing_shadow'] },
-    { type: 'absolutezero', name: 'Absolute Zero Mage', role: '특수형', tier: 3, icon: '💎', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Instantly kills frozen enemies with less than 30% HP.", upgrades: ['cocytus'] },
-    { type: 'permafrost', name: 'Ice Maiden', role: '지원형', tier: 3, icon: '🌬️', damage: 25, range: 140, cooldown: 1000, desc: "[Master] Creates a blizzard that reduces enemy speed by 50% in the area.", upgrades: ['cocytus'] },
-    { type: 'hellfire', name: 'Hellfire Alchemist', role: '공격형', tier: 3, icon: '🧪', damage: 20, range: 130, cooldown: 1000, desc: "[Master] Burning enemies explode on death, spreading the burn.", upgrades: ['purgatory'] },
-    { type: 'phoenix', name: 'Phoenix Summoner', role: '공격형', tier: 3, icon: '🐦‍🔥', damage: 40, range: 180, cooldown: 2000, desc: "[Master] Summons a phoenix that leaves a trail of fire.", upgrades: ['purgatory'] },
-    { type: 'abyssal', name: 'Abyssal Killer', role: '특수형', tier: 3, icon: '🌑', damage: 30, range: 100, cooldown: 300, desc: "[Master] Increases soul energy gain from kills by 1.5x.", upgrades: ['reaper'] },
-    { type: 'spatial', name: 'Spatial Slasher', role: '공격형', tier: 3, icon: '🌌', damage: 25, range: 120, cooldown: 300, desc: "[Master] Summons clones in empty slots to assassinate (15% chance on hit).", upgrades: ['reaper'] },
-    { type: 'seer', name: 'Seeker of Truth', role: '지원형', tier: 3, icon: '🔭', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' damage and detects stealthed enemies.", upgrades: ['doom_guide'] },
-    { type: 'commander', name: 'Battlefield Commander', role: '지원형', tier: 3, icon: '🚩', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' attack speed by 20%.", upgrades: ['doom_guide'] },
-    { type: 'wraithlord', name: 'Wraith Lord', role: '지원형', tier: 3, icon: '🧟', damage: 40, range: 130, cooldown: 1200, desc: "[Master] Reanimates killed enemies as ally skeleton soldiers.", upgrades: ['forsaken_king'] },
-    { type: 'cursedshaman', name: 'Cursed Shaman', role: '지원형', tier: 3, icon: '🎭', damage: 20, range: 130, cooldown: 1500, desc: "[Master] Curses a wide area to permanently reduce enemies' maximum HP.", upgrades: ['forsaken_king'] },
-    { type: 'rampart', name: 'Holy Rampart', role: '지원형', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] Returns enemies reaching the gate to the start (5 charges).", upgrades: ['void_gatekeeper'] },
-    { type: 'judgment', name: 'Knight of Judgment', role: '공격형', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack.", upgrades: ['void_gatekeeper'] },
+    { type: 'paladin', name: 'Holy Paladin', role: 'Attack', tier: 3, icon: '⛪', damage: 55, range: 130, cooldown: 1000, desc: "[Master] Every 5th attack deals 3x damage and stuns.", upgrades: ['eternal_wall'] },
+    { type: 'crusader', name: 'Blood Crusader', role: 'Attack', tier: 3, icon: '🚩', damage: 80, range: 120, cooldown: 1500, desc: "[Master] Attacks deal bonus damage based on enemy's missing HP.", upgrades: ['eternal_wall'] },
+    { type: 'executor', name: 'Underworld Executor', role: 'Special', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] 10% chance to return enemies near the gate to the starting point.", upgrades: ['warden'] },
+    { type: 'binder', name: 'Soul Binder', role: 'Support', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links up to 5 enemies to share 50% of damage taken.", upgrades: ['warden'] },
+    { type: 'grandsealer', name: 'Grand Sealer', role: 'Support', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Attaches large talismans to neutralize enemy special abilities.", upgrades: ['cursed_talisman'] },
+    { type: 'flamemaster', name: 'Fire Talisman Master', role: 'Attack', tier: 3, icon: '🌋', damage: 35, range: 130, cooldown: 1500, desc: "[Master] Leaves persistent flames where talismans explode.", upgrades: ['cursed_talisman'] },
+    { type: 'vajra', name: 'Vajrapani', role: 'Special', tier: 3, icon: '🔱', damage: 50, range: 100, cooldown: 1200, desc: "[Master] Knocks enemies off-screen on critical hit (100% on crit).", upgrades: ['asura'] },
+    { type: 'saint', name: 'Saint of Vibration', role: 'Support', tier: 3, icon: '🔔', damage: 45, range: 100, cooldown: 1500, desc: "[Master] Attacks stun enemies in a wide area (100% on hit).", upgrades: ['asura'] },
+    { type: 'voidsniper', name: 'Void Sniper', role: 'Attack', tier: 3, icon: '🎯', damage: 120, range: 9999, cooldown: 2000, desc: "[Master] Prioritizes sniping the enemy closest to the gate.", upgrades: ['piercing_shadow'] },
+    { type: 'thousandhand', name: 'Thousand-Hand Archer', role: 'Attack', tier: 3, icon: '🍃', damage: 40, range: 250, cooldown: 1500, desc: "[Master] Fires 6 arrows at once to attack up to 4 enemies.", upgrades: ['piercing_shadow'] },
+    { type: 'absolutezero', name: 'Absolute Zero Mage', role: 'Special', tier: 3, icon: '💎', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Instantly kills frozen enemies with less than 30% HP.", upgrades: ['cocytus'] },
+    { type: 'permafrost', name: 'Ice Maiden', role: 'Support', tier: 3, icon: '🌬️', damage: 25, range: 140, cooldown: 1000, desc: "[Master] Creates a blizzard that reduces enemy speed by 50% in the area.", upgrades: ['cocytus'] },
+    { type: 'hellfire', name: 'Hellfire Alchemist', role: 'Attack', tier: 3, icon: '🧪', damage: 20, range: 130, cooldown: 1000, desc: "[Master] Burning enemies explode on death, spreading the burn.", upgrades: ['purgatory'] },
+    { type: 'phoenix', name: 'Phoenix Summoner', role: 'Attack', tier: 3, icon: '🐦‍🔥', damage: 40, range: 180, cooldown: 2000, desc: "[Master] Summons a phoenix that leaves a trail of fire.", upgrades: ['purgatory'] },
+    { type: 'abyssal', name: 'Abyssal Killer', role: 'Special', tier: 3, icon: '🌑', damage: 30, range: 100, cooldown: 300, desc: "[Master] Increases soul energy gain from kills by 1.5x.", upgrades: ['reaper'] },
+    { type: 'spatial', name: 'Spatial Slasher', role: 'Attack', tier: 3, icon: '🌌', damage: 25, range: 120, cooldown: 300, desc: "[Master] Summons clones in empty slots to assassinate (15% chance on hit).", upgrades: ['reaper'] },
+    { type: 'seer', name: 'Seeker of Truth', role: 'Support', tier: 3, icon: '🔭', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' damage and detects stealthed enemies.", upgrades: ['doom_guide'] },
+    { type: 'commander', name: 'Battlefield Commander', role: 'Support', tier: 3, icon: '🚩', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' attack speed by 20%.", upgrades: ['doom_guide'] },
+    { type: 'wraithlord', name: 'Wraith Lord', role: 'Support', tier: 3, icon: '🧟', damage: 40, range: 130, cooldown: 1200, desc: "[Master] Reanimates killed enemies as ally skeleton soldiers.", upgrades: ['forsaken_king'] },
+    { type: 'cursedshaman', name: 'Cursed Shaman', role: 'Support', tier: 3, icon: '🎭', damage: 20, range: 130, cooldown: 1500, desc: "[Master] Curses a wide area to permanently reduce enemies' maximum HP.", upgrades: ['forsaken_king'] },
+    { type: 'rampart', name: 'Holy Rampart', role: 'Support', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] Returns enemies reaching the gate to the start (5 charges).", upgrades: ['void_gatekeeper'] },
+    { type: 'judgment', name: 'Knight of Judgment', role: 'Attack', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack.", upgrades: ['void_gatekeeper'] },
     // Abyss Classes (Tier 4)
-    { type: 'warden', name: 'Warden of the Abyss', role: '지원형', tier: 4, icon: '🗝️', damage: 100, range: 200, cooldown: 10000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing high DOT." },
-    { type: 'cursed_talisman', name: 'Cursed Sect', role: '공격형', tier: 4, icon: '⛩️', damage: 80, range: 150, cooldown: 1200, desc: "[Abyss] Mark enemies to explode on death for massive Max HP damage." },
-    { type: 'asura', name: 'Hell Crushing Asura', role: '공격형', tier: 4, icon: '👹', damage: 60, range: 120, cooldown: 400, desc: "[Abyss] 12 strikes to 3 targets. Knocks them back to start." },
-    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', role: '공격형', tier: 4, icon: '🌠', damage: 300, range: 9999, cooldown: 2000, desc: "[Abyss] Infinite range piercing arrow that ricochets faster." },
-    { type: 'cocytus', name: 'Ruler of Cocytus', role: '특수형', tier: 4, icon: '⏳', damage: 20, range: 200, cooldown: 20000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
-    { type: 'purgatory', name: 'Eternal Purgatory Fire', role: '공격형', tier: 4, icon: '🕯️', damage: 20, range: 150, cooldown: 800, desc: "[Abyss] Dynamic row of permanent hellfire. Follows unit position." },
-    { type: 'reaper', name: 'Nightmare Reaper', role: '특수형', tier: 4, icon: '☠️', damage: 0, range: 0, cooldown: 3000, desc: "[Abyss] Every 3s, instakills highest HP non-boss ghost for 3x Soul Energy." },
-    { type: 'doom_guide', name: 'Guide of Doom', role: '특수형', tier: 4, icon: '🛶', damage: 40, range: 150, cooldown: 800, desc: "[Abyss] Inverts portal. Escaping ghosts give 100% Soul Energy." },
-    { type: 'forsaken_king', name: 'King of the Forsaken', role: '지원형', tier: 4, icon: '👑', damage: 100, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts based on Corruption level." },
-    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', role: '지원형', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals portal until 30 ghosts gather." },
-    { type: 'eternal_wall', name: 'Guardian of Eternity', role: '지원형', tier: 4, icon: '🗿', damage: 150, range: 150, cooldown: 2000, desc: "[Abyss] Heavily slows all enemies in range by 80%." }
+    { type: 'warden', name: 'Warden of the Abyss', role: 'Support', tier: 4, icon: '🗝️', damage: 100, range: 200, cooldown: 10000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing high DOT." },
+    { type: 'cursed_talisman', name: 'Cursed Sect', role: 'Attack', tier: 4, icon: '⛩️', damage: 80, range: 150, cooldown: 1200, desc: "[Abyss] Mark enemies to explode on death for massive Max HP damage." },
+    { type: 'asura', name: 'Hell Crushing Asura', role: 'Attack', tier: 4, icon: '👹', damage: 60, range: 120, cooldown: 400, desc: "[Abyss] 12 strikes to 3 targets. Knocks them back to start." },
+    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', role: 'Attack', tier: 4, icon: '🌠', damage: 300, range: 9999, cooldown: 2000, desc: "[Abyss] Infinite range piercing arrow that ricochets faster." },
+    { type: 'cocytus', name: 'Ruler of Cocytus', role: 'Special', tier: 4, icon: '⏳', damage: 20, range: 200, cooldown: 20000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
+    { type: 'purgatory', name: 'Eternal Purgatory Fire', role: 'Attack', tier: 4, icon: '🕯️', damage: 20, range: 150, cooldown: 800, desc: "[Abyss] Dynamic row of permanent hellfire. Follows unit position." },
+    { type: 'reaper', name: 'Nightmare Reaper', role: 'Special', tier: 4, icon: '☠️', damage: 0, range: 0, cooldown: 3000, desc: "[Abyss] Every 3s, instakills highest HP non-boss ghost for 3x Soul Energy." },
+    { type: 'doom_guide', name: 'Guide of Doom', role: 'Special', tier: 4, icon: '🛶', damage: 40, range: 150, cooldown: 800, desc: "[Abyss] Inverts portal. Escaping ghosts give 100% Soul Energy." },
+    { type: 'forsaken_king', name: 'King of the Forsaken', role: 'Support', tier: 4, icon: '👑', damage: 100, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts based on Corruption level." },
+    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', role: 'Support', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals portal until 30 ghosts gather." },
+    { type: 'eternal_wall', name: 'Guardian of Eternity', role: 'Support', tier: 4, icon: '🗿', damage: 150, range: 150, cooldown: 2000, desc: "[Abyss] Heavily slows all enemies in range by 80%." }
 ];
 
 // Use draggedUnit from enemies.js
@@ -392,8 +392,8 @@ function showUnitInfo(tower) {
     
     // Position/Role Tag
     let roleColor = '#ff4500'; // Default Offense
-    if (data.role === '지원형') roleColor = '#00e5ff';
-    else if (data.role === '특수형') roleColor = '#ffd700';
+    if (data.role === 'Support') roleColor = '#00e5ff';
+    else if (data.role === 'Special') roleColor = '#ffd700';
     
     let roleHtml = `<div style="display:inline-block; background:${roleColor}; color:#000; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">${data.role}</div>`;
 
@@ -403,9 +403,9 @@ function showUnitInfo(tower) {
     // Cost display for next tier
     let costHtml = '';
     if (data.type === 'apprentice') {
-        costHtml = `<div style="font-size: 8px; color: #00ff00; margin-bottom: 4px;">↗️ Ascend: 100 SE</div>`;
+        costHtml = `<div style="font-size: 8px; color: #00ff00; margin-bottom: 4px;">↗️ Ascend: 200 SE</div>`;
     } else if (data.upgrades) {
-        costHtml = `<div style="font-size: 8px; color: #ffd700; margin-bottom: 2px;">Unleash Master (200 SE):</div>`;
+        costHtml = `<div style="font-size: 8px; color: #ffd700; margin-bottom: 2px;">Unleash Master (500 SE):</div>`;
         data.upgrades.forEach((uType, idx) => {
             const uData = unitTypes.find(u => u.type === uType);
             costHtml += `<div style="font-size: 7.5px; color: #aaa;">${idx === 0 ? '↖️ (Left)' : '↗️ (Right)'}: ${uData.name}</div>`;
@@ -476,7 +476,7 @@ function updateUnitOverlayButtons(tower) {
         const promoteBtn = document.createElement('div');
         promoteBtn.className = 'unit-overlay-btn promote-btn';
         promoteBtn.innerHTML = '↗️';
-        promoteBtn.title = `Ascend (100 SE)`;
+        promoteBtn.title = `Ascend (200 SE)`;
         promoteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (money >= jobChangeCost) {
@@ -496,7 +496,7 @@ function updateUnitOverlayButtons(tower) {
             const promoteBtn = document.createElement('div');
             promoteBtn.className = idx === 0 ? 'unit-overlay-btn promote-btn' : 'unit-overlay-btn promote-btn-right';
             promoteBtn.innerHTML = idx === 0 ? '↖️' : '↗️';
-            promoteBtn.title = `Unleash ${uData.name} (200 SE)`;
+            promoteBtn.title = `Unleash ${uData.name} (500 SE)`;
             promoteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (money >= masterJobCost) {
@@ -990,6 +990,8 @@ function renderBestiary() {
     // Enemy Name Mapping
     const enemyNames = {
         'normal': 'Whispering Soul',
+        'mist': 'Wandering Mist',
+        'memory': 'Faded Memory',
         'shade': 'Flickering Shade',
         'tank': 'Ironclad Wraith',
         'runner': 'Haste-Cursed Shadow',
@@ -1032,31 +1034,31 @@ function renderBestiary() {
         // Calculate effective spawn rate based on stage
         let catProb = 0.96; // basic
         if (stage >= 51) {
-            if (['normal', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.30;
+            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.30;
             else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.23;
             else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.23;
             else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.23;
             else if (enemy.type === 'gold') catProb = treasureChance;
         } else if (stage >= 31) {
-            if (['normal', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.55;
+            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.55;
             else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.14;
             else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.15;
             else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.15;
             else if (enemy.type === 'gold') catProb = treasureChance;
         } else if (stage >= 16) {
-            if (['normal', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.75;
+            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.75;
             else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.08;
             else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.08;
             else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.08;
             else if (enemy.type === 'gold') catProb = treasureChance;
         } else if (stage >= 6) {
-            if (['normal', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.90;
+            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.90;
             else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.03;
             else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.03;
             else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.03;
             else if (enemy.type === 'gold') catProb = treasureChance;
         } else {
-            if (['normal', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.96;
+            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.96;
             else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.01;
             else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.01;
             else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.01;
@@ -1135,7 +1137,8 @@ function renderPromotionTree() {
         { name: 'Shadow Assassin', type: 'assassin', masters: ['abyssal', 'spatial'], abyss: 'reaper' },
         { name: 'Soul Tracker', type: 'tracker', masters: ['seer', 'commander'], abyss: 'doom_guide' },
         { name: 'Necromancer', type: 'necromancer', masters: ['wraithlord', 'cursedshaman'], abyss: 'forsaken_king' },
-        { name: 'Sanctuary Guardian', type: 'guardian', masters: ['rampart', 'judgment'], abyss: 'void_gatekeeper' }
+        { name: 'Sanctuary Guardian', type: 'guardian', masters: ['rampart', 'judgment'], abyss: 'void_gatekeeper' },
+        { name: 'Exorcist Knight', type: 'knight', masters: ['paladin', 'crusader'], abyss: 'eternal_wall' }
     ];
 
     const treeContainer = document.createElement('div');
@@ -1188,8 +1191,8 @@ function renderPromotionTree() {
         t2Node.style.minWidth = 'auto';
         
         let t2RoleColor = '#ff4500';
-        if (t2Data.role === '지원형') t2RoleColor = '#00e5ff';
-        else if (t2Data.role === '특수형') t2RoleColor = '#ffd700';
+        if (t2Data.role === 'Support') t2RoleColor = '#00e5ff';
+        else if (t2Data.role === 'Special') t2RoleColor = '#ffd700';
 
         t2Node.innerHTML = `
             <div class="custom-tooltip">
@@ -1222,8 +1225,8 @@ function renderPromotionTree() {
             mNode.style.minWidth = 'auto';
             if (mData) {
                 let mRoleColor = '#ff4500';
-                if (mData.role === '지원형') mRoleColor = '#00e5ff';
-                else if (mData.role === '특수형') mRoleColor = '#ffd700';
+                if (mData.role === 'Support') mRoleColor = '#00e5ff';
+                else if (mData.role === 'Special') mRoleColor = '#ffd700';
 
                 mNode.innerHTML = `
                     <div class="custom-tooltip">
@@ -1255,8 +1258,8 @@ function renderPromotionTree() {
         abyssNode.style.minWidth = 'auto';
         if (aData) {
             let aRoleColor = '#ff4500';
-            if (aData.role === '지원형') aRoleColor = '#00e5ff';
-            else if (aData.role === '특수형') aRoleColor = '#ffd700';
+            if (aData.role === 'Support') aRoleColor = '#00e5ff';
+            else if (aData.role === 'Special') aRoleColor = '#ffd700';
 
             abyssNode.innerHTML = `
                 <div class="custom-tooltip" style="border-color:#9400d3;">

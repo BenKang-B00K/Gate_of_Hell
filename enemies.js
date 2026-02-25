@@ -71,13 +71,24 @@ function getCorruptionMultipliers() {
     return { hpMult, speedMult };
 }
 
+// Calculate gradual stage-based multipliers
+function getStageMultipliers() {
+    // HP increases by 8% per stage (compounded slightly)
+    // Speed increases by 0.5% per stage
+    const hpStageMult = Math.pow(1.08, stage - 1);
+    const speedStageMult = 1 + (stage - 1) * 0.005;
+    return { hpStageMult, speedStageMult };
+}
+
 // Enemy data (Categorized)
 const enemyCategories = {
     basic: [
-        { type: 'normal', icon: '👻', speed: 1.5, hp: 110, defense: 0, probability: 0.5, reward: 5, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
+        { type: 'normal', icon: '👻', speed: 1.5, hp: 110, defense: 0, probability: 0.2, reward: 5, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
+        { type: 'mist', icon: '🌫️', speed: 1.3, hp: 140, defense: 0, probability: 0.2, reward: 5, desc: "A spectral fog that drifts slowly. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Condensation of thousands of tiny, forgotten sorrows." },
+        { type: 'memory', icon: '👣', speed: 1.7, hp: 90, defense: 0, probability: 0.2, reward: 5, desc: "A faint trace of a once-living being. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Not even a full soul, just the impression left by a strong desire to live." },
         { type: 'shade', icon: '👤', speed: 2.2, hp: 60, defense: 0, probability: 0.1, reward: 4, desc: "A weak but fast spirit that moves in a blurring motion.", effectiveness: "Rapid-fire units.", lore: "The faintest remains of a soul, barely holding onto existence." },
-        { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.2, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
-        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.2, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
+        { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.15, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
+        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.15, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
     ],
     pattern: [
         { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.3, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
@@ -380,6 +391,7 @@ function spawnBoss() {
     enemyDiv.style.top = '0px';
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
+    const { hpStageMult, speedStageMult } = getStageMultipliers();
 
     const boss = {
         element: enemyDiv,
@@ -388,10 +400,10 @@ function spawnBoss() {
         x: 50,
         targetX: 50, // Bosses go to center
         y: 0,
-        baseSpeed: data.speed * speedMult,
-        speed: data.speed * speedMult,
-        maxHp: data.hp * hpMult,
-        hp: data.hp * hpMult,
+        baseSpeed: data.speed * speedMult * speedStageMult,
+        speed: data.speed * speedMult * speedStageMult,
+        maxHp: data.hp * hpMult * hpStageMult,
+        hp: data.hp * hpMult * hpStageMult,
         reward: 500,         // Add reward for boss
         isBoss: true,
         data: data,
@@ -509,6 +521,7 @@ function spawnEnemy() {
     enemyDiv.style.top = '0px';
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
+    const { hpStageMult, speedStageMult } = getStageMultipliers();
 
     const enemy = {
         element: enemyDiv,
@@ -517,11 +530,11 @@ function spawnEnemy() {
         x: randomX,
         targetX: Math.random() * 50 + 25, // Narrower range (25% to 75%) to fit portal arch
         y: 0,
-        baseSpeed: selectedType.speed * speedMult,
-        speed: selectedType.speed * speedMult,
-        maxHp: selectedType.hp * hpMult,
+        baseSpeed: selectedType.speed * speedMult * speedStageMult,
+        speed: selectedType.speed * speedMult * speedStageMult,
+        maxHp: selectedType.hp * hpMult * hpStageMult,
         defense: selectedType.defense || 0,
-        hp: selectedType.hp * hpMult,
+        hp: selectedType.hp * hpMult * hpStageMult,
         reward: selectedType.reward || 10,
         type: selectedType.type,
         isPhasing: false,
@@ -530,6 +543,13 @@ function spawnEnemy() {
         isSlowed: false,
         hasBackstepped: false
     };
+
+    // Special initialization for Boar (Feral Revenant)
+    if (selectedType.type === 'boar') {
+        enemy.vx = Math.random() < 0.5 ? -1.5 : 1.5; // Initial horizontal direction/speed
+        enemy.bouncesLeft = Math.floor(Math.random() * 3) + 2; // 2, 3, or 4 bounces
+    }
+
     enemies.push(enemy);
 }
 
@@ -549,6 +569,7 @@ function spawnPassenger(boss) {
     const offsetY = (Math.random() - 0.5) * 40;
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
+    const { hpStageMult, speedStageMult } = getStageMultipliers();
 
     const enemy = {
         element: enemyDiv,
@@ -556,10 +577,10 @@ function spawnPassenger(boss) {
         x: boss.x,
         targetX: 50, // Converge to center with boss
         y: boss.y,
-        baseSpeed: 1.5 * speedMult,
-        speed: 1.5 * speedMult,
-        maxHp: 100 * hpMult,
-        hp: 100 * hpMult,
+        baseSpeed: 1.5 * speedMult * speedStageMult,
+        speed: 1.5 * speedMult * speedStageMult,
+        maxHp: 100 * hpMult * hpStageMult,
+        hp: 100 * hpMult * hpStageMult,
         type: 'normal',
         isBoarded: true,     
         parentBoss: boss,    
@@ -617,7 +638,8 @@ function spawnCorruptedEnemy(tower) {
     enemyDiv.style.top = `0px`;
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
-    const hpValue = data.hp * hpMult;
+    const { hpStageMult, speedStageMult } = getStageMultipliers();
+    const hpValue = data.hp * hpMult * hpStageMult;
 
     const enemy = {
         element: enemyDiv,
@@ -626,8 +648,8 @@ function spawnCorruptedEnemy(tower) {
         x: relX,
         targetX: Math.random() * 50 + 25, // Within portal arch
         y: 0,
-        baseSpeed: data.speed * speedMult, 
-        speed: data.speed * speedMult,
+        baseSpeed: data.speed * speedMult * speedStageMult, 
+        speed: data.speed * speedMult * speedStageMult,
         maxHp: hpValue, 
         hp: hpValue,
         defense: data.defense,
