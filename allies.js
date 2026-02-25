@@ -809,7 +809,7 @@ function updateSummonButtonState() {
 
     // Update Purge Card State
     const purgeCard = document.getElementById('purge-card');
-    const purgeCost = 100;
+    const purgeCost = 800;
     if (purgeCard) {
         if (money < purgeCost || portalEnergy <= 0) {
             purgeCard.classList.add('locked');
@@ -820,8 +820,8 @@ function updateSummonButtonState() {
 }
 
 function purgePortal() {
-    const purgeCost = 100;
-    const purgeAmount = 200;
+    const purgeCost = 800;
+    const purgeAmount = portalEnergy * 0.5; // Half of current energy
 
     if (money >= purgeCost && portalEnergy > 0) {
         money -= purgeCost;
