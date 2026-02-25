@@ -751,11 +751,14 @@ function renderBestiary() {
         });
     });
 
-    allEnemyTypes.forEach(enemy => {
+        allEnemyTypes.forEach(enemy => {
         const kills = killCounts[enemy.type] || 0;
         const bonus = getBestiaryBonus(enemy.type);
         const bonusText = bonus > 1 ? `DMG +${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus';
         const dispName = enemyNames[enemy.type] || enemy.type.toUpperCase();
+        
+        // Probability percentage (simplified view)
+        const spawnRate = (enemy.probability * 100).toFixed(0);
 
         const item = document.createElement('div');
         item.className = 'bestiary-item';
@@ -768,6 +771,7 @@ function renderBestiary() {
             <div class="bestiary-info">
                 <div class="bestiary-name">${dispName}</div>
                 <div class="bestiary-stats">💀 ${kills} | ${bonusText}</div>
+                <div style="font-size: 7.5px; color: #aaa; margin-top: 2px;">Proc Rate: ${spawnRate}%</div>
                 <div class="bestiary-effectiveness" style="font-size: 7px; color: #ff4500; margin-top: 4px; border-top: 1px dotted #444; padding-top: 3px; line-height: 1.2;">
                     🎯 ${enemy.effectiveness || 'Standard'}
                 </div>

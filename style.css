@@ -503,6 +503,7 @@ body {
     cursor: grab;
     z-index: 15;
     font-size: 18px;
+    pointer-events: auto; /* Ensure unit is interactive */
     /* Text outline for the icon */
     text-shadow: 
         -1px -1px 0 #000,  
