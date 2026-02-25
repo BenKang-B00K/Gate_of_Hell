@@ -7,49 +7,49 @@ const maxTowers = 12; // Maximum summon count
 
 // Ally unit data
 const unitTypes = [
-    { type: 'apprentice', name: 'Apprentice Exorcist', tier: 1, damage: 35, range: 120, cooldown: 1000, desc: "An apprentice with basic exorcism abilities." },
-    { type: 'chainer', name: 'Soul Chainer', tier: 2, damage: 15, range: 130, cooldown: 1000, desc: "Uses soul chains to slow down enemies.", upgrades: ['executor', 'binder'] },
-    { type: 'talisman', name: 'Talismanist', tier: 2, damage: 25, range: 120, cooldown: 1500, desc: "Throws exploding talismans to deal area damage.", upgrades: ['grandsealer', 'flamemaster'] },
-    { type: 'monk', name: 'Mace Monk', tier: 2, damage: 40, range: 100, cooldown: 1200, desc: "Knocks back enemies with a powerful mace.", upgrades: ['vajra', 'saint'] },
-    { type: 'archer', name: 'Divine Archer', tier: 2, damage: 80, range: 250, cooldown: 1500, desc: "Has the longest range and snipes single targets.", upgrades: ['voidsniper', 'thousandhand'] },
-    { type: 'ice', name: 'Ice Daoist', tier: 2, damage: 20, range: 130, cooldown: 1000, desc: "Slows down ghosts with cold energy. (10% speed reduction)", upgrades: ['absolutezero', 'permafrost'] },
-    { type: 'fire', name: 'Fire Mage', tier: 2, damage: 10, range: 120, cooldown: 1000, desc: "Burns ghosts to deal damage based on max HP per second.", upgrades: ['hellfire', 'phoenix'] },
-    { type: 'assassin', name: 'Shadow Assassin', tier: 2, damage: 20, range: 100, cooldown: 300, desc: "Attacks very quickly, ignoring enemy defense.", upgrades: ['abyssal', 'spatial'] },
-    { type: 'tracker', name: 'Soul Tracker', tier: 2, damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies (up, down, left, right).", upgrades: ['seer', 'commander'] },
-    { type: 'necromancer', name: 'Necromancer', tier: 2, damage: 30, range: 120, cooldown: 1200, desc: "Chance to summon spirit walls that block enemy paths.", upgrades: ['wraithlord', 'cursedshaman'] },
-    { type: 'guardian', name: 'Sanctuary Guardian', tier: 2, damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit.", upgrades: ['rampart', 'judgment'] },
+    { type: 'apprentice', name: 'Apprentice Exorcist', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 1000, desc: "An apprentice with basic exorcism abilities." },
+    { type: 'chainer', name: 'Soul Chainer', tier: 2, icon: '⛓️', damage: 15, range: 130, cooldown: 1000, desc: "Uses soul chains to slow down enemies.", upgrades: ['executor', 'binder'] },
+    { type: 'talisman', name: 'Talismanist', tier: 2, icon: '📜', damage: 25, range: 120, cooldown: 1500, desc: "Throws exploding talismans to deal area damage.", upgrades: ['grandsealer', 'flamemaster'] },
+    { type: 'monk', name: 'Mace Monk', tier: 2, icon: '⛪', damage: 40, range: 100, cooldown: 1200, desc: "Knocks back enemies with a powerful mace.", upgrades: ['vajra', 'saint'] },
+    { type: 'archer', name: 'Divine Archer', tier: 2, icon: '🏹', damage: 80, range: 250, cooldown: 1500, desc: "Has the longest range and snipes single targets.", upgrades: ['voidsniper', 'thousandhand'] },
+    { type: 'ice', name: 'Ice Daoist', tier: 2, icon: '❄️', damage: 20, range: 130, cooldown: 1000, desc: "Slows down ghosts with cold energy. (10% speed reduction)", upgrades: ['absolutezero', 'permafrost'] },
+    { type: 'fire', name: 'Fire Mage', tier: 2, icon: '🔥', damage: 10, range: 120, cooldown: 1000, desc: "Burns ghosts to deal damage based on max HP per second.", upgrades: ['hellfire', 'phoenix'] },
+    { type: 'assassin', name: 'Shadow Assassin', tier: 2, icon: '🗡️', damage: 20, range: 100, cooldown: 300, desc: "Attacks very quickly, ignoring enemy defense.", upgrades: ['abyssal', 'spatial'] },
+    { type: 'tracker', name: 'Soul Tracker', tier: 2, icon: '👁️', damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies (up, down, left, right).", upgrades: ['seer', 'commander'] },
+    { type: 'necromancer', name: 'Necromancer', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Chance to summon spirit walls that block enemy paths.", upgrades: ['wraithlord', 'cursedshaman'] },
+    { type: 'guardian', name: 'Sanctuary Guardian', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit.", upgrades: ['rampart', 'judgment'] },
     // Master Classes
-    { type: 'executor', name: 'Underworld Executor', tier: 3, damage: 40, range: 150, cooldown: 1000, desc: "[Master] 10% chance to return enemies near the gate to the starting point." },
-    { type: 'binder', name: 'Soul Binder', tier: 3, damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links up to 5 enemies to share 50% of damage taken." },
-    { type: 'grandsealer', name: 'Grand Sealer', tier: 3, damage: 30, range: 130, cooldown: 1500, desc: "[Master] Attaches large talismans to neutralize enemy special abilities (stealth, teleport, etc.)." },
-    { type: 'flamemaster', name: 'Fire Talisman Master', tier: 3, damage: 35, range: 130, cooldown: 1500, desc: "[Master] Leaves persistent flames where talismans explode to deal damage." },
-    { type: 'vajra', name: 'Vajrapani', tier: 3, damage: 50, range: 100, cooldown: 1200, desc: "[Master] Knocks enemies off-screen on critical hit. (Bosses are knocked back)" },
-    { type: 'saint', name: 'Saint of Vibration', tier: 3, damage: 45, range: 100, cooldown: 1500, desc: "[Master] Attacks stun enemies in a wide area." },
-    { type: 'voidsniper', name: 'Void Sniper', tier: 3, damage: 120, range: 9999, cooldown: 2000, desc: "[Master] Prioritizes sniping the enemy closest to the gate regardless of distance." },
-    { type: 'thousandhand', name: 'Thousand-Hand Archer', tier: 3, damage: 40, range: 250, cooldown: 1500, desc: "[Master] Fires 6 arrows at once to attack up to 4 enemies." },
-    { type: 'absolutezero', name: 'Absolute Zero Mage', tier: 3, damage: 30, range: 140, cooldown: 1000, desc: "[Master] Instantly kills frozen enemies with less than 30% HP." },
-    { type: 'permafrost', name: 'Ice Maiden', tier: 3, damage: 25, range: 140, cooldown: 1000, desc: "[Master] Creates a blizzard that reduces enemy speed by 50% in the area." },
-    { type: 'hellfire', name: 'Hellfire Alchemist', tier: 3, damage: 20, range: 130, cooldown: 1000, desc: "[Master] Burning enemies explode on death, spreading the burn to nearby enemies." },
-    { type: 'phoenix', name: 'Phoenix Summoner', tier: 3, damage: 40, range: 180, cooldown: 2000, desc: "[Master] Summons a phoenix that leaves a trail of fire." },
-    { type: 'abyssal', name: 'Abyssal Killer', tier: 3, damage: 30, range: 100, cooldown: 300, desc: "[Master] Increases soul energy gain from kills by 1.5x." },
-    { type: 'spatial', name: 'Spatial Slasher', tier: 3, damage: 25, range: 120, cooldown: 300, desc: "[Master] Summons clones in empty slots to assassinate the most threatening enemies." },
-    { type: 'seer', name: 'Seeker of Truth', tier: 3, damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' damage and detects stealthed enemies." },
-    { type: 'commander', name: 'Battlefield Commander', tier: 3, damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' attack speed by 20%." },
-    { type: 'wraithlord', name: 'Wraith Lord', tier: 3, damage: 40, range: 130, cooldown: 1200, desc: "[Master] Reanimates killed enemies as ally skeleton soldiers." },
-    { type: 'cursedshaman', name: 'Cursed Shaman', tier: 3, damage: 20, range: 130, cooldown: 1500, desc: "[Master] Curses a wide area to permanently reduce enemies' maximum HP." },
-    { type: 'rampart', name: 'Holy Rampart', tier: 3, damage: 40, range: 120, cooldown: 1500, desc: "[Master] When placed near the gate, returns enemies reaching the gate to the start (up to 5 times)." },
-    { type: 'judgment', name: 'Knight of Judgment', tier: 3, damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack." },
+    { type: 'executor', name: 'Underworld Executor', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] 10% chance to return enemies near the gate to the starting point." },
+    { type: 'binder', name: 'Soul Binder', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links up to 5 enemies to share 50% of damage taken." },
+    { type: 'grandsealer', name: 'Grand Sealer', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Attaches large talismans to neutralize enemy special abilities (stealth, teleport, etc.)." },
+    { type: 'flamemaster', name: 'Fire Talisman Master', tier: 3, icon: '🌋', damage: 35, range: 130, cooldown: 1500, desc: "[Master] Leaves persistent flames where talismans explode to deal damage." },
+    { type: 'vajra', name: 'Vajrapani', tier: 3, icon: '🔱', damage: 50, range: 100, cooldown: 1200, desc: "[Master] Knocks enemies off-screen on critical hit. (Bosses are knocked back)" },
+    { type: 'saint', name: 'Saint of Vibration', tier: 3, icon: '🔔', damage: 45, range: 100, cooldown: 1500, desc: "[Master] Attacks stun enemies in a wide area." },
+    { type: 'voidsniper', name: 'Void Sniper', tier: 3, icon: '🎯', damage: 120, range: 9999, cooldown: 2000, desc: "[Master] Prioritizes sniping the enemy closest to the gate regardless of distance." },
+    { type: 'thousandhand', name: 'Thousand-Hand Archer', tier: 3, icon: '🍃', damage: 40, range: 250, cooldown: 1500, desc: "[Master] Fires 6 arrows at once to attack up to 4 enemies." },
+    { type: 'absolutezero', name: 'Absolute Zero Mage', tier: 3, icon: '💎', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Instantly kills frozen enemies with less than 30% HP." },
+    { type: 'permafrost', name: 'Ice Maiden', tier: 3, icon: '🌬️', damage: 25, range: 140, cooldown: 1000, desc: "[Master] Creates a blizzard that reduces enemy speed by 50% in the area." },
+    { type: 'hellfire', name: 'Hellfire Alchemist', tier: 3, icon: '🧪', damage: 20, range: 130, cooldown: 1000, desc: "[Master] Burning enemies explode on death, spreading the burn to nearby enemies." },
+    { type: 'phoenix', name: 'Phoenix Summoner', tier: 3, icon: '🐦‍🔥', damage: 40, range: 180, cooldown: 2000, desc: "[Master] Summons a phoenix that leaves a trail of fire." },
+    { type: 'abyssal', name: 'Abyssal Killer', tier: 3, icon: '🌑', damage: 30, range: 100, cooldown: 300, desc: "[Master] Increases soul energy gain from kills by 1.5x." },
+    { type: 'spatial', name: 'Spatial Slasher', tier: 3, icon: '🌌', damage: 25, range: 120, cooldown: 300, desc: "[Master] Summons clones in empty slots to assassinate the most threatening enemies." },
+    { type: 'seer', name: 'Seeker of Truth', tier: 3, icon: '🔭', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' damage and detects stealthed enemies." },
+    { type: 'commander', name: 'Battlefield Commander', tier: 3, icon: '🚩', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' attack speed by 20%." },
+    { type: 'wraithlord', name: 'Wraith Lord', tier: 3, icon: '🧟', damage: 40, range: 130, cooldown: 1200, desc: "[Master] Reanimates killed enemies as ally skeleton soldiers." },
+    { type: 'cursedshaman', name: 'Cursed Shaman', tier: 3, icon: '🎭', damage: 20, range: 130, cooldown: 1500, desc: "[Master] Curses a wide area to permanently reduce enemies' maximum HP." },
+    { type: 'rampart', name: 'Holy Rampart', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] When placed near the gate, returns enemies reaching the gate to the start (up to 5 times)." },
+    { type: 'judgment', name: 'Knight of Judgment', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack." },
     // Abyss Classes (Tier 4)
-    { type: 'warden', name: 'Warden of the Abyss', tier: 4, damage: 50, range: 200, cooldown: 15000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing DOT." },
-    { type: 'cursed_talisman', name: 'Cursed Sect', tier: 4, damage: 45, range: 150, cooldown: 1500, desc: "[Abyss] Attacks mark enemies. They explode on death for Max HP damage." },
-    { type: 'asura', name: 'Hell Crushing Asura', tier: 4, damage: 30, range: 120, cooldown: 500, desc: "[Abyss] 12 strikes to 2 targets. Knocks them back to start." },
-    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', tier: 4, damage: 150, range: 9999, cooldown: 3000, desc: "[Abyss] Infinite range piercing arrow that ricochets." },
-    { type: 'cocytus', name: 'Ruler of Cocytus', tier: 4, damage: 10, range: 200, cooldown: 30000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
-    { type: 'purgatory', name: 'Eternal Purgatory Fire', tier: 4, damage: 10, range: 150, cooldown: 1000, desc: "[Abyss] Turns its horizontal row into permanent hellfire (Slow & % DMG)." },
-    { type: 'reaper', name: 'Nightmare Reaper', tier: 4, damage: 0, range: 0, cooldown: 5000, desc: "[Abyss] Hidden. Every 5s, instakills highest HP non-boss ghost for 3x Soul Energy." },
-    { type: 'doom_guide', name: 'Guide of Doom', tier: 4, damage: 20, range: 150, cooldown: 1000, desc: "[Abyss] Inverts portal. Escaping ghosts give 90% Soul Energy instead of failing." },
-    { type: 'forsaken_king', name: 'King of the Forsaken', tier: 4, damage: 50, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts at stage start based on total Corrupted units." },
-    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals the portal until 30 ghosts gather." }
+    { type: 'warden', name: 'Warden of the Abyss', tier: 4, icon: '🗝️', damage: 50, range: 200, cooldown: 15000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing DOT." },
+    { type: 'cursed_talisman', name: 'Cursed Sect', tier: 4, icon: '⛩️', damage: 45, range: 150, cooldown: 1500, desc: "[Abyss] Attacks mark enemies. They explode on death for Max HP damage." },
+    { type: 'asura', name: 'Hell Crushing Asura', tier: 4, icon: '👹', damage: 30, range: 120, cooldown: 500, desc: "[Abyss] 12 strikes to 2 targets. Knocks them back to start." },
+    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', tier: 4, icon: '🌠', damage: 150, range: 9999, cooldown: 3000, desc: "[Abyss] Infinite range piercing arrow that ricochets." },
+    { type: 'cocytus', name: 'Ruler of Cocytus', tier: 4, icon: '⏳', damage: 10, range: 200, cooldown: 30000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
+    { type: 'purgatory', name: 'Eternal Purgatory Fire', tier: 4, icon: '🕯️', damage: 10, range: 150, cooldown: 1000, desc: "[Abyss] Turns its horizontal row into permanent hellfire (Slow & % DMG)." },
+    { type: 'reaper', name: 'Nightmare Reaper', tier: 4, icon: '☠️', damage: 0, range: 0, cooldown: 5000, desc: "[Abyss] Hidden. Every 5s, instakills highest HP non-boss ghost for 3x Soul Energy." },
+    { type: 'doom_guide', name: 'Guide of Doom', tier: 4, icon: '🛶', damage: 20, range: 150, cooldown: 1000, desc: "[Abyss] Inverts portal. Escaping ghosts give 90% Soul Energy instead of failing." },
+    { type: 'forsaken_king', name: 'King of the Forsaken', tier: 4, icon: '👑', damage: 50, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts at stage start based on total Corrupted units." },
+    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals the portal until 30 ghosts gather." }
 ];
 
 // Slot creation function
@@ -152,6 +152,7 @@ function summonTower(targetSlot) {
     const unit = document.createElement('div');
     unit.classList.add('unit', selectedUnit.type);
     unit.title = selectedUnit.name; // Show name on hover
+    unit.innerText = selectedUnit.icon; // Set icon
     unit.draggable = true; // Enable dragging
 
     // Unit drag start event
@@ -418,6 +419,7 @@ function performJobChange(unitElement) {
     unitElement.classList.remove('apprentice');
     unitElement.classList.add(newType.type);
     unitElement.title = newType.name;
+    unitElement.innerText = newType.icon; // Update icon
     
     // Update tower data
     const tower = towers.find(t => t.element === unitElement);
@@ -443,6 +445,7 @@ function performMasterJobChange(tower, newTypeStr) {
     // Replace class
     unitElement.className = `unit ${newType.type}`; // Overwrite existing classes
     unitElement.title = newType.name;
+    unitElement.innerText = newType.icon; // Update icon
 
     // Update data
     tower.data = newType;
@@ -475,6 +478,7 @@ function performAbyssJobChange(tower, newTypeStr) {
     // Replace class
     unitElement.className = `unit abyss ${newType.type}`; 
     unitElement.title = newType.name;
+    unitElement.innerText = newType.icon; // Update icon
 
     // Update data
     tower.data = newType;
@@ -653,7 +657,8 @@ function renderPromotionTree() {
     // Root: Apprentice
     const rootDiv = document.createElement('div');
     rootDiv.style.textAlign = 'center';
-    rootDiv.innerHTML = '<div class="unit-node tier1" style="display:inline-block;">Apprentice Exorcist</div>';
+    const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
+    rootDiv.innerHTML = `<div class="unit-node tier1" style="display:inline-block;">${apprenticeData.icon} Apprentice Exorcist</div>`;
     treeContainer.appendChild(rootDiv);
 
     const arrow = document.createElement('div');
@@ -675,7 +680,8 @@ function renderPromotionTree() {
         const tier2 = document.createElement('div');
         tier2.className = 'unit-node tier2';
         tier2.style.minWidth = '70px';
-        tier2.innerText = p.name;
+        const t2Data = unitTypes.find(u => u.type === p.type);
+        tier2.innerText = `${t2Data.icon} ${p.name}`;
         
         const mArrow = document.createElement('div');
         mArrow.innerText = '→';
@@ -693,7 +699,7 @@ function renderPromotionTree() {
             mNode.style.minWidth = '90px';
             mNode.style.fontSize = '8px';
             const mData = unitTypes.find(u => u.type === m);
-            mNode.innerText = mData ? mData.name : m;
+            mNode.innerText = mData ? `${mData.icon} ${mData.name}` : m;
             mastersDiv.appendChild(mNode);
         });
 
@@ -707,7 +713,7 @@ function renderPromotionTree() {
         abyssNode.style.minWidth = '90px';
         abyssNode.style.fontSize = '8px';
         const aData = unitTypes.find(u => u.type === p.abyss);
-        abyssNode.innerText = aData ? aData.name : p.abyss;
+        abyssNode.innerText = aData ? `${aData.icon} ${aData.name}` : p.abyss;
 
         pathRow.appendChild(tier2);
         pathRow.appendChild(mArrow);

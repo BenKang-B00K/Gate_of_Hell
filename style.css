@@ -500,18 +500,74 @@ body {
 
 /* 배치된 유닛 (시각적 표현) */
 .unit {
-    width: 70%;
-    height: 70%;
-    background-color: #00e5ff;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
-    box-shadow: 0 0 10px #00e5ff;
-    cursor: grab; /* 유닛 드래그 가능 표시 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
     z-index: 15;
+    font-size: 18px;
+    /* Text outline for the icon */
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
 }
 
 .unit:active {
     cursor: grabbing;
 }
+
+/* 유닛 클래스별 후광(Halo) 스타일 */
+.unit.apprentice { box-shadow: 0 0 10px #00e5ff; font-size: 16px; }
+.unit.chainer { box-shadow: 0 0 10px #9370db; }
+.unit.talisman { box-shadow: 0 0 10px #ffa500; }
+.unit.monk { box-shadow: 0 0 10px #a52a2a; }
+.unit.archer { box-shadow: 0 0 10px #228b22; }
+.unit.ice { box-shadow: 0 0 10px #00ffff; }
+.unit.fire { box-shadow: 0 0 10px #ff4500; }
+.unit.assassin { box-shadow: 0 0 10px #333; }
+.unit.tracker { box-shadow: 0 0 10px #ffffff; }
+.unit.necromancer { box-shadow: 0 0 10px #4b0082; }
+.unit.guardian { box-shadow: 0 0 15px #ffd700; }
+
+/* Master classes */
+.unit.executor { box-shadow: 0 0 15px #483d8b; border: 1px solid #fff; }
+.unit.binder { box-shadow: 0 0 15px #8b008b; border: 1px solid #fff; }
+.unit.grandsealer { box-shadow: 0 0 15px #191970; border: 1px solid #fff; }
+.unit.flamemaster { box-shadow: 0 0 15px #ff4500; border: 1px solid #fff; }
+.unit.vajra { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.saint { box-shadow: 0 0 15px #cd853f; border: 1px solid #fff; }
+.unit.voidsniper { box-shadow: 0 0 15px #00ff00; border: 1px solid #fff; }
+.unit.thousandhand { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.absolutezero { box-shadow: 0 0 15px #00ffff; border: 1px solid #fff; }
+.unit.permafrost { box-shadow: 0 0 15px #87ceeb; border: 1px solid #fff; }
+.unit.hellfire { box-shadow: 0 0 15px #ff4500; border: 1px solid #fff; }
+.unit.phoenix { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.abyssal { box-shadow: 0 0 15px #800080; border: 1px solid #fff; }
+.unit.spatial { box-shadow: 0 0 15px #c0c0c0; border: 1px solid #fff; }
+.unit.seer { box-shadow: 0 0 15px #e6e6fa; border: 1px solid #fff; }
+.unit.commander { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.wraithlord { box-shadow: 0 0 15px #00ff00; border: 1px solid #fff; }
+.unit.cursedshaman { box-shadow: 0 0 15px #708090; border: 1px solid #fff; }
+.unit.rampart { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.judgment { box-shadow: 0 0 15px #ff4500; border: 1px solid #fff; }
+
+/* Abyss classes */
+.unit.abyss { border: 2px solid #9400d3; }
+.unit.warden { box-shadow: 0 0 20px #8a2be2; }
+.unit.cursed_talisman { box-shadow: 0 0 20px #ff4500; }
+.unit.asura { box-shadow: 0 0 20px #b22222; }
+.unit.piercing_shadow { box-shadow: 0 0 20px #32cd32; }
+.unit.cocytus { box-shadow: 0 0 20px #00ffff; }
+.unit.purgatory { box-shadow: 0 0 20px #ff8c00; }
+.unit.reaper { box-shadow: 0 0 20px #4b0082; }
+.unit.doom_guide { box-shadow: 0 0 20px #9932cc; }
+.unit.forsaken_king { box-shadow: 0 0 20px #00ff00; }
+.unit.void_gatekeeper { box-shadow: 0 0 20px #aaaaaa; }
 
 /* 하단 UI 패널 (30%) */
 #bottom-panel {
@@ -525,41 +581,27 @@ body {
     z-index: 50;
 }
 
-/* 유닛 클래스별 스타일 */
-.unit.apprentice { background-color: #00e5ff; box-shadow: 0 0 10px #00e5ff; }
-.unit.chainer { background-color: #9370db; box-shadow: 0 0 10px #9370db; border: 2px solid #4b0082; }
-.unit.talisman { background-color: #ffa500; box-shadow: 0 0 10px #ffa500; border: 2px solid #8b4500; }
-.unit.monk { background-color: #a52a2a; box-shadow: 0 0 10px #a52a2a; border: 2px solid #800000; }
-.unit.archer { background-color: #228b22; box-shadow: 0 0 10px #228b22; border: 2px solid #006400; }
-.unit.ice { background-color: #00ffff; box-shadow: 0 0 10px #00ffff; border: 2px solid #008b8b; }
-.unit.fire { background-color: #ff4500; box-shadow: 0 0 10px #ff4500; border: 2px solid #8b0000; }
-.unit.assassin { background-color: #333333; box-shadow: 0 0 10px #000000; border: 2px solid #000000; }
-.unit.tracker { background-color: #ffffff; box-shadow: 0 0 10px #ffffff; border: 2px solid #cccccc; }
-.unit.necromancer { background-color: #4b0082; box-shadow: 0 0 10px #4b0082; border: 2px solid #800080; }
-.unit.guardian { background-color: #ffd700; box-shadow: 0 0 15px #ffd700; border: 2px solid #daa520; }
+/* Exorcism Records Overlay */
+#records-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-/* Master classes */
-.unit.executor { background-color: #483d8b; box-shadow: 0 0 20px #483d8b; border: 2px solid #fff; }
-.unit.binder { background-color: #8b008b; box-shadow: 0 0 20px #8b008b; border: 2px solid #fff; }
-.unit.grandsealer { background-color: #191970; box-shadow: 0 0 20px #191970; border: 2px solid #fff; }
-.unit.flamemaster { background-color: #ff4500; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff; }
-.unit.vajra { background-color: #b8860b; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
-.unit.saint { background-color: #8b4513; box-shadow: 0 0 20px #cd853f; border: 2px solid #fff; }
-.unit.voidsniper { background-color: #006400; box-shadow: 0 0 20px #00ff00; border: 2px solid #fff; }
-.unit.thousandhand { background-color: #32cd32; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
-.unit.absolutezero { background-color: #008b8b; box-shadow: 0 0 20px #00ffff; border: 2px solid #fff; }
-.unit.permafrost { background-color: #f0ffff; box-shadow: 0 0 20px #87ceeb; border: 2px solid #fff; }
-.unit.hellfire { background-color: #8b0000; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff; }
-.unit.phoenix { background-color: #ff8c00; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
-.unit.abyssal { background-color: #2e003e; box-shadow: 0 0 20px #800080; border: 2px solid #fff; }
-.unit.spatial { background-color: #1a1a1a; box-shadow: 0 0 20px #c0c0c0; border: 2px solid #fff; }
-.unit.clone { opacity: 0.6; filter: grayscale(100%); }
-.unit.seer { background-color: #9932cc; box-shadow: 0 0 20px #e6e6fa; border: 2px solid #fff; }
-.unit.commander { background-color: #dc143c; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
-.unit.wraithlord { background-color: #000000; box-shadow: 0 0 20px #00ff00; border: 2px solid #fff; }
-.unit.cursedshaman { background-color: #483d8b; box-shadow: 0 0 20px #708090; border: 2px solid #fff; }
-.unit.rampart { background-color: #f5f5f5; box-shadow: 0 0 20px #ffd700; border: 2px solid #fff; }
-.unit.judgment { background-color: #daa520; box-shadow: 0 0 20px #ff4500; border: 2px solid #fff; }
+#records-content {
+    width: 90%;
+    height: 80%;
+    background: #111;
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
 
 /* Exorcism Records Overlay */
 #records-overlay {
