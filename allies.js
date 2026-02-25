@@ -57,7 +57,14 @@ function createSlots(containerId, count) {
     const container = document.getElementById(containerId);
     container.innerHTML = ''; // Initialize slots (prevent duplicates)
     for (let i = 0; i < count; i++) {
-    const cell = document.createElement('div');
+        const cell = document.createElement('div');
+        
+        // Skip top 3 slots on each side (Row 1)
+        if (i < 3) {
+            container.appendChild(cell); // Empty div for the grid space
+            continue;
+        }
+
         cell.classList.add('card-slot');
         slots.push(cell);
         container.appendChild(cell);

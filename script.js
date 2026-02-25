@@ -428,12 +428,13 @@ function gameLoop() {
                 if (seDisplay) seDisplay.innerText = money;
             }
 
-            // [Master] Holy Rampart: Gate Defense (Indices 27~29, 57~59)
+            // [Master] Holy Rampart: Gate Defense (Updated indices for skipped top row)
             const rampart = towers.find(t => {
                 if (t.data.type !== 'rampart' || (t.charges || 0) <= 0) return false;
                 const idx = slots.indexOf(t.slotElement);
-                // Bottom left (27~29) or bottom right (57~59)
-                return (idx >= 27 && idx <= 29) || (idx >= 57 && idx <= 59);
+                // Bottom left (originally 27~29) -> now 24~26
+                // Bottom right (originally 57~59) -> now 51~53
+                return (idx >= 24 && idx <= 26) || (idx >= 51 && idx <= 53);
             });
 
             if (rampart) {

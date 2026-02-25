@@ -498,7 +498,7 @@ body {
     background: rgba(15, 15, 15, 0.9);
     border: 1px solid #222;
     border-radius: 4px;
-    padding: 6px;
+    padding: 4px 6px;
     margin-bottom: 6px;
     font-size: 9px;
     color: #eee;
@@ -511,6 +511,12 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+#unit-info::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 /* Remove old status bar */
