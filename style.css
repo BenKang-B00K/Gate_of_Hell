@@ -423,8 +423,8 @@ body {
 #se-gauge-fill {
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, #8b8000, #ffd700);
-    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+    background: linear-gradient(90deg, #008ba3, #00e5ff);
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
     transition: width 0.3s ease;
 }
 
@@ -670,3 +670,10 @@ body {
 .enemy.burning { filter: sepia(1) saturate(5) hue-rotate(-50deg); }
 .enemy.stunned { filter: grayscale(100%) brightness(1.5); animation: shake 0.2s infinite; }
 .enemy.cursed { filter: sepia(1) hue-rotate(250deg) saturate(3); border: 1px dashed #800080; }
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.05); }
+}

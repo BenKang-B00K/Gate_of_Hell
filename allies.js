@@ -161,13 +161,16 @@ function summonTower(targetSlot) {
         e.dataTransfer.effectAllowed = "move";
     });
 
-    // Unit click event (promotion menu)
+    // Unit click event (promotion menu & range display)
     unit.addEventListener('click', function(e) {
         e.stopPropagation();
         
         // Display info
         const tower = towers.find(t => t.element === this);
-        if (tower) showUnitInfo(tower);
+        if (tower) {
+            showUnitInfo(tower);
+            showRangeIndicator(tower);
+        }
     });
     
     targetSlot.appendChild(unit);
@@ -320,6 +323,41 @@ function showUnitInfo(tower) {
 
     // Auto-reset after 3 seconds
     infoResetTimeout = setTimeout(resetUnitInfo, 3000);
+}
+
+function showRangeIndicator(tower) {
+    // Remove existing indicators if any
+    const existing = document.querySelectorAll('.range-indicator');
+    existing.forEach(el => el.remove());
+
+    const range = tower.range + (tower.rangeBonus || 0);
+    if (range > 5000) return; // Don't show for infinite range
+
+    const rect = tower.slotElement.getBoundingClientRect();
+    const gameRect = gameContainer.getBoundingClientRect();
+    
+    const centerX = (rect.left + rect.width / 2) - gameRect.left;
+    const centerY = (rect.top + rect.height / 2) - gameRect.top;
+
+    const indicator = document.createElement('div');
+    indicator.className = 'range-indicator';
+    indicator.style.cssText = `
+        position: absolute;
+        left: ${centerX}px;
+        top: ${centerY}px;
+        width: ${range * 2}px;
+        height: ${range * 2}px;
+        border: 2px dashed rgba(0, 229, 255, 0.5);
+        background: rgba(0, 229, 255, 0.05);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 100;
+        animation: fadeInOut 1s forwards;
+    `;
+    
+    gameContainer.appendChild(indicator);
+    setTimeout(() => indicator.remove(), 1000);
 }
 
 function resetUnitInfo() {
