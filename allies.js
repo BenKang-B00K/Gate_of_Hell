@@ -734,13 +734,5 @@ function renderPromotionTree() {
         treeContainer.appendChild(pathRow);
     });
 
-        pathRow.appendChild(tier2);
-        pathRow.appendChild(mArrow);
-        pathRow.appendChild(mastersDiv);
-        pathRow.appendChild(aArrow);
-        pathRow.appendChild(abyssNode);
-        treeContainer.appendChild(pathRow);
-    });
-
     treeTab.appendChild(treeContainer);
 }
