@@ -823,6 +823,18 @@ body {
     cursor: help;
 }
 
+.unit-node.locked {
+    filter: grayscale(100%);
+    opacity: 0.3;
+    background: #000;
+    border-color: #333;
+    color: #444;
+}
+
+.unit-node.locked .custom-tooltip {
+    display: none !important;
+}
+
 .unit-node.tier1 { border-color: #00e5ff; }
 .unit-node.tier2 { border-color: #9370db; }
 .unit-node.tier3 { border-color: #ffd700; }

@@ -5,6 +5,13 @@ const jobChangeCost = 100; // Promotion cost
 const masterJobCost = 200; // Master promotion cost
 const maxTowers = 12; // Maximum summon count
 
+// Track unlocked classes for Records
+const unlockedUnits = new Set(['apprentice']);
+
+function recordUnlock(type) {
+    unlockedUnits.add(type);
+}
+
 // Ally unit data
 const unitTypes = [
     { type: 'apprentice', name: 'Apprentice Exorcist', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 1000, desc: "An apprentice with basic exorcism abilities." },
@@ -147,6 +154,7 @@ function summonTower(targetSlot) {
 
     // Summon always starts as Apprentice Exorcist
     const selectedUnit = unitTypes[0];
+    recordUnlock(selectedUnit.type);
 
     // Create unit visual element
     const unit = document.createElement('div');
@@ -420,6 +428,7 @@ function performJobChange(unitElement) {
     unitElement.classList.add(newType.type);
     unitElement.title = newType.name;
     unitElement.innerText = newType.icon; // Update icon
+    recordUnlock(newType.type);
     
     // Update tower data
     const tower = towers.find(t => t.element === unitElement);
@@ -446,6 +455,7 @@ function performMasterJobChange(tower, newTypeStr) {
     unitElement.className = `unit ${newType.type}`; // Overwrite existing classes
     unitElement.title = newType.name;
     unitElement.innerText = newType.icon; // Update icon
+    recordUnlock(newType.type);
 
     // Update data
     tower.data = newType;
@@ -479,6 +489,7 @@ function performAbyssJobChange(tower, newTypeStr) {
     unitElement.className = `unit abyss ${newType.type}`; 
     unitElement.title = newType.name;
     unitElement.innerText = newType.icon; // Update icon
+    recordUnlock(newType.type);
 
     // Update data
     tower.data = newType;
@@ -665,8 +676,9 @@ function renderPromotionTree() {
 
     paths.forEach(p => {
         const pathRow = document.createElement('div');
+        // Adjusted grid columns: wider columns for full names
         pathRow.style.display = 'grid';
-        pathRow.style.gridTemplateColumns = '50px 12px 60px 12px 85px 12px 85px';
+        pathRow.style.gridTemplateColumns = '70px 12px 85px 12px 105px 12px 105px';
         pathRow.style.alignItems = 'center';
         pathRow.style.justifyContent = 'center';
         pathRow.style.gap = '3px';
@@ -675,7 +687,8 @@ function renderPromotionTree() {
 
         // 1. Tier 1 (Apprentice)
         const t1Node = document.createElement('div');
-        t1Node.className = 'unit-node tier1';
+        const t1Unlocked = unlockedUnits.has('apprentice');
+        t1Node.className = `unit-node tier1 ${t1Unlocked ? '' : 'locked'}`;
         t1Node.style.position = 'relative';
         t1Node.style.fontSize = '7px';
         t1Node.style.padding = '2px 4px';
@@ -685,7 +698,7 @@ function renderPromotionTree() {
                 <strong style="color:#00e5ff; font-size: 9px;">${apprenticeData.name}</strong><br>
                 <span style="font-size: 8px;">${apprenticeData.desc}</span>
             </div>
-            ${apprenticeData.icon} Apr.`;
+            ${t1Unlocked ? apprenticeData.icon : '❓'} ${t1Unlocked ? 'Apprentice' : 'Locked'}`;
 
         // Arrow 1
         const arrow1 = document.createElement('div');
@@ -695,8 +708,9 @@ function renderPromotionTree() {
 
         // 2. Tier 2
         const t2Data = unitTypes.find(u => u.type === p.type);
+        const t2Unlocked = unlockedUnits.has(p.type);
         const t2Node = document.createElement('div');
-        t2Node.className = 'unit-node tier2';
+        t2Node.className = `unit-node tier2 ${t2Unlocked ? '' : 'locked'}`;
         t2Node.style.position = 'relative';
         t2Node.style.fontSize = '7px';
         t2Node.style.padding = '2px 4px';
@@ -706,7 +720,7 @@ function renderPromotionTree() {
                 <strong style="color:#9370db; font-size: 9px;">${t2Data.name}</strong><br>
                 <span style="font-size: 8px;">${t2Data.desc}</span>
             </div>
-            ${t2Data.icon} ${p.name.split(' ').pop()}`;
+            ${t2Unlocked ? t2Data.icon : '❓'} ${t2Unlocked ? p.name : 'Unknown'}`;
         
         // Arrow 2
         const arrow2 = document.createElement('div');
@@ -722,8 +736,9 @@ function renderPromotionTree() {
 
         p.masters.forEach(m => {
             const mData = unitTypes.find(u => u.type === m);
+            const mUnlocked = unlockedUnits.has(m);
             const mNode = document.createElement('div');
-            mNode.className = 'unit-node tier3';
+            mNode.className = `unit-node tier3 ${mUnlocked ? '' : 'locked'}`;
             mNode.style.fontSize = '7px';
             mNode.style.position = 'relative';
             mNode.style.padding = '2px 4px';
@@ -734,7 +749,7 @@ function renderPromotionTree() {
                         <strong style="color:#ffd700; font-size: 9px;">${mData.name}</strong><br>
                         <span style="font-size: 8px;">${mData.desc}</span>
                     </div>
-                    ${mData.icon} ${mData.name.split(' ').pop()}`;
+                    ${mUnlocked ? mData.icon : '❓'} ${mUnlocked ? mData.name : 'Master Locked'}`;
             } else {
                 mNode.innerText = m;
             }
@@ -749,8 +764,9 @@ function renderPromotionTree() {
 
         // 4. Tier 4 (Abyss)
         const aData = unitTypes.find(u => u.type === p.abyss);
+        const aUnlocked = unlockedUnits.has(p.abyss);
         const abyssNode = document.createElement('div');
-        abyssNode.className = 'unit-node tier4';
+        abyssNode.className = `unit-node tier4 ${aUnlocked ? '' : 'locked'}`;
         abyssNode.style.fontSize = '7px';
         abyssNode.style.position = 'relative';
         abyssNode.style.padding = '2px 4px';
@@ -761,7 +777,7 @@ function renderPromotionTree() {
                     <strong style="color:#9400d3; font-size: 9px;">${aData.name}</strong><br>
                     <span style="font-size: 8px;">${aData.desc}</span>
                 </div>
-                ${aData.icon} ${aData.name.split(' ').pop()}`;
+                ${aUnlocked ? aData.icon : '❓'} ${aUnlocked ? aData.name : 'Abyss Locked'}`;
         } else {
             abyssNode.innerText = p.abyss;
         }
