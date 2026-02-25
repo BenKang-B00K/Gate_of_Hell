@@ -33,6 +33,7 @@ let sealedGhostCount = 0;
 let portalEnergy = 0;
 const maxPortalEnergy = 2000;
 let draggedUnit = null; // Currently dragged unit
+window.encounteredEnemies = new Set();
 
 // --- Exorcism Records Data ---
 const killCounts = {}; // Track kills by type
@@ -261,6 +262,10 @@ function spawnBoss() {
     const frozenOverlay = document.getElementById('frozen-overlay');
     const data = bossData[stage] || { name: "Boss", type: "cerberus", hp: 3000, speed: 0.3, size: 60 };
     
+    if (typeof recordUnlock === 'function') {
+        recordUnlock(data.type, true);
+    }
+
     const enemyDiv = document.createElement('div');
     enemyDiv.classList.add('enemy', 'boss', data.type);
     enemyDiv.innerText = data.icon; 
@@ -369,6 +374,10 @@ function spawnEnemy() {
             selectedType = enemyType;
             break;
         }
+    }
+
+    if (typeof recordUnlock === 'function') {
+        recordUnlock(selectedType.type, true);
     }
 
     const enemyDiv = document.createElement('div');

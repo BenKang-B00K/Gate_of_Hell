@@ -8,17 +8,58 @@ const maxTowers = 12; // Maximum summon count
 // Track unlocked classes for Records
 const unlockedUnits = new Set(['apprentice']);
 
-function recordUnlock(type) {
+function recordUnlock(type, isEnemy = false) {
+    if (isEnemy) {
+        if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
+        if (window.encounteredEnemies.has(type)) return;
+        window.encounteredEnemies.add(type);
+
+        let enemyData = null;
+        // Search in categories
+        for (const cat in enemyCategories) {
+            const found = enemyCategories[cat].find(e => e.type === type);
+            if (found) { enemyData = found; break; }
+        }
+        // Search in bosses
+        if (!enemyData) {
+            for (const key in bossData) {
+                if (bossData[key].type === type) { enemyData = bossData[key]; break; }
+            }
+        }
+
+        if (enemyData) {
+            const modal = document.getElementById('unlock-modal');
+            const header = document.getElementById('unlock-header');
+            const icon = document.getElementById('unlock-icon');
+            const name = document.getElementById('unlock-name');
+            const desc = document.getElementById('unlock-desc');
+            
+            if (modal && header && icon && name && desc) {
+                header.innerText = "👻 NEW SPECTER ENCOUNTERED!";
+                header.style.color = "#ff4500";
+                icon.innerText = enemyData.icon;
+                name.innerText = enemyData.name || (enemyData.type.charAt(0).toUpperCase() + enemyData.type.slice(1));
+                desc.innerText = enemyData.desc || enemyData.lore;
+                modal.style.display = 'flex';
+                isPaused = true;
+            }
+        }
+        return;
+    }
+
     if (!unlockedUnits.has(type)) {
         unlockedUnits.add(type);
         const data = unitTypes.find(u => u.type === type);
         if (data && type !== 'apprentice') {
             const modal = document.getElementById('unlock-modal');
+            const header = document.getElementById('unlock-header');
             const icon = document.getElementById('unlock-icon');
             const name = document.getElementById('unlock-name');
             const desc = document.getElementById('unlock-desc');
             
-            if (modal && icon && name && desc) {
+            if (modal && header && icon && name && desc) {
+                header.innerText = "🆕 NEW CLASS UNLOCKED!";
+                header.style.color = "#ffd700";
                 icon.innerText = data.icon;
                 name.innerText = data.name;
                 desc.innerText = data.desc;
@@ -31,7 +72,7 @@ function recordUnlock(type) {
 
 // Ally unit data
 const unitTypes = [
-    { type: 'apprentice', name: 'Apprentice Exorcist', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 1000, desc: "An apprentice with basic exorcism abilities." },
+    { type: 'apprentice', name: 'Apprentice Exorcist', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 833, desc: "An apprentice with basic exorcism abilities." },
     { type: 'chainer', name: 'Soul Chainer', tier: 2, icon: '⛓️', damage: 15, range: 130, cooldown: 1000, desc: "Uses soul chains to slow down enemies.", upgrades: ['executor', 'binder'] },
     { type: 'talisman', name: 'Talismanist', tier: 2, icon: '📜', damage: 25, range: 120, cooldown: 1500, desc: "Throws exploding talismans to deal area damage.", upgrades: ['grandsealer', 'flamemaster'] },
     { type: 'monk', name: 'Mace Monk', tier: 2, icon: '⛪', damage: 40, range: 100, cooldown: 1200, desc: "Knocks back enemies with a powerful mace.", upgrades: ['vajra', 'saint'] },
