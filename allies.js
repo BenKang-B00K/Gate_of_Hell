@@ -621,7 +621,7 @@ function renderBestiary() {
         const item = document.createElement('div');
         item.className = 'bestiary-item';
         item.innerHTML = `
-            <div class="specter-tooltip">
+            <div class="custom-tooltip specter">
                 <strong style="color:#ffd700;">[TRAIT]</strong><br>
                 ${enemy.desc}
             </div>
@@ -667,7 +667,15 @@ function renderPromotionTree() {
     const rootDiv = document.createElement('div');
     rootDiv.style.textAlign = 'center';
     const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
-    rootDiv.innerHTML = `<div class="unit-node tier1" style="display:inline-block;" title="${apprenticeData.desc}\nATK: ${apprenticeData.damage} | CD: ${apprenticeData.cooldown/1000}s">${apprenticeData.icon} Apprentice Exorcist</div>`;
+    rootDiv.innerHTML = `
+        <div class="unit-node tier1" style="display:inline-block; position:relative;">
+            <div class="custom-tooltip">
+                <strong style="color:#00e5ff;">${apprenticeData.name}</strong><br>
+                ${apprenticeData.desc}<br>
+                <span style="color:#aaa;">ATK: ${apprenticeData.damage} | CD: ${apprenticeData.cooldown/1000}s</span>
+            </div>
+            ${apprenticeData.icon} Apprentice Exorcist
+        </div>`;
     treeContainer.appendChild(rootDiv);
 
     const arrow = document.createElement('div');
@@ -686,12 +694,18 @@ function renderPromotionTree() {
         pathRow.style.paddingBottom = '8px';
 
         // Tier 2
+        const t2Data = unitTypes.find(u => u.type === p.type);
         const tier2 = document.createElement('div');
         tier2.className = 'unit-node tier2';
         tier2.style.minWidth = '70px';
-        const t2Data = unitTypes.find(u => u.type === p.type);
-        tier2.innerText = `${t2Data.icon} ${p.name}`;
-        tier2.title = `${t2Data.desc}\nATK: ${t2Data.damage} | CD: ${t2Data.cooldown/1000}s`;
+        tier2.style.position = 'relative';
+        tier2.innerHTML = `
+            <div class="custom-tooltip">
+                <strong style="color:#9370db;">${t2Data.name}</strong><br>
+                ${t2Data.desc}<br>
+                <span style="color:#aaa;">ATK: ${t2Data.damage} | CD: ${t2Data.cooldown/1000}s</span>
+            </div>
+            ${t2Data.icon} ${p.name}`;
         
         const mArrow = document.createElement('div');
         mArrow.innerText = '→';
@@ -704,14 +718,20 @@ function renderPromotionTree() {
         mastersDiv.style.gap = '3px';
 
         p.masters.forEach(m => {
+            const mData = unitTypes.find(u => u.type === m);
             const mNode = document.createElement('div');
             mNode.className = 'unit-node tier3';
             mNode.style.minWidth = '90px';
             mNode.style.fontSize = '8px';
-            const mData = unitTypes.find(u => u.type === m);
+            mNode.style.position = 'relative';
             if (mData) {
-                mNode.innerText = `${mData.icon} ${mData.name}`;
-                mNode.title = `${mData.desc}\nATK: ${mData.damage} | CD: ${mData.cooldown/1000}s`;
+                mNode.innerHTML = `
+                    <div class="custom-tooltip">
+                        <strong style="color:#ffd700;">${mData.name}</strong><br>
+                        ${mData.desc}<br>
+                        <span style="color:#aaa;">ATK: ${mData.damage} | CD: ${mData.cooldown/1000}s</span>
+                    </div>
+                    ${mData.icon} ${mData.name}`;
             } else {
                 mNode.innerText = m;
             }
@@ -723,14 +743,20 @@ function renderPromotionTree() {
         aArrow.style.fontSize = '10px';
 
         // Tier 4 (Abyss)
+        const aData = unitTypes.find(u => u.type === p.abyss);
         const abyssNode = document.createElement('div');
         abyssNode.className = 'unit-node tier4';
         abyssNode.style.minWidth = '90px';
         abyssNode.style.fontSize = '8px';
-        const aData = unitTypes.find(u => u.type === p.abyss);
+        abyssNode.style.position = 'relative';
         if (aData) {
-            abyssNode.innerText = `${aData.icon} ${aData.name}`;
-            abyssNode.title = `${aData.desc}\nATK: ${aData.damage} | CD: ${aData.cooldown/1000}s`;
+            abyssNode.innerHTML = `
+                <div class="custom-tooltip" style="border-color:#9400d3;">
+                    <strong style="color:#9400d3;">${aData.name}</strong><br>
+                    ${aData.desc}<br>
+                    <span style="color:#aaa;">ATK: ${aData.damage} | CD: ${aData.cooldown/1000}s</span>
+                </div>
+                ${aData.icon} ${aData.name}`;
         } else {
             abyssNode.innerText = p.abyss;
         }
