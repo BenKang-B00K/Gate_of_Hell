@@ -118,7 +118,11 @@ function initStage() {
     if (isBossStage) {
         totalStageEnemies = 999; 
         const bossName = bossData[stage] ? bossData[stage].name : "Unknown Boss";
-        alert(`⚠️ Warning! Boss [${bossName}] appeared! ⚠️`);
+        
+        const tutorialToggle = document.getElementById('tutorial-toggle');
+        if (!tutorialToggle || !tutorialToggle.checked) {
+            alert(`⚠️ Warning! Boss [${bossName}] appeared! ⚠️`);
+        }
     }
     else if (stage <= 10) {
         totalStageEnemies = Math.floor(Math.random() * 31) + 20;
@@ -325,7 +329,11 @@ function spawnBoss() {
                     const target = activeTowers[0]; 
                     target.isFrozenTomb = true;
                     target.element.classList.add('frozen-tomb');
-                    alert("🥶 Lucifer's [Absolute Zero]! An exorcist has been permanently frozen!");
+                    
+                    const tutorialToggle = document.getElementById('tutorial-toggle');
+                    if (!tutorialToggle || !tutorialToggle.checked) {
+                        alert("🥶 Lucifer's [Absolute Zero]! An exorcist has been permanently frozen!");
+                    }
                 }
             }
         }, 3000);
@@ -629,15 +637,18 @@ function handleEnemyDeath(target, killer = null) {
         
         // Boss death rewards
         if (target.isBoss) {
+            const tutorialToggle = document.getElementById('tutorial-toggle');
+            const showMsg = !tutorialToggle || !tutorialToggle.checked;
+
             if (target.data.type === 'cerberus') {
                 damageMultiplier += target.data.rewardEffect;
-                alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n⚔️ Ally attack power increased by 10%! (Current Multiplier: ${damageMultiplier.toFixed(1)}x)`);
+                if (showMsg) alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n⚔️ Ally attack power increased by 10%! (Current Multiplier: ${damageMultiplier.toFixed(1)}x)`);
             } else if (target.data.type === 'charon') {
                 globalSpeedFactor -= target.data.rewardEffect;
-                alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n🐢 Enemy movement speed reduced by 15%! (Current Multiplier: ${globalSpeedFactor.toFixed(2)}x)`);
+                if (showMsg) alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n🐢 Enemy movement speed reduced by 15%! (Current Multiplier: ${globalSpeedFactor.toFixed(2)}x)`);
             } else if (target.data.type === 'beelzebub') {
                 treasureChance += target.data.rewardEffect;
-                alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n💰 Treasure ghost spawn rate increased! (Current: ${(treasureChance * 100).toFixed(0)}%)`);
+                if (showMsg) alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n💰 Treasure ghost spawn rate increased! (Current: ${(treasureChance * 100).toFixed(0)}%)`);
             } else if (target.data.type === 'lucifer') {
                 critChance += target.data.rewardEffect;
                 const frozenOverlay = document.getElementById('frozen-overlay');
@@ -648,7 +659,7 @@ function handleEnemyDeath(target, killer = null) {
                         t.element.classList.remove('frozen-tomb');
                     }
                 });
-                alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n⚡ Ally critical hit chance increased by 10%! (Current: ${(critChance * 100).toFixed(0)}%)`);
+                if (showMsg) alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n⚡ Ally critical hit chance increased by 10%! (Current: ${(critChance * 100).toFixed(0)}%)`);
             }
             
             bossInstance = null;
@@ -659,7 +670,11 @@ function handleEnemyDeath(target, killer = null) {
             if (corruptedShards < 99) {
                 corruptedShards += 1;
                 updateGauges();
-                alert("💠 Obtained a [Corrupted Shard]!");
+                
+                const tutorialToggle = document.getElementById('tutorial-toggle');
+                if (!tutorialToggle || !tutorialToggle.checked) {
+                    alert("💠 Obtained a [Corrupted Shard]!");
+                }
             }
         }
 

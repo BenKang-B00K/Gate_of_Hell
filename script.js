@@ -479,8 +479,17 @@ function gameLoop() {
                 portalEnergy = maxPortalEnergy;
                 if (typeof updateGauges === 'function') updateGauges();
                 isPaused = true;
-                alert("Game Over! The portal has been overwhelmed by spirits.");
-                location.reload(); 
+                
+                // Show Spooky Game Over
+                const goOverlay = document.getElementById('game-over-overlay');
+                const finalStageText = document.getElementById('final-stage');
+                if (goOverlay) {
+                    if (finalStageText) finalStageText.innerText = stage;
+                    goOverlay.style.display = 'flex';
+                } else {
+                    alert("Game Over! The portal has been overwhelmed by spirits.");
+                    location.reload(); 
+                }
                 return;
             }
             if (typeof updateGauges === 'function') updateGauges();

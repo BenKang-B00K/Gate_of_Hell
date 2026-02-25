@@ -15,6 +15,15 @@
             <div id="enemy-counter">Lingering Souls: <span id="enemies-left">0</span></div>
         </div>
 
+        <!-- Tutorial Toggle -->
+        <div id="tutorial-toggle-container">
+            <label class="switch">
+                <input type="checkbox" id="tutorial-toggle" checked>
+                <span class="slider round"></span>
+            </label>
+            <span id="tutorial-label">TUTORIAL</span>
+        </div>
+
         <div id="frozen-overlay"></div>
         <div id="game-layout">
             <div id="left-slots" class="slot-area"></div>
@@ -89,6 +98,16 @@
 
                 <div id="unit-info">Select a unit to view information.</div>
             </div>
+        </div>
+    </div>
+
+    <!-- Spooky Game Over Overlay -->
+    <div id="game-over-overlay" style="display: none;">
+        <div id="game-over-content">
+            <h1 id="game-over-title">YOU HAVE BEEN CONSUMED</h1>
+            <p id="game-over-msg">The abyss claims another soul... The gate has fallen, and eternal darkness awaits.</p>
+            <div id="final-stats">Last Stage Reached: <span id="final-stage">1</span></div>
+            <button id="retry-btn">SUCCUMB TO THE VOID (RETRY)</button>
         </div>
     </div>
 
