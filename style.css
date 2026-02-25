@@ -683,11 +683,11 @@ body {
 #bestiary-tab {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 10px;
-    padding-top: 45px; /* Space for top-row tooltips */
+    padding-top: 60px; /* Increased space for top-row tooltips */
 }
 
 .tree-main-container {
-    padding-top: 45px; /* Space for top-row tooltips */
+    padding-top: 60px; /* Increased space for top-row tooltips */
 }
 
 .bestiary-item {

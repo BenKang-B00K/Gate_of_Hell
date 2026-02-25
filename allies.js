@@ -622,8 +622,10 @@ function renderBestiary() {
         item.className = 'bestiary-item';
         item.innerHTML = `
             <div class="custom-tooltip specter">
-                <strong style="color:#ffd700;">[TRAIT]</strong><br>
-                ${enemy.desc}
+                <strong style="color:#ffd700;">[Unique Trait]</strong><br>
+                ${enemy.desc}<br>
+                <strong style="color:#ff4500; margin-top:4px; display:inline-block;">[Effectiveness]</strong><br>
+                <span style="color:#ddd;">${enemy.effectiveness || 'No specific weakness.'}</span>
             </div>
             <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${enemy.icon}</div>
             <div class="bestiary-info">
@@ -638,7 +640,7 @@ function renderBestiary() {
 
 function renderPromotionTree() {
     const treeTab = document.getElementById('tree-tab');
-    treeTab.innerHTML = '<h3 style="color:#ffd700; font-size:14px; text-align:center; margin-bottom:20px;">Unit Evolution Path</h3>';
+    treeTab.innerHTML = '<h3 style="color:#ffd700; font-size:14px; text-align:center; margin-bottom:20px;">Ascendency Evolution Path</h3>';
 
     // Clear any leftover content
     const existingContainer = treeTab.querySelector('.tree-main-container');

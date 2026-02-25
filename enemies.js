@@ -71,27 +71,27 @@ function getCorruptionMultipliers() {
 // Enemy data (Categorized)
 const enemyCategories = {
     basic: [
-        { type: 'normal', icon: '👻', speed: 1.5, hp: 100, defense: 0, probability: 0.6, desc: "A common soul lingering in the abyss. No special traits." }, 
-        { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.2, desc: "A soul hardened by sin. High HP and moderate defense." },  
-        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.2, desc: "An agile shadow that rushes toward the portal at high speed." }   
+        { type: 'normal', icon: '👻', speed: 1.5, hp: 100, defense: 0, probability: 0.6, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks." }, 
+        { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.2, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins." },  
+        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.2, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy." }   
     ],
     pattern: [
-        { type: 'greedy', icon: '💰', speed: 1.2, hp: 150, defense: 5, probability: 0.34, desc: "Forcibly relocates the attacking unit to a random slot on hit." }, 
-        { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.33, desc: "Occasionally phases out of existence, becoming immune to attacks." }, 
-        { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.33, desc: "Backsteps and evades when an exorcist first targets them." }  
+        { type: 'greedy', icon: '💰', speed: 1.2, hp: 150, defense: 5, probability: 0.34, desc: "Forcibly relocates the attacking unit to a random slot on hit.", effectiveness: "High range snipers to minimize movement." }, 
+        { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.33, desc: "Occasionally phases out of existence, becoming immune to attacks.", effectiveness: "Truth-seeking seers or rapid-fire units." }, 
+        { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.33, desc: "Backsteps and evades when an exorcist first targets them.", effectiveness: "Area damage or multiple hunters." }  
     ],
     enhanced: [
-        { type: 'boar', icon: '🐗', speed: 0.5, hp: 250, defense: 8, probability: 0.34, desc: "Accelerates exponentially as it nears the portal." }, 
-        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.33, desc: "Emits a freezing aura that boosts the speed of nearby specters." }, 
-        { type: 'lightspeed', icon: '✨', speed: 4.0, hp: 60, defense: 0, probability: 0.33, desc: "Moves at incredible speed and ignores speed-boosting auras." } 
+        { type: 'boar', icon: '🐗', speed: 0.5, hp: 250, defense: 8, probability: 0.34, desc: "Accelerates exponentially as it nears the portal.", effectiveness: "Knockback and heavy stuns near the gate." }, 
+        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.33, desc: "Emits a freezing aura that boosts the speed of nearby specters.", effectiveness: "Priority targeting and fire energy." }, 
+        { type: 'lightspeed', icon: '✨', speed: 4.0, hp: 60, defense: 0, probability: 0.33, desc: "Moves at incredible speed and ignores speed-boosting auras.", effectiveness: "Instant-kill guardians or void snipers." } 
     ],
     armoured: [
-        { type: 'heavy', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8, desc: "An massive behemoth with high defense and knockback resistance." }, 
-        { type: 'lava', icon: '🌋', speed: 1.3, hp: 200, defense: 15, probability: 0.33, desc: "Cleanses freeze effects and leaps forward when hit by cold energy." }, 
-        { type: 'burning', icon: '💢', speed: 1.0, hp: 350, defense: 10, probability: 0.33, desc: "Consumes its own vengeful energy to heal every time it is struck." } 
+        { type: 'heavy', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8, desc: "An massive behemoth with high defense and knockback resistance.", effectiveness: "Soul link shared damage or high-penetration strikes." }, 
+        { type: 'lava', icon: '🌋', speed: 1.3, hp: 200, defense: 15, probability: 0.33, desc: "Cleanses freeze effects and leaps forward when hit by cold energy.", effectiveness: "Avoid frost; use standard magic or fire." }, 
+        { type: 'burning', icon: '💢', speed: 1.0, hp: 350, defense: 10, probability: 0.33, desc: "Consumes its own vengeful energy to heal every time it is struck.", effectiveness: "High single-hit damage to overwhelm recovery." } 
     ],
     treasure: [
-        { type: 'gold', icon: '💎', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300, desc: "A rare spirit that grants a massive amount of Soul Energy upon defeat." } 
+        { type: 'gold', icon: '💎', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300, desc: "A rare spirit that grants a massive amount of Soul Energy upon defeat.", effectiveness: "Rapid-fire assassins to bypass high defense." } 
     ]
 };
 
