@@ -538,23 +538,23 @@ body {
 }
 
 .promote-btn {
-    top: -4px;
-    left: -4px;
+    top: -6px;
+    left: -6px; /* 11 o'clock */
     border-color: #00ff00;
     color: #00ff00;
 }
 
 .promote-btn-right {
-    top: -4px;
-    right: -4px;
+    top: -6px;
+    right: -6px; /* 1 o'clock */
     border-color: #ffd700;
     color: #ffd700;
 }
 
 .corrupt-btn {
-    top: 50%;
-    left: -6px;
-    transform: translateY(-50%);
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%); /* 6 o'clock */
     border-color: #ff4500;
     color: #ff4500;
 }

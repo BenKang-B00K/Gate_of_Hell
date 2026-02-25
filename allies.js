@@ -294,7 +294,8 @@ function updateUnitOverlayButtons(tower) {
         corruptBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const shardCount = data.tier;
-            if (confirm(`Do you want to corrupt this unit?\n\nRewards upon defeat:\n💰 ${Math.floor(tower.spentSE * 0.7)} SE\n💠 ${shardCount} Corrupted Shard(s)`)) {
+            const refund = Math.floor(tower.spentSE * 0.7);
+            if (confirm(`Do you want to corrupt this unit?\n\nImmediate Gain:\n💰 ${refund} SE (70% Refund)\n\nUpon defeat:\n💠 ${shardCount} Corrupted Shard(s)`)) {
                 sellTower(tower);
                 resetUnitInfo();
             }
