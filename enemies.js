@@ -244,6 +244,14 @@ function spawnBoss() {
     enemyDiv.classList.add('enemy', 'boss', data.type);
     enemyDiv.innerText = data.icon; 
     
+    // HP Bar
+    const hpBg = document.createElement('div');
+    hpBg.className = 'hp-bar-bg';
+    const hpFill = document.createElement('div');
+    hpFill.className = 'hp-bar-fill';
+    hpBg.appendChild(hpFill);
+    enemyDiv.appendChild(hpBg);
+    
     // Enemy click event
     enemyDiv.addEventListener('mousedown', (e) => {
         e.stopPropagation();
@@ -260,6 +268,7 @@ function spawnBoss() {
 
     const boss = {
         element: enemyDiv,
+        hpFill: hpFill,
         initialX: 50,
         x: 50,
         y: 0,
@@ -346,6 +355,14 @@ function spawnEnemy() {
     enemyDiv.classList.add(selectedType.type);
     enemyDiv.innerText = selectedType.icon;
     
+    // HP Bar
+    const hpBg = document.createElement('div');
+    hpBg.className = 'hp-bar-bg';
+    const hpFill = document.createElement('div');
+    hpFill.className = 'hp-bar-fill';
+    hpBg.appendChild(hpFill);
+    enemyDiv.appendChild(hpBg);
+
     // Enemy click event
     enemyDiv.addEventListener('mousedown', (e) => {
         e.stopPropagation();
@@ -363,6 +380,7 @@ function spawnEnemy() {
 
     const enemy = {
         element: enemyDiv,
+        hpFill: hpFill,
         initialX: randomX,
         x: randomX,
         y: 0,

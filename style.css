@@ -151,6 +151,34 @@ body {
     border-radius: 50%; /* For the halo effect */
 }
 
+/* 유령 체력바 */
+.hp-bar-bg {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #000;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.hp-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: #ff4500;
+    border-radius: 1px;
+    transition: width 0.2s ease;
+}
+
+.enemy.boss .hp-bar-bg {
+    width: 40px;
+    height: 5px;
+    top: -15px;
+}
+
 /* 유령별 후광(Halo) 및 스타일 */
 .enemy.normal { font-size: 16px; box-shadow: 0 0 12px rgba(255, 85, 85, 0.8); }
 .enemy.tank { font-size: 22px; box-shadow: 0 0 15px rgba(138, 43, 226, 0.8); }

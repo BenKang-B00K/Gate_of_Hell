@@ -19,6 +19,12 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
 
     target.hp -= amount;
 
+    // Update HP Bar
+    if (target.hpFill) {
+        const hpPercent = Math.max(0, (target.hp / target.maxHp) * 100);
+        target.hpFill.style.width = `${hpPercent}%`;
+    }
+
     // [Master] Soul Binder: Shared damage
     // Shared damage (isShared=true) is not shared again (to prevent infinite loops)
     if (!isShared && target.linkId && target.linkEndTime > Date.now()) {
