@@ -30,6 +30,8 @@ let treasureChance = 0.0033;
 let isTimeFrozen = false;
 let timeFreezeEndTime = 0;
 let sealedGhostCount = 0;
+let portalEnergy = 0;
+const maxPortalEnergy = 2000;
 let draggedUnit = null; // Currently dragged unit
 
 // --- Exorcism Records Data ---
@@ -159,7 +161,7 @@ function initStage() {
     }, 1000);
 }
 
-// Update All Gauges (Soul Energy & Corrupted Shards)
+// Update All Gauges (Soul Energy, Portal Energy, & Corrupted Shards)
 function updateGauges() {
     // Shard Gauge
     const shardFill = document.getElementById('shard-gauge-fill');
@@ -177,6 +179,15 @@ function updateGauges() {
         else if (corruptedShards >= 21) desc = "🌑 +1.5% HP/shard, +0.01% SPD/shard";
         else if (corruptedShards >= 1) desc = "☁️ +1% HP/shard";
         debuffDesc.innerText = `Corruption Level: ${desc}`;
+    }
+
+    // Portal Energy Gauge
+    const portalFill = document.getElementById('portal-gauge-fill');
+    const portalText = document.getElementById('portal-display-text');
+    if (portalFill && portalText) {
+        const portalPercent = Math.min((portalEnergy / maxPortalEnergy) * 100, 100);
+        portalFill.style.width = `${portalPercent}%`;
+        portalText.innerText = `${Math.floor(portalEnergy)} / ${maxPortalEnergy}`;
     }
 
     // Soul Energy Gauge

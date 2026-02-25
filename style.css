@@ -344,6 +344,10 @@ body {
     color: #00e5ff; 
     text-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
 } /* SE neon color */
+.gauge-half:nth-child(2) .gauge-header span:last-child { 
+    color: #9400d3; 
+    text-shadow: 0 0 8px rgba(148, 0, 211, 0.8);
+} /* Portal color */
 .gauge-half:last-child .gauge-header span:last-child { color: #ff4500; } /* Shards color */
 
 .gauge-bar-bg {
@@ -361,6 +365,14 @@ body {
     height: 100%;
     background: linear-gradient(90deg, #008ba3, #00e5ff);
     box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+    transition: width 0.3s ease;
+}
+
+#portal-gauge-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #4b0082, #9400d3);
+    box-shadow: 0 0 8px rgba(148, 0, 211, 0.6);
     transition: width 0.3s ease;
 }
 

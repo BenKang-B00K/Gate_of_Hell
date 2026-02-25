@@ -472,6 +472,18 @@ function gameLoop() {
                 continue;
             }
 
+            // Portal Energy Accumulation
+            portalEnergy += enemy.hp;
+            if (portalEnergy >= maxPortalEnergy) {
+                portalEnergy = maxPortalEnergy;
+                if (typeof updateGauges === 'function') updateGauges();
+                isPaused = true;
+                alert("Game Over! The portal has been overwhelmed by spirits.");
+                location.reload(); 
+                return;
+            }
+            if (typeof updateGauges === 'function') updateGauges();
+
             enemy.element.remove();
             enemies.splice(i, 1);
             if (typeof updateStageInfo === 'function') {
