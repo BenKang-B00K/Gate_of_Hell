@@ -195,9 +195,9 @@ function initStage() {
     currentStageSpawned = 0;
     updateStageInfo();
 
-    // Stage start delay (5s)
+    // Stage start delay (5s for stage 1, 3s for others)
     isStageStarting = true;
-    let countdown = 5;
+    let countdown = (stage === 1) ? 5 : 3;
     const timerElement = document.getElementById('start-timer');
     timerElement.style.display = 'block';
     timerElement.innerText = countdown;
@@ -240,6 +240,14 @@ function updateGauges() {
         const shardPercent = (corruptedShards / 99) * 100;
         shardFill.style.width = `${shardPercent}%`;
         shardText.innerText = `${corruptedShards} / 99`;
+
+        const { hpStageMult, speedStageMult } = getStageMultipliers();
+        const debuffHeader = document.getElementById('stage-debuff-header');
+        if (debuffHeader) {
+            const hpPct = Math.round((hpStageMult - 1) * 100);
+            const spdPct = Math.round((speedStageMult - 1) * 100);
+            debuffHeader.innerText = `Stage Debuff (HP +${hpPct}%, SPD +${spdPct}%)`;
+        }
 
         let desc = "Normal";
         if (corruptedShards >= 50) desc = "⚠️ 70% HP, +2% SPD (FATAL)";

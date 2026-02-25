@@ -67,7 +67,7 @@ function recordUnlock(type, isEnemy = false) {
                 icon.innerText = enemyData.icon;
                 const hpVal = Math.floor(enemyData.hp || (enemyData.type === 'normal' ? 110 : 0));
                 const fullName = enemyData.name || enemyNames[enemyData.type] || (enemyData.type.charAt(0).toUpperCase() + enemyData.type.slice(1));
-                name.innerHTML = `${fullName} <span style="font-size:10px; color:#aaa;">(HP: ${hpVal})</span>`;
+                name.innerHTML = `${fullName}<br><span style="font-size:10px; color:#aaa;">(HP: ${hpVal})</span>`;
                 desc.innerText = enemyData.desc || enemyData.lore;
                 modal.style.display = 'flex';
                 isPaused = true;
@@ -105,7 +105,7 @@ function recordUnlock(type, isEnemy = false) {
 
 // Ally unit data
 const unitTypes = [
-    { type: 'apprentice', name: 'Apprentice Exorcist', role: 'Attack', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 833, desc: "An apprentice with basic exorcism abilities." },
+    { type: 'apprentice', name: 'Apprentice Exorcist', role: 'Basic', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 833, desc: "An apprentice with basic exorcism abilities." },
     { type: 'chainer', name: 'Soul Chainer', role: 'Support', tier: 2, icon: '⛓️', damage: 15, range: 130, cooldown: 1000, desc: "Uses soul chains to slow down enemies.", upgrades: ['executor', 'binder'] },
     { type: 'talisman', name: 'Talismanist', role: 'Attack', tier: 2, icon: '📜', damage: 25, range: 120, cooldown: 1500, desc: "Throws exploding talismans to deal area damage.", upgrades: ['grandsealer', 'flamemaster'] },
     { type: 'monk', name: 'Mace Monk', role: 'Support', tier: 2, icon: '⛪', damage: 40, range: 100, cooldown: 1200, desc: "Knocks back enemies with a powerful mace.", upgrades: ['vajra', 'saint'] },
@@ -391,8 +391,9 @@ function showUnitInfo(tower) {
     let titleHtml = `<div style="color: #ffd700; font-weight: bold; font-size: 13px; margin-bottom: 2px;">${data.name}</div>`;
     
     // Position/Role Tag
-    let roleColor = '#ff4500'; // Default Offense
-    if (data.role === 'Support') roleColor = '#00e5ff';
+    let roleColor = '#ff4500'; // Default Attack
+    if (data.role === 'Basic') roleColor = '#00ff00'; // Green for basic
+    else if (data.role === 'Support') roleColor = '#00e5ff';
     else if (data.role === 'Special') roleColor = '#ffd700';
     
     let roleHtml = `<div style="display:inline-block; background:${roleColor}; color:#000; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">${data.role}</div>`;
@@ -1012,12 +1013,20 @@ function renderBestiary() {
         'bringer_of_doom': 'Bringer of Doom'
     };
 
-    // 1. Render Normal Specters
-    const normalHeader = document.createElement('h3');
-    normalHeader.innerText = "Normal Specters";
-    normalHeader.style.cssText = "grid-column: 1 / -1; color: #00e5ff; border-bottom: 1px solid #333; margin: 10px 0; font-size: 14px;";
-    bestiaryTab.appendChild(normalHeader);
+    // 1. Render Basic Souls Section
+    const basicHeader = document.createElement('h3');
+    basicHeader.innerText = "Basic Souls";
+    basicHeader.style.cssText = "grid-column: 1 / -1; color: #00e5ff; border-bottom: 1px solid #333; margin: 10px 0; font-size: 14px;";
+    bestiaryTab.appendChild(basicHeader);
 
+    // Filter and render Basic category
+    const basicTypes = ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'];
+    
+    // 2. Render Specialized Wraiths Section
+    const specHeader = document.createElement('h3');
+    specHeader.innerText = "Specialized Wraiths";
+    specHeader.style.cssText = "grid-column: 1 / -1; color: #ff00ff; border-bottom: 1px solid #333; margin: 20px 0 10px 0; font-size: 14px;";
+    
     const allEnemyTypes = [];
     Object.keys(enemyCategories).forEach(cat => {
         enemyCategories[cat].forEach(e => {
@@ -1025,14 +1034,14 @@ function renderBestiary() {
         });
     });
 
-    allEnemyTypes.forEach(enemy => {
+    // Helper to render items
+    const renderItem = (enemy) => {
         const kills = killCounts[enemy.type] || 0;
         const bonus = getBestiaryBonus(enemy.type);
         const bonusText = bonus > 1 ? `DMG +${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus';
         const dispName = enemyNames[enemy.type] || enemy.type.toUpperCase();
         
-        // Calculate effective spawn rate based on stage
-        let catProb = 0.96; // basic
+        let catProb = 0.96;
         if (stage >= 51) {
             if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.30;
             else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.23;
@@ -1065,7 +1074,7 @@ function renderBestiary() {
             else if (enemy.type === 'gold') catProb = treasureChance;
         }
 
-        const effectiveRate = (catProb * enemy.probability * 100).toFixed(1);
+        const effectiveRate = (catProb * (enemy.probability || 0) * 100).toFixed(1);
 
         const item = document.createElement('div');
         item.className = 'bestiary-item';
@@ -1085,9 +1094,16 @@ function renderBestiary() {
             </div>
         `;
         bestiaryTab.appendChild(item);
-    });
+    };
 
-    // 2. Render Bosses Section
+    // Render Basic Section
+    allEnemyTypes.filter(e => basicTypes.includes(e.type)).forEach(renderItem);
+
+    // Render Specialized Section
+    bestiaryTab.appendChild(specHeader);
+    allEnemyTypes.filter(e => !basicTypes.includes(e.type)).forEach(renderItem);
+
+    // 3. Render Bosses Section
     const bossHeader = document.createElement('h3');
     bossHeader.innerText = "Abyssal Bosses";
     bossHeader.style.cssText = "grid-column: 1 / -1; color: #ff0000; border-bottom: 1px solid #4a0000; margin: 20px 0 10px 0; font-size: 14px;";
@@ -1166,10 +1182,13 @@ function renderPromotionTree() {
         t1Node.style.fontSize = '7px';
         t1Node.style.padding = '2px 4px';
         t1Node.style.minWidth = 'auto';
+        
+        let t1RoleColor = '#00ff00'; // Green for basic
+
         t1Node.innerHTML = `
             <div class="custom-tooltip">
                 <strong style="color:#00e5ff; font-size: 9px;">${apprenticeData.name}</strong><br>
-                <span style="color:#ff4500; font-size: 8px; font-weight: bold;">[${apprenticeData.role}]</span><br>
+                <span style="color:${t1RoleColor}; font-size: 8px; font-weight: bold;">[${apprenticeData.role}]</span><br>
                 <span style="font-size: 8px;">${apprenticeData.desc}</span>
             </div>
             ${t1Unlocked ? apprenticeData.icon : '❓'} ${t1Unlocked ? 'Apprentice' : 'Locked'}`;

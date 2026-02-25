@@ -31,7 +31,7 @@ body {
     display: flex;
     width: 100%;
     position: relative;
-    border-bottom: 3px solid #4a0000;
+    border-bottom: 1px solid #4a0000; /* Reduced from 3px */
 }
 
 /* 좌우 카드 배치 구역 */
@@ -62,12 +62,12 @@ body {
     top: 0; /* Align with top of the road */
     left: 50%;
     transform: translateX(-50%);
-    width: 120px;
-    height: 60px;
-    background: radial-gradient(ellipse at center, rgba(75, 0, 130, 0.6), rgba(148, 0, 211, 0.3), transparent 70%);
-    filter: blur(5px);
+    width: 140px;
+    height: 80px;
+    background: radial-gradient(ellipse at center, rgba(30, 0, 50, 0.8) 0%, rgba(0, 0, 0, 0.5) 40%, transparent 80%);
+    filter: blur(10px);
     z-index: 1;
-    animation: poolSwirl 4s infinite linear;
+    animation: eerieMist 6s infinite alternate ease-in-out;
     pointer-events: none;
 }
 
@@ -79,19 +79,19 @@ body {
     transform: translate(-50%, -50%);
     width: 100%;
     height: 100%;
-    background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.4), transparent 60%);
-    animation: poolPulse 2s infinite alternate ease-in-out;
+    background: radial-gradient(circle at center, rgba(75, 0, 130, 0.4), transparent 70%);
+    animation: creepingDarkness 4s infinite alternate;
 }
 
-@keyframes poolSwirl {
-    0% { transform: translateX(-50%) rotate(0deg) scale(1); opacity: 0.6; }
-    50% { transform: translateX(-50%) rotate(180deg) scale(1.1); opacity: 0.8; }
-    100% { transform: translateX(-50%) rotate(360deg) scale(1); opacity: 0.6; }
+@keyframes eerieMist {
+    0% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+    50% { transform: translateX(-52%) scale(1.15) skewX(5deg); opacity: 0.9; }
+    100% { transform: translateX(-48%) scale(1) skewX(-5deg); opacity: 0.6; }
 }
 
-@keyframes poolPulse {
-    from { opacity: 0.3; transform: translate(-50%, -50%) scale(0.9); }
-    to { opacity: 0.7; transform: translate(-50%, -50%) scale(1.2); }
+@keyframes creepingDarkness {
+    from { opacity: 0.2; transform: translate(-50%, -50%) scale(0.8) rotate(0deg); }
+    to { opacity: 0.7; transform: translate(-50%, -50%) scale(1.3) rotate(10deg); }
 }
 
 /* 개별 타일 (셀) */
@@ -138,9 +138,9 @@ body {
     width: 150px;
     height: 35px;
     border-radius: 75px 75px 0 0;
-    background: linear-gradient(to top, rgba(40, 0, 60, 0.7), rgba(148, 0, 211, 0.2)); /* Increased transparency */
+    background: linear-gradient(to top, rgba(40, 0, 60, 0.7), rgba(148, 0, 211, 0.2));
     box-shadow: 0 -8px 25px rgba(148, 0, 211, 0.5);
-    border: none; /* Removed white outline */
+    border: none;
     border-bottom: none;
     z-index: 1;
     left: 50%;
@@ -150,7 +150,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: visible;
-    opacity: 0.9; /* Slightly more transparent overall */
+    opacity: 0.9; /* Set back to 90% opacity */
 }
 
 #portal-energy-label {
@@ -534,13 +534,13 @@ body {
     text-align: center;
     font-weight: bold;
     text-transform: uppercase;
-    margin-bottom: 1px;
+    margin-bottom: 5px; /* Set to 5px spacing */
 }
 
 #active-debuffs {
     font-size: 7px;
     color: #ff0000;
-    margin-bottom: 4px;
+    margin-bottom: 0px; /* Removed margin-bottom */
     text-align: center;
     font-style: italic;
 }
@@ -837,7 +837,7 @@ body {
     position: relative; 
     height: 35%;
     background: linear-gradient(to bottom, #1a0505, #000000);
-    padding: 10px;
+    padding: 5px 10px; /* Reduced top padding from 10px to 5px */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
