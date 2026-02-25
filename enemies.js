@@ -76,7 +76,7 @@ const enemyCategories = {
         { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.2, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
     ],
     pattern: [
-        { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.34, desc: "Forcibly relocates the attacking unit to a random slot on hit (30% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
+        { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.34, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
         { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.33, desc: "Occasionally phases out of existence, becoming immune to attacks (1% chance per frame).", effectiveness: "Truth-seeking seers or rapid-fire units.", lore: "A hermit who sought to hide from the world, now drifting between dimensions of pain." }, 
         { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.33, desc: "Backsteps and evades when an exorcist first targets them (100% chance, once).", effectiveness: "Area damage or multiple hunters.", lore: "A master of lies whose face was never seen, now eternally hiding behind a spectral mask." }  
     ],
@@ -171,12 +171,12 @@ function updateGauges() {
         shardFill.style.width = `${shardPercent}%`;
         shardText.innerText = `${corruptedShards} / 99`;
 
-        let desc = "Normal Souls";
+        let desc = "Normal";
         if (corruptedShards >= 50) desc = "⚠️ 70% HP, +2% SPD (FATAL)";
         else if (corruptedShards >= 41) desc = "🔥 +2% HP/shard, +0.02% SPD/shard";
         else if (corruptedShards >= 21) desc = "🌑 +1.5% HP/shard, +0.01% SPD/shard";
         else if (corruptedShards >= 1) desc = "☁️ +1% HP/shard";
-        debuffDesc.innerText = `Current Debuff: ${desc}`;
+        debuffDesc.innerText = `Corruption Level: ${desc}`;
     }
 
     // Soul Energy Gauge

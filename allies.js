@@ -436,16 +436,19 @@ function updateUnitOverlayButtons(tower) {
         };
         const abyssType = abyssMapping[data.type];
         if (abyssType) {
+            const uData = unitTypes.find(u => u.type === abyssType);
             const promoteBtn = document.createElement('div');
             promoteBtn.className = 'unit-overlay-btn promote-btn';
             promoteBtn.innerHTML = '↖️';
-            promoteBtn.title = `Descent (50 Shards)`;
+            promoteBtn.title = `Descent: ${uData.name} (50 Shards)`;
             promoteBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (typeof corruptedShards !== 'undefined' && corruptedShards >= 50) {
                     performAbyssJobChange(tower, abyssType);
                     showUnitInfo(tower);
                     updateUnitOverlayButtons(tower);
+                } else {
+                    alert(`Not enough Corrupted Shards! (Need 50, currently have ${corruptedShards || 0})`);
                 }
             });
             unitElement.appendChild(promoteBtn);

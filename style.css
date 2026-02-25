@@ -374,7 +374,7 @@ body {
 
 #active-debuffs {
     font-size: 7px;
-    color: #777;
+    color: #ff0000;
     margin-bottom: 4px;
     text-align: center;
     font-style: italic;

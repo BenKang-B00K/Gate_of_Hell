@@ -785,7 +785,7 @@ function shoot(tower, target, startX, startY) {
         proj.remove();
         
         // [Special Ability] Greedy Spirit: Chance to forcibly move attacking tower
-        if (target.type === 'greedy' && Math.random() < 0.3 && !target.isSilenced) { // 30% chance (Silence immune)
+        if (target.type === 'greedy' && Math.random() < 0.1 && !target.isSilenced) { // 10% chance (Silence immune)
             const validSlots = slots.filter(c => !c.classList.contains('occupied'));
             if (validSlots.length > 0) {
                 const newSlot = validSlots[Math.floor(Math.random() * validSlots.length)];
