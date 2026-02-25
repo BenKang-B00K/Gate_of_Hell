@@ -487,9 +487,18 @@ function gameLoop() {
                 const finalStageText = document.getElementById('final-stage');
                 const cancelBtn = document.getElementById('cancel-restart-btn');
 
+                const spookyMessages = [
+                    "The abyss claims another soul... The gate has fallen, and eternal darkness awaits.",
+                    "Your light has flickered out. The Underworld consumes all that remains.",
+                    "Silence falls over the abyss. The gate is breached, and hope is but a memory.",
+                    "The spirits dance upon your failure. Darkness is the only truth left.",
+                    "The descent ends here. Your name will be forgotten in the echoes of the void.",
+                    "Death was not the end... but it was the only way out. The gate is lost."
+                ];
+
                 if (goOverlay) {
                     if (title) title.innerText = "YOU HAVE BEEN CONSUMED";
-                    if (msg) msg.innerText = "The abyss claims another soul... The gate has fallen, and eternal darkness awaits.";
+                    if (msg) msg.innerText = spookyMessages[Math.floor(Math.random() * spookyMessages.length)];
                     if (finalStageText) finalStageText.innerText = stage;
                     if (cancelBtn) cancelBtn.style.display = 'none';
                     goOverlay.style.display = 'flex';
