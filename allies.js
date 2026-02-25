@@ -542,4 +542,141 @@ function initAllies() {
     slots.length = 0; // Initialize slots array
     createSlots('left-slots', 30);
     createSlots('right-slots', 30);
+
+    initRecordsUI();
+}
+
+// --- Exorcism Records UI Logic ---
+function initRecordsUI() {
+    const recordsBtn = document.getElementById('records-btn');
+    const recordsOverlay = document.getElementById('records-overlay');
+    const closeBtn = document.getElementById('close-records');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+
+    if (!recordsBtn) return;
+
+    recordsBtn.addEventListener('click', () => {
+        isPaused = true;
+        recordsOverlay.style.display = 'flex';
+        renderBestiary();
+        renderPromotionTree();
+    });
+
+    closeBtn.addEventListener('click', () => {
+        isPaused = false;
+        recordsOverlay.style.display = 'none';
+    });
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            
+            btn.classList.add('active');
+            const tabId = `${btn.dataset.tab}-tab`;
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+}
+
+function renderBestiary() {
+    const bestiaryTab = document.getElementById('bestiary-tab');
+    bestiaryTab.innerHTML = '';
+
+    // Flatten enemy data
+    const allEnemyTypes = [];
+    Object.keys(enemyCategories).forEach(cat => {
+        enemyCategories[cat].forEach(e => {
+            allEnemyTypes.push(e);
+        });
+    });
+
+    allEnemyTypes.forEach(enemy => {
+        const kills = killCounts[enemy.type] || 0;
+        const bonus = getBestiaryBonus(enemy.type);
+        const bonusText = bonus > 1 ? `Damage Bonus: +${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus (Need 50 kills)';
+
+        const item = document.createElement('div');
+        item.className = 'bestiary-item';
+        item.innerHTML = `
+            <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; width:20px; height:20px;"></div>
+            <div class="bestiary-info">
+                <div class="bestiary-name">${enemy.type.toUpperCase()}</div>
+                <div class="bestiary-stats">Kills: ${kills}</div>
+                <div class="bestiary-bonus">${bonusText}</div>
+            </div>
+        `;
+        bestiaryTab.appendChild(item);
+    });
+}
+
+function renderPromotionTree() {
+    const treeTab = document.getElementById('tree-tab');
+    treeTab.innerHTML = '<h3 style="color:#ffd700; font-size:14px; text-align:center; margin-bottom:20px;">Unit Evolution Path</h3>';
+
+    const paths = [
+        { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'] },
+        { name: 'Talismanist', type: 'talisman', masters: ['grandsealer', 'flamemaster'] },
+        { name: 'Mace Monk', type: 'monk', masters: ['vajra', 'saint'] },
+        { name: 'Divine Archer', type: 'archer', masters: ['voidsniper', 'thousandhand'] },
+        { name: 'Ice Daoist', type: 'ice', masters: ['absolutezero', 'permafrost'] },
+        { name: 'Fire Mage', type: 'fire', masters: ['hellfire', 'phoenix'] },
+        { name: 'Shadow Assassin', type: 'assassin', masters: ['abyssal', 'spatial'] },
+        { name: 'Soul Tracker', type: 'tracker', masters: ['seer', 'commander'] },
+        { name: 'Necromancer', type: 'necromancer', masters: ['wraithlord', 'cursedshaman'] },
+        { name: 'Sanctuary Guardian', type: 'guardian', masters: ['rampart', 'judgment'] }
+    ];
+
+    const treeContainer = document.createElement('div');
+    treeContainer.style.display = 'flex';
+    treeContainer.style.flexDirection = 'column';
+    treeContainer.style.gap = '20px';
+
+    // Root: Apprentice
+    const rootDiv = document.createElement('div');
+    rootDiv.className = 'unit-node tier1';
+    rootDiv.innerText = 'Apprentice Exorcist';
+    treeContainer.appendChild(rootDiv);
+
+    const arrow = document.createElement('div');
+    arrow.innerText = '↓';
+    arrow.style.textAlign = 'center';
+    treeContainer.appendChild(arrow);
+
+    paths.forEach(p => {
+        const pathRow = document.createElement('div');
+        pathRow.style.display = 'flex';
+        pathRow.style.alignItems = 'center';
+        pathRow.style.gap = '10px';
+        pathRow.style.marginBottom = '10px';
+        pathRow.style.borderBottom = '1px solid #333';
+        pathRow.style.paddingBottom = '10px';
+
+        const tier2 = document.createElement('div');
+        tier2.className = 'unit-node tier2';
+        tier2.innerText = p.name;
+        
+        const mArrow = document.createElement('div');
+        mArrow.innerText = '→';
+
+        const mastersDiv = document.createElement('div');
+        mastersDiv.style.display = 'flex';
+        mastersDiv.style.flexDirection = 'column';
+        mastersDiv.style.gap = '5px';
+
+        p.masters.forEach(m => {
+            const mNode = document.createElement('div');
+            mNode.className = 'unit-node tier3';
+            const mData = unitTypes.find(u => u.type === m);
+            mNode.innerText = mData ? mData.name : m;
+            mastersDiv.appendChild(mNode);
+        });
+
+        pathRow.appendChild(tier2);
+        pathRow.appendChild(mArrow);
+        pathRow.appendChild(mastersDiv);
+        treeContainer.appendChild(pathRow);
+    });
+
+    treeTab.appendChild(treeContainer);
 }

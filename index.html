@@ -58,6 +58,11 @@
                         <div>Exorcist</div>
                         <div style="font-size: 9px;">50 Energy</div>
                     </div>
+                    <!-- Records Button -->
+                    <div id="records-btn" class="tower-card" style="border-color: #ffd700; color: #ffd700;">
+                        <div style="font-size: 14px;">📜</div>
+                        <div style="font-size: 8px;">RECORDS</div>
+                    </div>
                     <!-- Reserved for other features -->
                     <div class="tower-card placeholder">
                         <div>?</div>
@@ -65,6 +70,24 @@
                 </div>
 
                 <div id="unit-info">Select a unit to view information.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exorcism Records Overlay -->
+    <div id="records-overlay" style="display: none;">
+        <div id="records-content">
+            <div id="records-header">
+                <h2>Exorcism Records</h2>
+                <button id="close-records">X</button>
+            </div>
+            <div id="records-tabs">
+                <button class="tab-btn active" data-tab="bestiary">Bestiary</button>
+                <button class="tab-btn" data-tab="tree">Promotion Tree</button>
+            </div>
+            <div id="tab-content">
+                <div id="bestiary-tab" class="tab-pane active"></div>
+                <div id="tree-tab" class="tab-pane"></div>
             </div>
         </div>
     </div>

@@ -32,6 +32,20 @@ let timeFreezeEndTime = 0;
 let sealedGhostCount = 0;
 let draggedUnit = null; // Currently dragged unit
 
+// --- Exorcism Records Data ---
+const killCounts = {}; // Track kills by type
+
+function recordKill(type) {
+    killCounts[type] = (killCounts[type] || 0) + 1;
+}
+
+function getBestiaryBonus(type) {
+    const kills = killCounts[type] || 0;
+    // Every 50 kills = +10% Damage bonus (Max 50%)
+    const bonusLevel = Math.min(Math.floor(kills / 50), 5);
+    return 1 + (bonusLevel * 0.1);
+}
+
 // Calculate debuff multipliers based on corrupted shards
 function getCorruptionMultipliers() {
     let hpMult = 1.0;
@@ -543,6 +557,7 @@ function handleEnemyDeath(target, killer = null) {
 
     const idx = enemies.indexOf(target);
     if (idx > -1) {
+        if (target.type) recordKill(target.type);
         target.element.remove();
         enemies.splice(idx, 1);
         updateStageInfo(); // Update enemy counter

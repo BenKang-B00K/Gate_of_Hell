@@ -1,5 +1,6 @@
 /* script.js */
 let spawnInterval = 2000; // Enemy spawn interval (Initial value 2s)
+let isPaused = false;
 
 // Apply damage function (Handles shared damage)
 function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze = false) {
@@ -9,6 +10,11 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
     if (isTimeFrozen && !ignoreFreeze && !target.isBoss) {
         target.accumulatedDamage = (target.accumulatedDamage || 0) + amount;
         return;
+    }
+
+    // Bestiary bonus
+    if (target.type) {
+        amount *= getBestiaryBonus(target.type);
     }
 
     target.hp -= amount;
@@ -30,6 +36,10 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
 
 // Game Loop
 function gameLoop() {
+    if (isPaused) {
+        requestAnimationFrame(gameLoop);
+        return;
+    }
     const roadRect = road.getBoundingClientRect();
     const targetY = roadRect.height - 60; // Portal reach Y position
     const gameWidth = gameContainer.offsetWidth;
