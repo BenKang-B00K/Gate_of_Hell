@@ -29,29 +29,29 @@ const unitTypes = [
     { type: 'fire', name: 'Fire Mage', tier: 2, icon: '🔥', damage: 10, range: 120, cooldown: 1000, desc: "Burns ghosts to deal damage based on max HP per second.", upgrades: ['hellfire', 'phoenix'] },
     { type: 'assassin', name: 'Shadow Assassin', tier: 2, icon: '🗡️', damage: 20, range: 100, cooldown: 300, desc: "Attacks very quickly, ignoring enemy defense.", upgrades: ['abyssal', 'spatial'] },
     { type: 'tracker', name: 'Soul Tracker', tier: 2, icon: '👁️', damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies (up, down, left, right).", upgrades: ['seer', 'commander'] },
-    { type: 'necromancer', name: 'Necromancer', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Chance to summon spirit walls that block enemy paths.", upgrades: ['wraithlord', 'cursedshaman'] },
-    { type: 'guardian', name: 'Sanctuary Guardian', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit.", upgrades: ['rampart', 'judgment'] },
+    { type: 'necromancer', name: 'Necromancer', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Chance to summon spirit walls that block enemy paths (30% chance on hit).", upgrades: ['wraithlord', 'cursedshaman'] },
+    { type: 'guardian', name: 'Sanctuary Guardian', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit (5% chance).", upgrades: ['rampart', 'judgment'] },
     // Master Classes
-    { type: 'executor', name: 'Underworld Executor', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] 10% chance to return enemies near the gate to the starting point." },
-    { type: 'binder', name: 'Soul Binder', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links up to 5 enemies to share 50% of damage taken." },
-    { type: 'grandsealer', name: 'Grand Sealer', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Attaches large talismans to neutralize enemy special abilities (stealth, teleport, etc.)." },
-    { type: 'flamemaster', name: 'Fire Talisman Master', tier: 3, icon: '🌋', damage: 35, range: 130, cooldown: 1500, desc: "[Master] Leaves persistent flames where talismans explode to deal damage." },
-    { type: 'vajra', name: 'Vajrapani', tier: 3, icon: '🔱', damage: 50, range: 100, cooldown: 1200, desc: "[Master] Knocks enemies off-screen on critical hit. (Bosses are knocked back)" },
-    { type: 'saint', name: 'Saint of Vibration', tier: 3, icon: '🔔', damage: 45, range: 100, cooldown: 1500, desc: "[Master] Attacks stun enemies in a wide area." },
-    { type: 'voidsniper', name: 'Void Sniper', tier: 3, icon: '🎯', damage: 120, range: 9999, cooldown: 2000, desc: "[Master] Prioritizes sniping the enemy closest to the gate regardless of distance." },
-    { type: 'thousandhand', name: 'Thousand-Hand Archer', tier: 3, icon: '🍃', damage: 40, range: 250, cooldown: 1500, desc: "[Master] Fires 6 arrows at once to attack up to 4 enemies." },
-    { type: 'absolutezero', name: 'Absolute Zero Mage', tier: 3, icon: '💎', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Instantly kills frozen enemies with less than 30% HP." },
-    { type: 'permafrost', name: 'Ice Maiden', tier: 3, icon: '🌬️', damage: 25, range: 140, cooldown: 1000, desc: "[Master] Creates a blizzard that reduces enemy speed by 50% in the area." },
-    { type: 'hellfire', name: 'Hellfire Alchemist', tier: 3, icon: '🧪', damage: 20, range: 130, cooldown: 1000, desc: "[Master] Burning enemies explode on death, spreading the burn to nearby enemies." },
-    { type: 'phoenix', name: 'Phoenix Summoner', tier: 3, icon: '🐦‍🔥', damage: 40, range: 180, cooldown: 2000, desc: "[Master] Summons a phoenix that leaves a trail of fire." },
-    { type: 'abyssal', name: 'Abyssal Killer', tier: 3, icon: '🌑', damage: 30, range: 100, cooldown: 300, desc: "[Master] Increases soul energy gain from kills by 1.5x." },
-    { type: 'spatial', name: 'Spatial Slasher', tier: 3, icon: '🌌', damage: 25, range: 120, cooldown: 300, desc: "[Master] Summons clones in empty slots to assassinate the most threatening enemies." },
-    { type: 'seer', name: 'Seeker of Truth', tier: 3, icon: '🔭', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' damage and detects stealthed enemies." },
-    { type: 'commander', name: 'Battlefield Commander', tier: 3, icon: '🚩', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' attack speed by 20%." },
-    { type: 'wraithlord', name: 'Wraith Lord', tier: 3, icon: '🧟', damage: 40, range: 130, cooldown: 1200, desc: "[Master] Reanimates killed enemies as ally skeleton soldiers." },
-    { type: 'cursedshaman', name: 'Cursed Shaman', tier: 3, icon: '🎭', damage: 20, range: 130, cooldown: 1500, desc: "[Master] Curses a wide area to permanently reduce enemies' maximum HP." },
-    { type: 'rampart', name: 'Holy Rampart', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] When placed near the gate, returns enemies reaching the gate to the start (up to 5 times)." },
-    { type: 'judgment', name: 'Knight of Judgment', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack." },
+    { type: 'executor', name: 'Underworld Executor', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] 10% chance to return enemies near the gate to the starting point.", upgrades: ['warden'] },
+    { type: 'binder', name: 'Soul Binder', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links up to 5 enemies to share 50% of damage taken.", upgrades: ['warden'] },
+    { type: 'grandsealer', name: 'Grand Sealer', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Attaches large talismans to neutralize enemy special abilities.", upgrades: ['cursed_talisman'] },
+    { type: 'flamemaster', name: 'Fire Talisman Master', tier: 3, icon: '🌋', damage: 35, range: 130, cooldown: 1500, desc: "[Master] Leaves persistent flames where talismans explode.", upgrades: ['cursed_talisman'] },
+    { type: 'vajra', name: 'Vajrapani', tier: 3, icon: '🔱', damage: 50, range: 100, cooldown: 1200, desc: "[Master] Knocks enemies off-screen on critical hit (100% on crit).", upgrades: ['asura'] },
+    { type: 'saint', name: 'Saint of Vibration', tier: 3, icon: '🔔', damage: 45, range: 100, cooldown: 1500, desc: "[Master] Attacks stun enemies in a wide area (100% on hit).", upgrades: ['asura'] },
+    { type: 'voidsniper', name: 'Void Sniper', tier: 3, icon: '🎯', damage: 120, range: 9999, cooldown: 2000, desc: "[Master] Prioritizes sniping the enemy closest to the gate.", upgrades: ['piercing_shadow'] },
+    { type: 'thousandhand', name: 'Thousand-Hand Archer', tier: 3, icon: '🍃', damage: 40, range: 250, cooldown: 1500, desc: "[Master] Fires 6 arrows at once to attack up to 4 enemies.", upgrades: ['piercing_shadow'] },
+    { type: 'absolutezero', name: 'Absolute Zero Mage', tier: 3, icon: '💎', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Instantly kills frozen enemies with less than 30% HP.", upgrades: ['cocytus'] },
+    { type: 'permafrost', name: 'Ice Maiden', tier: 3, icon: '🌬️', damage: 25, range: 140, cooldown: 1000, desc: "[Master] Creates a blizzard that reduces enemy speed by 50% in the area.", upgrades: ['cocytus'] },
+    { type: 'hellfire', name: 'Hellfire Alchemist', tier: 3, icon: '🧪', damage: 20, range: 130, cooldown: 1000, desc: "[Master] Burning enemies explode on death, spreading the burn.", upgrades: ['purgatory'] },
+    { type: 'phoenix', name: 'Phoenix Summoner', tier: 3, icon: '🐦‍🔥', damage: 40, range: 180, cooldown: 2000, desc: "[Master] Summons a phoenix that leaves a trail of fire.", upgrades: ['purgatory'] },
+    { type: 'abyssal', name: 'Abyssal Killer', tier: 3, icon: '🌑', damage: 30, range: 100, cooldown: 300, desc: "[Master] Increases soul energy gain from kills by 1.5x.", upgrades: ['reaper'] },
+    { type: 'spatial', name: 'Spatial Slasher', tier: 3, icon: '🌌', damage: 25, range: 120, cooldown: 300, desc: "[Master] Summons clones in empty slots to assassinate (15% chance on hit).", upgrades: ['reaper'] },
+    { type: 'seer', name: 'Seeker of Truth', tier: 3, icon: '🔭', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' damage and detects stealthed enemies.", upgrades: ['doom_guide'] },
+    { type: 'commander', name: 'Battlefield Commander', tier: 3, icon: '🚩', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' attack speed by 20%.", upgrades: ['doom_guide'] },
+    { type: 'wraithlord', name: 'Wraith Lord', tier: 3, icon: '🧟', damage: 40, range: 130, cooldown: 1200, desc: "[Master] Reanimates killed enemies as ally skeleton soldiers.", upgrades: ['forsaken_king'] },
+    { type: 'cursedshaman', name: 'Cursed Shaman', tier: 3, icon: '🎭', damage: 20, range: 130, cooldown: 1500, desc: "[Master] Curses a wide area to permanently reduce enemies' maximum HP.", upgrades: ['forsaken_king'] },
+    { type: 'rampart', name: 'Holy Rampart', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] Returns enemies reaching the gate to the start (5 charges).", upgrades: ['void_gatekeeper'] },
+    { type: 'judgment', name: 'Knight of Judgment', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack.", upgrades: ['void_gatekeeper'] },
     // Abyss Classes (Tier 4)
     { type: 'warden', name: 'Warden of the Abyss', tier: 4, icon: '🗝️', damage: 50, range: 200, cooldown: 15000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing DOT." },
     { type: 'cursed_talisman', name: 'Cursed Sect', tier: 4, icon: '⛩️', damage: 45, range: 150, cooldown: 1500, desc: "[Abyss] Attacks mark enemies. They explode on death for Max HP damage." },
@@ -751,14 +751,47 @@ function renderBestiary() {
         });
     });
 
-        allEnemyTypes.forEach(enemy => {
+    allEnemyTypes.forEach(enemy => {
         const kills = killCounts[enemy.type] || 0;
         const bonus = getBestiaryBonus(enemy.type);
         const bonusText = bonus > 1 ? `DMG +${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus';
         const dispName = enemyNames[enemy.type] || enemy.type.toUpperCase();
         
-        // Probability percentage (simplified view)
-        const spawnRate = (enemy.probability * 100).toFixed(0);
+        // Calculate effective spawn rate based on stage
+        let catProb = 0.96; // basic
+        if (stage >= 51) {
+            if (['normal', 'tank', 'runner'].includes(enemy.type)) catProb = 0.30;
+            else if (['greedy', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.23;
+            else if (['boar', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.23;
+            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.23;
+            else if (enemy.type === 'gold') catProb = treasureChance;
+        } else if (stage >= 31) {
+            if (['normal', 'tank', 'runner'].includes(enemy.type)) catProb = 0.55;
+            else if (['greedy', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.14;
+            else if (['boar', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.15;
+            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.15;
+            else if (enemy.type === 'gold') catProb = treasureChance;
+        } else if (stage >= 16) {
+            if (['normal', 'tank', 'runner'].includes(enemy.type)) catProb = 0.75;
+            else if (['greedy', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.08;
+            else if (['boar', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.08;
+            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.08;
+            else if (enemy.type === 'gold') catProb = treasureChance;
+        } else if (stage >= 6) {
+            if (['normal', 'tank', 'runner'].includes(enemy.type)) catProb = 0.90;
+            else if (['greedy', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.03;
+            else if (['boar', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.03;
+            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.03;
+            else if (enemy.type === 'gold') catProb = treasureChance;
+        } else {
+            if (['normal', 'tank', 'runner'].includes(enemy.type)) catProb = 0.96;
+            else if (['greedy', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.01;
+            else if (['boar', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.01;
+            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.01;
+            else if (enemy.type === 'gold') catProb = treasureChance;
+        }
+
+        const effectiveRate = (catProb * enemy.probability * 100).toFixed(1);
 
         const item = document.createElement('div');
         item.className = 'bestiary-item';
@@ -771,7 +804,7 @@ function renderBestiary() {
             <div class="bestiary-info">
                 <div class="bestiary-name">${dispName}</div>
                 <div class="bestiary-stats">💀 ${kills} | ${bonusText}</div>
-                <div style="font-size: 7.5px; color: #aaa; margin-top: 2px;">Proc Rate: ${spawnRate}%</div>
+                <div style="font-size: 7.5px; color: #aaa; margin-top: 2px;">Spawn Rate: ${effectiveRate}%</div>
                 <div class="bestiary-effectiveness" style="font-size: 7px; color: #ff4500; margin-top: 4px; border-top: 1px dotted #444; padding-top: 3px; line-height: 1.2;">
                     🎯 ${enemy.effectiveness || 'Standard'}
                 </div>

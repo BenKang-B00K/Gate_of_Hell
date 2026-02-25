@@ -504,12 +504,24 @@ body {
     z-index: 15;
     font-size: 18px;
     pointer-events: auto; /* Ensure unit is interactive */
+    -webkit-user-drag: element; /* Support for some browsers */
     /* Text outline for the icon */
     text-shadow: 
         -1px -1px 0 #000,  
          1px -1px 0 #000,
-        -1px  1px 0 #000,
+        -1px  1px 0 #000,  
          1px  1px 0 #000;
+}
+
+.unit.selected {
+    outline: 2px solid #00e5ff;
+    outline-offset: 2px;
+    animation: selectPulse 1s infinite alternate;
+}
+
+@keyframes selectPulse {
+    from { outline-color: rgba(0, 229, 255, 0.5); }
+    to { outline-color: rgba(0, 229, 255, 1); }
 }
 
 /* Unit Overlay Buttons */
