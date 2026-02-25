@@ -65,6 +65,9 @@ const unitTypes = [
     { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals the portal until 30 ghosts gather." }
 ];
 
+let draggedUnit = null; // Repurposed for Click-to-Move
+let isMovingUnit = false;
+
 // Slot creation function
 function createSlots(containerId, count) {
     const container = document.getElementById(containerId);
@@ -82,73 +85,50 @@ function createSlots(containerId, count) {
         slots.push(cell);
         container.appendChild(cell);
 
-        // Add drag and drop events
-        cell.addEventListener('dragover', allowDrop);
-        cell.addEventListener('drop', drop);
-        cell.addEventListener('dragenter', dragEnter);
-        cell.addEventListener('dragleave', dragLeave);
+        // Click-to-Move Logic
+        cell.addEventListener('click', function(e) {
+            if (isMovingUnit && draggedUnit) {
+                const targetSlot = this;
+                const oldSlot = draggedUnit.parentElement;
+
+                if (oldSlot === targetSlot) {
+                    cancelMovement();
+                    return;
+                }
+
+                if (targetSlot.classList.contains('occupied')) {
+                    // Swap units
+                    const targetUnit = targetSlot.querySelector('.unit');
+                    if (targetUnit) {
+                        oldSlot.appendChild(targetUnit);
+                        targetSlot.appendChild(draggedUnit);
+                        
+                        const unit1 = towers.find(t => t.element === draggedUnit);
+                        const unit2 = towers.find(t => t.element === targetUnit);
+                        
+                        if (unit1) unit1.slotElement = targetSlot;
+                        if (unit2) unit2.slotElement = oldSlot;
+                    }
+                } else {
+                    // Move to empty slot
+                    targetSlot.appendChild(draggedUnit);
+                    oldSlot.classList.remove('occupied');
+                    targetSlot.classList.add('occupied');
+                    
+                    const unit = towers.find(t => t.element === draggedUnit);
+                    if (unit) unit.slotElement = targetSlot;
+                }
+                
+                cancelMovement();
+            }
+        });
     }
 }
 
-function allowDrop(e) {
-    e.preventDefault();
-}
-
-function dragEnter(e) {
-    e.preventDefault();
-    this.style.backgroundColor = 'rgba(0, 255, 255, 0.3)';
-}
-
-function dragLeave(e) {
-    this.style.backgroundColor = '';
-}
-
-function drop(e) {
-    e.preventDefault();
-    this.style.backgroundColor = '';
-
-    const type = e.dataTransfer.getData("type");
-    
-    // Handle unit movement
-    if (type === "move-unit" && draggedUnit) {
-        const oldSlot = draggedUnit.parentElement;
-        const targetSlot = this;
-        
-        if (oldSlot === targetSlot) {
-            draggedUnit = null;
-            return;
-        }
-        
-        if (targetSlot.classList.contains('occupied')) {
-            // Swap units
-            const targetUnit = targetSlot.querySelector('.unit');
-            if (targetUnit) {
-                oldSlot.appendChild(targetUnit);
-                targetSlot.appendChild(draggedUnit);
-                
-                const draggedTower = towers.find(t => t.element === draggedUnit);
-                const targetTower = towers.find(t => t.element === targetUnit);
-                
-                if (draggedTower) draggedTower.slotElement = targetSlot;
-                if (targetTower) targetTower.slotElement = oldSlot;
-            }
-        } else {
-            // Move to empty slot
-            targetSlot.appendChild(draggedUnit);
-            
-            // Update state
-            oldSlot.classList.remove('occupied');
-            targetSlot.classList.add('occupied');
-            
-            // Update tower data
-            const tower = towers.find(t => t.element === draggedUnit);
-            if (tower) {
-                tower.slotElement = targetSlot;
-            }
-        }
-        
-        draggedUnit = null;
-    }
+function cancelMovement() {
+    if (draggedUnit) draggedUnit.classList.remove('move-ready');
+    draggedUnit = null;
+    isMovingUnit = false;
 }
 
 function summonTower(targetSlot) {
@@ -178,20 +158,26 @@ function summonTower(targetSlot) {
     cdOverlay.style.pointerEvents = 'none';
     unit.appendChild(cdOverlay);
 
-    // Unit drag start event
-    unit.addEventListener('dragstart', function(e) {
-        draggedUnit = this;
-        e.dataTransfer.setData("type", "move-unit");
-        e.dataTransfer.effectAllowed = "move";
-    });
-
-    // Unit click event (promotion menu & range display & selection)
+    // Unit click event (promotion menu & range display & selection & move)
     unit.addEventListener('click', function(e) {
         e.stopPropagation();
         
+        // Handle Move (Second click on a selected unit)
+        if (this.classList.contains('selected') && !isMovingUnit) {
+            isMovingUnit = true;
+            draggedUnit = this;
+            this.classList.add('move-ready');
+            return;
+        }
+
         // Handle selection
-        document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected'));
+        document.querySelectorAll('.unit').forEach(u => {
+            u.classList.remove('selected');
+            u.classList.remove('move-ready');
+        });
         this.classList.add('selected');
+        isMovingUnit = false;
+        draggedUnit = null;
 
         // Display info
         const tower = towers.find(t => t.element === this);
