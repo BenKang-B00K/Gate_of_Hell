@@ -1280,6 +1280,25 @@ input:checked + .slider:before {
     transform: translateY(-2px);
 }
 
+#cancel-restart-btn {
+    background: rgba(20, 20, 20, 0.8);
+    color: #888;
+    border: 1px solid #444;
+    padding: 12px 24px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+#cancel-restart-btn:hover {
+    background: #222;
+    color: #fff;
+    border-color: #666;
+    transform: translateY(-2px);
+}
+
 @keyframes fadeInOut {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
     20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }

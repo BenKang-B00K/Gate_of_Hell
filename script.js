@@ -482,9 +482,16 @@ function gameLoop() {
                 
                 // Show Spooky Game Over
                 const goOverlay = document.getElementById('game-over-overlay');
+                const title = document.getElementById('game-over-title');
+                const msg = document.getElementById('game-over-msg');
                 const finalStageText = document.getElementById('final-stage');
+                const cancelBtn = document.getElementById('cancel-restart-btn');
+
                 if (goOverlay) {
+                    if (title) title.innerText = "YOU HAVE BEEN CONSUMED";
+                    if (msg) msg.innerText = "The abyss claims another soul... The gate has fallen, and eternal darkness awaits.";
                     if (finalStageText) finalStageText.innerText = stage;
+                    if (cancelBtn) cancelBtn.style.display = 'none';
                     goOverlay.style.display = 'flex';
                 } else {
                     alert("Game Over! The portal has been overwhelmed by spirits.");

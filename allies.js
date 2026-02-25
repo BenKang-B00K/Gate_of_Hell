@@ -837,8 +837,31 @@ function initAllies() {
     const restartBtnTop = document.getElementById('restart-btn-top');
     if (restartBtnTop) {
         restartBtnTop.addEventListener('click', () => {
-            if (confirm("Abandon all hope and succumb to the void? (Restart from the beginning)")) {
-                location.reload();
+            isPaused = true;
+            const goOverlay = document.getElementById('game-over-overlay');
+            const title = document.getElementById('game-over-title');
+            const msg = document.getElementById('game-over-msg');
+            const finalStageText = document.getElementById('final-stage');
+            const cancelBtn = document.getElementById('cancel-restart-btn');
+
+            if (goOverlay) {
+                if (title) title.innerText = "ABANDONING HOPE?";
+                if (msg) msg.innerText = "Do you truly wish to succumb to the void and leave this descent behind?";
+                if (finalStageText) finalStageText.innerText = stage;
+                if (cancelBtn) cancelBtn.style.display = 'inline-block';
+                goOverlay.style.display = 'flex';
+            }
+        });
+    }
+
+    // Cancel Restart Button
+    const cancelRestartBtn = document.getElementById('cancel-restart-btn');
+    if (cancelRestartBtn) {
+        cancelRestartBtn.addEventListener('click', () => {
+            const goOverlay = document.getElementById('game-over-overlay');
+            if (goOverlay) {
+                goOverlay.style.display = 'none';
+                isPaused = false;
             }
         });
     }
