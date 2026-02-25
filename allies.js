@@ -312,7 +312,7 @@ function showUnitInfo(tower) {
         costHtml = `<div style="font-size: 8px; color: #ffd700; margin-bottom: 2px;">Unleash Master (200 SE):</div>`;
         data.upgrades.forEach((uType, idx) => {
             const uData = unitTypes.find(u => u.type === uType);
-            costHtml += `<div style="font-size: 7.5px; color: #aaa;">\${idx === 0 ? '↖️ (Left)' : '↗️ (Right)'}: \${uData.name}</div>`;
+            costHtml += `<div style="font-size: 7.5px; color: #aaa;">${idx === 0 ? '↖️ (Left)' : '↗️ (Right)'}: ${uData.name}</div>`;
         });
     } else if (data.tier === 3) {
         const abyssMapping = {
