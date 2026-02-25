@@ -642,6 +642,8 @@ function renderPromotionTree() {
     const treeTab = document.getElementById('tree-tab');
     treeTab.innerHTML = ''; 
 
+    const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
+
     const paths = [
         { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'], abyss: 'warden' },
         { name: 'Talismanist', type: 'talisman', masters: ['grandsealer', 'flamemaster'], abyss: 'cursed_talisman' },
@@ -659,54 +661,60 @@ function renderPromotionTree() {
     treeContainer.className = 'tree-main-container';
     treeContainer.style.display = 'flex';
     treeContainer.style.flexDirection = 'column';
-    treeContainer.style.gap = '8px';
-
-    // Root: Apprentice
-    const rootDiv = document.createElement('div');
-    rootDiv.style.textAlign = 'center';
-    rootDiv.style.marginBottom = '5px';
-    const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
-    rootDiv.innerHTML = `
-        <div class="unit-node tier1" style="display:inline-block; position:relative; padding: 3px 10px; font-size: 8px;">
-            <div class="custom-tooltip">
-                <strong style="color:#00e5ff;">${apprenticeData.name}</strong><br>
-                ${apprenticeData.desc}<br>
-                <span style="color:#aaa;">ATK: ${apprenticeData.damage} | CD: ${apprenticeData.cooldown/1000}s</span>
-            </div>
-            ${apprenticeData.icon} Apprentice
-        </div>`;
-    treeContainer.appendChild(rootDiv);
+    treeContainer.style.gap = '6px';
 
     paths.forEach(p => {
         const pathRow = document.createElement('div');
         pathRow.style.display = 'grid';
-        pathRow.style.gridTemplateColumns = '80px 15px 95px 15px 95px';
+        pathRow.style.gridTemplateColumns = '50px 12px 60px 12px 85px 12px 85px';
         pathRow.style.alignItems = 'center';
         pathRow.style.justifyContent = 'center';
-        pathRow.style.gap = '4px';
+        pathRow.style.gap = '3px';
         pathRow.style.borderBottom = '1px solid #222';
         pathRow.style.paddingBottom = '4px';
 
-        // Tier 2
-        const t2Data = unitTypes.find(u => u.type === p.type);
-        const tier2 = document.createElement('div');
-        tier2.className = 'unit-node tier2';
-        tier2.style.position = 'relative';
-        tier2.style.fontSize = '7.5px';
-        tier2.innerHTML = `
+        // 1. Tier 1 (Apprentice)
+        const t1Node = document.createElement('div');
+        t1Node.className = 'unit-node tier1';
+        t1Node.style.position = 'relative';
+        t1Node.style.fontSize = '7px';
+        t1Node.style.padding = '2px 4px';
+        t1Node.style.minWidth = 'auto';
+        t1Node.innerHTML = `
             <div class="custom-tooltip">
-                <strong style="color:#9370db;">${t2Data.name}</strong><br>
-                ${t2Data.desc}<br>
-                <span style="color:#aaa;">ATK: ${t2Data.damage} | CD: ${t2Data.cooldown/1000}s</span>
+                <strong style="color:#00e5ff; font-size: 9px;">${apprenticeData.name}</strong><br>
+                <span style="font-size: 8px;">${apprenticeData.desc}</span>
             </div>
-            ${t2Data.icon} ${p.name}`;
-        
-        const mArrow = document.createElement('div');
-        mArrow.innerText = '→';
-        mArrow.style.fontSize = '9px';
-        mArrow.style.textAlign = 'center';
+            ${apprenticeData.icon} Apr.`;
 
-        // Tier 3 (Masters)
+        // Arrow 1
+        const arrow1 = document.createElement('div');
+        arrow1.innerText = '→';
+        arrow1.style.fontSize = '8px';
+        arrow1.style.textAlign = 'center';
+
+        // 2. Tier 2
+        const t2Data = unitTypes.find(u => u.type === p.type);
+        const t2Node = document.createElement('div');
+        t2Node.className = 'unit-node tier2';
+        t2Node.style.position = 'relative';
+        t2Node.style.fontSize = '7px';
+        t2Node.style.padding = '2px 4px';
+        t2Node.style.minWidth = 'auto';
+        t2Node.innerHTML = `
+            <div class="custom-tooltip">
+                <strong style="color:#9370db; font-size: 9px;">${t2Data.name}</strong><br>
+                <span style="font-size: 8px;">${t2Data.desc}</span>
+            </div>
+            ${t2Data.icon} ${p.name.split(' ').pop()}`;
+        
+        // Arrow 2
+        const arrow2 = document.createElement('div');
+        arrow2.innerText = '→';
+        arrow2.style.fontSize = '8px';
+        arrow2.style.textAlign = 'center';
+
+        // 3. Tier 3 (Masters)
         const mastersDiv = document.createElement('div');
         mastersDiv.style.display = 'flex';
         mastersDiv.style.flexDirection = 'column';
@@ -716,49 +724,54 @@ function renderPromotionTree() {
             const mData = unitTypes.find(u => u.type === m);
             const mNode = document.createElement('div');
             mNode.className = 'unit-node tier3';
-            mNode.style.fontSize = '7.5px';
+            mNode.style.fontSize = '7px';
             mNode.style.position = 'relative';
+            mNode.style.padding = '2px 4px';
+            mNode.style.minWidth = 'auto';
             if (mData) {
                 mNode.innerHTML = `
                     <div class="custom-tooltip">
-                        <strong style="color:#ffd700;">${mData.name}</strong><br>
-                        ${mData.desc}<br>
-                        <span style="color:#aaa;">ATK: ${mData.damage} | CD: ${mData.cooldown/1000}s</span>
+                        <strong style="color:#ffd700; font-size: 9px;">${mData.name}</strong><br>
+                        <span style="font-size: 8px;">${mData.desc}</span>
                     </div>
-                    ${mData.icon} ${mData.name}`;
+                    ${mData.icon} ${mData.name.split(' ').pop()}`;
             } else {
                 mNode.innerText = m;
             }
             mastersDiv.appendChild(mNode);
         });
 
-        const aArrow = document.createElement('div');
-        aArrow.innerText = '→';
-        aArrow.style.fontSize = '9px';
-        aArrow.style.textAlign = 'center';
+        // Arrow 3
+        const arrow3 = document.createElement('div');
+        arrow3.innerText = '→';
+        arrow3.style.fontSize = '8px';
+        arrow3.style.textAlign = 'center';
 
-        // Tier 4 (Abyss)
+        // 4. Tier 4 (Abyss)
         const aData = unitTypes.find(u => u.type === p.abyss);
         const abyssNode = document.createElement('div');
         abyssNode.className = 'unit-node tier4';
-        abyssNode.style.fontSize = '7.5px';
+        abyssNode.style.fontSize = '7px';
         abyssNode.style.position = 'relative';
+        abyssNode.style.padding = '2px 4px';
+        abyssNode.style.minWidth = 'auto';
         if (aData) {
             abyssNode.innerHTML = `
                 <div class="custom-tooltip" style="border-color:#9400d3;">
-                    <strong style="color:#9400d3;">${aData.name}</strong><br>
-                    ${aData.desc}<br>
-                    <span style="color:#aaa;">ATK: ${aData.damage} | CD: ${aData.cooldown/1000}s</span>
+                    <strong style="color:#9400d3; font-size: 9px;">${aData.name}</strong><br>
+                    <span style="font-size: 8px;">${aData.desc}</span>
                 </div>
-                ${aData.icon} ${aData.name}`;
+                ${aData.icon} ${aData.name.split(' ').pop()}`;
         } else {
             abyssNode.innerText = p.abyss;
         }
 
-        pathRow.appendChild(tier2);
-        pathRow.appendChild(mArrow);
+        pathRow.appendChild(t1Node);
+        pathRow.appendChild(arrow1);
+        pathRow.appendChild(t2Node);
+        pathRow.appendChild(arrow2);
         pathRow.appendChild(mastersDiv);
-        pathRow.appendChild(aArrow);
+        pathRow.appendChild(arrow3);
         pathRow.appendChild(abyssNode);
         treeContainer.appendChild(pathRow);
     });
