@@ -957,6 +957,13 @@ function shoot(tower, target, startX, startY) {
             tower.element.style.boxShadow = '';
         }
 
+        // Handle temporary Defiled Apprentice curse (5s)
+        if (tower.defiledDebuffTime && Date.now() > tower.defiledDebuffTime) {
+            tower.defiledDebuff = 0;
+            tower.defiledDebuffTime = 0;
+            tower.element.style.filter = '';
+        }
+
         const acolyteDmgLoss = (tower.acolyteStacks || 0) * 4;
         const defiledDmgLoss = tower.defiledDebuff || 0;
         const slotCorruption = parseInt(tower.slotElement.dataset.corruption) || 0;
@@ -998,9 +1005,10 @@ function shoot(tower, target, startX, startY) {
         // [Corruption Abilities] When hit by a tower, these enemies retaliate
         if (target.isCorrupted) {
             if (target.type === 'defiled_apprentice') {
-                // 10% chance to curse attacker's damage (-3, No stack)
-                if (Math.random() < 0.1 && !tower.defiledDebuff) {
+                // 10% chance to curse attacker's damage (-3, 5s duration, no refresh while active)
+                if (Math.random() < 0.1 && (!tower.defiledDebuffTime || Date.now() > tower.defiledDebuffTime)) {
                     tower.defiledDebuff = 3;
+                    tower.defiledDebuffTime = Date.now() + 5000;
                     tower.element.style.filter = 'sepia(1) hue-rotate(300deg)'; // Reddish tint for curse
                 }
             } else if (target.type === 'abyssal_acolyte') {
