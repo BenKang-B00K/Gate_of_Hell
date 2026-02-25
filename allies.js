@@ -611,16 +611,16 @@ function renderBestiary() {
     allEnemyTypes.forEach(enemy => {
         const kills = killCounts[enemy.type] || 0;
         const bonus = getBestiaryBonus(enemy.type);
-        const bonusText = bonus > 1 ? `Damage Bonus: +${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus (Need 50 kills)';
+        const bonusText = bonus > 1 ? `DMG Bonus<br>+${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus<br>(Need 50)';
         const dispName = enemyNames[enemy.type] || enemy.type.toUpperCase();
 
         const item = document.createElement('div');
         item.className = 'bestiary-item';
         item.innerHTML = `
-            <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; width:20px; height:20px;"></div>
+            <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none;"></div>
             <div class="bestiary-info">
                 <div class="bestiary-name">${dispName}</div>
-                <div class="bestiary-stats">Kills: ${kills}</div>
+                <div class="bestiary-stats">💀 ${kills} Kills</div>
                 <div class="bestiary-bonus">${bonusText}</div>
             </div>
         `;
