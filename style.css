@@ -774,6 +774,24 @@ body {
     box-sizing: border-box;
 }
 
+#purge-card {
+    border-color: #9400d3 !important;
+    color: #9400d3 !important;
+    box-shadow: 0 0 10px rgba(148, 0, 211, 0.2);
+    transition: all 0.2s;
+}
+
+#purge-card:hover {
+    box-shadow: 0 0 15px rgba(148, 0, 211, 0.5);
+    background: linear-gradient(135deg, #2a0052, #000);
+}
+
+#purge-card.locked {
+    filter: grayscale(100%);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* Exorcism Records Overlay */
 #records-overlay {
     position: fixed;

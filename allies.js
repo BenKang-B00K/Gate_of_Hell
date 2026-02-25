@@ -781,6 +781,39 @@ function updateSummonButtonState() {
         towerCard.classList.remove('locked');
         costDiv.innerText = `${towerCost} SE`;
     }
+
+    // Update Purge Card State
+    const purgeCard = document.getElementById('purge-card');
+    const purgeCost = 100;
+    if (purgeCard) {
+        if (money < purgeCost || portalEnergy <= 0) {
+            purgeCard.classList.add('locked');
+        } else {
+            purgeCard.classList.remove('locked');
+        }
+    }
+}
+
+function purgePortal() {
+    const purgeCost = 100;
+    const purgeAmount = 200;
+
+    if (money >= purgeCost && portalEnergy > 0) {
+        money -= purgeCost;
+        portalEnergy = Math.max(0, portalEnergy - purgeAmount);
+        
+        // Visual effect
+        const portal = document.getElementById('portal');
+        if (portal) {
+            const flash = document.createElement('div');
+            flash.style.cssText = 'position:absolute; width:100%; height:100%; border-radius:50%; background:white; opacity:0.8; z-index:10;';
+            portal.appendChild(flash);
+            setTimeout(() => flash.remove(), 200);
+        }
+
+        updateGauges();
+        updateSummonButtonState();
+    }
 }
 
 // Attach to window for other scripts
@@ -809,6 +842,13 @@ function initAllies() {
         const targetSlot = validSlots[Math.floor(Math.random() * validSlots.length)];
         summonTower(targetSlot);
     });
+
+    const purgeCard = document.getElementById('purge-card');
+    if (purgeCard) {
+        purgeCard.addEventListener('click', () => {
+            purgePortal();
+        });
+    }
     
     // Create 30 slots on each side (Total 60)
     slots.length = 0; // Initialize slots array
