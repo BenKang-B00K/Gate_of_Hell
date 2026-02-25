@@ -474,27 +474,28 @@ function spawnEnemy() {
         probs = { basic: 0.985, pattern: 0.005, enhanced: 0.005, armoured: 0.005, treasure: treasureChance };
     }
 
-    probs.basic -= (treasureChance - 0.01);
+    probs.basic -= treasureChance; // Adjust basic to accommodate treasure chance
 
     const randCat = Math.random();
-    let accumulatedProbability = 0;
+    let accumulatedCatProb = 0;
     let category = 'basic';
 
     for (const [key, value] of Object.entries(probs)) {
-        accumulatedProbability += value;
-        if (randCat < accumulatedProbability) {
+        accumulatedCatProb += value;
+        if (randCat < accumulatedCatProb) {
             category = key;
             break;
         }
     }
 
     const enemyTypes = enemyCategories[category];
-    const rand = Math.random();
+    const randEnemy = Math.random();
+    let accumulatedEnemyProb = 0;
     let selectedType = enemyTypes[0];
 
     for (const enemyType of enemyTypes) {
-        accumulatedProbability += enemyType.probability;
-        if (rand < accumulatedProbability) {
+        accumulatedEnemyProb += enemyType.probability;
+        if (randEnemy < accumulatedEnemyProb) {
             selectedType = enemyType;
             break;
         }
@@ -638,7 +639,6 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
     if (typeof recordUnlock === 'function') {
         recordUnlock(data.type, true);
     }
-    }
 
     const enemyDiv = document.createElement('div');
     enemyDiv.classList.add('enemy', 'corrupted', 'spawning', data.type);
@@ -684,9 +684,6 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
 
     // Bringer of Doom Special Ability: Master Corruption
     if (data.type === 'bringer_of_doom') {
-        // Find 2 random inner slots (closest to road)
-        // Left inner: 2, 5, 8, 11, 14, 17, 20, 23, 26, 29
-        // Right inner: 30, 33, 36, 39, 42, 45, 48, 51, 54, 57
         const innerIndices = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57];
         const shuffled = innerIndices.sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 2);
@@ -735,7 +732,7 @@ function spawnFriendlyGhost() {
 function handleEnemyDeath(target, killer = null) {
     if (target.hp > 0) return;
 
-    // Cursed Sect: Explosion on death
+    // Cursed Mark: Explosion on death
     if (target.isCursedMark) {
         const explosion = document.createElement('div');
         explosion.style.position = 'absolute';
@@ -760,13 +757,13 @@ function handleEnemyDeath(target, killer = null) {
             const dist = Math.sqrt(Math.pow(eX - tX, 2) + Math.pow(e.y - tY, 2));
             if (dist < 100) { 
                 if (typeof window.applyDamage === 'function') {
-                    window.applyDamage(e, target.maxHp * 0.5, null); // 50% max HP damage
+                    window.applyDamage(e, target.maxHp * 0.5, null); 
                 }
             }
         });
     }
 
-    // Hellfire Alchemist: Explosion on death
+    // Hellfire Explosion
     if (target.isHellfireBurn) {
         const explosion = document.createElement('div');
         explosion.style.position = 'absolute';
@@ -801,7 +798,7 @@ function handleEnemyDeath(target, killer = null) {
         });
     }
 
-    // [Corrupted Ability] Embers of Hatred: Explosion on death
+    // Embers of Hatred: Explosion on death
     if (target.type === 'ember_hatred') {
         const explosion = document.createElement('div');
         explosion.style.position = 'absolute';
@@ -830,13 +827,12 @@ function handleEnemyDeath(target, killer = null) {
         });
     }
 
-    // Wraith Lord: Resurrect enemy as skeleton
+    // Wraith Lord Resurrect
     if (killer && killer.data.type === 'wraithlord') {
         const road = document.getElementById('road');
         const skeletonDiv = document.createElement('div');
         skeletonDiv.classList.add('friendly-skeleton');
         road.appendChild(skeletonDiv);
-        
         skeletonDiv.style.left = target.element.style.left;
         skeletonDiv.style.top = target.element.style.top;
 
@@ -853,22 +849,21 @@ function handleEnemyDeath(target, killer = null) {
         if (target.type) recordKill(target.type);
         target.element.remove();
         enemies.splice(idx, 1);
-        updateStageInfo(); // Update enemy counter
+        updateStageInfo(); 
         
-        // Boss death rewards
         if (target.isBoss) {
             const tutorialToggle = document.getElementById('tutorial-toggle');
             const showMsg = tutorialToggle && tutorialToggle.checked;
 
             if (target.data.type === 'cerberus') {
                 damageMultiplier += target.data.rewardEffect;
-                if (showMsg) alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n⚔️ Ally attack power increased by 10%! (Current Multiplier: ${damageMultiplier.toFixed(1)}x)`);
+                if (showMsg) alert(`🎉 Defeated! Obtained [${target.data.rewardName}]!\n⚔️ ATK +10%!`);
             } else if (target.data.type === 'charon') {
                 globalSpeedFactor -= target.data.rewardEffect;
-                if (showMsg) alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n🐢 Enemy movement speed reduced by 15%! (Current Multiplier: ${globalSpeedFactor.toFixed(2)}x)`);
+                if (showMsg) alert(`🎉 Defeated! Obtained [${target.data.rewardName}]!\n🐢 Enemy Speed -15%!`);
             } else if (target.data.type === 'beelzebub') {
                 treasureChance += target.data.rewardEffect;
-                if (showMsg) alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n💰 Treasure ghost spawn rate increased! (Current: ${(treasureChance * 100).toFixed(0)}%)`);
+                if (showMsg) alert(`🎉 Defeated! Obtained [${target.data.rewardName}]!\n💰 Treasure Spawn Rate Up!`);
             } else if (target.data.type === 'lucifer') {
                 critChance += target.data.rewardEffect;
                 const frozenOverlay = document.getElementById('frozen-overlay');
@@ -879,35 +874,23 @@ function handleEnemyDeath(target, killer = null) {
                         t.element.classList.remove('frozen-tomb');
                     }
                 });
-                if (showMsg) alert(`🎉 Boss Defeated! Obtained [${target.data.rewardName}]!\n⚡ Ally critical hit chance increased by 10%! (Current: ${(critChance * 100).toFixed(0)}%)`);
+                if (showMsg) alert(`🎉 Defeated! Obtained [${target.data.rewardName}]!\n⚡ Crit Chance +10%!`);
             }
-            
             bossInstance = null;
         }
 
-        // Corruption reward: Corrupted Shards
         if (target.isCorrupted) {
             if (corruptedShards < 99) {
                 corruptedShards += 1;
                 updateGauges();
-                
-                // Trigger CS Gain Effect
                 if (typeof createCSGainEffect === 'function' && target.element) {
                     const rect = target.element.getBoundingClientRect();
                     const gameRect = gameContainer.getBoundingClientRect();
-                    const x = (rect.left + rect.width / 2) - gameRect.left;
-                    const y = (rect.top + rect.height / 2) - gameRect.top;
-                    createCSGainEffect(x, y, 1, gameContainer);
-                }
-
-                const tutorialToggle = document.getElementById('tutorial-toggle');
-                if (tutorialToggle && tutorialToggle.checked) {
-                    alert("💠 Obtained a [Corrupted Shard]!");
+                    createCSGainEffect((rect.left + rect.width / 2) - gameRect.left, (rect.top + rect.height / 2) - gameRect.top, 1, gameContainer);
                 }
             }
         }
 
-        // SE Reward
         let reward = target.reward;
         if (killer && killer.data && killer.data.type === 'abyssal') {
             reward = Math.floor(reward * 1.5);
@@ -915,13 +898,10 @@ function handleEnemyDeath(target, killer = null) {
         money = Math.min(1000, money + reward);
         updateGauges();
 
-        // Trigger SE Gain Effect
         if (typeof createSEGainEffect === 'function' && target.element) {
             const rect = target.element.getBoundingClientRect();
             const gameRect = gameContainer.getBoundingClientRect();
-            const x = (rect.left + rect.width / 2) - gameRect.left;
-            const y = (rect.top + rect.height / 2) - gameRect.top;
-            createSEGainEffect(x, y, reward, gameContainer);
+            createSEGainEffect((rect.left + rect.width / 2) - gameRect.left, (rect.top + rect.height / 2) - gameRect.top, reward, gameContainer);
         }
 
         if (typeof window.updateSummonButtonState === 'function') {

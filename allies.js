@@ -1,15 +1,14 @@
 /* allies.js */
 
 let towerCost = 40;
-const jobChangeCost = 200; // Increased from 100
-const masterJobCost = 500; // Increased from 200
-const maxTowers = 12; // Maximum summon count
+const jobChangeCost = 200; 
+const masterJobCost = 500; 
+const maxTowers = 12; 
 
 // Track unlocked classes for Records
 const unlockedUnits = new Set(['apprentice']);
 
 function recordUnlock(type, isEnemy = false) {
-    // Check tutorial toggle (If checked, show alerts)
     const tutorialToggle = document.getElementById('tutorial-toggle');
     const isTutorialEnabled = tutorialToggle ? tutorialToggle.checked : true;
     
@@ -18,20 +17,20 @@ function recordUnlock(type, isEnemy = false) {
         if (window.encounteredEnemies.has(type)) return;
         window.encounteredEnemies.add(type);
 
-        // Skip message if tutorial is disabled (OFF)
         if (!isTutorialEnabled) return;
 
         let enemyData = null;
-        // Search in categories
         for (const cat in enemyCategories) {
             const found = enemyCategories[cat].find(e => e.type === type);
             if (found) { enemyData = found; break; }
         }
-        // Search in bosses
         if (!enemyData) {
             for (const key in bossData) {
                 if (bossData[key].type === type) { enemyData = bossData[key]; break; }
             }
+        }
+        if (!enemyData && typeof corruptedTypes !== 'undefined') {
+            enemyData = corruptedTypes[type];
         }
 
         if (enemyData) {
@@ -41,42 +40,24 @@ function recordUnlock(type, isEnemy = false) {
             const name = document.getElementById('unlock-name');
             const desc = document.getElementById('unlock-desc');
             
-            // Full Name Mapping for Popup
             const enemyNames = {
-                'normal': 'Whispering Soul',
-                'mist': 'Wandering Mist',
-                'memory': 'Faded Memory',
-                'shade': 'Flickering Shade',
-                'tank': 'Ironclad Wraith',
-                'runner': 'Haste-Cursed Shadow',
-                'greedy': 'Gluttonous Poltergeist',
-                'mimic': 'Mimic Soul',
-                'dimension': 'Void-Step Phantasm',
-                'deceiver': 'Siren of Despair',
-                'boar': 'Feral Revenant',
-                'soul_eater': 'Soul Eater',
-                'frost': 'Cocytus Drifter',
-                'lightspeed': 'Ethereal Streak',
-                'heavy': 'Grave-Bound Behemoth',
-                'lava': 'Magma-Veined Terror',
-                'burning': 'Eternal Zealot',
-                'gold': 'Gilded Apparition',
-                'defiled_apprentice': 'Defiled Apprentice',
-                'abyssal_acolyte': 'Abyssal Acolyte',
-                'bringer_of_doom': 'Bringer of Doom',
-                'cursed_vajra': 'Cursed Vajra',
-                'void_piercer': 'Void-Piercing Shade',
-                'frost_outcast': 'Frost-Bitten Outcast',
-                'ember_hatred': 'Embers of Hatred',
-                'betrayer_blade': "Betrayer's Blade"
+                'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory',
+                'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow',
+                'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm',
+                'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater',
+                'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth',
+                'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition',
+                'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom',
+                'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast',
+                'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade"
             };
 
             if (modal && header && icon && name && desc) {
                 header.innerText = `${enemyData.icon} NEW SPECTER ENCOUNTERED!`;
                 header.style.color = "#ff4500";
                 icon.innerText = enemyData.icon;
-                const hpVal = Math.floor(enemyData.hp || (enemyData.type === 'normal' ? 110 : 0));
-                const fullName = enemyData.name || enemyNames[enemyData.type] || (enemyData.type.charAt(0).toUpperCase() + enemyData.type.slice(1));
+                const hpVal = Math.floor(enemyData.hp || 110);
+                const fullName = enemyData.name || enemyNames[enemyData.type] || enemyData.type;
                 name.innerHTML = `${fullName}<br><span style="font-size:10px; color:#aaa;">(HP: ${hpVal})</span>`;
                 desc.innerText = enemyData.desc || enemyData.lore;
                 modal.style.display = 'flex';
@@ -88,8 +69,6 @@ function recordUnlock(type, isEnemy = false) {
 
     if (!unlockedUnits.has(type)) {
         unlockedUnits.add(type);
-        
-        // Skip message if tutorial is disabled (OFF)
         if (!isTutorialEnabled) return;
 
         const data = unitTypes.find(u => u.type === type);
@@ -107,1289 +86,273 @@ function recordUnlock(type, isEnemy = false) {
                 name.innerText = data.name;
                 desc.innerText = data.desc;
                 modal.style.display = 'flex';
-                isPaused = true; // Pause game while modal is open
+                isPaused = true;
             }
         }
     }
 }
 
-// Ally unit data
 const unitTypes = [
     { type: 'apprentice', name: 'Apprentice Exorcist', role: 'Basic', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 833, desc: "An apprentice with basic exorcism abilities." },
     { type: 'chainer', name: 'Soul Chainer', role: 'Support', tier: 2, icon: '⛓️', damage: 15, range: 130, cooldown: 1000, desc: "Uses soul chains to slow down enemies.", upgrades: ['executor', 'binder'] },
     { type: 'talisman', name: 'Talismanist', role: 'Attack', tier: 2, icon: '📜', damage: 25, range: 120, cooldown: 1500, desc: "Throws exploding talismans to deal area damage.", upgrades: ['grandsealer', 'flamemaster'] },
     { type: 'monk', name: 'Mace Monk', role: 'Support', tier: 2, icon: '⛪', damage: 40, range: 100, cooldown: 1200, desc: "Knocks back enemies with a powerful mace.", upgrades: ['vajra', 'saint'] },
     { type: 'archer', name: 'Divine Archer', role: 'Attack', tier: 2, icon: '🏹', damage: 80, range: 250, cooldown: 1500, desc: "Has the longest range and snipes single targets.", upgrades: ['voidsniper', 'thousandhand'] },
-    { type: 'ice', name: 'Ice Daoist', role: 'Support', tier: 2, icon: '❄️', damage: 20, range: 130, cooldown: 1000, desc: "Slows down ghosts with cold energy. (10% speed reduction)", upgrades: ['absolutezero', 'permafrost'] },
-    { type: 'fire', name: 'Fire Mage', role: 'Attack', tier: 2, icon: '🔥', damage: 10, range: 120, cooldown: 1000, desc: "Burns ghosts to deal damage based on max HP per second.", upgrades: ['hellfire', 'phoenix'] },
+    { type: 'ice', name: 'Ice Daoist', role: 'Support', tier: 2, icon: '❄️', damage: 20, range: 130, cooldown: 1000, desc: "Slows down ghosts with cold energy.", upgrades: ['absolutezero', 'permafrost'] },
+    { type: 'fire', name: 'Fire Mage', role: 'Attack', tier: 2, icon: '🔥', damage: 10, range: 120, cooldown: 1000, desc: "Burns ghosts to deal damage based on max HP.", upgrades: ['hellfire', 'phoenix'] },
     { type: 'assassin', name: 'Shadow Assassin', role: 'Attack', tier: 2, icon: '🗡️', damage: 20, range: 100, cooldown: 300, desc: "Attacks very quickly, ignoring enemy defense.", upgrades: ['abyssal', 'spatial'] },
-    { type: 'tracker', name: 'Soul Tracker', role: 'Support', tier: 2, icon: '👁️', damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies (up, down, left, right).", upgrades: ['seer', 'commander'] },
-    { type: 'necromancer', name: 'Necromancer', role: 'Support', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Chance to summon spirit walls that block enemy paths (30% chance on hit).", upgrades: ['wraithlord', 'cursedshaman'] },
-    { type: 'guardian', name: 'Sanctuary Guardian', role: 'Special', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit (5% chance).", upgrades: ['rampart', 'judgment'] },
-    { type: 'knight', name: 'Exorcist Knight', role: 'Attack', tier: 2, icon: '⚔️', damage: 45, range: 110, cooldown: 1000, desc: "A disciplined warrior with balanced stats.", upgrades: ['paladin', 'crusader'] },
-    // Master Classes
-    { type: 'paladin', name: 'Holy Paladin', role: 'Attack', tier: 3, icon: '⛪', damage: 55, range: 130, cooldown: 1000, desc: "[Master] Every 5th attack deals 3x damage and stuns.", upgrades: ['eternal_wall'] },
-    { type: 'crusader', name: 'Blood Crusader', role: 'Attack', tier: 3, icon: '🚩', damage: 80, range: 120, cooldown: 1500, desc: "[Master] Attacks deal bonus damage based on enemy's missing HP.", upgrades: ['eternal_wall'] },
-    { type: 'executor', name: 'Underworld Executor', role: 'Special', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] 10% chance to return enemies near the gate to the starting point.", upgrades: ['warden'] },
-    { type: 'binder', name: 'Soul Binder', role: 'Support', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links up to 5 enemies to share 50% of damage taken.", upgrades: ['warden'] },
-    { type: 'grandsealer', name: 'Grand Sealer', role: 'Support', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Attaches large talismans to neutralize enemy special abilities.", upgrades: ['cursed_talisman'] },
-    { type: 'flamemaster', name: 'Fire Talisman Master', role: 'Attack', tier: 3, icon: '🌋', damage: 35, range: 130, cooldown: 1500, desc: "[Master] Leaves persistent flames where talismans explode.", upgrades: ['cursed_talisman'] },
-    { type: 'vajra', name: 'Vajrapani', role: 'Special', tier: 3, icon: '🔱', damage: 50, range: 100, cooldown: 1200, desc: "[Master] Knocks enemies off-screen on critical hit (100% on crit).", upgrades: ['asura'] },
-    { type: 'saint', name: 'Saint of Vibration', role: 'Support', tier: 3, icon: '🔔', damage: 45, range: 100, cooldown: 1500, desc: "[Master] Attacks stun enemies in a wide area (100% on hit).", upgrades: ['asura'] },
-    { type: 'voidsniper', name: 'Void Sniper', role: 'Attack', tier: 3, icon: '🎯', damage: 120, range: 9999, cooldown: 2000, desc: "[Master] Prioritizes sniping the enemy closest to the gate.", upgrades: ['piercing_shadow'] },
-    { type: 'thousandhand', name: 'Thousand-Hand Archer', role: 'Attack', tier: 3, icon: '🍃', damage: 40, range: 250, cooldown: 1500, desc: "[Master] Fires 6 arrows at once to attack up to 4 enemies.", upgrades: ['piercing_shadow'] },
-    { type: 'absolutezero', name: 'Absolute Zero Mage', role: 'Special', tier: 3, icon: '💎', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Instantly kills frozen enemies with less than 30% HP.", upgrades: ['cocytus'] },
-    { type: 'permafrost', name: 'Ice Maiden', role: 'Support', tier: 3, icon: '🌬️', damage: 25, range: 140, cooldown: 1000, desc: "[Master] Creates a blizzard that reduces enemy speed by 50% in the area.", upgrades: ['cocytus'] },
-    { type: 'hellfire', name: 'Hellfire Alchemist', role: 'Attack', tier: 3, icon: '🧪', damage: 20, range: 130, cooldown: 1000, desc: "[Master] Burning enemies explode on death, spreading the burn.", upgrades: ['purgatory'] },
-    { type: 'phoenix', name: 'Phoenix Summoner', role: 'Attack', tier: 3, icon: '🐦‍🔥', damage: 40, range: 180, cooldown: 2000, desc: "[Master] Summons a phoenix that leaves a trail of fire.", upgrades: ['purgatory'] },
-    { type: 'abyssal', name: 'Abyssal Killer', role: 'Special', tier: 3, icon: '🌑', damage: 30, range: 100, cooldown: 300, desc: "[Master] Increases soul energy gain from kills by 1.5x.", upgrades: ['reaper'] },
-    { type: 'spatial', name: 'Spatial Slasher', role: 'Attack', tier: 3, icon: '🌌', damage: 25, range: 120, cooldown: 300, desc: "[Master] Summons clones in empty slots to assassinate (15% chance on hit).", upgrades: ['reaper'] },
-    { type: 'seer', name: 'Seeker of Truth', role: 'Support', tier: 3, icon: '🔭', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' damage and detects stealthed enemies.", upgrades: ['doom_guide'] },
-    { type: 'commander', name: 'Battlefield Commander', role: 'Support', tier: 3, icon: '🚩', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Increases nearby allies' attack speed by 20%.", upgrades: ['doom_guide'] },
-    { type: 'wraithlord', name: 'Wraith Lord', role: 'Support', tier: 3, icon: '🧟', damage: 40, range: 130, cooldown: 1200, desc: "[Master] Reanimates killed enemies as ally skeleton soldiers.", upgrades: ['forsaken_king'] },
-    { type: 'cursedshaman', name: 'Cursed Shaman', role: 'Support', tier: 3, icon: '🎭', damage: 20, range: 130, cooldown: 1500, desc: "[Master] Curses a wide area to permanently reduce enemies' maximum HP.", upgrades: ['forsaken_king'] },
-    { type: 'rampart', name: 'Holy Rampart', role: 'Support', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] Returns enemies reaching the gate to the start (5 charges).", upgrades: ['void_gatekeeper'] },
-    { type: 'judgment', name: 'Knight of Judgment', role: 'Attack', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack.", upgrades: ['void_gatekeeper'] },
-    // Abyss Classes (Tier 4)
-    { type: 'warden', name: 'Warden of the Abyss', role: 'Support', tier: 4, icon: '🗝️', damage: 100, range: 200, cooldown: 10000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing high DOT." },
-    { type: 'cursed_talisman', name: 'Cursed Sect', role: 'Attack', tier: 4, icon: '⛩️', damage: 80, range: 150, cooldown: 1200, desc: "[Abyss] Mark enemies to explode on death for massive Max HP damage." },
-    { type: 'asura', name: 'Hell Crushing Asura', role: 'Attack', tier: 4, icon: '👹', damage: 60, range: 120, cooldown: 400, desc: "[Abyss] 12 strikes to 3 targets. Knocks them back to start." },
-    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', role: 'Attack', tier: 4, icon: '🌠', damage: 300, range: 9999, cooldown: 2000, desc: "[Abyss] Infinite range piercing arrow that ricochets faster." },
-    { type: 'cocytus', name: 'Ruler of Cocytus', role: 'Special', tier: 4, icon: '⏳', damage: 20, range: 200, cooldown: 20000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
-    { type: 'purgatory', name: 'Eternal Purgatory Fire', role: 'Attack', tier: 4, icon: '🕯️', damage: 20, range: 150, cooldown: 800, desc: "[Abyss] Dynamic row of permanent hellfire. Follows unit position." },
-    { type: 'reaper', name: 'Nightmare Reaper', role: 'Special', tier: 4, icon: '☠️', damage: 0, range: 0, cooldown: 3000, desc: "[Abyss] Every 3s, instakills highest HP non-boss ghost for 3x Soul Energy." },
-    { type: 'doom_guide', name: 'Guide of Doom', role: 'Special', tier: 4, icon: '🛶', damage: 40, range: 150, cooldown: 800, desc: "[Abyss] Inverts portal. Escaping ghosts give 100% Soul Energy." },
-    { type: 'forsaken_king', name: 'King of the Forsaken', role: 'Support', tier: 4, icon: '👑', damage: 100, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts based on Corruption level." },
-    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', role: 'Support', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals portal until 30 ghosts gather." },
-    { type: 'eternal_wall', name: 'Guardian of Eternity', role: 'Support', tier: 4, icon: '🗿', damage: 150, range: 150, cooldown: 2000, desc: "[Abyss] Heavily slows all enemies in range by 80%." }
+    { type: 'tracker', name: 'Soul Tracker', role: 'Support', tier: 2, icon: '👁️', damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies.", upgrades: ['seer', 'commander'] },
+    { type: 'necromancer', name: 'Necromancer', role: 'Support', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Summons spirit walls that block paths.", upgrades: ['wraithlord', 'cursedshaman'] },
+    { type: 'guardian', name: 'Sanctuary Guardian', role: 'Special', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit (5%).", upgrades: ['rampart', 'judgment'] },
+    { type: 'knight', name: 'Exorcist Knight', role: 'Attack', tier: 2, icon: '⚔️', damage: 45, range: 110, cooldown: 1000, desc: "Balanced stats warrior.", upgrades: ['paladin', 'crusader'] },
+    { type: 'paladin', name: 'Holy Paladin', role: 'Attack', tier: 3, icon: '⛪', damage: 55, range: 130, cooldown: 1000, desc: "[Master] 5th attack deals 3x damage and stuns.", upgrades: ['eternal_wall'] },
+    { type: 'crusader', name: 'Blood Crusader', role: 'Attack', tier: 3, icon: '🚩', damage: 80, range: 120, cooldown: 1500, desc: "[Master] Bonus damage based on enemy missing HP.", upgrades: ['eternal_wall'] },
+    { type: 'executor', name: 'Underworld Executor', role: 'Special', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] Returns enemies to start (10%).", upgrades: ['warden'] },
+    { type: 'binder', name: 'Soul Binder', role: 'Support', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links enemies to share damage.", upgrades: ['warden'] },
+    { type: 'grandsealer', name: 'Grand Sealer', role: 'Support', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Neutralizes enemy special abilities.", upgrades: ['cursed_talisman'] },
+    { type: 'flamemaster', name: 'Fire Talisman Master', role: 'Attack', tier: 3, icon: '🌋', damage: 35, range: 130, cooldown: 1500, desc: "[Master] Leaves persistent flames.", upgrades: ['cursed_talisman'] },
+    { type: 'vajra', name: 'Vajrapani', role: 'Special', tier: 3, icon: '🔱', damage: 50, range: 100, cooldown: 1200, desc: "[Master] Heavy knockback on crit.", upgrades: ['asura'] },
+    { type: 'saint', name: 'Saint of Vibration', role: 'Support', tier: 3, icon: '🔔', damage: 45, range: 100, cooldown: 1500, desc: "[Master] AOE Stun attacks.", upgrades: ['asura'] },
+    { type: 'voidsniper', name: 'Void Sniper', role: 'Attack', tier: 3, icon: '🎯', damage: 120, range: 9999, cooldown: 2000, desc: "[Master] Snipes closest to gate.", upgrades: ['piercing_shadow'] },
+    { type: 'thousandhand', name: 'Thousand-Hand Archer', role: 'Attack', tier: 3, icon: '🍃', damage: 40, range: 250, cooldown: 1500, desc: "[Master] Multiple arrows.", upgrades: ['piercing_shadow'] },
+    { type: 'absolutezero', name: 'Absolute Zero Mage', role: 'Special', tier: 3, icon: '💎', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Instakills low HP frozen targets.", upgrades: ['cocytus'] },
+    { type: 'permafrost', name: 'Ice Maiden', role: 'Support', tier: 3, icon: '🌬️', damage: 25, range: 140, cooldown: 1000, desc: "[Master] Blizzard AOE slow.", upgrades: ['cocytus'] },
+    { type: 'hellfire', name: 'Hellfire Alchemist', role: 'Attack', tier: 3, icon: '🧪', damage: 20, range: 130, cooldown: 1000, desc: "[Master] Exploding burning enemies.", upgrades: ['purgatory'] },
+    { type: 'phoenix', name: 'Phoenix Summoner', role: 'Attack', tier: 3, icon: '🐦‍🔥', damage: 40, range: 180, cooldown: 2000, desc: "[Master] Trail of fire.", upgrades: ['purgatory'] },
+    { type: 'abyssal', name: 'Abyssal Killer', role: 'Special', tier: 3, icon: '🌑', damage: 30, range: 100, cooldown: 300, desc: "[Master] 1.5x Soul Energy gain.", upgrades: ['reaper'] },
+    { type: 'spatial', name: 'Spatial Slasher', role: 'Attack', tier: 3, icon: '🌌', damage: 25, range: 120, cooldown: 300, desc: "[Master] Clone summons.", upgrades: ['reaper'] },
+    { type: 'seer', name: 'Seeker of Truth', role: 'Support', tier: 3, icon: '🔭', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Reveal stealth.", upgrades: ['doom_guide'] },
+    { type: 'commander', name: 'Battlefield Commander', role: 'Support', tier: 3, icon: '🚩', damage: 15, range: 120, cooldown: 1000, desc: "[Master] Nearby AS buff.", upgrades: ['doom_guide'] },
+    { type: 'wraithlord', name: 'Wraith Lord', role: 'Support', tier: 3, icon: '🧟', damage: 40, range: 130, cooldown: 1200, desc: "[Master] Skeleton resurrections.", upgrades: ['forsaken_king'] },
+    { type: 'cursedshaman', name: 'Cursed Shaman', role: 'Support', tier: 3, icon: '🎭', damage: 20, range: 130, cooldown: 1500, desc: "[Master] Max HP reduction curse.", upgrades: ['forsaken_king'] },
+    { type: 'rampart', name: 'Holy Rampart', role: 'Support', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] Return reaching gate.", upgrades: ['void_gatekeeper'] },
+    { type: 'judgment', name: 'Knight of Judgment', role: 'Attack', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] Holy AOE chance.", upgrades: ['void_gatekeeper'] },
+    { type: 'warden', name: 'Warden of the Abyss', role: 'Support', tier: 4, icon: '🗝️', damage: 100, range: 200, cooldown: 10000, desc: "[Abyss] Pull all to center." },
+    { type: 'cursed_talisman', name: 'Cursed Sect', role: 'Attack', tier: 4, icon: '⛩️', damage: 80, range: 150, cooldown: 1200, desc: "[Abyss] Explode on death mark." },
+    { type: 'asura', name: 'Hell Crushing Asura', role: 'Attack', tier: 4, icon: '👹', damage: 60, range: 120, cooldown: 400, desc: "[Abyss] 12 strikes." },
+    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', role: 'Attack', tier: 4, icon: '🌠', damage: 300, range: 9999, cooldown: 2000, desc: "[Abyss] Infinite pierce." },
+    { type: 'cocytus', name: 'Ruler of Cocytus', role: 'Special', tier: 4, icon: '⏳', damage: 20, range: 200, cooldown: 20000, desc: "[Abyss] Time Freeze." },
+    { type: 'purgatory', name: 'Eternal Purgatory Fire', role: 'Attack', tier: 4, icon: '🕯️', damage: 20, range: 150, cooldown: 800, desc: "[Abyss] Permanent hellfire row." },
+    { type: 'reaper', name: 'Nightmare Reaper', role: 'Special', tier: 4, icon: '☠️', damage: 0, range: 0, cooldown: 3000, desc: "[Abyss] Instakill highest HP." },
+    { type: 'doom_guide', name: 'Guide of Doom', role: 'Special', tier: 4, icon: '🛶', damage: 40, range: 150, cooldown: 800, desc: "[Abyss] Inverted portal gain." },
+    { type: 'forsaken_king', name: 'King of the Forsaken', role: 'Support', tier: 4, icon: '👑', damage: 100, range: 150, cooldown: 1000, desc: "[Abyss] Spawn friendly ghosts." },
+    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', role: 'Support', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Portal seal." },
+    { type: 'eternal_wall', name: 'Guardian of Eternity', role: 'Support', tier: 4, icon: '🗿', damage: 150, range: 150, cooldown: 2000, desc: "[Abyss] 80% slow aura." }
 ];
 
-// Use draggedUnit from enemies.js
 let isMovingUnit = false;
 
 function executeMove(unit, targetSlot) {
     const oldSlot = unit.parentElement;
-
-    if (oldSlot === targetSlot) {
-        cancelMovement();
-        return;
-    }
-
+    if (oldSlot === targetSlot) { cancelMovement(); return; }
     if (targetSlot.classList.contains('occupied')) {
-        // Swap units
         const targetUnit = targetSlot.querySelector('.unit');
         if (targetUnit) {
             oldSlot.appendChild(targetUnit);
             targetSlot.appendChild(unit);
-            
-            const unit1 = towers.find(t => t.element === unit);
-            const unit2 = towers.find(t => t.element === targetUnit);
-            
-            if (unit1) unit1.slotElement = targetSlot;
-            if (unit2) unit2.slotElement = oldSlot;
+            const u1 = towers.find(t => t.element === unit);
+            const u2 = towers.find(t => t.element === targetUnit);
+            if (u1) u1.slotElement = targetSlot;
+            if (u2) u2.slotElement = oldSlot;
         }
     } else {
-        // Move to empty slot
         targetSlot.appendChild(unit);
         oldSlot.classList.remove('occupied');
         targetSlot.classList.add('occupied');
-        
-        const unitData = towers.find(t => t.element === unit);
-        if (unitData) unitData.slotElement = targetSlot;
+        const ud = towers.find(t => t.element === unit);
+        if (ud) ud.slotElement = targetSlot;
     }
-    
     cancelMovement();
 }
 
-// Slot creation function
 function createSlots(containerId, count) {
     const container = document.getElementById(containerId);
-    container.innerHTML = ''; // Initialize slots (prevent duplicates)
+    if (!container) return;
+    container.innerHTML = '';
     for (let i = 0; i < count; i++) {
         const cell = document.createElement('div');
-        
-        // Skip top 3 slots on each side (Row 1)
-        if (i < 3) {
-            container.appendChild(cell); // Empty div for the grid space
-            continue;
-        }
-
+        if (i < 3) { container.appendChild(cell); continue; }
         cell.classList.add('card-slot');
         slots.push(cell);
         container.appendChild(cell);
-
-        // Click-to-Move Logic
-        cell.addEventListener('click', function(e) {
-            if (isMovingUnit && draggedUnit) {
-                executeMove(draggedUnit, this);
-            }
-        });
-
-        // Drag and Drop Logic
-        cell.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('drag-over');
-        });
-
-        cell.addEventListener('dragleave', function(e) {
-            this.classList.remove('drag-over');
-        });
-
-        cell.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('drag-over');
-            if (draggedUnit) {
-                executeMove(draggedUnit, this);
-            }
-        });
+        cell.addEventListener('click', function() { if (isMovingUnit && draggedUnit) executeMove(draggedUnit, this); });
+        cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+        cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+        cell.addEventListener('drop', e => { e.preventDefault(); cell.classList.remove('drag-over'); if (draggedUnit) executeMove(draggedUnit, cell); });
     }
 }
 
-function cancelMovement() {
-    if (draggedUnit) draggedUnit.classList.remove('move-ready');
-    draggedUnit = null;
-    isMovingUnit = false;
-}
+function cancelMovement() { if (draggedUnit) draggedUnit.classList.remove('move-ready'); draggedUnit = null; isMovingUnit = false; }
 
 function summonTower(targetSlot) {
-    // Consume resource
     money -= towerCost;
-    if (typeof updateGauges === 'function') {
-        updateGauges();
-    }
-
-    // Increase cost for next summon
+    if (typeof updateGauges === 'function') updateGauges();
     towerCost += 5;
-
-    // Summon always starts as Apprentice Exorcist
-    const selectedUnit = unitTypes[0];
-    recordUnlock(selectedUnit.type);
-
-    // Create unit visual element
+    const s = unitTypes[0];
+    recordUnlock(s.type);
     const unit = document.createElement('div');
-    unit.classList.add('unit', selectedUnit.type);
-    unit.title = selectedUnit.name; // Show name on hover
-    unit.innerText = selectedUnit.icon; // Set icon
-    unit.draggable = true; // Enable dragging
-
-    // Cooldown overlay
-    const cdOverlay = document.createElement('div');
-    cdOverlay.className = 'cooldown-overlay';
-    cdOverlay.style.pointerEvents = 'none';
-    unit.appendChild(cdOverlay);
-
-    // Unit click and drag event (promotion menu & range display & selection & move)
-    let longPressTimeout;
-    let dragStartTime;
-    
-    // Drag and Drop implementation
-    unit.addEventListener('dragstart', function(e) {
-        draggedUnit = this;
-        isMovingUnit = true;
-        this.classList.add('selected');
-        
-        const tower = towers.find(t => t.element === this);
-        if (tower) {
-            showUnitInfo(tower);
-            showRangeIndicator(tower);
-        }
-    });
-
-    unit.addEventListener('dragend', function(e) {
-        // Clear dragged state if it wasn't dropped in a valid slot
-        setTimeout(() => {
-            if (draggedUnit === this) cancelMovement();
-        }, 50);
-    });
-
-    unit.addEventListener('mousedown', function(e) {
-        if (e.button !== 0) return; // Only left click
-        dragStartTime = Date.now();
-        
-        // Long press detection (Fallback for mobile or alternative to drag)
-        longPressTimeout = setTimeout(() => {
-            if (!isMovingUnit) {
-                isMovingUnit = true;
-                draggedUnit = this;
-                
-                // Visual feedback
-                document.querySelectorAll('.unit').forEach(u => {
-                    u.classList.remove('selected');
-                    u.classList.remove('move-ready');
-                });
-                this.classList.add('selected');
-                this.classList.add('move-ready');
-                
-                const tower = towers.find(t => t.element === this);
-                if (tower) {
-                    showUnitInfo(tower);
-                    showRangeIndicator(tower);
-                }
-            }
-        }, 400); // 0.4s for long press
-    });
-
-    unit.addEventListener('mouseup', function(e) {
-        clearTimeout(longPressTimeout);
-    });
-
-    unit.addEventListener('mouseleave', function(e) {
-        clearTimeout(longPressTimeout);
-    });
-
-    unit.addEventListener('click', function(e) {
-        e.stopPropagation();
-        
-        // If it was a quick click:
-        if (Date.now() - dragStartTime < 400) {
-            // Handle Move (Second click on a selected unit - original double-click logic)
-            if (this.classList.contains('selected') && !isMovingUnit) {
-                isMovingUnit = true;
-                draggedUnit = this;
-                this.classList.add('move-ready');
-                return;
-            }
-
-            // Handle selection (first click)
-            document.querySelectorAll('.unit').forEach(u => {
-                u.classList.remove('selected');
-                u.classList.remove('move-ready');
-            });
-            this.classList.add('selected');
-            isMovingUnit = false;
-            draggedUnit = null;
-
-            // Display info
-            const tower = towers.find(t => t.element === this);
-            if (tower) {
-                showUnitInfo(tower);
-                showRangeIndicator(tower);
-            }
-        }
-    });
-    
-    targetSlot.appendChild(unit);
-    targetSlot.classList.add('occupied');
-
-    // Save tower data
-    const tower = {
-        data: selectedUnit, // Unit stats
-        element: unit,
-        slotElement: targetSlot, 
-        range: selectedUnit.range,
-        cooldown: selectedUnit.cooldown,
-        lastShot: 0,
-        spentSE: (towerCost - 5) // Track spent SE (before increase)
-    };
-    towers.push(tower);
-    
-    updateUnitOverlayButtons(tower);
-    updateSummonButtonState();
+    unit.classList.add('unit', s.type);
+    unit.title = s.name; unit.innerText = s.icon; unit.draggable = true;
+    const cd = document.createElement('div');
+    cd.className = 'cooldown-overlay'; cd.style.pointerEvents = 'none';
+    unit.appendChild(cd);
+    let ds;
+    unit.addEventListener('dragstart', function() { draggedUnit = this; isMovingUnit = true; this.classList.add('selected'); const t = towers.find(x => x.element === this); if(t){showUnitInfo(t); showRangeIndicator(t);} });
+    unit.addEventListener('mousedown', function(e) { if(e.button!==0)return; ds=Date.now(); });
+    unit.addEventListener('click', function(e) { e.stopPropagation(); if(Date.now()-ds<400) { if(this.classList.contains('selected') && !isMovingUnit) { isMovingUnit=true; draggedUnit=this; this.classList.add('move-ready'); return; } document.querySelectorAll('.unit').forEach(u=>u.classList.remove('selected','move-ready')); this.classList.add('selected'); isMovingUnit=false; draggedUnit=null; const t=towers.find(x=>x.element===this); if(t){showUnitInfo(t); showRangeIndicator(t);} } });
+    targetSlot.appendChild(unit); targetSlot.classList.add('occupied');
+    const tower = { data: s, element: unit, slotElement: targetSlot, range: s.range, cooldown: s.cooldown, lastShot: 0, spentSE: towerCost - 5 };
+    towers.push(tower); updateUnitOverlayButtons(tower); updateSummonButtonState();
 }
-
-// Unit information display function
-let infoResetTimeout = null;
 
 function showUnitInfo(tower) {
-    const unitInfoDisplay = document.getElementById('unit-info');
+    const d = document.getElementById('unit-info');
     const data = tower.data;
-    
-    // Clear existing timeout
-    if (infoResetTimeout) clearTimeout(infoResetTimeout);
-
-    // 1. Title section
-    let titleHtml = `<div style="color: #ffd700; font-weight: bold; font-size: 13px; margin-bottom: 2px;">${data.name}</div>`;
-    
-    // Position/Role Tag
-    let roleColor = '#ff4500'; // Default Attack
-    if (data.role === 'Basic') roleColor = '#00ff00'; // Green for basic
-    else if (data.role === 'Support') roleColor = '#00e5ff';
-    else if (data.role === 'Special') roleColor = '#ffd700';
-    
-    let roleHtml = `<div style="display:inline-block; background:${roleColor}; color:#000; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">${data.role}</div>`;
-
-    // 2. Info/Description section
-    let infoHtml = `<div style="font-size: 9px; color: #bbb; margin-bottom: 4px;">ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>`;
-    
-    // Cost display for next tier
-    let costHtml = '';
-    if (data.type === 'apprentice') {
-        costHtml = `<div style="font-size: 8px; color: #00ff00; margin-bottom: 4px;">↗️ Ascend: 200 SE</div>`;
-    } else if (data.upgrades) {
-        costHtml = `<div style="font-size: 8px; color: #ffd700; margin-bottom: 2px;">Unleash Master (500 SE):</div>`;
-        data.upgrades.forEach((uType, idx) => {
-            const uData = unitTypes.find(u => u.type === uType);
-            costHtml += `<div style="font-size: 7.5px; color: #aaa;">${idx === 0 ? '↖️ (Left)' : '↗️ (Right)'}: ${uData.name}</div>`;
-        });
-    } else if (data.tier === 3) {
-        const abyssMapping = {
-            'executor': 'warden', 'binder': 'warden',
-            'grandsealer': 'cursed_talisman', 'flamemaster': 'cursed_talisman',
-            'vajra': 'asura', 'saint': 'asura',
-            'voidsniper': 'piercing_shadow', 'thousandhand': 'piercing_shadow',
-            'absolutezero': 'cocytus', 'permafrost': 'cocytus',
-            'hellfire': 'purgatory', 'phoenix': 'purgatory',
-            'abyssal': 'reaper', 'spatial': 'reaper',
-            'seer': 'doom_guide', 'commander': 'doom_guide',
-            'wraithlord': 'forsaken_king', 'cursedshaman': 'forsaken_king',
-            'rampart': 'void_gatekeeper', 'judgment': 'void_gatekeeper',
-            'paladin': 'eternal_wall', 'crusader': 'eternal_wall'
-        };
-        const abyssType = abyssMapping[data.type];
-        if (abyssType) {
-            const uData = unitTypes.find(u => u.type === abyssType);
-            costHtml = `<div style="font-size: 8px; color: #9400d3; margin-top: 4px;">↖️ Descent: 50 Shards (${uData.name})</div>`;
-        }
-    }
-
-    unitInfoDisplay.innerHTML = `
-        ${titleHtml}
-        ${roleHtml}
-        ${costHtml}
-        ${infoHtml}
-        <div style="color: #888; font-size: 9px; margin-top: 2px; line-height: 1.2;">${data.desc}</div>
-    `;
-
-    // Auto-reset after 7 seconds
-    infoResetTimeout = setTimeout(resetUnitInfo, 7000);
+    let rc = '#ff4500'; if(data.role==='Basic') rc='#00ff00'; else if(data.role==='Support') rc='#00e5ff'; else if(data.role==='Special') rc='#ffd700';
+    let th = `<div style="color:#ffd700; font-weight:bold; font-size:13px; margin-bottom:2px;">${data.name}</div><div style="display:inline-block; background:${rc}; color:#000; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">${data.role}</div>`;
+    let ih = `<div style="font-size:9px; color:#bbb; margin-bottom:4px;">ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>`;
+    let ch = ''; if(data.type==='apprentice') ch=`<div style="font-size:8px; color:#00ff00; margin-bottom:4px;">↗️ Ascend: 200 SE</div>`;
+    else if(data.upgrades) { ch=`<div style="font-size:8px; color:#ffd700; margin-bottom:2px;">Unleash Master (500 SE):</div>`; data.upgrades.forEach((u,i)=>{const ud=unitTypes.find(x=>x.type===u); ch+=`<div style="font-size:7.5px; color:#aaa;">${i===0?'↖️':'↗️'}: ${ud.name}</div>`;}); }
+    d.innerHTML = `${th}${ch}${ih}<div style="color:#888; font-size:9px; margin-top:2px; line-height:1.2;">${data.desc}</div>`;
 }
 
-// Function to update direct action buttons on the unit
-function updateUnitOverlayButtons(tower) {
-    const unitElement = tower.element;
-    const data = tower.data;
-
-    // Clear existing overlay buttons
-    const existingBtns = unitElement.querySelectorAll('.unit-overlay-btn');
-    existingBtns.forEach(btn => btn.remove());
-
-    // 1. Corruption (Sell) Button - 9 o'clock position (left)
-    if (data.tier < 4) {
-        const corruptBtn = document.createElement('div');
-        corruptBtn.className = 'unit-overlay-btn corrupt-btn';
-        corruptBtn.innerHTML = '💀';
-        corruptBtn.title = `Corrupt (Sell for SE & Shards)`;
-        corruptBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const shardCount = data.tier;
-            const refund = Math.floor(tower.spentSE * 0.7);
-            if (confirm(`Do you want to corrupt this unit?\n\nImmediate Gain:\n💰 ${refund} SE (70% Refund)\n\nUpon defeat:\n💠 ${shardCount} Corrupted Shard(s)`)) {
-                sellTower(tower);
-                resetUnitInfo();
-            }
-        });
-        unitElement.appendChild(corruptBtn);
-    }
-
-    // 2. Promotion Buttons - Top positions
-    if (data.type === 'apprentice') {
-        // Ascend (Tier 1 -> 2)
-        const promoteBtn = document.createElement('div');
-        promoteBtn.className = 'unit-overlay-btn promote-btn';
-        promoteBtn.innerHTML = '↗️';
-        promoteBtn.title = `Ascend (200 SE)`;
-        promoteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (money >= jobChangeCost) {
-                performJobChange(unitElement);
-                const updatedTower = towers.find(t => t.element === unitElement);
-                if (updatedTower) {
-                    showUnitInfo(updatedTower);
-                    updateUnitOverlayButtons(updatedTower);
-                }
-            }
-        });
-        unitElement.appendChild(promoteBtn);
-    } else if (data.upgrades) {
-        // Unleash Master (Tier 2 -> 3) - Left and Right options
-        data.upgrades.forEach((uType, idx) => {
-            const uData = unitTypes.find(u => u.type === uType);
-            const promoteBtn = document.createElement('div');
-            promoteBtn.className = idx === 0 ? 'unit-overlay-btn promote-btn' : 'unit-overlay-btn promote-btn-right';
-            promoteBtn.innerHTML = idx === 0 ? '↖️' : '↗️';
-            promoteBtn.title = `Unleash ${uData.name} (500 SE)`;
-            promoteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (money >= masterJobCost) {
-                    performMasterJobChange(tower, uType);
-                    showUnitInfo(tower);
-                    updateUnitOverlayButtons(tower);
-                }
-            });
-            unitElement.appendChild(promoteBtn);
-        });
-    } else if (data.tier === 3) {
-        // Descent Abyss (Tier 3 -> 4)
-        const abyssMapping = {
-            'executor': 'warden', 'binder': 'warden',
-            'grandsealer': 'cursed_talisman', 'flamemaster': 'cursed_talisman',
-            'vajra': 'asura', 'saint': 'asura',
-            'voidsniper': 'piercing_shadow', 'thousandhand': 'piercing_shadow',
-            'absolutezero': 'cocytus', 'permafrost': 'cocytus',
-            'hellfire': 'purgatory', 'phoenix': 'purgatory',
-            'abyssal': 'reaper', 'spatial': 'reaper',
-            'seer': 'doom_guide', 'commander': 'doom_guide',
-            'wraithlord': 'forsaken_king', 'cursedshaman': 'forsaken_king',
-            'rampart': 'void_gatekeeper', 'judgment': 'void_gatekeeper'
-        };
-        const abyssType = abyssMapping[data.type];
-        if (abyssType) {
-            const uData = unitTypes.find(u => u.type === abyssType);
-            const promoteBtn = document.createElement('div');
-            promoteBtn.className = 'unit-overlay-btn promote-btn';
-            promoteBtn.innerHTML = '↖️';
-            promoteBtn.title = `Descent: ${uData.name} (50 Shards)`;
-            promoteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (typeof corruptedShards !== 'undefined' && corruptedShards >= 50) {
-                    performAbyssJobChange(tower, abyssType);
-                    showUnitInfo(tower);
-                    updateUnitOverlayButtons(tower);
-                } else {
-                    const tutorialToggle = document.getElementById('tutorial-toggle');
-                    if (tutorialToggle && tutorialToggle.checked) {
-                        alert(`Not enough Corrupted Shards! (Need 50, currently have ${corruptedShards || 0})`);
-                    }
-                }
-            });
-            unitElement.appendChild(promoteBtn);
-        }
-    }
-}
-
-function showRangeIndicator(tower) {
-    // Remove existing indicators if any
-    const existing = document.querySelectorAll('.range-indicator');
-    existing.forEach(el => el.remove());
-
-    const range = tower.range + (tower.rangeBonus || 0);
-    if (range > 5000) return; // Don't show for infinite range
-
-    const rect = tower.slotElement.getBoundingClientRect();
-    const gameRect = gameContainer.getBoundingClientRect();
-    
-    const centerX = (rect.left + rect.width / 2) - gameRect.left;
-    const centerY = (rect.top + rect.height / 2) - gameRect.top;
-
-    const indicator = document.createElement('div');
-    indicator.className = 'range-indicator';
-    indicator.style.cssText = `
-        position: absolute;
-        left: ${centerX}px;
-        top: ${centerY}px;
-        width: ${range * 2}px;
-        height: ${range * 2}px;
-        border: 2px dashed rgba(0, 229, 255, 0.5);
-        background: rgba(0, 229, 255, 0.05);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-        z-index: 100;
-        animation: fadeInOut 1s forwards;
-    `;
-    
-    gameContainer.appendChild(indicator);
-    setTimeout(() => indicator.remove(), 1000);
-}
-
-function resetUnitInfo() {
-    const unitInfoDisplay = document.getElementById('unit-info');
-    if (unitInfoDisplay) {
-        unitInfoDisplay.innerHTML = `
-            <div class="divine-glow" style="font-size: 10px; line-height: 1.4;">
-                GUARDIAN<br>
-                of the<br>
-                UNDERWORLD
-            </div>`;
-    }
-}
-
-function showEnemyInfo(enemyData) {
-    const unitInfoDisplay = document.getElementById('unit-info');
-    if (!unitInfoDisplay) return;
-
-    // Clear existing timeout
-    if (infoResetTimeout) clearTimeout(infoResetTimeout);
-
-    // Enemy Name Mapping
-    const enemyNames = {
-        'normal': 'Whispering Soul',
-        'tank': 'Ironclad Wraith',
-        'runner': 'Haste-Cursed Shadow',
-        'greedy': 'Gluttonous Poltergeist',
-        'dimension': 'Void-Step Phantasm',
-        'deceiver': 'Siren of Despair',
-        'boar': 'Feral Revenant',
-        'frost': 'Cocytus Drifter',
-        'lightspeed': 'Ethereal Streak',
-        'heavy': 'Grave-Bound Behemoth',
-        'lava': 'Magma-Veined Terror',
-        'burning': 'Eternal Zealot',
-        'gold': 'Gilded Apparition',
-        'defiled_apprentice': 'Defiled Apprentice',
-        'abyssal_acolyte': 'Abyssal Acolyte',
-        'bringer_of_doom': 'Bringer of Doom',
-        'cursed_vajra': 'Cursed Vajra',
-        'void_piercer': 'Void-Piercing Shade',
-        'frost_outcast': 'Frost-Bitten Outcast',
-        'ember_hatred': 'Embers of Hatred',
-        'betrayer_blade': "Betrayer's Blade"
-    };
-
-    const name = enemyData.name || enemyNames[enemyData.type] || enemyData.type.toUpperCase();
-    const lore = enemyData.lore || "A lost soul wandering the abyss.";
-
-    unitInfoDisplay.innerHTML = `
-        <div style="color: #ff4500; font-weight: bold; font-size: 13px; margin-bottom: 4px;">${enemyData.icon} ${name}</div>
-        <div style="font-size: 9px; color: #bbb; margin-bottom: 6px;">HP: ${Math.floor(enemyData.hp)} / ${Math.floor(enemyData.maxHp || enemyData.hp)} | DEF: ${enemyData.defense || 0}</div>
-        <div style="color: #ddd; font-size: 9px; line-height: 1.3; font-style: italic; border-top: 1px solid #333; padding-top: 4px;">
-            "${lore}"
-        </div>
-    `;
-
-    // Auto-reset after 7 seconds
-    infoResetTimeout = setTimeout(resetUnitInfo, 7000);
-}
-
-// Attach to window
-window.showEnemyInfo = showEnemyInfo;
-
-// Sell tower (Corruption)
-function sellTower(tower) {
-    const data = tower.data;
-    const sellRefund = Math.floor(tower.spentSE * 0.7);
-    money = Math.min(1000, money + sellRefund);
-
-    // Dynamic Shard Return: Tier 1=1, Tier 2=2, Tier 3=3
-    const shardRefund = data.tier;
-    corruptedShards = Math.min(99, corruptedShards + shardRefund);
-
-    if (typeof updateGauges === 'function') {
-        updateGauges();
-    }
-    updateSummonButtonState();
-
-    const slot = tower.slotElement;
-    const unitElement = tower.element;
-
-    // Release slot
-    slot.classList.remove('occupied');
-    unitElement.remove();
-
-    // Remove from towers array
-    const idx = towers.indexOf(tower);
-    if (idx > -1) towers.splice(idx, 1);
-
-    // Create [Corrupted Unit] (becomes an enemy)
-    if (typeof window.spawnCorruptedEnemy === 'function') {
-        let corruptedType = 'defiled_apprentice'; // Default
-        
-        // Map based on unit type
-        if (data.type === 'monk' || data.type === 'vajra' || data.type === 'saint') corruptedType = 'cursed_vajra';
-        else if (data.type === 'archer' || data.type === 'voidsniper' || data.type === 'thousandhand') corruptedType = 'void_piercer';
-        else if (data.type === 'ice' || data.type === 'absolutezero' || data.type === 'permafrost') corruptedType = 'frost_outcast';
-        else if (data.type === 'fire' || data.type === 'hellfire' || data.type === 'phoenix') corruptedType = 'ember_hatred';
-        else if (data.type === 'assassin' || data.type === 'abyssal' || data.type === 'spatial') corruptedType = 'betrayer_blade';
-        else if (data.tier >= 3) corruptedType = 'abyssal_acolyte'; // High tier default
-        if (data.tier === 4) corruptedType = 'bringer_of_doom'; // Abyss tier special
-
-        window.spawnCorruptedEnemy(tower, corruptedType);
-    }
-}
-
-// Perform job change
-function performJobChange(unitElement) {
-    if (money < jobChangeCost) {
-        return;
-    }
-    
-    money -= jobChangeCost;
-    if (typeof updateGauges === 'function') {
-        updateGauges();
-    }
-    updateSummonButtonState();
-    
-    // Random promotion (Random among Tier 2 classes)
-    const advancedUnits = unitTypes.filter(u => u.tier === 2);
-    const newType = advancedUnits[Math.floor(Math.random() * advancedUnits.length)];
-    
-    // Update unit
-    unitElement.classList.remove('apprentice');
-    unitElement.classList.add(newType.type);
-    unitElement.title = newType.name;
-    unitElement.innerText = newType.icon; // Update icon
-    
-    const cdOverlay = document.createElement('div');
-    cdOverlay.className = 'cooldown-overlay';
-    cdOverlay.style.pointerEvents = 'none';
-    unitElement.appendChild(cdOverlay);
-
-    recordUnlock(newType.type);
-    const updatedTower = towers.find(t => t.element === unitElement);
-    if (updatedTower) updateUnitOverlayButtons(updatedTower);
-    
-    // Update tower data
-    const tower = towers.find(t => t.element === unitElement);
-    if (tower) {
-        tower.data = newType;
-        tower.range = newType.range;
-        tower.cooldown = newType.cooldown;
-        tower.spentSE += jobChangeCost; // Add spent SE
-    }
-}
-
-// Perform master job change
-function performMasterJobChange(tower, newTypeStr) {
-    money -= masterJobCost;
-    if (typeof updateGauges === 'function') {
-        updateGauges();
-    }
-    updateSummonButtonState();
-
-    const newType = unitTypes.find(u => u.type === newTypeStr);
-    const unitElement = tower.element;
-
-    // Replace class
-    unitElement.className = `unit ${newType.type}`; // Overwrite existing classes
-    unitElement.title = newType.name;
-    unitElement.innerText = newType.icon; // Update icon
-    
-    const cdOverlay = document.createElement('div');
-    cdOverlay.className = 'cooldown-overlay';
-    cdOverlay.style.pointerEvents = 'none';
-    unitElement.appendChild(cdOverlay);
-
-    recordUnlock(newType.type);
-    updateUnitOverlayButtons(tower);
-
-    // Update data
-    tower.data = newType;
-    tower.range = newType.range;
-    tower.cooldown = newType.cooldown;
-    tower.spentSE += masterJobCost; // Add spent SE
-
-    // [Master] Holy Rampart: Initialize charges
-    if (newType.type === 'rampart') {
-        tower.charges = 5;
-    }
-    
-    // Effect
-    unitElement.style.transform = "scale(1.5)";
-    setTimeout(() => unitElement.style.transform = "scale(1)", 300);
-}
-
-// Perform Abyss job change
-function performAbyssJobChange(tower, newTypeStr) {
-    if (typeof corruptedShards === 'undefined' || corruptedShards < 50) return;
-    
-    corruptedShards -= 50;
-    if (typeof updateGauges === 'function') {
-        updateGauges();
-    }
-
-    const newType = unitTypes.find(u => u.type === newTypeStr);
-    const unitElement = tower.element;
-
-    // Replace class
-    unitElement.className = `unit abyss ${newType.type}`; 
-    unitElement.title = newType.name;
-    unitElement.innerText = newType.icon; // Update icon
-    
-    const cdOverlay = document.createElement('div');
-    cdOverlay.className = 'cooldown-overlay';
-    cdOverlay.style.pointerEvents = 'none';
-    unitElement.appendChild(cdOverlay);
-
-    recordUnlock(newType.type);
-    updateUnitOverlayButtons(tower);
-
-    // Update data
-    tower.data = newType;
-    tower.range = newType.range;
-    tower.cooldown = newType.cooldown;
-
-    // Visual effect
-    unitElement.style.transform = "scale(1.8)";
-    unitElement.style.boxShadow = "0 0 30px #9400d3";
-    setTimeout(() => unitElement.style.transform = "scale(1)", 500);
-
-    // Initializations for specific Abyss abilities
-    if (newType.type === 'purgatory') {
-        tower.hasCreatedRow = false;
-    } else if (newType.type === 'reaper') {
-        unitElement.style.opacity = 0.3; // Hidden appearance
-    }
-}
-
-// Update summon button state
-function updateSummonButtonState() {
-    const towerCard = document.getElementById('tower-card');
-    if (!towerCard) return;
-    
-    const nameDiv = towerCard.querySelector('div:first-child');
-    const costDiv = towerCard.querySelector('div:last-child');
-    if (!nameDiv || !costDiv) return;
-    
-    nameDiv.innerHTML = "Summon<br>Exorcist";
-
-    if (towers.length >= maxTowers) {
-        towerCard.classList.add('locked');
-        costDiv.innerText = "MAX";
-    } else if (money < towerCost) {
-        towerCard.classList.add('locked');
-        costDiv.innerText = `${towerCost} SE`;
-    } else {
-        towerCard.classList.remove('locked');
-        costDiv.innerText = `${towerCost} SE`;
-    }
-
-    // Update Purge Card State
-    const purgeCard = document.getElementById('purge-card');
-    const purgeCost = 800;
-    if (purgeCard) {
-        if (money < purgeCost || portalEnergy <= 0) {
-            purgeCard.classList.add('locked');
-        } else {
-            purgeCard.classList.remove('locked');
-        }
-    }
-}
-
-function purgePortal() {
-    const purgeCost = 800;
-    const purgeAmount = portalEnergy * 0.5; // Half of current energy
-
-    if (money >= purgeCost && portalEnergy > 0) {
-        money -= purgeCost;
-        portalEnergy = Math.max(0, portalEnergy - purgeAmount);
-        
-        // Visual effect
-        const portal = document.getElementById('portal');
-        if (portal) {
-            const flash = document.createElement('div');
-            flash.style.cssText = 'position:absolute; width:100%; height:100%; border-radius:50%; background:white; opacity:0.8; z-index:10;';
-            portal.appendChild(flash);
-            setTimeout(() => flash.remove(), 200);
-        }
-
-        updateGauges();
-        updateSummonButtonState();
-    }
-}
-
-// Attach to window for other scripts
-window.updateSummonButtonState = updateSummonButtonState;
-
-// Initialize allies
 function initAllies() {
-    const towerCard = document.getElementById('tower-card');
-    towerCard.addEventListener('click', function() {
-        if (money < towerCost) {
-            return;
-        }
-
-        // Find available slots
-        const validSlots = slots.filter(c => !c.classList.contains('occupied'));
-
-        if (validSlots.length === 0) {
-            const tutorialToggle = document.getElementById('tutorial-toggle');
-            if (tutorialToggle && tutorialToggle.checked) {
-                alert("No more space available!");
-            }
-            return;
-        }
-
-        // Select random slot and summon
-        const targetSlot = validSlots[Math.floor(Math.random() * validSlots.length)];
-        summonTower(targetSlot);
-    });
-
-    const purgeCard = document.getElementById('purge-card');
-    if (purgeCard) {
-        purgeCard.addEventListener('click', () => {
-            purgePortal();
-        });
-    }
-    
-    // Create 27 slots on each side (Total 54) to fit 9 rows of 3
-    slots.length = 0; // Initialize slots array
-    createSlots('left-slots', 27);
-    createSlots('right-slots', 27);
-
-    initRecordsUI();
-    initTutorial();
-
-    // New Class Unlock Modal Close
-    const modal = document.getElementById('unlock-modal');
-    if (modal) {
-        modal.addEventListener('click', () => {
-            modal.style.display = 'none';
-            isPaused = false; // Resume game
-        });
-    }
-
-    // Spooky Game Over Retry Button
-    const retryBtn = document.getElementById('retry-btn');
-    if (retryBtn) {
-        retryBtn.addEventListener('click', () => {
-            location.reload();
-        });
-    }
-
-    // Top Left Restart Button
-    const restartBtnTop = document.getElementById('restart-btn-top');
-    if (restartBtnTop) {
-        restartBtnTop.addEventListener('click', () => {
-            isPaused = true;
-            const goOverlay = document.getElementById('game-over-overlay');
-            const title = document.getElementById('game-over-title');
-            const msg = document.getElementById('game-over-msg');
-            const finalStageText = document.getElementById('final-stage');
-            const cancelBtn = document.getElementById('cancel-restart-btn');
-
-            if (goOverlay) {
-                if (title) title.innerText = "ABANDONING HOPE?";
-                if (msg) msg.innerText = "Do you truly wish to succumb to the void and leave this descent behind?";
-                if (finalStageText) finalStageText.innerText = stage;
-                if (cancelBtn) cancelBtn.style.display = 'inline-block';
-                goOverlay.style.display = 'flex';
-            }
-        });
-    }
-
-    // Cancel Restart Button
-    const cancelRestartBtn = document.getElementById('cancel-restart-btn');
-    if (cancelRestartBtn) {
-        cancelRestartBtn.addEventListener('click', () => {
-            const goOverlay = document.getElementById('game-over-overlay');
-            if (goOverlay) {
-                goOverlay.style.display = 'none';
-                isPaused = false;
-            }
-        });
-    }
-
-    // Deselect units when clicking background
-    document.addEventListener('mousedown', (e) => {
-        if (!e.target.closest('.unit') && !e.target.closest('.unit-overlay-btn')) {
-            document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected'));
-        }
-    });
+    const tc = document.getElementById('tower-card');
+    if(tc) tc.addEventListener('click', () => { if(money<towerCost) return; const vs=slots.filter(c=>!c.classList.contains('occupied')); if(vs.length===0) return; summonTower(vs[Math.floor(Math.random()*vs.length)]); });
+    const pc = document.getElementById('purge-card'); if(pc) pc.addEventListener('click', () => purgePortal());
+    slots.length = 0; createSlots('left-slots', 27); createSlots('right-slots', 27);
+    initRecordsUI(); initTutorial();
+    const modal = document.getElementById('unlock-modal'); if(modal) modal.addEventListener('click', () => { modal.style.display='none'; isPaused=false; });
+    const retry = document.getElementById('retry-btn'); if(retry) retry.addEventListener('click', () => location.reload());
+    const rbt = document.getElementById('restart-btn-top'); if(rbt) rbt.addEventListener('click', () => { isPaused=true; const go=document.getElementById('game-over-overlay'); if(go) go.style.display='flex'; });
 }
 
-// --- Exorcism Records UI Logic ---
 function initRecordsUI() {
-    const recordsBtn = document.getElementById('records-btn');
-    const recordsOverlay = document.getElementById('records-overlay');
-    const closeBtn = document.getElementById('close-records');
-    const tabBtns = document.querySelectorAll('.tab-btn');
+    const rb = document.getElementById('records-btn'); const ro = document.getElementById('records-overlay');
+    if(rb && ro) rb.addEventListener('click', () => { isPaused=true; ro.style.display='flex'; renderBestiary(); });
+    const cr = document.getElementById('close-records'); if(cr) cr.addEventListener('click', () => { ro.style.display='none'; isPaused=false; });
+    document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active')); this.classList.add('active');
+        document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active')); document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
+        if(this.dataset.tab==='bestiary') renderBestiary(); else renderPromotionTree();
+    }));
+}
 
-    if (!recordsBtn) return;
-
-    recordsBtn.addEventListener('click', () => {
-        isPaused = true;
-        recordsOverlay.style.display = 'flex';
-        renderBestiary();
-        renderPromotionTree();
-    });
-
-    closeBtn.addEventListener('click', () => {
-        isPaused = false;
-        recordsOverlay.style.display = 'none';
-    });
-
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            tabBtns.forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-            
-            btn.classList.add('active');
-            const tabId = `${btn.dataset.tab}-tab`;
-            document.getElementById(tabId).classList.add('active');
-        });
-    });
+function initTutorial() {
+    const t = document.getElementById('tutorial-toggle'); const s = document.getElementById('tutorial-status');
+    if(t && s) { t.addEventListener('change', () => s.innerText=t.checked?'ON':'OFF'); s.innerText=t.checked?'ON':'OFF'; }
 }
 
 function renderBestiary() {
-    const bestiaryTab = document.getElementById('bestiary-tab');
-    bestiaryTab.innerHTML = '';
-
-    // Enemy Name Mapping
-    const enemyNames = {
-        'normal': 'Whispering Soul',
-        'mist': 'Wandering Mist',
-        'memory': 'Faded Memory',
-        'shade': 'Flickering Shade',
-        'tank': 'Ironclad Wraith',
-        'runner': 'Haste-Cursed Shadow',
-        'greedy': 'Gluttonous Poltergeist',
-        'mimic': 'Mimic Soul',
-        'dimension': 'Void-Step Phantasm',
-        'deceiver': 'Siren of Despair',
-        'boar': 'Feral Revenant',
-        'soul_eater': 'Soul Eater',
-        'frost': 'Cocytus Drifter',
-        'lightspeed': 'Ethereal Streak',
-        'heavy': 'Grave-Bound Behemoth',
-        'lava': 'Magma-Veined Terror',
-        'burning': 'Eternal Zealot',
-        'gold': 'Gilded Apparition',
-        'defiled_apprentice': 'Defiled Apprentice',
-        'abyssal_acolyte': 'Abyssal Acolyte',
-        'bringer_of_doom': 'Bringer of Doom',
-        'cursed_vajra': 'Cursed Vajra',
-        'void_piercer': 'Void-Piercing Shade',
-        'frost_outcast': 'Frost-Bitten Outcast',
-        'ember_hatred': 'Embers of Hatred',
-        'betrayer_blade': "Betrayer's Blade"
-    };
-
-    // 1. Render Basic Specters Section
-    const basicHeader = document.createElement('h3');
-    basicHeader.innerText = "Basic Specters";
-    basicHeader.style.cssText = "grid-column: 1 / -1; color: #00e5ff; border-bottom: 1px solid #333; margin: 10px 0; font-size: 14px;";
-    bestiaryTab.appendChild(basicHeader);
-
-    // Filter and render Basic category
-    const basicTypes = ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'];
-    
-    // 2. Render Specialized Wraiths Section
-    const specHeader = document.createElement('h3');
-    specHeader.innerText = "Specialized Wraiths";
-    specHeader.style.cssText = "grid-column: 1 / -1; color: #ff00ff; border-bottom: 1px solid #333; margin: 20px 0 10px 0; font-size: 14px;";
-    
-    const allEnemyTypes = [];
-    Object.keys(enemyCategories).forEach(cat => {
-        enemyCategories[cat].forEach(e => {
-            allEnemyTypes.push(e);
-        });
-    });
-
-    // Helper to render items
-    const renderItem = (enemy) => {
-        const kills = killCounts[enemy.type] || 0;
-        const bonus = getBestiaryBonus(enemy.type);
-        const bonusText = bonus > 1 ? `DMG +${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus';
-        const dispName = enemyNames[enemy.type] || enemy.type.toUpperCase();
-        
-        let catProb = 0.96;
-        if (stage >= 51) {
-            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.30;
-            else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.23;
-            else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.23;
-            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.23;
-            else if (enemy.type === 'gold') catProb = treasureChance;
-        } else if (stage >= 31) {
-            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.55;
-            else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.14;
-            else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.15;
-            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.15;
-            else if (enemy.type === 'gold') catProb = treasureChance;
-        } else if (stage >= 16) {
-            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.75;
-            else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.08;
-            else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.08;
-            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.08;
-            else if (enemy.type === 'gold') catProb = treasureChance;
-        } else if (stage >= 6) {
-            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.90;
-            else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.03;
-            else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.03;
-            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.03;
-            else if (enemy.type === 'gold') catProb = treasureChance;
-        } else {
-            if (['normal', 'mist', 'memory', 'shade', 'tank', 'runner'].includes(enemy.type)) catProb = 0.96;
-            else if (['greedy', 'mimic', 'dimension', 'deceiver'].includes(enemy.type)) catProb = 0.01;
-            else if (['boar', 'soul_eater', 'frost', 'lightspeed'].includes(enemy.type)) catProb = 0.01;
-            else if (['heavy', 'lava', 'burning'].includes(enemy.type)) catProb = 0.01;
-            else if (enemy.type === 'gold') catProb = treasureChance;
-        }
-
-        const effectiveRate = (catProb * (enemy.probability || 0) * 100).toFixed(1);
-
-        const item = document.createElement('div');
-        item.className = 'bestiary-item';
-        item.innerHTML = `
-            <div class="custom-tooltip specter">
-                <strong style="color:#ffd700;">[Unique Trait]</strong><br>
-                ${enemy.desc}
-            </div>
-            <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${enemy.icon}</div>
-            <div class="bestiary-info">
-                <div class="bestiary-name">${dispName}</div>
-                <div class="bestiary-stats">💀 ${kills} | ${bonusText}</div>
-                <div style="font-size: 7.5px; color: #aaa; margin-top: 2px;">Spawn Rate: ${effectiveRate}%</div>
-                <div class="bestiary-effectiveness" style="font-size: 7px; color: #ff4500; margin-top: 4px; border-top: 1px dotted #444; padding-top: 3px; line-height: 1.2;">
-                    🎯 ${enemy.effectiveness || 'Standard'}
-                </div>
-            </div>
-        `;
-        bestiaryTab.appendChild(item);
-    };
-
-    // Render Basic Section
-    allEnemyTypes.filter(e => basicTypes.includes(e.type)).forEach(renderItem);
-
-    // Render Specialized Section
-    bestiaryTab.appendChild(specHeader);
-    const specializedTypes = allEnemyTypes.filter(e => !basicTypes.includes(e.type) && e.type !== 'gold');
-    specializedTypes.forEach(renderItem);
-
-    // 2.2 Render Treasure Specters Section
-    const treasureHeader = document.createElement('h3');
-    treasureHeader.innerText = "Treasure Specters";
-    treasureHeader.style.cssText = "grid-column: 1 / -1; color: #ffd700; border-bottom: 1px solid #b8860b; margin: 20px 0 10px 0; font-size: 14px;";
-    bestiaryTab.appendChild(treasureHeader);
-
-    const treasureTypes = allEnemyTypes.filter(e => e.type === 'gold');
-    treasureTypes.forEach(renderItem);
-
-    // 2.5 Render Corrupted Specters Section
-    const corruptedHeader = document.createElement('h3');
-    corruptedHeader.innerText = "Corrupted Specters";
-    corruptedHeader.style.cssText = "grid-column: 1 / -1; color: #ff0000; border-bottom: 1px solid #4a0000; margin: 20px 0 10px 0; font-size: 14px;";
-    bestiaryTab.appendChild(corruptedHeader);
-
-    // These are from corruptedTypes in enemies.js
-    const corruptedTypesList = [
-        { type: 'defiled_apprentice', icon: '🥀', desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3).", effectiveness: "Holy attacks and high DPS." },
-        { type: 'abyssal_acolyte', icon: '🌑', desc: "A servant of the void. Reduces hit source's damage by 4 (Max 3 stacks).", effectiveness: "Switching targets or pure damage." },
-        { type: 'bringer_of_doom', icon: '⛓️‍💥', desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7.", effectiveness: "Kill as fast as possible!" },
-        { type: 'cursed_vajra', icon: '🏮', desc: "A fallen monk. 15% chance to stun the attacker for 1s when hit.", effectiveness: "Long-range units." },
-        { type: 'void_piercer', icon: '🏹', desc: "A traitorous archer. Gains 50% dodge chance against long-range units.", effectiveness: "Short-range units." },
-        { type: 'frost_outcast', icon: '❄️', desc: "A cursed daoist. Emits a cold aura that slows nearby allies' attack speed by 20%.", effectiveness: "Kill from outside its aura range." },
-        { type: 'ember_hatred', icon: '☄️', desc: "A hateful mage. Explodes on death, speeding up nearby enemies by 50% for 3s.", effectiveness: "Kill when isolated." },
-        { type: 'betrayer_blade', icon: '🗡️', desc: "A shadow traitor. Occasionally vanishes, forcing attackers to lose target.", effectiveness: "AOE or rapid-fire units." }
+    const bt = document.getElementById('bestiary-tab'); bt.innerHTML = '';
+    const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade" };
+    const groups = [
+        { h: 'Basic Specters', c: '#00e5ff', types: ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'] },
+        { h: 'Specialized Wraiths', c: '#ff00ff', types: ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning'] },
+        { h: 'Treasure Specters', c: '#ffd700', types: ['gold'] },
+        { h: 'Corrupted Specters', c: '#ff0000', types: ['defiled_apprentice', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'] }
     ];
-    corruptedTypesList.forEach(renderItem);
-
-    // 3. Render Bosses Section
-    const bossHeader = document.createElement('h3');
-    bossHeader.innerText = "Abyssal Bosses";
-    bossHeader.style.cssText = "grid-column: 1 / -1; color: #ff0000; border-bottom: 1px solid #4a0000; margin: 20px 0 10px 0; font-size: 14px;";
-    bestiaryTab.appendChild(bossHeader);
-
-    Object.keys(bossData).forEach(stageKey => {
-        const boss = bossData[stageKey];
-        const kills = killCounts[boss.type] || 0;
-        const item = document.createElement('div');
-        item.className = 'bestiary-item';
-        item.style.borderColor = "#ff0000";
-        
-        item.innerHTML = `
-            <div class="custom-tooltip specter" style="border-color: #ff0000;">
-                <strong style="color:#ff0000;">[Ancient Lore]</strong><br>
-                ${boss.lore}<br><br>
-                <strong style="color:#ffd700;">[Slayer Reward]</strong><br>
-                ${boss.rewardName}
-            </div>
-            <div class="bestiary-icon enemy boss ${boss.type}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center; font-size: 24px;">${boss.icon}</div>
-            <div class="bestiary-info">
-                <div class="bestiary-name" style="color: #ff4500;">${boss.name}</div>
-                <div class="bestiary-stats">Defeated: ${kills}</div>
-                <div style="font-size: 7.5px; color: #aaa; margin-top: 2px;">Encounter: Depth ${stageKey}</div>
-                <div class="bestiary-effectiveness" style="font-size: 7px; color: #ffd700; margin-top: 4px; border-top: 1px dotted #444; padding-top: 3px; line-height: 1.2;">
-                    🎁 ${boss.rewardName}
-                </div>
-            </div>
-        `;
-        bestiaryTab.appendChild(item);
+    groups.forEach(g => {
+        const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px;`; bt.appendChild(h);
+        g.types.forEach(t => {
+            let d; for(let k in enemyCategories) { const f=enemyCategories[k].find(x=>x.type===t); if(f){d=f; break;} } if(!d && typeof corruptedTypes!=='undefined') d=corruptedTypes[t]; if(!d) return;
+            const kills = killCounts[t] || 0; const bonus = getBestiaryBonus(t); const btx = bonus>1?`DMG +${((bonus-1)*100).toFixed(0)}%`:`No Bonus`;
+            const item = document.createElement('div'); item.className='bestiary-item';
+            item.innerHTML = `<div class="custom-tooltip specter"><strong style="color:#ffd700;">[Trait]</strong><br>${d.desc}</div><div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div><div class="bestiary-info"><div class="bestiary-name">${names[t]||t}</div><div class="bestiary-stats">💀 ${kills} | ${btx}</div></div>`;
+            bt.appendChild(item);
+        });
     });
 }
 
 function renderPromotionTree() {
-    const treeTab = document.getElementById('tree-tab');
-    treeTab.innerHTML = ''; 
-
-    const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
-
-    const pathGroups = {
-        'Attack Paths': [
-            { name: 'Talismanist', type: 'talisman', masters: ['grandsealer', 'flamemaster'], abyss: 'cursed_talisman' },
-            { name: 'Divine Archer', type: 'archer', masters: ['voidsniper', 'thousandhand'], abyss: 'piercing_shadow' },
-            { name: 'Fire Mage', type: 'fire', masters: ['hellfire', 'phoenix'], abyss: 'purgatory' },
-            { name: 'Shadow Assassin', type: 'assassin', masters: ['abyssal', 'spatial'], abyss: 'reaper' },
-            { name: 'Exorcist Knight', type: 'knight', masters: ['paladin', 'crusader'], abyss: 'eternal_wall' }
-        ],
-        'Support Paths': [
-            { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'], abyss: 'warden' },
-            { name: 'Mace Monk', type: 'monk', masters: ['vajra', 'saint'], abyss: 'asura' },
-            { name: 'Ice Daoist', type: 'ice', masters: ['absolutezero', 'permafrost'], abyss: 'cocytus' },
-            { name: 'Soul Tracker', type: 'tracker', masters: ['seer', 'commander'], abyss: 'doom_guide' },
-            { name: 'Necromancer', type: 'necromancer', masters: ['wraithlord', 'cursedshaman'], abyss: 'forsaken_king' }
-        ],
-        'Special Paths': [
-            { name: 'Sanctuary Guardian', type: 'guardian', masters: ['rampart', 'judgment'], abyss: 'void_gatekeeper' }
-        ]
+    const tt = document.getElementById('tree-tab'); tt.innerHTML = '';
+    const pg = {
+        'Attack Paths': [ {n:'Talismanist',t:'talisman',m:['grandsealer','flamemaster'],a:'cursed_talisman'}, {n:'Divine Archer',t:'archer',m:['voidsniper','thousandhand'],a:'piercing_shadow'}, {n:'Fire Mage',t:'fire',m:['hellfire','phoenix'],a:'purgatory'}, {n:'Shadow Assassin',t:'assassin',m:['abyssal','spatial'],a:'reaper'}, {n:'Exorcist Knight',t:'knight',m:['paladin','crusader'],a:'eternal_wall'} ],
+        'Support Paths': [ {n:'Soul Chainer',t:'chainer',m:['executor','binder'],a:'warden'}, {n:'Mace Monk',t:'monk',m:['vajra','saint'],a:'asura'}, {n:'Ice Daoist',t:'ice',m:['absolutezero','permafrost'],a:'cocytus'}, {n:'Soul Tracker',t:'tracker',m:['seer','commander'],a:'doom_guide'}, {n:'Necromancer',t:'necromancer',m:['wraithlord','cursedshaman'],a:'forsaken_king'} ],
+        'Special Paths': [ {n:'Sanctuary Guardian',t:'guardian',m:['rampart','judgment'],a:'void_gatekeeper'} ]
     };
-
-    Object.keys(pathGroups).forEach(groupName => {
-        const groupHeader = document.createElement('h3');
-        let groupColor = "#ff4500";
-        if (groupName.includes('Support')) groupColor = "#00e5ff";
-        if (groupName.includes('Special')) groupColor = "#ffd700";
-        
-        groupHeader.innerText = groupName;
-        groupHeader.style.cssText = `color: ${groupColor}; border-bottom: 1px solid #333; margin: 15px 0 8px 0; font-size: 14px; text-align: center;`;
-        treeTab.appendChild(groupHeader);
-
-        const treeContainer = document.createElement('div');
-        treeContainer.className = 'tree-main-container';
-        treeContainer.style.display = 'flex';
-        treeContainer.style.flexDirection = 'column';
-        treeContainer.style.gap = '6px';
-
-        pathGroups[groupName].forEach(p => {
-            const pathRow = document.createElement('div');
-            // Adjusted grid columns: wider columns for full names
-            pathRow.style.display = 'grid';
-            pathRow.style.gridTemplateColumns = '70px 12px 85px 12px 105px 12px 105px';
-            pathRow.style.alignItems = 'center';
-            pathRow.style.justifyContent = 'center';
-            pathRow.style.gap = '3px';
-            pathRow.style.borderBottom = '1px solid #222';
-            pathRow.style.paddingBottom = '4px';
-
-            // 1. Tier 1 (Apprentice)
-            const t1Node = document.createElement('div');
-            const t1Unlocked = unlockedUnits.has('apprentice');
-            t1Node.className = `unit-node tier1 ${t1Unlocked ? '' : 'locked'}`;
-            t1Node.style.position = 'relative';
-            t1Node.style.fontSize = '7px';
-            t1Node.style.padding = '2px 4px';
-            t1Node.style.minWidth = 'auto';
-            
-            let t1RoleColor = '#00ff00'; // Green for basic
-
-            t1Node.innerHTML = `
-                <div class="custom-tooltip">
-                    <strong style="color:#00e5ff; font-size: 9px;">${apprenticeData.name}</strong><br>
-                    <span style="color:${t1RoleColor}; font-size: 8px; font-weight: bold;">[${apprenticeData.role}]</span><br>
-                    <span style="font-size: 8px;">${apprenticeData.desc}</span>
-                </div>
-                ${t1Unlocked ? apprenticeData.icon : '❓'} ${t1Unlocked ? 'Apprentice' : 'Locked'}`;
-
-            // Arrow 1
-            const arrow1 = document.createElement('div');
-            arrow1.innerText = '→';
-            arrow1.style.fontSize = '8px';
-            arrow1.style.textAlign = 'center';
-
-            // 2. Tier 2
-            const t2Data = unitTypes.find(u => u.type === p.type);
-            const t2Unlocked = unlockedUnits.has(p.type);
-            const t2Node = document.createElement('div');
-            t2Node.className = `unit-node tier2 ${t2Unlocked ? '' : 'locked'}`;
-            t2Node.style.position = 'relative';
-            t2Node.style.fontSize = '7px';
-            t2Node.style.padding = '2px 4px';
-            t2Node.style.minWidth = 'auto';
-            
-            let t2RoleColor = '#ff4500';
-            if (t2Data.role === 'Support') t2RoleColor = '#00e5ff';
-            else if (t2Data.role === 'Special') t2RoleColor = '#ffd700';
-
-            t2Node.innerHTML = `
-                <div class="custom-tooltip">
-                    <strong style="color:#9370db; font-size: 9px;">${t2Data.name}</strong><br>
-                    <span style="color:${t2RoleColor}; font-size: 8px; font-weight: bold;">[${t2Data.role}]</span><br>
-                    <span style="font-size: 8px;">${t2Data.desc}</span>
-                </div>
-                ${t2Unlocked ? t2Data.icon : '❓'} ${t2Unlocked ? p.name : 'Unknown'}`;
-            
-            // Arrow 2
-            const arrow2 = document.createElement('div');
-            arrow2.innerText = '→';
-            arrow2.style.fontSize = '8px';
-            arrow2.style.textAlign = 'center';
-
-            // 3. Tier 3 (Masters)
-            const mastersDiv = document.createElement('div');
-            mastersDiv.style.display = 'flex';
-            mastersDiv.style.flexDirection = 'column';
-            mastersDiv.style.gap = '2px';
-
-            p.masters.forEach(m => {
-                const mData = unitTypes.find(u => u.type === m);
-                const mUnlocked = unlockedUnits.has(m);
-                const mNode = document.createElement('div');
-                mNode.className = `unit-node tier3 ${mUnlocked ? '' : 'locked'}`;
-                mNode.style.fontSize = '7px';
-                mNode.style.position = 'relative';
-                mNode.style.padding = '2px 4px';
-                mNode.style.minWidth = 'auto';
-                if (mData) {
-                    let mRoleColor = '#ff4500';
-                    if (mData.role === 'Support') mRoleColor = '#00e5ff';
-                    else if (mData.role === 'Special') mRoleColor = '#ffd700';
-
-                    mNode.innerHTML = `
-                        <div class="custom-tooltip">
-                            <strong style="color:#ffd700; font-size: 9px;">${mData.name}</strong><br>
-                            <span style="color:${mRoleColor}; font-size: 8px; font-weight: bold;">[${mData.role}]</span><br>
-                            <span style="font-size: 8px;">${mData.desc}</span>
-                        </div>
-                        ${mUnlocked ? mData.icon : '❓'} ${mUnlocked ? mData.name : 'Master Locked'}`;
-                } else {
-                    mNode.innerText = m;
-                }
-                mastersDiv.appendChild(mNode);
-            });
-
-            // Arrow 3
-            const arrow3 = document.createElement('div');
-            arrow3.innerText = '→';
-            arrow3.style.fontSize = '8px';
-            arrow3.style.textAlign = 'center';
-
-            // 4. Tier 4 (Abyss)
-            const aData = unitTypes.find(u => u.type === p.abyss);
-            const aUnlocked = unlockedUnits.has(p.abyss);
-            const abyssNode = document.createElement('div');
-            abyssNode.className = `unit-node tier4 ${aUnlocked ? '' : 'locked'}`;
-            abyssNode.style.fontSize = '7px';
-            abyssNode.style.position = 'relative';
-            abyssNode.style.padding = '2px 4px';
-            abyssNode.style.minWidth = 'auto';
-            if (aData) {
-                let aRoleColor = '#ff4500';
-                if (aData.role === 'Support') aRoleColor = '#00e5ff';
-                else if (aData.role === 'Special') aRoleColor = '#ffd700';
-
-                abyssNode.innerHTML = `
-                    <div class="custom-tooltip" style="border-color:#9400d3;">
-                        <strong style="color:#9400d3; font-size: 9px;">${aData.name}</strong><br>
-                        <span style="color:${aRoleColor}; font-size: 8px; font-weight: bold;">[${aData.role}]</span><br>
-                        <span style="font-size: 8px;">${aData.desc}</span>
-                    </div>
-                    ${aUnlocked ? aData.icon : '❓'} ${aUnlocked ? aData.name : 'Abyss Locked'}`;
-            } else {
-                abyssNode.innerText = p.abyss;
-            }
-
-            pathRow.appendChild(t1Node);
-            pathRow.appendChild(arrow1);
-            pathRow.appendChild(t2Node);
-            pathRow.appendChild(arrow2);
-            pathRow.appendChild(mastersDiv);
-            pathRow.appendChild(arrow3);
-            pathRow.appendChild(abyssNode);
-            treeContainer.appendChild(pathRow);
-        });
-
-        treeTab.appendChild(treeContainer);
+    Object.keys(pg).forEach(gn => {
+        const h = document.createElement('h3'); let c="#ff4500"; if(gn.includes('Support')) c="#00e5ff"; if(gn.includes('Special')) c="#ffd700";
+        h.innerText=gn; h.style.cssText=`color:${c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px; text-align:center;`; tt.appendChild(h);
+        const tc = document.createElement('div'); tc.className='tree-main-container'; tc.style.cssText='display:flex; flex-direction:column; gap:6px;';
+        pg[gn].forEach(p => {
+            const row = document.createElement('div'); row.style.cssText='display:grid; grid-template-columns:70px 12px 85px 12px 105px 12px 105px; align-items:center; justify-content:center; gap:3px; border-bottom:1px solid #222; padding-bottom:4px;';
+            const node = (type,tier) => {
+                const d=unitTypes.find(x=>x.type===type); const u=unlockedUnits.has(type);
+                const n=document.createElement('div'); n.className=`unit-node tier${tier} ${u?'':'locked'}`; n.style.cssText='position:relative; font-size:7px; padding:2px 4px; min-width:auto;';
+                n.innerHTML = `<div class="custom-tooltip"><strong>${d.name}</strong><br>${d.desc}</div>${u?d.icon:'❓'} ${u?d.name:'Locked'}`; return n;
+            };
+            const arrow = () => { const a=document.createElement('div'); a.innerText='→'; a.style.fontSize='8px'; return a; };
+            row.appendChild(node('apprentice',1)); row.appendChild(arrow()); row.appendChild(node(p.t,2)); row.appendChild(arrow());
+            const mdiv = document.createElement('div'); mdiv.style.cssText='display:flex; flex-direction:column; gap:2px;';
+            p.m.forEach(m=>mdiv.appendChild(node(m,3))); row.appendChild(mdiv); row.appendChild(arrow()); row.appendChild(node(p.a,4));
+            tc.appendChild(row);
+        }); tt.appendChild(tc);
     });
 }
 
-function initTutorial() {
-    const toggle = document.getElementById('tutorial-toggle');
-    const status = document.getElementById('tutorial-status');
-    
-    if (toggle && status) {
-        toggle.addEventListener('change', () => {
-            status.innerText = toggle.checked ? 'ON' : 'OFF';
+function purgePortal() {
+    const pc = 800; const pa = portalEnergy * 0.5;
+    if(money>=pc && portalEnergy>0) { money-=pc; portalEnergy=Math.max(0,portalEnergy-pa); if(typeof updateGauges==='function')updateGauges(); }
+}
+
+function performJobChange(el) {
+    if(money<jobChangeCost) return; money-=jobChangeCost; if(typeof updateGauges==='function')updateGauges();
+    const t = towers.find(x=>x.element===el); if(!t) return;
+    const paths = [ {from:'apprentice', to:['chainer','talisman','monk','archer','ice','fire','assassin','tracker','necromancer','guardian','knight']} ];
+    const p = paths.find(x=>x.from===t.data.type); if(!p) return;
+    const ntStr = p.to[Math.floor(Math.random()*p.to.length)]; const nt = unitTypes.find(x=>x.type===ntStr);
+    el.className=`unit ${nt.type}`; el.title=nt.name; el.innerText=nt.icon;
+    const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
+    recordUnlock(nt.type); t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
+    updateUnitOverlayButtons(t); updateSummonButtonState();
+}
+
+function performMasterJobChange(tower, ntStr) {
+    if(money<masterJobCost) return; money-=masterJobCost; if(typeof updateGauges==='function')updateGauges();
+    const nt = unitTypes.find(x=>x.type===ntStr); const el = tower.element;
+    el.className=`unit ${nt.type}`; el.title=nt.name; el.innerText=nt.icon;
+    const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
+    recordUnlock(nt.type); tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; tower.spentSE+=masterJobCost;
+    if(nt.type==='rampart') tower.charges=5;
+    updateUnitOverlayButtons(tower); updateSummonButtonState();
+}
+
+function updateUnitOverlayButtons(t) {
+    const el = t.element; el.querySelectorAll('.unit-overlay-btn').forEach(b=>b.remove());
+    const sell = document.createElement('div'); sell.className='unit-overlay-btn sell-btn'; sell.innerHTML='💀'; sell.title='Corrupt Unit (Sell)';
+    sell.addEventListener('click', e=>{ e.stopPropagation(); sellTower(t); }); el.appendChild(sell);
+    if(t.data.type==='apprentice') {
+        const up = document.createElement('div'); up.className='unit-overlay-btn promote-btn'; up.innerHTML='↗️'; up.title='Ascend (200 SE)';
+        up.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el); }); el.appendChild(up);
+    } else if(t.data.upgrades) {
+        t.data.upgrades.forEach((u,i)=>{
+            const ud=unitTypes.find(x=>x.type===u); const b=document.createElement('div');
+            b.className=i===0?'unit-overlay-btn promote-btn':'unit-overlay-btn promote-btn-right'; b.innerHTML=i===0?'↖️':'↗️'; b.title=`Unleash ${ud.name} (500 SE)`;
+            b.addEventListener('click', e=>{ e.stopPropagation(); performMasterJobChange(t,u); }); el.appendChild(b);
         });
-        // Initial state
-        status.innerText = toggle.checked ? 'ON' : 'OFF';
     }
+}
+
+function sellTower(t) {
+    const s = t.slotElement; s.classList.remove('occupied'); t.element.remove();
+    const idx = towers.indexOf(t); if(idx>-1) towers.splice(idx,1);
+    if(typeof window.spawnCorruptedEnemy === 'function') {
+        let ct = 'defiled_apprentice';
+        if(['monk','vajra','saint'].includes(t.data.type)) ct='cursed_vajra';
+        else if(['archer','voidsniper','thousandhand'].includes(t.data.type)) ct='void_piercer';
+        else if(['ice','absolutezero','permafrost'].includes(t.data.type)) ct='frost_outcast';
+        else if(['fire','hellfire','phoenix'].includes(t.data.type)) ct='ember_hatred';
+        else if(['assassin','abyssal','spatial'].includes(t.data.type)) ct='betrayer_blade';
+        else if(t.data.tier>=3) ct='abyssal_acolyte';
+        if(t.data.tier===4) ct='bringer_of_doom';
+        window.spawnCorruptedEnemy(t, ct);
+    }
+}
+
+function updateSummonButtonState() {
+    const tc = document.getElementById('tower-card'); if(!tc) return;
+    if(money<towerCost || towers.length>=maxTowers) tc.classList.add('locked'); else tc.classList.remove('locked');
+    const pc = document.getElementById('purge-card'); if(!pc) return;
+    if(money<800 || portalEnergy<=0) pc.classList.add('locked'); else pc.classList.remove('locked');
 }
