@@ -187,10 +187,15 @@ function summonTower(targetSlot) {
 }
 
 // Unit information display function
+let infoResetTimeout = null;
+
 function showUnitInfo(tower) {
     const unitInfoDisplay = document.getElementById('unit-info');
     const data = tower.data;
     
+    // Clear existing timeout
+    if (infoResetTimeout) clearTimeout(infoResetTimeout);
+
     // 1. Title section (Name only)
     let titleHtml = `<div style="color: #ffd700; font-weight: bold; font-size: 13px; margin-bottom: 4px;">${data.name}</div>`;
     
@@ -295,8 +300,10 @@ function showUnitInfo(tower) {
     if (sellBtn) {
         sellBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            sellTower(tower);
-            unitInfoDisplay.innerHTML = "Select a unit to view information.";
+            if (confirm(`Do you want to corrupt this unit and return ${Math.floor(tower.spentSE * 0.7)} SE?`)) {
+                sellTower(tower);
+                resetUnitInfo();
+            }
         });
     }
 
@@ -309,6 +316,16 @@ function showUnitInfo(tower) {
                 showUnitInfo(tower);
             }
         });
+    }
+
+    // Auto-reset after 3 seconds
+    infoResetTimeout = setTimeout(resetUnitInfo, 3000);
+}
+
+function resetUnitInfo() {
+    const unitInfoDisplay = document.getElementById('unit-info');
+    if (unitInfoDisplay) {
+        unitInfoDisplay.innerHTML = `<div style="color: #666; font-weight: bold; letter-spacing: 2px; font-size: 10px;">[ GUARDIAN OF THE UNDERWORLD ]</div>`;
     }
 }
 
@@ -341,7 +358,6 @@ function sellTower(tower) {
 // Perform job change
 function performJobChange(unitElement) {
     if (money < jobChangeCost) {
-        alert("Not enough soul energy!");
         return;
     }
     
@@ -463,7 +479,6 @@ function initAllies() {
     const towerCard = document.getElementById('tower-card');
     towerCard.addEventListener('click', function() {
         if (money < towerCost) {
-            alert("Not enough soul energy!");
             return;
         }
 
