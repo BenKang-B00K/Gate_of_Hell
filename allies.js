@@ -201,9 +201,8 @@ function showUnitInfo(tower) {
     if (data.type === 'apprentice') {
         const canAfford = money >= jobChangeCost;
         const btnClass = canAfford ? 'active' : 'locked';
-        const btnText = canAfford ? `Promote` : `🔒 LACK`;
-        
-        buttonsHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">${btnText}</span>`;
+        // 1st Promotion: Ascend
+        buttonsHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">Ascend</span>`;
     }
 
     // [Corruption] (Sell) button - only for Tier 1-3
@@ -235,7 +234,8 @@ function showUnitInfo(tower) {
             const uData = unitTypes.find(u => u.type === abyssType);
             const canAfford = typeof corruptedShards !== 'undefined' && corruptedShards >= 50;
             const btnClass = canAfford ? 'active' : 'locked';
-            abyssBtnHtml = `<div style="margin-bottom: 6px;"><span id="info-abyss-btn" class="job-btn ${btnClass}">Ascend to ${uData.name}</span></div>`;
+            // Abyss Promotion: Descent
+            abyssBtnHtml = `<div style="margin-bottom: 6px;"><span id="info-abyss-btn" class="job-btn ${btnClass}">Descent to ${uData.name}</span></div>`;
         }
     }
 
@@ -262,14 +262,13 @@ function showUnitInfo(tower) {
             const btn = document.createElement('div');
             btn.id = `master-btn-${idx}`;
             btn.className = `job-btn ${btnClass}`;
-            btn.innerText = uData.name;
+            // Master Promotion: Unleash
+            btn.innerText = `Unleash ${uData.name}`;
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (money >= masterJobCost) {
                     performMasterJobChange(tower, uType);
                     showUnitInfo(tower);
-                } else {
-                    alert("Not enough soul energy!");
                 }
             });
             upgradeContainer.appendChild(btn);
@@ -308,8 +307,6 @@ function showUnitInfo(tower) {
             if (typeof corruptedShards !== 'undefined' && corruptedShards >= 50) {
                 performAbyssJobChange(tower, abyssType);
                 showUnitInfo(tower);
-            } else {
-                alert("Not enough Corrupted Shards! (Need 50)");
             }
         });
     }
