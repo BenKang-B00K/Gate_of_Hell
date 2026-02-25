@@ -1100,20 +1100,20 @@ body {
 .enemy.stunned { filter: grayscale(100%) brightness(1.5); animation: shake 0.2s infinite; }
 .enemy.cursed { filter: sepia(1) hue-rotate(250deg) saturate(3); border: 1px dashed #800080; }
 
-/* Tutorial Toggle Styles - Made Smaller */
+/* Tutorial Toggle Styles - Made Even Smaller */
 #tutorial-toggle-container {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 6px;
+    right: 6px;
     z-index: 1000;
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     background: rgba(0, 0, 0, 0.6);
-    padding: 1px 5px;
-    border-radius: 10px;
+    padding: 1px 4px;
+    border-radius: 8px;
     border: 1px solid #333;
-    transform: scale(0.85); /* Overall shrink */
+    transform: scale(0.7); /* Further shrink from 0.85 to 0.7 */
     transform-origin: right top;
 }
 
@@ -1128,8 +1128,8 @@ body {
 .switch {
   position: relative;
   display: inline-block;
-  width: 20px;
-  height: 12px;
+  width: 18px;
+  height: 10px;
 }
 
 .switch input { 
@@ -1152,8 +1152,8 @@ body {
 .slider:before {
   position: absolute;
   content: "";
-  height: 8px;
-  width: 8px;
+  height: 6px;
+  width: 6px;
   left: 2px;
   bottom: 2px;
   background-color: white;
@@ -1172,22 +1172,24 @@ input:checked + .slider:before {
   transform: translateX(8px);
 }
 
-/* Restart Button (Top Left) */
+/* Restart Button (Top Left) - Slightly Smaller */
 #restart-btn-top {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 6px;
+    left: 6px;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.6);
-    color: #aaa;
+    color: #888;
     border: 1px solid #333;
-    border-radius: 4px;
-    font-size: 7px;
-    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 6px; /* Reduced from 7px */
+    padding: 2px 5px; /* Reduced padding */
     cursor: pointer;
     font-weight: bold;
     letter-spacing: 0.5px;
     transition: all 0.2s;
+    transform: scale(0.9);
+    transform-origin: left top;
 }
 
 #restart-btn-top:hover {

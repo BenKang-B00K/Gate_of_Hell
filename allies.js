@@ -837,7 +837,7 @@ function initAllies() {
     const restartBtnTop = document.getElementById('restart-btn-top');
     if (restartBtnTop) {
         restartBtnTop.addEventListener('click', () => {
-            if (confirm("Are you sure you want to restart the descent?")) {
+            if (confirm("Abandon all hope and succumb to the void? (Restart from the beginning)")) {
                 location.reload();
             }
         });
