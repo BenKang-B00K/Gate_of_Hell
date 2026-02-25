@@ -68,6 +68,40 @@ const unitTypes = [
 // Use draggedUnit from enemies.js
 let isMovingUnit = false;
 
+function executeMove(unit, targetSlot) {
+    const oldSlot = unit.parentElement;
+
+    if (oldSlot === targetSlot) {
+        cancelMovement();
+        return;
+    }
+
+    if (targetSlot.classList.contains('occupied')) {
+        // Swap units
+        const targetUnit = targetSlot.querySelector('.unit');
+        if (targetUnit) {
+            oldSlot.appendChild(targetUnit);
+            targetSlot.appendChild(unit);
+            
+            const unit1 = towers.find(t => t.element === unit);
+            const unit2 = towers.find(t => t.element === targetUnit);
+            
+            if (unit1) unit1.slotElement = targetSlot;
+            if (unit2) unit2.slotElement = oldSlot;
+        }
+    } else {
+        // Move to empty slot
+        targetSlot.appendChild(unit);
+        oldSlot.classList.remove('occupied');
+        targetSlot.classList.add('occupied');
+        
+        const unitData = towers.find(t => t.element === unit);
+        if (unitData) unitData.slotElement = targetSlot;
+    }
+    
+    cancelMovement();
+}
+
 // Slot creation function
 function createSlots(containerId, count) {
     const container = document.getElementById(containerId);
@@ -88,38 +122,25 @@ function createSlots(containerId, count) {
         // Click-to-Move Logic
         cell.addEventListener('click', function(e) {
             if (isMovingUnit && draggedUnit) {
-                const targetSlot = this;
-                const oldSlot = draggedUnit.parentElement;
+                executeMove(draggedUnit, this);
+            }
+        });
 
-                if (oldSlot === targetSlot) {
-                    cancelMovement();
-                    return;
-                }
+        // Drag and Drop Logic
+        cell.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
 
-                if (targetSlot.classList.contains('occupied')) {
-                    // Swap units
-                    const targetUnit = targetSlot.querySelector('.unit');
-                    if (targetUnit) {
-                        oldSlot.appendChild(targetUnit);
-                        targetSlot.appendChild(draggedUnit);
-                        
-                        const unit1 = towers.find(t => t.element === draggedUnit);
-                        const unit2 = towers.find(t => t.element === targetUnit);
-                        
-                        if (unit1) unit1.slotElement = targetSlot;
-                        if (unit2) unit2.slotElement = oldSlot;
-                    }
-                } else {
-                    // Move to empty slot
-                    targetSlot.appendChild(draggedUnit);
-                    oldSlot.classList.remove('occupied');
-                    targetSlot.classList.add('occupied');
-                    
-                    const unit = towers.find(t => t.element === draggedUnit);
-                    if (unit) unit.slotElement = targetSlot;
-                }
-                
-                cancelMovement();
+        cell.addEventListener('dragleave', function(e) {
+            this.classList.remove('drag-over');
+        });
+
+        cell.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            if (draggedUnit) {
+                executeMove(draggedUnit, this);
             }
         });
     }
@@ -162,11 +183,31 @@ function summonTower(targetSlot) {
     let longPressTimeout;
     let dragStartTime;
     
+    // Drag and Drop implementation
+    unit.addEventListener('dragstart', function(e) {
+        draggedUnit = this;
+        isMovingUnit = true;
+        this.classList.add('selected');
+        
+        const tower = towers.find(t => t.element === this);
+        if (tower) {
+            showUnitInfo(tower);
+            showRangeIndicator(tower);
+        }
+    });
+
+    unit.addEventListener('dragend', function(e) {
+        // Clear dragged state if it wasn't dropped in a valid slot
+        setTimeout(() => {
+            if (draggedUnit === this) cancelMovement();
+        }, 50);
+    });
+
     unit.addEventListener('mousedown', function(e) {
         if (e.button !== 0) return; // Only left click
         dragStartTime = Date.now();
         
-        // Long press detection
+        // Long press detection (Fallback for mobile or alternative to drag)
         longPressTimeout = setTimeout(() => {
             if (!isMovingUnit) {
                 isMovingUnit = true;
@@ -200,8 +241,7 @@ function summonTower(targetSlot) {
     unit.addEventListener('click', function(e) {
         e.stopPropagation();
         
-        // If it was a long press, it might have already triggered move-ready
-        // If it was just a quick click:
+        // If it was a quick click:
         if (Date.now() - dragStartTime < 400) {
             // Handle Move (Second click on a selected unit - original double-click logic)
             if (this.classList.contains('selected') && !isMovingUnit) {

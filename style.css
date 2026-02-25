@@ -82,6 +82,16 @@ body {
     box-shadow: 0 0 10px #ffd700;
 }
 
+.card-slot.drag-over {
+    background-color: rgba(0, 255, 0, 0.2);
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 15px #00ff00;
+}
+
+.unit.dragging {
+    opacity: 0.5;
+}
+
 /* 포탈 (적 소멸 지점) */
 #portal {
     position: absolute;
