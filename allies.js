@@ -620,6 +620,7 @@ function renderBestiary() {
 
         const item = document.createElement('div');
         item.className = 'bestiary-item';
+        item.title = `[Special Trait]\n${enemy.desc}`; // Hover tooltip for trait
         item.innerHTML = `
             <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${enemy.icon}</div>
             <div class="bestiary-info">
@@ -636,6 +637,10 @@ function renderPromotionTree() {
     const treeTab = document.getElementById('tree-tab');
     treeTab.innerHTML = '<h3 style="color:#ffd700; font-size:14px; text-align:center; margin-bottom:20px;">Unit Evolution Path</h3>';
 
+    // Clear any leftover content
+    const existingContainer = treeTab.querySelector('.tree-main-container');
+    if (existingContainer) existingContainer.remove();
+
     const paths = [
         { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'], abyss: 'warden' },
         { name: 'Talismanist', type: 'talisman', masters: ['grandsealer', 'flamemaster'], abyss: 'cursed_talisman' },
@@ -650,6 +655,7 @@ function renderPromotionTree() {
     ];
 
     const treeContainer = document.createElement('div');
+    treeContainer.className = 'tree-main-container';
     treeContainer.style.display = 'flex';
     treeContainer.style.flexDirection = 'column';
     treeContainer.style.gap = '15px';
