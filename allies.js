@@ -64,16 +64,16 @@ const unitTypes = [
     { type: 'rampart', name: 'Holy Rampart', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] Returns enemies reaching the gate to the start (5 charges).", upgrades: ['void_gatekeeper'] },
     { type: 'judgment', name: 'Knight of Judgment', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] 15% chance to deal holy damage to all enemies on attack.", upgrades: ['void_gatekeeper'] },
     // Abyss Classes (Tier 4)
-    { type: 'warden', name: 'Warden of the Abyss', tier: 4, icon: '🗝️', damage: 50, range: 200, cooldown: 15000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing DOT." },
-    { type: 'cursed_talisman', name: 'Cursed Sect', tier: 4, icon: '⛩️', damage: 45, range: 150, cooldown: 1500, desc: "[Abyss] Attacks mark enemies. They explode on death for Max HP damage." },
-    { type: 'asura', name: 'Hell Crushing Asura', tier: 4, icon: '👹', damage: 30, range: 120, cooldown: 500, desc: "[Abyss] 12 strikes to 2 targets. Knocks them back to start." },
-    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', tier: 4, icon: '🌠', damage: 150, range: 9999, cooldown: 3000, desc: "[Abyss] Infinite range piercing arrow that ricochets." },
-    { type: 'cocytus', name: 'Ruler of Cocytus', tier: 4, icon: '⏳', damage: 10, range: 200, cooldown: 30000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
-    { type: 'purgatory', name: 'Eternal Purgatory Fire', tier: 4, icon: '🕯️', damage: 10, range: 150, cooldown: 1000, desc: "[Abyss] Turns its horizontal row into permanent hellfire (Slow & % DMG)." },
-    { type: 'reaper', name: 'Nightmare Reaper', tier: 4, icon: '☠️', damage: 0, range: 0, cooldown: 5000, desc: "[Abyss] Hidden. Every 5s, instakills highest HP non-boss ghost for 3x Soul Energy." },
-    { type: 'doom_guide', name: 'Guide of Doom', tier: 4, icon: '🛶', damage: 20, range: 150, cooldown: 1000, desc: "[Abyss] Inverts portal. Escaping ghosts give 90% Soul Energy instead of failing." },
-    { type: 'forsaken_king', name: 'King of the Forsaken', tier: 4, icon: '👑', damage: 50, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts at stage start based on total Corrupted units." },
-    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals the portal until 30 ghosts gather." }
+    { type: 'warden', name: 'Warden of the Abyss', tier: 4, icon: '🗝️', damage: 100, range: 200, cooldown: 10000, desc: "[Abyss] Pulls all ghosts to center for 5s, causing high DOT." },
+    { type: 'cursed_talisman', name: 'Cursed Sect', tier: 4, icon: '⛩️', damage: 80, range: 150, cooldown: 1200, desc: "[Abyss] Mark enemies to explode on death for massive Max HP damage." },
+    { type: 'asura', name: 'Hell Crushing Asura', tier: 4, icon: '👹', damage: 60, range: 120, cooldown: 400, desc: "[Abyss] 12 strikes to 3 targets. Knocks them back to start." },
+    { type: 'piercing_shadow', name: 'Soul Piercing Shadow', tier: 4, icon: '🌠', damage: 300, range: 9999, cooldown: 2000, desc: "[Abyss] Infinite range piercing arrow that ricochets faster." },
+    { type: 'cocytus', name: 'Ruler of Cocytus', tier: 4, icon: '⏳', damage: 20, range: 200, cooldown: 20000, desc: "[Abyss] Freezes time for 10s. Damage accumulates and bursts 2x." },
+    { type: 'purgatory', name: 'Eternal Purgatory Fire', tier: 4, icon: '🕯️', damage: 20, range: 150, cooldown: 800, desc: "[Abyss] Dynamic row of permanent hellfire. Follows unit position." },
+    { type: 'reaper', name: 'Nightmare Reaper', tier: 4, icon: '☠️', damage: 0, range: 0, cooldown: 3000, desc: "[Abyss] Every 3s, instakills highest HP non-boss ghost for 3x Soul Energy." },
+    { type: 'doom_guide', name: 'Guide of Doom', tier: 4, icon: '🛶', damage: 40, range: 150, cooldown: 800, desc: "[Abyss] Inverts portal. Escaping ghosts give 100% Soul Energy." },
+    { type: 'forsaken_king', name: 'King of the Forsaken', tier: 4, icon: '👑', damage: 100, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts based on Corruption level." },
+    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals portal until 30 ghosts gather." }
 ];
 
 // Use draggedUnit from enemies.js

@@ -1,5 +1,5 @@
 /* script.js */
-let spawnInterval = 2000; // Enemy spawn interval (Initial value 2s)
+let spawnInterval = 1200; // Reduced from 2000
 let isPaused = false;
 
 // Apply damage function (Handles shared damage)
@@ -126,10 +126,18 @@ function gameLoop() {
             });
         } else if (effect.type === 'purgatory_row') {
             // [Abyss] Eternal Purgatory Fire
+            // Dynamic position update: Follow the parent tower's row
+            if (effect.parentTower && effect.parentTower.slotElement) {
+                const towerRect = effect.parentTower.slotElement.getBoundingClientRect();
+                const gameRect = gameContainer.getBoundingClientRect();
+                effect.y = (towerRect.top + towerRect.height / 2) - gameRect.top;
+                effect.element.style.top = `${effect.y - 30}px`;
+            }
+
             enemies.forEach(e => {
                 if (Math.abs(e.y - effect.y) < 30) {
                     e.inPurgatory = true;
-                    applyDamage(e, (e.maxHp * 0.05) / 60, null); // 5% max HP per sec
+                    applyDamage(e, (e.maxHp * 0.08) / 60, null); // Buffed from 5% to 8% max HP per sec
                 }
             });
         }
@@ -188,7 +196,7 @@ function gameLoop() {
             if (bossInstance && bossInstance.hp > 0) {
                 if (Date.now() - lastSpawnTime > spawnInterval) {
                     spawnWave();
-                    spawnInterval = Math.random() * (3100 - 1500) + 1500; // 1.5 ~ 3.1s random
+                    spawnInterval = Math.random() * (2000 - 800) + 800; // 0.8 ~ 2.0s random
                 }
             } else if (enemies.length === 0) {
                 // Clear when boss and minions are all gone
@@ -199,8 +207,7 @@ function gameLoop() {
             // Normal stage: Spawn if no enemies or interval passed
             if (enemies.length === 0 || Date.now() - lastSpawnTime > spawnInterval) {
                 spawnWave();
-                spawnInterval = Math.random() * (3100 - 1500) + 1500; // 1.5 ~ 3.1s random
-            }
+                                    spawnInterval = Math.random() * (2000 - 800) + 800; // 0.8 ~ 2.0s random            }
         } else if (enemies.length === 0) {
             // Stage Clear (All enemies defeated)
             stage++;
@@ -554,14 +561,15 @@ function gameLoop() {
             const rowY = (towerRect.top + towerRect.height / 2) - gameRect.top;
             
             const pZone = document.createElement('div');
-            pZone.style.cssText = `position:absolute; left:0; width:100%; height:60px; top:${rowY - 30}px; background:linear-gradient(to bottom, transparent, rgba(139,0,0,0.5), transparent); pointer-events:none; z-index:4;`;
+            pZone.style.cssText = `position:absolute; left:0; width:100%; height:60px; top:${rowY - 30}px; background:linear-gradient(to bottom, transparent, rgba(139,0,0,0.5), transparent); pointer-events:none; z-index:4; transition: top 0.2s;`;
             gameContainer.appendChild(pZone);
 
             groundEffects.push({
                 type: 'purgatory_row',
                 y: rowY,
                 element: pZone,
-                endTime: Infinity
+                endTime: Infinity,
+                parentTower: tower // Reference to tower
             });
         }
 
