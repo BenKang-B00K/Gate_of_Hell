@@ -194,15 +194,18 @@ function summonTower(targetSlot) {
     targetSlot.classList.add('occupied');
 
     // Save tower data
-    towers.push({
+    const tower = {
         data: selectedUnit, // Unit stats
         element: unit,
         slotElement: targetSlot, 
         range: selectedUnit.range,
         cooldown: selectedUnit.cooldown,
         lastShot: 0,
-        spentSE: towerCost // Track spent SE
-    });
+        spentSE: (towerCost - 5) // Track spent SE (before increase)
+    };
+    towers.push(tower);
+    
+    updateUnitOverlayButtons(tower);
     updateSummonButtonState();
 }
 
@@ -216,131 +219,147 @@ function showUnitInfo(tower) {
     // Clear existing timeout
     if (infoResetTimeout) clearTimeout(infoResetTimeout);
 
-    // 1. Title section (Name only)
+    // 1. Title section
     let titleHtml = `<div style="color: #ffd700; font-weight: bold; font-size: 13px; margin-bottom: 4px;">${data.name}</div>`;
     
-    // 2. Buttons section
-    let buttonsHtml = `<div id="info-buttons-container" style="margin-bottom: 6px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;">`;
-
-    // Add promotion button for Apprentice Exorcist
-    if (data.type === 'apprentice') {
-        const canAfford = money >= jobChangeCost;
-        const btnClass = canAfford ? 'active' : 'locked';
-        // 1st Promotion: Ascend + Cost
-        buttonsHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">Ascend (100 SE)</span>`;
-    }
-
-    // [Corruption] (Sell) button - only for Tier 1-3
-    if (data.tier < 4) {
-        buttonsHtml += `<span id="info-sell-btn" class="job-btn active">[Corrupt]</span>`;
-    }
+    // 2. Info/Description section (Buttons removed)
+    let infoHtml = `<div style="font-size: 9px; color: #bbb; margin-bottom: 4px;">ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>`;
     
-    buttonsHtml += `</div>`;
-
-    // Abyss Promotion button
-    const abyssMapping = {
-        'executor': 'warden', 'binder': 'warden',
-        'grandsealer': 'cursed_talisman', 'flamemaster': 'cursed_talisman',
-        'vajra': 'asura', 'saint': 'asura',
-        'voidsniper': 'piercing_shadow', 'thousandhand': 'piercing_shadow',
-        'absolutezero': 'cocytus', 'permafrost': 'cocytus',
-        'hellfire': 'purgatory', 'phoenix': 'purgatory',
-        'abyssal': 'reaper', 'spatial': 'reaper',
-        'seer': 'doom_guide', 'commander': 'doom_guide',
-        'wraithlord': 'forsaken_king', 'cursedshaman': 'forsaken_king',
-        'rampart': 'void_gatekeeper', 'judgment': 'void_gatekeeper'
-    };
-
-    let abyssType = null;
-    let abyssBtnHtml = '';
-    if (data.tier === 3) {
-        abyssType = abyssMapping[data.type];
+    // Cost display for next tier
+    let costHtml = '';
+    if (data.type === 'apprentice') {
+        costHtml = `<div style="font-size: 8px; color: #00ff00; margin-bottom: 4px;">↗️ Ascend: 100 SE</div>`;
+    } else if (data.upgrades) {
+        costHtml = `<div style="font-size: 8px; color: #ffd700; margin-bottom: 2px;">Unleash Master (200 SE):</div>`;
+        data.upgrades.forEach((uType, idx) => {
+            const uData = unitTypes.find(u => u.type === uType);
+            costHtml += `<div style="font-size: 7.5px; color: #aaa;">\${idx === 0 ? '↖️ (Left)' : '↗️ (Right)'}: \${uData.name}</div>`;
+        });
+    } else if (data.tier === 3) {
+        const abyssMapping = {
+            'executor': 'warden', 'binder': 'warden',
+            'grandsealer': 'cursed_talisman', 'flamemaster': 'cursed_talisman',
+            'vajra': 'asura', 'saint': 'asura',
+            'voidsniper': 'piercing_shadow', 'thousandhand': 'piercing_shadow',
+            'absolutezero': 'cocytus', 'permafrost': 'cocytus',
+            'hellfire': 'purgatory', 'phoenix': 'purgatory',
+            'abyssal': 'reaper', 'spatial': 'reaper',
+            'seer': 'doom_guide', 'commander': 'doom_guide',
+            'wraithlord': 'forsaken_king', 'cursedshaman': 'forsaken_king',
+            'rampart': 'void_gatekeeper', 'judgment': 'void_gatekeeper'
+        };
+        const abyssType = abyssMapping[data.type];
         if (abyssType) {
             const uData = unitTypes.find(u => u.type === abyssType);
-            const canAfford = typeof corruptedShards !== 'undefined' && corruptedShards >= 50;
-            const btnClass = canAfford ? 'active' : 'locked';
-            // Abyss Promotion: Descent + Shard Cost
-            abyssBtnHtml = `<div style="margin-bottom: 6px;"><span id="info-abyss-btn" class="job-btn ${btnClass}">Descent to ${uData.name} (50 Shards)</span></div>`;
+            costHtml = `<div style="font-size: 8px; color: #9400d3; margin-top: 4px;">↖️ Descent: 50 Shards (${uData.name})</div>`;
         }
     }
 
-    // Render basic info
     unitInfoDisplay.innerHTML = `
         ${titleHtml}
-        ${buttonsHtml}
-        ${abyssBtnHtml}
-        <div style="font-size: 9px; color: #bbb;">ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>
-        <div style="color: #888; font-size: 9px; margin-top: 4px; line-height: 1.2;">${data.desc}</div>
+        ${costHtml}
+        ${infoHtml}
+        <div style="color: #888; font-size: 9px; margin-top: 2px; line-height: 1.2;">${data.desc}</div>
     `;
 
-    // Master class promotion buttons (Special handling as they are multiple)
-    if (data.upgrades) {
-        const canAfford = money >= masterJobCost;
-        const btnClass = canAfford ? 'active' : 'locked';
-        
-        const upgradeContainer = document.createElement('div');
-        upgradeContainer.className = "master-btn-container";
-        upgradeContainer.style.marginBottom = "6px";
-        
-        data.upgrades.forEach((uType, idx) => {
-            const uData = unitTypes.find(u => u.type === uType);
-            const btn = document.createElement('div');
-            btn.id = `master-btn-${idx}`;
-            btn.className = `job-btn ${btnClass}`;
-            // Master Promotion: Unleash + Cost
-            btn.innerText = `Unleash ${uData.name} (200 SE)`;
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (money >= masterJobCost) {
-                    performMasterJobChange(tower, uType);
-                    showUnitInfo(tower);
-                }
-            });
-            upgradeContainer.appendChild(btn);
-        });
-        
-        // Insert after the buttons container
-        const buttonsContainer = document.getElementById('info-buttons-container');
-        buttonsContainer.after(upgradeContainer);
-    }
+    // Auto-reset after 7 seconds
+    infoResetTimeout = setTimeout(resetUnitInfo, 7000);
+}
 
-    // Connect standard button events
-    const jobBtn = document.getElementById('info-job-btn');
-    if (jobBtn) {
-        jobBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (money >= jobChangeCost) {
-                performJobChange(tower.element);
-                showUnitInfo(tower); // Refresh info
-            }
-        });
-    }
+// Function to update direct action buttons on the unit
+function updateUnitOverlayButtons(tower) {
+    const unitElement = tower.element;
+    const data = tower.data;
 
-    const sellBtn = document.getElementById('info-sell-btn');
-    if (sellBtn) {
-        sellBtn.addEventListener('click', function(e) {
+    // Clear existing overlay buttons
+    const existingBtns = unitElement.querySelectorAll('.unit-overlay-btn');
+    existingBtns.forEach(btn => btn.remove());
+
+    // 1. Corruption (Sell) Button - 9 o'clock position (left)
+    if (data.tier < 4) {
+        const corruptBtn = document.createElement('div');
+        corruptBtn.className = 'unit-overlay-btn corrupt-btn';
+        corruptBtn.innerHTML = '💀';
+        corruptBtn.title = `Corrupt (Sell for SE & Shards)`;
+        corruptBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const shardCount = data.tier;
-            if (confirm(`Do you want to corrupt this unit? \n\nReturns: \n💰 ${Math.floor(tower.spentSE * 0.7)} SE \n💠 ${shardCount} Corrupted Shard(s)`)) {
+            if (confirm(`Do you want to corrupt this unit?\n\nReturns:\n💰 ${Math.floor(tower.spentSE * 0.7)} SE\n💠 ${shardCount} Corrupted Shard(s)`)) {
                 sellTower(tower);
                 resetUnitInfo();
             }
         });
+        unitElement.appendChild(corruptBtn);
     }
 
-    const abyssBtn = document.getElementById('info-abyss-btn');
-    if (abyssBtn && abyssType) {
-        abyssBtn.addEventListener('click', function(e) {
+    // 2. Promotion Buttons - Top positions
+    if (data.type === 'apprentice') {
+        // Ascend (Tier 1 -> 2)
+        const promoteBtn = document.createElement('div');
+        promoteBtn.className = 'unit-overlay-btn promote-btn';
+        promoteBtn.innerHTML = '↗️';
+        promoteBtn.title = `Ascend (100 SE)`;
+        promoteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (typeof corruptedShards !== 'undefined' && corruptedShards >= 50) {
-                performAbyssJobChange(tower, abyssType);
-                showUnitInfo(tower);
+            if (money >= jobChangeCost) {
+                performJobChange(unitElement);
+                const updatedTower = towers.find(t => t.element === unitElement);
+                if (updatedTower) {
+                    showUnitInfo(updatedTower);
+                    updateUnitOverlayButtons(updatedTower);
+                }
             }
         });
+        unitElement.appendChild(promoteBtn);
+    } else if (data.upgrades) {
+        // Unleash Master (Tier 2 -> 3) - Left and Right options
+        data.upgrades.forEach((uType, idx) => {
+            const uData = unitTypes.find(u => u.type === uType);
+            const promoteBtn = document.createElement('div');
+            promoteBtn.className = idx === 0 ? 'unit-overlay-btn promote-btn' : 'unit-overlay-btn promote-btn-right';
+            promoteBtn.innerHTML = idx === 0 ? '↖️' : '↗️';
+            promoteBtn.title = `Unleash ${uData.name} (200 SE)`;
+            promoteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (money >= masterJobCost) {
+                    performMasterJobChange(tower, uType);
+                    showUnitInfo(tower);
+                    updateUnitOverlayButtons(tower);
+                }
+            });
+            unitElement.appendChild(promoteBtn);
+        });
+    } else if (data.tier === 3) {
+        // Descent Abyss (Tier 3 -> 4)
+        const abyssMapping = {
+            'executor': 'warden', 'binder': 'warden',
+            'grandsealer': 'cursed_talisman', 'flamemaster': 'cursed_talisman',
+            'vajra': 'asura', 'saint': 'asura',
+            'voidsniper': 'piercing_shadow', 'thousandhand': 'piercing_shadow',
+            'absolutezero': 'cocytus', 'permafrost': 'cocytus',
+            'hellfire': 'purgatory', 'phoenix': 'purgatory',
+            'abyssal': 'reaper', 'spatial': 'reaper',
+            'seer': 'doom_guide', 'commander': 'doom_guide',
+            'wraithlord': 'forsaken_king', 'cursedshaman': 'forsaken_king',
+            'rampart': 'void_gatekeeper', 'judgment': 'void_gatekeeper'
+        };
+        const abyssType = abyssMapping[data.type];
+        if (abyssType) {
+            const promoteBtn = document.createElement('div');
+            promoteBtn.className = 'unit-overlay-btn promote-btn';
+            promoteBtn.innerHTML = '↖️';
+            promoteBtn.title = `Descent (50 Shards)`;
+            promoteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (typeof corruptedShards !== 'undefined' && corruptedShards >= 50) {
+                    performAbyssJobChange(tower, abyssType);
+                    showUnitInfo(tower);
+                    updateUnitOverlayButtons(tower);
+                }
+            });
+            unitElement.appendChild(promoteBtn);
+        }
     }
-
-    // Auto-reset after 7 seconds
-    infoResetTimeout = setTimeout(resetUnitInfo, 7000);
 }
 
 function showRangeIndicator(tower) {
@@ -503,6 +522,8 @@ function performJobChange(unitElement) {
     unitElement.appendChild(cdOverlay);
 
     recordUnlock(newType.type);
+    const updatedTower = towers.find(t => t.element === unitElement);
+    if (updatedTower) updateUnitOverlayButtons(updatedTower);
     
     // Update tower data
     const tower = towers.find(t => t.element === unitElement);
@@ -535,6 +556,7 @@ function performMasterJobChange(tower, newTypeStr) {
     unitElement.appendChild(cdOverlay);
 
     recordUnlock(newType.type);
+    updateUnitOverlayButtons(tower);
 
     // Update data
     tower.data = newType;
@@ -574,6 +596,7 @@ function performAbyssJobChange(tower, newTypeStr) {
     unitElement.appendChild(cdOverlay);
 
     recordUnlock(newType.type);
+    updateUnitOverlayButtons(tower);
 
     // Update data
     tower.data = newType;
