@@ -1493,6 +1493,45 @@ input:checked + .slider:before {
     border-color: #8b0000 !important;
 }
 
+/* --- Attack Effects --- */
+.attack-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 30;
+    transform: translate(-50%, -50%);
+}
+
+.apprentice-effect {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: apprenticeSpark 0.4s ease-out forwards;
+}
+
+.apprentice-effect .cross-v, .apprentice-effect .cross-h {
+    position: absolute;
+    background-color: #00e5ff;
+    box-shadow: 0 0 8px #00e5ff;
+}
+
+.apprentice-effect .cross-v {
+    width: 2px;
+    height: 100%;
+}
+
+.apprentice-effect .cross-h {
+    width: 100%;
+    height: 2px;
+}
+
+@keyframes apprenticeSpark {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.2) rotate(90deg); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1.5) rotate(180deg); opacity: 0; }
+}
+
 @keyframes fadeInOut {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
     20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }

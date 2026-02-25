@@ -855,6 +855,11 @@ function shoot(tower, target, startX, startY) {
     setTimeout(() => {
         proj.remove();
         
+        // Trigger visual attack effect
+        if (typeof createAttackEffect === 'function') {
+            createAttackEffect(tower.data.type, target, gameContainer);
+        }
+
         // [Enemy Ability] Mimic Soul: Blink forward when hit (20% chance)
         if (target.type === 'mimic' && Math.random() < 0.2 && !target.isSilenced) {
             target.y += 40;
