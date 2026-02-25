@@ -615,7 +615,7 @@ function renderBestiary() {
     allEnemyTypes.forEach(enemy => {
         const kills = killCounts[enemy.type] || 0;
         const bonus = getBestiaryBonus(enemy.type);
-        const bonusText = bonus > 1 ? `DMG Bonus<br>+${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus<br>(Need 50)';
+        const bonusText = bonus > 1 ? `DMG +${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus';
         const dispName = enemyNames[enemy.type] || enemy.type.toUpperCase();
 
         const item = document.createElement('div');
@@ -623,15 +623,15 @@ function renderBestiary() {
         item.innerHTML = `
             <div class="custom-tooltip specter">
                 <strong style="color:#ffd700;">[Unique Trait]</strong><br>
-                ${enemy.desc}<br>
-                <strong style="color:#ff4500; margin-top:4px; display:inline-block;">[Effectiveness]</strong><br>
-                <span style="color:#ddd;">${enemy.effectiveness || 'No specific weakness.'}</span>
+                ${enemy.desc}
             </div>
             <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${enemy.icon}</div>
             <div class="bestiary-info">
                 <div class="bestiary-name">${dispName}</div>
-                <div class="bestiary-stats">💀 ${kills} Kills</div>
-                <div class="bestiary-bonus">${bonusText}</div>
+                <div class="bestiary-stats">💀 ${kills} | ${bonusText}</div>
+                <div class="bestiary-effectiveness" style="font-size: 7px; color: #ff4500; margin-top: 4px; border-top: 1px dotted #444; padding-top: 3px; line-height: 1.2;">
+                    🎯 ${enemy.effectiveness || 'Standard'}
+                </div>
             </div>
         `;
         bestiaryTab.appendChild(item);
@@ -640,11 +640,7 @@ function renderBestiary() {
 
 function renderPromotionTree() {
     const treeTab = document.getElementById('tree-tab');
-    treeTab.innerHTML = '<h3 style="color:#ffd700; font-size:14px; text-align:center; margin-bottom:20px;">Ascendency Evolution Path</h3>';
-
-    // Clear any leftover content
-    const existingContainer = treeTab.querySelector('.tree-main-container');
-    if (existingContainer) existingContainer.remove();
+    treeTab.innerHTML = ''; 
 
     const paths = [
         { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'], abyss: 'warden' },
@@ -663,44 +659,40 @@ function renderPromotionTree() {
     treeContainer.className = 'tree-main-container';
     treeContainer.style.display = 'flex';
     treeContainer.style.flexDirection = 'column';
-    treeContainer.style.gap = '15px';
+    treeContainer.style.gap = '8px';
 
     // Root: Apprentice
     const rootDiv = document.createElement('div');
     rootDiv.style.textAlign = 'center';
+    rootDiv.style.marginBottom = '5px';
     const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
     rootDiv.innerHTML = `
-        <div class="unit-node tier1" style="display:inline-block; position:relative;">
+        <div class="unit-node tier1" style="display:inline-block; position:relative; padding: 3px 10px; font-size: 8px;">
             <div class="custom-tooltip">
                 <strong style="color:#00e5ff;">${apprenticeData.name}</strong><br>
                 ${apprenticeData.desc}<br>
                 <span style="color:#aaa;">ATK: ${apprenticeData.damage} | CD: ${apprenticeData.cooldown/1000}s</span>
             </div>
-            ${apprenticeData.icon} Apprentice Exorcist
+            ${apprenticeData.icon} Apprentice
         </div>`;
     treeContainer.appendChild(rootDiv);
 
-    const arrow = document.createElement('div');
-    arrow.innerText = '↓';
-    arrow.style.textAlign = 'center';
-    treeContainer.appendChild(arrow);
-
     paths.forEach(p => {
         const pathRow = document.createElement('div');
-        pathRow.style.display = 'flex';
+        pathRow.style.display = 'grid';
+        pathRow.style.gridTemplateColumns = '80px 15px 95px 15px 95px';
         pathRow.style.alignItems = 'center';
         pathRow.style.justifyContent = 'center';
-        pathRow.style.gap = '8px';
-        pathRow.style.marginBottom = '5px';
-        pathRow.style.borderBottom = '1px solid #333';
-        pathRow.style.paddingBottom = '8px';
+        pathRow.style.gap = '4px';
+        pathRow.style.borderBottom = '1px solid #222';
+        pathRow.style.paddingBottom = '4px';
 
         // Tier 2
         const t2Data = unitTypes.find(u => u.type === p.type);
         const tier2 = document.createElement('div');
         tier2.className = 'unit-node tier2';
-        tier2.style.minWidth = '70px';
         tier2.style.position = 'relative';
+        tier2.style.fontSize = '7.5px';
         tier2.innerHTML = `
             <div class="custom-tooltip">
                 <strong style="color:#9370db;">${t2Data.name}</strong><br>
@@ -711,20 +703,20 @@ function renderPromotionTree() {
         
         const mArrow = document.createElement('div');
         mArrow.innerText = '→';
-        mArrow.style.fontSize = '10px';
+        mArrow.style.fontSize = '9px';
+        mArrow.style.textAlign = 'center';
 
         // Tier 3 (Masters)
         const mastersDiv = document.createElement('div');
         mastersDiv.style.display = 'flex';
         mastersDiv.style.flexDirection = 'column';
-        mastersDiv.style.gap = '3px';
+        mastersDiv.style.gap = '2px';
 
         p.masters.forEach(m => {
             const mData = unitTypes.find(u => u.type === m);
             const mNode = document.createElement('div');
             mNode.className = 'unit-node tier3';
-            mNode.style.minWidth = '90px';
-            mNode.style.fontSize = '8px';
+            mNode.style.fontSize = '7.5px';
             mNode.style.position = 'relative';
             if (mData) {
                 mNode.innerHTML = `
@@ -742,14 +734,14 @@ function renderPromotionTree() {
 
         const aArrow = document.createElement('div');
         aArrow.innerText = '→';
-        aArrow.style.fontSize = '10px';
+        aArrow.style.fontSize = '9px';
+        aArrow.style.textAlign = 'center';
 
         // Tier 4 (Abyss)
         const aData = unitTypes.find(u => u.type === p.abyss);
         const abyssNode = document.createElement('div');
         abyssNode.className = 'unit-node tier4';
-        abyssNode.style.minWidth = '90px';
-        abyssNode.style.fontSize = '8px';
+        abyssNode.style.fontSize = '7.5px';
         abyssNode.style.position = 'relative';
         if (aData) {
             abyssNode.innerHTML = `
