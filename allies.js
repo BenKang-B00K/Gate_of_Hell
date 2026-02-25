@@ -322,8 +322,8 @@ function showUnitInfo(tower) {
         });
     }
 
-    // Auto-reset after 3 seconds
-    infoResetTimeout = setTimeout(resetUnitInfo, 3000);
+    // Auto-reset after 7 seconds
+    infoResetTimeout = setTimeout(resetUnitInfo, 7000);
 }
 
 function showRangeIndicator(tower) {
@@ -658,7 +658,7 @@ function renderPromotionTree() {
     const rootDiv = document.createElement('div');
     rootDiv.style.textAlign = 'center';
     const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
-    rootDiv.innerHTML = `<div class="unit-node tier1" style="display:inline-block;">${apprenticeData.icon} Apprentice Exorcist</div>`;
+    rootDiv.innerHTML = `<div class="unit-node tier1" style="display:inline-block;" title="${apprenticeData.desc}\nATK: ${apprenticeData.damage} | CD: ${apprenticeData.cooldown/1000}s">${apprenticeData.icon} Apprentice Exorcist</div>`;
     treeContainer.appendChild(rootDiv);
 
     const arrow = document.createElement('div');
@@ -682,6 +682,7 @@ function renderPromotionTree() {
         tier2.style.minWidth = '70px';
         const t2Data = unitTypes.find(u => u.type === p.type);
         tier2.innerText = `${t2Data.icon} ${p.name}`;
+        tier2.title = `${t2Data.desc}\nATK: ${t2Data.damage} | CD: ${t2Data.cooldown/1000}s`;
         
         const mArrow = document.createElement('div');
         mArrow.innerText = '→';
@@ -699,7 +700,12 @@ function renderPromotionTree() {
             mNode.style.minWidth = '90px';
             mNode.style.fontSize = '8px';
             const mData = unitTypes.find(u => u.type === m);
-            mNode.innerText = mData ? `${mData.icon} ${mData.name}` : m;
+            if (mData) {
+                mNode.innerText = `${mData.icon} ${mData.name}`;
+                mNode.title = `${mData.desc}\nATK: ${mData.damage} | CD: ${mData.cooldown/1000}s`;
+            } else {
+                mNode.innerText = m;
+            }
             mastersDiv.appendChild(mNode);
         });
 
@@ -713,7 +719,20 @@ function renderPromotionTree() {
         abyssNode.style.minWidth = '90px';
         abyssNode.style.fontSize = '8px';
         const aData = unitTypes.find(u => u.type === p.abyss);
-        abyssNode.innerText = aData ? `${aData.icon} ${aData.name}` : p.abyss;
+        if (aData) {
+            abyssNode.innerText = `${aData.icon} ${aData.name}`;
+            abyssNode.title = `${aData.desc}\nATK: ${aData.damage} | CD: ${aData.cooldown/1000}s`;
+        } else {
+            abyssNode.innerText = p.abyss;
+        }
+
+        pathRow.appendChild(tier2);
+        pathRow.appendChild(mArrow);
+        pathRow.appendChild(mastersDiv);
+        pathRow.appendChild(aArrow);
+        pathRow.appendChild(abyssNode);
+        treeContainer.appendChild(pathRow);
+    });
 
         pathRow.appendChild(tier2);
         pathRow.appendChild(mArrow);
