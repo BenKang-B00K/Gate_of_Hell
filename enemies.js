@@ -71,36 +71,36 @@ function getCorruptionMultipliers() {
 // Enemy data (Categorized)
 const enemyCategories = {
     basic: [
-        { type: 'normal', speed: 1.5, hp: 100, defense: 0, probability: 0.6 }, // Whispering Soul
-        { type: 'tank', speed: 0.75, hp: 300, defense: 10, probability: 0.2 },  // Ironclad Wraith
-        { type: 'runner', speed: 3.0, hp: 40, defense: 0, probability: 0.2 }   // Haste-Cursed Shadow
+        { type: 'normal', icon: '👻', speed: 1.5, hp: 100, defense: 0, probability: 0.6 }, // Whispering Soul
+        { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.2 },  // Ironclad Wraith
+        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.2 }   // Haste-Cursed Shadow
     ],
     pattern: [
-        { type: 'greedy', speed: 1.2, hp: 150, defense: 5, probability: 0.34 }, // Gluttonous Poltergeist
-        { type: 'dimension', speed: 1.8, hp: 80, defense: 0, probability: 0.33 }, // Void-Step Phantasm
-        { type: 'deceiver', speed: 1.4, hp: 120, defense: 5, probability: 0.33 }  // Siren of Despair
+        { type: 'greedy', icon: '💰', speed: 1.2, hp: 150, defense: 5, probability: 0.34 }, // Gluttonous Poltergeist
+        { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.33 }, // Void-Step Phantasm
+        { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.33 }  // Siren of Despair
     ],
     enhanced: [
-        { type: 'boar', speed: 0.5, hp: 250, defense: 8, probability: 0.34 }, // Feral Revenant
-        { type: 'frost', speed: 1.0, hp: 180, defense: 5, probability: 0.33 }, // Cocytus Drifter
-        { type: 'lightspeed', speed: 4.0, hp: 60, defense: 0, probability: 0.33 } // Ethereal Streak
+        { type: 'boar', icon: '🐗', speed: 0.5, hp: 250, defense: 8, probability: 0.34 }, // Feral Revenant
+        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.33 }, // Cocytus Drifter
+        { type: 'lightspeed', icon: '✨', speed: 4.0, hp: 60, defense: 0, probability: 0.33 } // Ethereal Streak
     ],
     armoured: [
-        { type: 'heavy', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8 }, // Grave-Bound Behemoth
-        { type: 'lava', speed: 1.3, hp: 200, defense: 15, probability: 0.33 }, // Magma-Veined Terror
-        { type: 'burning', speed: 1.0, hp: 350, defense: 10, probability: 0.33 } // Eternal Zealot
+        { type: 'heavy', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8 }, // Grave-Bound Behemoth
+        { type: 'lava', icon: '🌋', speed: 1.3, hp: 200, defense: 15, probability: 0.33 }, // Magma-Veined Terror
+        { type: 'burning', icon: '💢', speed: 1.0, hp: 350, defense: 10, probability: 0.33 } // Eternal Zealot
     ],
     treasure: [
-        { type: 'gold', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300 } // Gilded Apparition
+        { type: 'gold', icon: '💎', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300 } // Gilded Apparition
     ]
 };
 
 // Boss data
 const bossData = {
-    10: { name: "Cerberus", type: "cerberus", hp: 5000, speed: 0.3, size: 60, rewardName: "Cerberus's Fang", rewardEffect: 0.1 },
-    20: { name: "Charon", type: "charon", hp: 8000, speed: 0.2, size: 60, rewardName: "Stygian Oar", rewardEffect: 0.15 }, 
-    30: { name: "Beelzebub", type: "beelzebub", hp: 15000, speed: 0.2, size: 60, rewardName: "Crown of Gluttony", rewardEffect: 0.01 }, 
-    40: { name: "Lucifer", type: "lucifer", hp: 25000, speed: 0.15, size: 70, rewardName: "Fallen Angel's Wings", rewardEffect: 0.1 } 
+    10: { name: "Cerberus", type: "cerberus", icon: '🐕', hp: 5000, speed: 0.3, size: 60, rewardName: "Cerberus's Fang", rewardEffect: 0.1 },
+    20: { name: "Charon", type: "charon", icon: '🛶', hp: 8000, speed: 0.2, size: 60, rewardName: "Stygian Oar", rewardEffect: 0.15 }, 
+    30: { name: "Beelzebub", type: "beelzebub", icon: '🪰', hp: 15000, speed: 0.2, size: 60, rewardName: "Crown of Gluttony", rewardEffect: 0.01 }, 
+    40: { name: "Lucifer", type: "lucifer", icon: '👑', hp: 25000, speed: 0.15, size: 70, rewardName: "Fallen Angel's Wings", rewardEffect: 0.1 } 
 };
 
 // Initialize stage
@@ -242,7 +242,7 @@ function spawnBoss() {
     
     const enemyDiv = document.createElement('div');
     enemyDiv.classList.add('enemy', 'boss', data.type);
-    enemyDiv.innerText = "BOSS"; 
+    enemyDiv.innerText = data.icon; 
     
     road.appendChild(enemyDiv);
     enemyDiv.style.left = '50%';
@@ -336,6 +336,7 @@ function spawnEnemy() {
     const enemyDiv = document.createElement('div');
     enemyDiv.classList.add('enemy');
     enemyDiv.classList.add(selectedType.type);
+    enemyDiv.innerText = selectedType.icon;
     
     road.appendChild(enemyDiv);
     const randomX = Math.random() * 80 + 10;

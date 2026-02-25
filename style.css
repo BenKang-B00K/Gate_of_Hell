@@ -134,154 +134,50 @@ body {
 /* 적 유닛 */
 .enemy {
     position: absolute;
-    border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
     z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: serif;
+    /* Text outline for the emoji */
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+    border-radius: 50%; /* For the halo effect */
 }
 
-/* 길 잃은 영혼 (보통) */
-.enemy.normal {
-    width: 14px;
-    height: 14px;
-    background: radial-gradient(circle, #ff5555, #800000);
-    box-shadow: 0 0 10px #ff0000;
-}
-
-/* 죄무거운 망령 (탱커) */
-.enemy.tank {
-    width: 22px;
-    height: 22px;
-    background: radial-gradient(circle, #4b0082, #1a0033); /* 보라색 */
-    box-shadow: 0 0 15px #4b0082;
-    border: 1px solid #888;
-}
-
-/* 성급한 그림자 (러너) */
-.enemy.runner {
-    width: 10px;
-    height: 10px;
-    background: radial-gradient(circle, #ffaa00, #804000); /* 주황색 */
-    box-shadow: 0 0 8px #ffaa00;
-}
-
-/* --- 변칙형(Pattern) 적군 스타일 --- */
-/* 욕심쟁이 령 (레인 스위칭) */
-.enemy.greedy {
-    width: 18px;
-    height: 18px;
-    background: radial-gradient(circle, #ffd700, #b8860b); /* 금색 */
-    box-shadow: 0 0 12px #ffd700;
-    border: 1px solid #fff;
-}
-/* 차원 이동자 (상태 변화) */
-.enemy.dimension {
-    width: 16px;
-    height: 16px;
-    background: radial-gradient(circle, #00ffff, #008b8b); /* 청록색 */
-    box-shadow: 0 0 10px #00ffff;
-    transition: opacity 0.5s; /* 투명화 애니메이션 */
-}
-/* 기만하는 유혹자 (조건부 후퇴) */
-.enemy.deceiver {
-    width: 16px;
-    height: 16px;
-    background: radial-gradient(circle, #ff00ff, #8b008b); /* 자홍색 */
-    box-shadow: 0 0 10px #ff00ff;
-}
-
-/* --- 강화형(Enhanced) 적군 스타일 --- */
-/* 돌진하는 멧돼지 (지수적 가속) */
-.enemy.boar {
-    width: 20px;
-    height: 20px;
-    background: radial-gradient(circle, #8b4513, #3e1c09); /* 갈색 */
-    box-shadow: 0 0 10px #8b4513;
-    border: 2px solid #ff4500;
-}
-/* 서리 낀 망령 (이속 오라) */
-.enemy.frost {
-    width: 24px;
-    height: 24px;
-    background: radial-gradient(circle, #e0ffff, #00ced1); /* 밝은 청록색 */
-    box-shadow: 0 0 15px #00ced1;
-    opacity: 0.9;
-}
-/* 광속의 그림자 (고정 고속) */
-.enemy.lightspeed {
-    width: 12px;
-    height: 12px;
-    background: radial-gradient(circle, #ffffff, #ffff00); /* 흰색/노란색 */
-    box-shadow: 0 0 10px #ffffff, 0 0 20px #ffff00;
-}
-
-/* --- 철벽형(Armoured) 적군 스타일 --- */
-/* 육중한 죄인 (넉백 저항) */
-.enemy.heavy {
-    width: 26px;
-    height: 26px;
-    background: radial-gradient(circle, #555555, #222222); /* 회색 */
-    box-shadow: 0 0 10px #000000;
-    border: 3px solid #888;
-}
-/* 용암의 갈망 (도약 및 정화) */
-.enemy.lava {
-    width: 18px;
-    height: 18px;
-    background: radial-gradient(circle, #ff4500, #8b0000); /* 붉은 오렌지 */
-    box-shadow: 0 0 15px #ff4500;
-    border: 1px solid #ffff00;
-}
-/* 타오르는 복수심 (피격 회복) */
-.enemy.burning {
-    width: 20px;
-    height: 20px;
-    background: radial-gradient(circle, #ff0000, #330000); /* 진한 빨강 */
-    box-shadow: 0 0 12px #ff0000, inset 0 0 5px #ffff00;
-}
-
-/* --- 보물(Treasure) 적군 스타일 --- */
-/* 황금 메아리 (많은 SE 드롭) */
-.enemy.gold {
-    width: 16px;
-    height: 16px;
-    background: radial-gradient(circle, #ffd700, #fffacd); /* 금색 */
-    box-shadow: 0 0 15px #ffd700, 0 0 5px #ffffff;
-    border: 2px solid #daa520;
-    animation: goldPulse 0.5s infinite alternate;
-}
+/* 유령별 후광(Halo) 및 스타일 */
+.enemy.normal { font-size: 16px; box-shadow: 0 0 12px rgba(255, 85, 85, 0.8); }
+.enemy.tank { font-size: 22px; box-shadow: 0 0 15px rgba(138, 43, 226, 0.8); }
+.enemy.runner { font-size: 14px; box-shadow: 0 0 10px rgba(255, 170, 0, 0.8); }
+.enemy.greedy { font-size: 18px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+.enemy.dimension { font-size: 16px; box-shadow: 0 0 12px rgba(0, 255, 255, 0.8); }
+.enemy.deceiver { font-size: 16px; box-shadow: 0 0 12px rgba(255, 0, 255, 0.8); }
+.enemy.boar { font-size: 20px; box-shadow: 0 0 12px rgba(139, 69, 19, 0.8); }
+.enemy.frost { font-size: 22px; box-shadow: 0 0 15px rgba(173, 216, 230, 0.8); }
+.enemy.lightspeed { font-size: 14px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.9); }
+.enemy.heavy { font-size: 24px; box-shadow: 0 0 15px rgba(85, 85, 85, 0.8); }
+.enemy.lava { font-size: 18px; box-shadow: 0 0 15px rgba(255, 69, 0, 0.8); }
+.enemy.burning { font-size: 20px; box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+.enemy.gold { font-size: 18px; box-shadow: 0 0 20px rgba(255, 215, 0, 1); }
 
 /* --- 보스(Boss) 스타일 --- */
 .enemy.boss {
     z-index: 100;
-    border: 2px solid #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 10px;
-    color: white;
     font-weight: bold;
-    text-shadow: 0 0 3px #000;
 }
 
-/* 케르베로스 */
-.enemy.cerberus {
-    width: 60px; /* 기본 유령의 약 3배 */
-    height: 60px;
-    background: radial-gradient(circle, #330000, #000000);
-    box-shadow: 0 0 25px #ff0000;
-}
-
-/* 카론 (Lv.20 보스) */
-.enemy.charon {
-    width: 40px;
-    height: 60px;
-    background: linear-gradient(180deg, #222 0%, #444 50%, #222 100%);
-    border-radius: 5px 5px 20px 20px; /* 배 모양 */
-    box-shadow: 0 0 15px #00ffff;
-    border: 1px solid #888;
-    z-index: 15;
-}
+.enemy.cerberus { font-size: 60px; box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
+.enemy.charon { font-size: 50px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); }
+.enemy.beelzebub { font-size: 55px; box-shadow: 0 0 30px rgba(0, 255, 0, 0.7); }
+.enemy.lucifer { font-size: 70px; box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
 
 /* 물살 효과 */
 .enemy.charon::before {

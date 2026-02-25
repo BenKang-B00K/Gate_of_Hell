@@ -617,7 +617,7 @@ function renderBestiary() {
         const item = document.createElement('div');
         item.className = 'bestiary-item';
         item.innerHTML = `
-            <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none;"></div>
+            <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${enemy.icon}</div>
             <div class="bestiary-info">
                 <div class="bestiary-name">${dispName}</div>
                 <div class="bestiary-stats">💀 ${kills} Kills</div>
