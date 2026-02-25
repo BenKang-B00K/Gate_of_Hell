@@ -74,19 +74,22 @@ function getCorruptionMultipliers() {
 // Enemy data (Categorized)
 const enemyCategories = {
     basic: [
-        { type: 'normal', icon: '👻', speed: 1.5, hp: 110, defense: 0, probability: 0.6, reward: 5, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
+        { type: 'normal', icon: '👻', speed: 1.5, hp: 110, defense: 0, probability: 0.5, reward: 5, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
+        { type: 'shade', icon: '👤', speed: 2.2, hp: 60, defense: 0, probability: 0.1, reward: 4, desc: "A weak but fast spirit that moves in a blurring motion.", effectiveness: "Rapid-fire units.", lore: "The faintest remains of a soul, barely holding onto existence." },
         { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.2, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
         { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.2, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
     ],
     pattern: [
-        { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.34, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
-        { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.33, desc: "Occasionally phases out of existence, becoming immune to attacks (1% chance per frame).", effectiveness: "Truth-seeking seers or rapid-fire units.", lore: "A hermit who sought to hide from the world, now drifting between dimensions of pain." }, 
-        { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.33, desc: "Backsteps and evades when an exorcist first targets them (100% chance, once).", effectiveness: "Area damage or multiple hunters.", lore: "A master of lies whose face was never seen, now eternally hiding behind a spectral mask." }  
+        { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.3, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
+        { type: 'mimic', icon: '📦', speed: 1.1, hp: 180, defense: 15, probability: 0.1, desc: "Occasionally blinks forward when targeted (20% chance).", effectiveness: "AOE or slow effects.", lore: "It takes the form of what you desire most, only to reveal its true, hollow self." },
+        { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.3, desc: "Occasionally phases out of existence, becoming immune to attacks (1% chance per frame).", effectiveness: "Truth-seeking seers or rapid-fire units.", lore: "A hermit who sought to hide from the world, now drifting between dimensions of pain." }, 
+        { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.3, desc: "Backsteps and evades when an exorcist first targets them (100% chance, once).", effectiveness: "Area damage or multiple hunters.", lore: "A master of lies whose face was never seen, now eternally hiding behind a spectral mask." }  
     ],
     enhanced: [
-        { type: 'boar', icon: '🐗', speed: 0.5, hp: 250, defense: 8, probability: 0.34, desc: "Accelerates exponentially as it nears the portal.", effectiveness: "Knockback and heavy stuns near the gate.", lore: "A violent hunter who enjoyed the thrill of the chase, now driven by an uncontrollable bloodlust." }, 
-        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.33, desc: "Emits a freezing aura that boosts the speed of nearby specters.", effectiveness: "Priority targeting and fire energy.", lore: "Died alone in a blizzard, their heart frozen by isolation and cold resentment." }, 
-        { type: 'lightspeed', icon: '✨', speed: 4.0, hp: 60, defense: 0, probability: 0.33, desc: "Moves at incredible speed and ignores speed-boosting auras.", effectiveness: "Instant-kill guardians or void snipers.", lore: "A messenger who failed to deliver a life-saving word, now desperate to reach the end." } 
+        { type: 'boar', icon: '🐗', speed: 0.5, hp: 250, defense: 8, probability: 0.3, desc: "Accelerates exponentially as it nears the portal.", effectiveness: "Knockback and heavy stuns near the gate.", lore: "A violent hunter who enjoyed the thrill of the chase, now driven by an uncontrollable bloodlust." }, 
+        { type: 'soul_eater', icon: '🧿', speed: 1.2, hp: 220, defense: 12, probability: 0.1, desc: "Gains a short burst of speed whenever it takes damage.", effectiveness: "High damage single hits.", lore: "It hungers not for flesh, but for the very essence of your exorcists' power." },
+        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.3, desc: "Emits a freezing aura that boosts the speed of nearby specters.", effectiveness: "Priority targeting and fire energy.", lore: "Died alone in a blizzard, their heart frozen by isolation and cold resentment." }, 
+        { type: 'lightspeed', icon: '✨', speed: 4.0, hp: 60, defense: 0, probability: 0.3, desc: "Moves at incredible speed and ignores speed-boosting auras.", effectiveness: "Instant-kill guardians or void snipers.", lore: "A messenger who failed to deliver a life-saving word, now desperate to reach the end." } 
     ],
     armoured: [
         { type: 'heavy', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8, desc: "An massive behemoth with high defense and knockback resistance.", effectiveness: "Soul link shared damage or high-penetration strikes.", lore: "An executioner who took pride in their cruelty, now bound by the very chains they once used." }, 
@@ -111,12 +114,56 @@ const bossData = {
     40: { name: "Lucifer", type: "lucifer", icon: '👑', hp: 25000, speed: 0.15, size: 70, rewardName: "Fallen Angel's Wings", rewardEffect: 0.1, lore: "The first to fall, seeking to drag every other light into the same bottomless abyss." } 
 };
 
+function showBossWarning(bossName) {
+    const modal = document.getElementById('unlock-modal');
+    const header = document.getElementById('unlock-header');
+    const icon = document.getElementById('unlock-icon');
+    const name = document.getElementById('unlock-name');
+    const desc = document.getElementById('unlock-desc');
+    
+    if (modal && header && icon && name && desc) {
+        header.innerText = "⚠️ WARNING! BOSS APPEARED!";
+        header.style.color = "#ff0000";
+        icon.innerText = "👿";
+        name.innerText = bossName;
+        desc.innerText = "A powerful entity has emerged from the depths! Prepare for a fierce battle.";
+        modal.style.display = 'flex';
+        isPaused = true;
+    }
+}
+
 // Initialize stage
 function initStage() {
     isBossStage = (stage % 10 === 0); // Boss stage every 10 levels
     bossSpawned = false;
     bossInstance = null;
     
+    // Check for difficulty increase message
+    const diffMsgContainer = document.getElementById('difficulty-msg-container');
+    const diffMsg = document.getElementById('difficulty-msg');
+    if (diffMsg && diffMsgContainer) {
+        let msg = "";
+        if (stage === 6) msg = "SHADOWS DEEPEN...";
+        else if (stage === 16) msg = "ABYSS AWAKENS!";
+        else if (stage === 31) msg = "ETERNAL NIGHTFALL";
+        else if (stage === 51) msg = "THE VOID CONSUMES ALL";
+
+        if (msg) {
+            diffMsg.innerText = msg;
+            diffMsg.classList.remove('difficulty-anim');
+            void diffMsg.offsetWidth; // Trigger reflow
+            diffMsg.classList.add('difficulty-anim');
+            
+            // Make clickable to close
+            diffMsgContainer.style.pointerEvents = 'auto';
+            diffMsgContainer.onclick = () => {
+                diffMsg.classList.remove('difficulty-anim');
+                diffMsg.style.opacity = 0;
+                diffMsgContainer.style.pointerEvents = 'none';
+            };
+        }
+    }
+
     // Unseal Gatekeeper
     sealedGhostCount = 0; 
 
@@ -126,7 +173,7 @@ function initStage() {
         
         const tutorialToggle = document.getElementById('tutorial-toggle');
         if (tutorialToggle && tutorialToggle.checked) {
-            alert(`⚠️ Warning! Boss [${bossName}] appeared! ⚠️`);
+            showBossWarning(bossName);
         }
     }
     else if (stage <= 10) {
@@ -201,12 +248,35 @@ function updateGauges() {
         portalFill.style.width = `${portalPercent}%`;
         portalText.innerText = `${Math.floor(portalEnergy)} / ${maxPortalEnergy}`;
 
-        // Portal Glow Effect: More energy = Stronger glow
+        // Portal Glow Effect: Transitions to dark red as it fills
         if (portalElement) {
-            const glowStrength = 20 + (portalRatio * 60); // 20px to 80px
-            const borderGlow = portalRatio * 10; // Up to 10px white border glow
-            portalElement.style.boxShadow = `0 0 ${glowStrength}px #9400d3, 0 0 ${borderGlow}px white`;
-            portalElement.style.filter = `brightness(${1 + portalRatio * 0.5})`; // Max 1.5x brightness
+            const glowStrength = 25 + (portalRatio * 50);
+            
+            // Purple base glow (Lower priority as it fills)
+            let shadow = `0 -5px ${glowStrength}px rgba(148, 0, 211, ${0.7 - portalRatio * 0.4})`;
+            
+            // Strong Dark Red / Black "Corruption" Aura
+            if (portalRatio > 0.2) {
+                const redIntensity = (portalRatio - 0.2) * 1.25; 
+                // Layer multiple shadows for "spreading" effect
+                shadow += `, 0 -10px ${glowStrength * 1.5}px rgba(139, 0, 0, ${redIntensity})`;
+                shadow += `, 0 -15px ${glowStrength * 2.5}px rgba(255, 0, 0, ${redIntensity * 0.4})`;
+                shadow += `, 0 -5px 40px rgba(0, 0, 0, ${redIntensity})`;
+            }
+            
+            if (portalRatio > 0.8) {
+                shadow += `, 0 0 15px white`;
+            }
+
+            portalElement.style.boxShadow = shadow;
+            portalElement.style.filter = `brightness(${1 + portalRatio * 0.3})`;
+
+            // Intense shaking when near death (Fixed to not dislocate)
+            if (portalRatio > 0.85) {
+                portalElement.style.animation = 'portalShake 0.1s infinite';
+            } else {
+                portalElement.style.animation = 'none';
+            }
         }
     }
 
@@ -262,9 +332,12 @@ function spawnWave() {
     }
 
     for(let i=0; i<count; i++) {
-        spawnEnemy();
+        setTimeout(() => {
+            if (isPaused) return; // Don't spawn if game paused during sequence
+            spawnEnemy();
+        }, i * 350); // 0.35s delay between each enemy
     }
-    lastSpawnTime = Date.now();
+    lastSpawnTime = Date.now() + (count * 350); // Adjust lastSpawnTime to account for sequence duration
 }
 
 // Spawn boss
@@ -278,9 +351,14 @@ function spawnBoss() {
     }
 
     const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy', 'boss', data.type);
+    enemyDiv.classList.add('enemy', 'boss', 'spawning', data.type);
     enemyDiv.innerText = data.icon; 
     
+    // Remove spawning class after animation
+    setTimeout(() => {
+        enemyDiv.classList.remove('spawning');
+    }, 500);
+
     // HP Bar
     const hpBg = document.createElement('div');
     hpBg.className = 'hp-bar-bg';
@@ -308,6 +386,7 @@ function spawnBoss() {
         hpFill: hpFill,
         initialX: 50,
         x: 50,
+        targetX: 50, // Bosses go to center
         y: 0,
         baseSpeed: data.speed * speedMult,
         speed: data.speed * speedMult,
@@ -399,10 +478,15 @@ function spawnEnemy() {
     }
 
     const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy');
+    enemyDiv.classList.add('enemy', 'spawning');
     enemyDiv.classList.add(selectedType.type);
     enemyDiv.innerText = selectedType.icon;
     
+    // Remove spawning class after animation
+    setTimeout(() => {
+        enemyDiv.classList.remove('spawning');
+    }, 500);
+
     // HP Bar
     const hpBg = document.createElement('div');
     hpBg.className = 'hp-bar-bg';
@@ -431,6 +515,7 @@ function spawnEnemy() {
         hpFill: hpFill,
         initialX: randomX,
         x: randomX,
+        targetX: Math.random() * 50 + 25, // Narrower range (25% to 75%) to fit portal arch
         y: 0,
         baseSpeed: selectedType.speed * speedMult,
         speed: selectedType.speed * speedMult,
@@ -452,9 +537,14 @@ function spawnEnemy() {
 function spawnPassenger(boss) {
     const road = document.getElementById('road');
     const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy', 'normal', 'boarded');
+    enemyDiv.classList.add('enemy', 'normal', 'boarded', 'spawning');
     road.appendChild(enemyDiv);
     
+    // Remove spawning class after animation
+    setTimeout(() => {
+        enemyDiv.classList.remove('spawning');
+    }, 500);
+
     const offsetX = (Math.random() - 0.5) * 30; 
     const offsetY = (Math.random() - 0.5) * 40;
 
@@ -464,6 +554,7 @@ function spawnPassenger(boss) {
         element: enemyDiv,
         initialX: boss.x,
         x: boss.x,
+        targetX: 50, // Converge to center with boss
         y: boss.y,
         baseSpeed: 1.5 * speedMult,
         speed: 1.5 * speedMult,
@@ -505,9 +596,14 @@ function spawnCorruptedEnemy(tower) {
     }
 
     const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy', 'corrupted', data.type);
+    enemyDiv.classList.add('enemy', 'corrupted', 'spawning', data.type);
     enemyDiv.innerText = data.icon;
     
+    // Remove spawning class after animation
+    setTimeout(() => {
+        enemyDiv.classList.remove('spawning');
+    }, 500);
+
     // HP Bar
     const hpBg = document.createElement('div');
     hpBg.className = 'hp-bar-bg';
@@ -528,6 +624,7 @@ function spawnCorruptedEnemy(tower) {
         hpFill: hpFill,
         initialX: relX,
         x: relX,
+        targetX: Math.random() * 50 + 25, // Within portal arch
         y: 0,
         baseSpeed: data.speed * speedMult, 
         speed: data.speed * speedMult,

@@ -27,7 +27,7 @@ body {
 
 /* 메인 게임 영역 (좌/우 슬롯, 중앙 길) */
 #game-layout {
-    height: 70%;
+    height: 65%;
     display: flex;
     width: 100%;
     position: relative;
@@ -39,10 +39,12 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(10, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    grid-auto-rows: 0; /* Extra rows have no height */
     gap: 2px;
     padding: 2px;
     z-index: 5;
+    overflow: hidden; /* Hide anything beyond the grid */
 }
 
 /* 중앙 길 */
@@ -53,6 +55,43 @@ body {
     position: relative;
     display: flex;
     justify-content: center;
+}
+
+#spawning-pool {
+    position: absolute;
+    top: 0; /* Align with top of the road */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 60px;
+    background: radial-gradient(ellipse at center, rgba(75, 0, 130, 0.6), rgba(148, 0, 211, 0.3), transparent 70%);
+    filter: blur(5px);
+    z-index: 1;
+    animation: poolSwirl 4s infinite linear;
+    pointer-events: none;
+}
+
+#spawning-pool::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(139, 0, 0, 0.4), transparent 60%);
+    animation: poolPulse 2s infinite alternate ease-in-out;
+}
+
+@keyframes poolSwirl {
+    0% { transform: translateX(-50%) rotate(0deg) scale(1); opacity: 0.6; }
+    50% { transform: translateX(-50%) rotate(180deg) scale(1.1); opacity: 0.8; }
+    100% { transform: translateX(-50%) rotate(360deg) scale(1); opacity: 0.6; }
+}
+
+@keyframes poolPulse {
+    from { opacity: 0.3; transform: translate(-50%, -50%) scale(0.9); }
+    to { opacity: 0.7; transform: translate(-50%, -50%) scale(1.2); }
 }
 
 /* 개별 타일 (셀) */
@@ -95,46 +134,51 @@ body {
 /* 포탈 (적 소멸 지점) */
 #portal {
     position: absolute;
-    bottom: 40px; /* Raised slightly to make room for gauge below */
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #d000ff, #4b0082, transparent);
-    box-shadow: 0 0 30px #9400d3;
-    border: 2px solid #fff;
-    animation: portalPulse 2s infinite alternate;
+    bottom: 0;
+    width: 150px;
+    height: 35px;
+    border-radius: 75px 75px 0 0;
+    background: linear-gradient(to top, rgba(40, 0, 60, 0.9), rgba(148, 0, 211, 0.3));
+    box-shadow: 0 -8px 25px rgba(148, 0, 211, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: none;
     z-index: 1;
     left: 50%;
-    margin-left: -30px; /* 너비의 절반만큼 이동하여 중앙 정렬 */
+    transform: translateX(-50%); /* Centering using transform */
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    overflow: visible;
 }
 
 #portal-energy-label {
     position: absolute;
-    top: -18px; /* Above the gauge (which is below the portal) */
-    width: 80px;
+    bottom: 14px; /* 게이지 바로 위로 이동 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
     text-align: center;
-    font-size: 9px;
+    font-size: 8px;
     font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 4px #000;
+    color: rgba(255, 255, 255, 0.5); /* 투명도 대폭 증가 (0.9 -> 0.5) */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); 
     pointer-events: none;
-    bottom: -20px;
+    z-index: 10;
     top: auto;
 }
 
 #portal-gauge-container {
     position: absolute;
-    bottom: -30px;
-    width: 80px;
-    height: 6px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #444;
-    border-radius: 3px;
+    bottom: 4px;
+    width: 90px;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.4); /* 배경 투명도 증가 (0.8 -> 0.4) */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* 테두리 투명도 증가 */
+    border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+    opacity: 0.7; /* 전체적인 투명도 추가 적용 */
 }
 
 #portal-gauge-fill {
@@ -145,10 +189,15 @@ body {
     transition: width 0.3s ease;
 }
 
-@keyframes portalPulse {
-    from { transform: scale(1); box-shadow: 0 0 20px #9400d3; }
-    to { transform: scale(1.1); box-shadow: 0 0 40px #9400d3, 0 0 10px white; }
+@keyframes portalShake {
+    0% { transform: translateX(-50%) translateX(-2px); }
+    25% { transform: translateX(-50%) translateX(2px); }
+    50% { transform: translateX(-50%) translateY(-1px); }
+    75% { transform: translateX(-50%) translateX(-2px); }
+    100% { transform: translateX(-50%) translateX(2px); }
 }
+
+/* 기존 portalPulse 애니메이션 삭제 */
 
 /* 스테이지 정보 (길 위쪽 표시) */
 #stage-info {
@@ -197,6 +246,17 @@ body {
         -1px  1px 0 #000,
          1px  1px 0 #000;
     border-radius: 50%; /* For the halo effect */
+    transition: top 0.1s linear, left 0.1s linear;
+}
+
+.enemy.spawning {
+    animation: enemySummon 0.5s ease-out forwards;
+}
+
+@keyframes enemySummon {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; filter: brightness(3) blur(5px); }
+    50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; filter: brightness(2) blur(2px); }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1) blur(0); }
 }
 
 /* 유령 체력바 */
@@ -316,24 +376,21 @@ body {
     border: 2px solid #555 !important;
 }
 
-/* Thematic Header (Top Center) */
+/* Thematic Header (Now inside bottom panel) */
 #thematic-header {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90%;
+    width: 100%;
     text-align: center;
-    z-index: 100;
+    margin-bottom: 0px;
     pointer-events: none;
+    line-height: 1.1;
 }
 
 #stage-count {
-    font-size: 14px;
+    font-size: 10px; /* Reduced from 11px */
     font-weight: bold;
     color: #ff4500;
     text-shadow: 0 0 10px rgba(255, 69, 0, 0.8), 0 0 2px #000;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     animation: textBreathing 3s infinite alternate ease-in-out;
 }
 
@@ -343,11 +400,46 @@ body {
 }
 
 #enemy-counter {
-    font-size: 11px;
+    font-size: 7.5px; /* Reduced from 9px */
     color: #00e5ff;
-    margin-top: 2px;
+    margin-top: 0px;
     text-shadow: 0 0 5px rgba(0, 229, 255, 0.5), 0 0 2px #000;
     font-style: italic;
+}
+
+/* Difficulty Message Overlay */
+#difficulty-msg-container {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 200;
+    pointer-events: none;
+    text-align: center;
+    width: 100%;
+}
+
+#difficulty-msg {
+    font-family: serif;
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff0000;
+    text-shadow: 0 0 20px #ff0000, 0 0 5px #000;
+    letter-spacing: 2px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: none;
+}
+
+.difficulty-anim {
+    animation: difficultyStrike 2s ease-out forwards;
+}
+
+@keyframes difficultyStrike {
+    0% { opacity: 0; transform: scale(3) rotate(-10deg); filter: blur(10px); }
+    20% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0px); }
+    80% { opacity: 1; transform: scale(1.1); filter: blur(0px); }
+    100% { opacity: 0; transform: scale(1.5); filter: blur(5px); }
 }
 
 /* Dual Gauges (Bottom Panel) */
@@ -719,13 +811,14 @@ body {
 /* 하단 UI 패널 (30%) */
 #bottom-panel {
     position: relative; 
-    height: 30%;
+    height: 35%;
     background: linear-gradient(to bottom, #1a0505, #000000);
     padding: 10px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     z-index: 50;
+    gap: 5px;
 }
 
 #control-panel {
@@ -1136,7 +1229,7 @@ body {
 /* Tutorial Toggle Styles - Made Even Smaller */
 #tutorial-toggle-container {
     position: absolute;
-    top: 6px;
+    top: 6px; /* Reverted from 2px */
     right: 6px;
     z-index: 1000;
     display: flex;
@@ -1146,19 +1239,19 @@ body {
     padding: 1px 4px;
     border-radius: 8px;
     border: 1px solid #333;
-    transform: scale(0.7); /* Further shrink from 0.85 to 0.7 */
+    transform: scale(0.8); /* Increased from 0.7 */
     transform-origin: right top;
 }
 
 #tutorial-label {
-    font-size: 7px;
+    font-size: 8px; /* Increased from 7px */
     color: #ffd700;
     font-weight: bold;
     letter-spacing: 0.5px;
 }
 
 #tutorial-status {
-    font-size: 7px;
+    font-size: 8px; /* Increased from 7px */
     color: #ffd700;
     font-weight: bold;
     min-width: 18px;
@@ -1169,8 +1262,8 @@ body {
 .switch {
   position: relative;
   display: inline-block;
-  width: 18px;
-  height: 10px;
+  width: 20px; /* Increased from 18px */
+  height: 12px; /* Increased from 10px */
 }
 
 .switch input { 
@@ -1193,8 +1286,8 @@ body {
 .slider:before {
   position: absolute;
   content: "";
-  height: 6px;
-  width: 6px;
+  height: 8px; /* Increased from 6px */
+  width: 8px; /* Increased from 6px */
   left: 2px;
   bottom: 2px;
   background-color: white;
@@ -1216,20 +1309,20 @@ input:checked + .slider:before {
 /* Restart Button (Top Left) - Slightly Smaller */
 #restart-btn-top {
     position: absolute;
-    top: 6px;
+    top: 6px; /* Reverted from 2px */
     left: 6px;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.6);
     color: #888;
     border: 1px solid #333;
     border-radius: 3px;
-    font-size: 6px; /* Reduced from 7px */
-    padding: 2px 5px; /* Reduced padding */
+    font-size: 8px; /* Increased from 6px */
+    padding: 3px 6px; /* Increased padding */
     cursor: pointer;
     font-weight: bold;
     letter-spacing: 0.5px;
     transition: all 0.2s;
-    transform: scale(0.9);
+    transform: scale(1.0); /* Increased from 0.9 */
     transform-origin: left top;
 }
 

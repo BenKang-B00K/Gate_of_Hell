@@ -12,10 +12,9 @@
         <!-- Restart Button -->
         <button id="restart-btn-top">RESTART</button>
 
-        <!-- Thematic Stage Header -->
-        <div id="thematic-header">
-            <div id="stage-count">DEEP WITHIN THE ABYSS - <span id="stage-display">1</span></div>
-            <div id="enemy-counter">Lingering Souls: <span id="enemies-left">0</span></div>
+        <!-- Difficulty Message Overlay -->
+        <div id="difficulty-msg-container">
+            <div id="difficulty-msg"></div>
         </div>
 
         <!-- Tutorial Toggle -->
@@ -32,6 +31,7 @@
         <div id="game-layout">
             <div id="left-slots" class="slot-area"></div>
             <div id="road">
+                <div id="spawning-pool"></div>
                 <div id="stage-info" style="display:none;"></div> <!-- Legacy hidden -->
                 <div id="portal">
                     <div id="portal-energy-label">0 / 2000</div>
@@ -45,12 +45,17 @@
         </div>
 
         <div id="bottom-panel">
+            <!-- Thematic Stage Header -->
+            <div id="thematic-header">
+                <div id="stage-count">ABYSS DEPTH: <span id="stage-display">1</span></div>
+                <div id="enemy-counter">Remaining Specters to Visit: <span id="enemies-left">0</span></div>
+            </div>
             <!-- Dual Gauge Container (SE and Shards only) -->
             <div id="gauges-container">
                 <!-- Soul Energy Gauge (Left) -->
                 <div class="gauge-half">
                     <div class="gauge-header">
-                        <span>Soul Energy</span>
+                        <span>✨ Soul Energy</span>
                         <span id="se-display-text">100</span>
                     </div>
                     <div class="gauge-bar-bg se">
@@ -60,7 +65,7 @@
                 <!-- Corrupted Shards Gauge (Right) -->
                 <div class="gauge-half">
                     <div class="gauge-header">
-                        <span>Corrupted Shards</span>
+                        <span>🏮 Corrupted Shards</span>
                         <span id="shards-display-text">0 / 99</span>
                     </div>
                     <div class="gauge-bar-bg shards">

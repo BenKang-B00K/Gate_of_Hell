@@ -116,7 +116,10 @@ const unitTypes = [
     { type: 'tracker', name: 'Soul Tracker', tier: 2, icon: '👁️', damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies (up, down, left, right).", upgrades: ['seer', 'commander'] },
     { type: 'necromancer', name: 'Necromancer', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Chance to summon spirit walls that block enemy paths (30% chance on hit).", upgrades: ['wraithlord', 'cursedshaman'] },
     { type: 'guardian', name: 'Sanctuary Guardian', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit (5% chance).", upgrades: ['rampart', 'judgment'] },
+    { type: 'knight', name: 'Exorcist Knight', tier: 2, icon: '⚔️', damage: 45, range: 110, cooldown: 1000, desc: "A disciplined warrior with balanced stats.", upgrades: ['paladin', 'crusader'] },
     // Master Classes
+    { type: 'paladin', name: 'Holy Paladin', tier: 3, icon: '⛪', damage: 55, range: 130, cooldown: 1000, desc: "[Master] Every 5th attack deals 3x damage and stuns.", upgrades: ['eternal_wall'] },
+    { type: 'crusader', name: 'Blood Crusader', tier: 3, icon: '🚩', damage: 80, range: 120, cooldown: 1500, desc: "[Master] Attacks deal bonus damage based on enemy's missing HP.", upgrades: ['eternal_wall'] },
     { type: 'executor', name: 'Underworld Executor', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] 10% chance to return enemies near the gate to the starting point.", upgrades: ['warden'] },
     { type: 'binder', name: 'Soul Binder', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links up to 5 enemies to share 50% of damage taken.", upgrades: ['warden'] },
     { type: 'grandsealer', name: 'Grand Sealer', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Attaches large talismans to neutralize enemy special abilities.", upgrades: ['cursed_talisman'] },
@@ -147,7 +150,8 @@ const unitTypes = [
     { type: 'reaper', name: 'Nightmare Reaper', tier: 4, icon: '☠️', damage: 0, range: 0, cooldown: 3000, desc: "[Abyss] Every 3s, instakills highest HP non-boss ghost for 3x Soul Energy." },
     { type: 'doom_guide', name: 'Guide of Doom', tier: 4, icon: '🛶', damage: 40, range: 150, cooldown: 800, desc: "[Abyss] Inverts portal. Escaping ghosts give 100% Soul Energy." },
     { type: 'forsaken_king', name: 'King of the Forsaken', tier: 4, icon: '👑', damage: 100, range: 150, cooldown: 1000, desc: "[Abyss] Spawns allied ghosts based on Corruption level." },
-    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals portal until 30 ghosts gather." }
+    { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals portal until 30 ghosts gather." },
+    { type: 'eternal_wall', name: 'Guardian of Eternity', tier: 4, icon: '🗿', damage: 150, range: 150, cooldown: 2000, desc: "[Abyss] Heavily slows all enemies in range by 80%." }
 ];
 
 // Use draggedUnit from enemies.js
@@ -871,23 +875,20 @@ function initAllies() {
         });
     }
     
-    // Create 30 slots on each side (Total 60)
+    // Create 27 slots on each side (Total 54) to fit 9 rows of 3
     slots.length = 0; // Initialize slots array
-    createSlots('left-slots', 30);
-    createSlots('right-slots', 30);
+    createSlots('left-slots', 27);
+    createSlots('right-slots', 27);
 
     initRecordsUI();
     initTutorial();
 
     // New Class Unlock Modal Close
-    const closeUnlockBtn = document.getElementById('close-unlock');
-    if (closeUnlockBtn) {
-        closeUnlockBtn.addEventListener('click', () => {
-            const modal = document.getElementById('unlock-modal');
-            if (modal) {
-                modal.style.display = 'none';
-                isPaused = false; // Resume game
-            }
+    const modal = document.getElementById('unlock-modal');
+    if (modal) {
+        modal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            isPaused = false; // Resume game
         });
     }
 

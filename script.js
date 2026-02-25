@@ -47,7 +47,7 @@ function gameLoop() {
         return;
     }
     const roadRect = road.getBoundingClientRect();
-    const targetY = roadRect.height - 60; // Portal reach Y position
+    const targetY = roadRect.height + 40; // Deep into the portal/bottom
     const gameWidth = gameContainer.offsetWidth;
 
     const nowTime = Date.now();
@@ -266,6 +266,11 @@ function gameLoop() {
             e.speed = e.baseSpeed * globalSpeedFactor;
         }
 
+        // [Enemy Ability] Soul Eater: Speed burst when hit (handled in speed calculation)
+        if (e.type === 'soul_eater' && e.lastHitTime && Date.now() - e.lastHitTime < 1000) {
+            e.speed *= 2.0;
+        }
+
         // [Status Effect] Soul Chainer: Movement speed -10%
         if (e.isSlowed) {
             e.speed *= 0.9;
@@ -274,6 +279,17 @@ function gameLoop() {
         // [Status Effect] Blizzard: Movement speed -50%
         if (e.inBlizzard) {
             e.speed *= 0.5;
+        }
+
+        // [Abyss] Guardian of Eternity: Movement speed -80% in range
+        const inEternalRange = towers.some(t => {
+            if (t.data.type !== 'eternal_wall') return false;
+            const tRect = t.slotElement.getBoundingClientRect();
+            const dist = Math.sqrt(Math.pow((e.x/100*gameWidth) - (tRect.left + tRect.width/2), 2) + Math.pow(e.y - (tRect.top + tRect.height/2), 2));
+            return dist <= t.range;
+        });
+        if (inEternalRange) {
+            e.speed *= 0.2;
         }
         
         // [Status Effect] Stunned (Cannot move)
@@ -425,9 +441,21 @@ function gameLoop() {
             }
         }
 
-        // Move X-axis towards center (50%) based on progress
+        // Move X-axis towards individual targetX based on progress
         const progress = Math.min(enemy.y / targetY, 1);
-        enemy.x = enemy.initialX + (50 - enemy.initialX) * progress;
+        const targetX = enemy.targetX || 50; 
+        enemy.x = enemy.initialX + (targetX - enemy.initialX) * progress;
+
+        // Apply visual position immediately
+        enemy.element.style.top = `${enemy.y}px`;
+        enemy.element.style.left = `${enemy.x}%`;
+
+        // Absorption effect: Fade and shrink as it goes deep into portal
+        const absorptionProgress = Math.max(0, (enemy.y - (targetY - 60)) / 60);
+        if (absorptionProgress > 0) {
+            enemy.element.style.opacity = 1 - absorptionProgress;
+            enemy.element.style.transform = `translate(-50%, -50%) scale(${1 - absorptionProgress * 0.5})`;
+        }
 
         // Portal Reach Confirmation
         if (enemy.y >= targetY) {
@@ -517,9 +545,6 @@ function gameLoop() {
             }
             continue;
         }
-
-        enemy.element.style.top = `${enemy.y}px`;
-        enemy.element.style.left = `${enemy.x}%`;
     }
 
     // 2. Tower Attack Processing
@@ -830,6 +855,22 @@ function shoot(tower, target, startX, startY) {
     setTimeout(() => {
         proj.remove();
         
+        // [Enemy Ability] Mimic Soul: Blink forward when hit (20% chance)
+        if (target.type === 'mimic' && Math.random() < 0.2 && !target.isSilenced) {
+            target.y += 40;
+            if (target.element) target.element.style.top = `${target.y}px`;
+            // Blink effect
+            const blink = document.createElement('div');
+            blink.style.cssText = `position:absolute; left:${target.x}%; top:${target.y - 40}px; width:30px; height:30px; border:2px solid #fff; border-radius:50%; transform:translate(-50%,-50%); z-index:20; animation: fadeOut 0.3s forwards;`;
+            gameContainer.appendChild(blink);
+            setTimeout(() => blink.remove(), 300);
+        }
+
+        // [Enemy Ability] Soul Eater: Record hit time for speed burst
+        if (target.type === 'soul_eater') {
+            target.lastHitTime = Date.now();
+        }
+
         // [Special Ability] Greedy Spirit: Chance to forcibly move attacking tower
         if (target.type === 'greedy' && Math.random() < 0.1 && !target.isSilenced) { // 10% chance (Silence immune)
             const validSlots = slots.filter(c => !c.classList.contains('occupied'));
@@ -970,6 +1011,28 @@ function shoot(tower, target, startX, startY) {
         
         let damage = Math.max(1, baseDmg - acolyteDmgLoss - defiledDmgLoss - slotCorruption);
         
+        // [Master] Holy Paladin: Every 5th hit deals 3x damage and stuns
+        if (tower.data.type === 'paladin') {
+            tower.attackCount = (tower.attackCount || 0) + 1;
+            if (tower.attackCount % 5 === 0) {
+                damage *= 3;
+                target.isStunned = true;
+                target.stunEndTime = Date.now() + 1000;
+                if (target.element) target.element.classList.add('stunned');
+                // Visual feedback
+                const flash = document.createElement('div');
+                flash.style.cssText = `position:absolute; left:${target.x}%; top:${target.y}px; width:40px; height:40px; background:white; border-radius:50%; transform:translate(-50%,-50%); z-index:20; opacity:0.8;`;
+                gameContainer.appendChild(flash);
+                setTimeout(() => flash.remove(), 200);
+            }
+        }
+
+        // [Master] Blood Crusader: Bonus damage based on missing HP
+        if (tower.data.type === 'crusader') {
+            const missingHpRatio = 1 - (target.hp / target.maxHp);
+            damage *= (1 + missingHpRatio); // Up to 2x damage
+        }
+
         // Apply defense (Shadow Assassin series ignores)
         if (tower.data.type !== 'assassin' && tower.data.type !== 'abyssal' && tower.data.type !== 'spatial') {
             let defense = target.defense || 0;
