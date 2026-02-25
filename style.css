@@ -1321,6 +1321,56 @@ input:checked + .slider:before {
     transform: translateY(-2px);
 }
 
+/* --- Corrupted Enemy Styles --- */
+.enemy.corrupted.defiled_apprentice { font-size: 18px; box-shadow: 0 0 10px #4a0000; border: 1px dashed #f00; }
+
+.enemy.corrupted.abyssal_acolyte { 
+    font-size: 22px; 
+    box-shadow: 0 0 15px #4b0082; 
+    text-shadow: 0 0 5px #d000ff; /* Purple glowing eyes effect on emoji if possible */
+}
+
+/* Shadow Arm Effect */
+.enemy.corrupted.abyssal_acolyte::after {
+    content: '💪';
+    position: absolute;
+    font-size: 14px;
+    left: -10px;
+    top: -5px;
+    filter: brightness(0) drop-shadow(0 0 2px #d000ff);
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+.enemy.corrupted.bringer_of_doom { 
+    font-size: 26px; 
+    box-shadow: 0 0 20px #ff0000;
+    z-index: 12;
+}
+
+/* Blood Pool Effect */
+.enemy.corrupted.bringer_of_doom::before {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 10px;
+    background: radial-gradient(ellipse at center, rgba(139,0,0,0.8) 0%, transparent 70%);
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -1;
+    animation: bloodSpread 2s infinite alternate;
+}
+
+@keyframes bloodSpread {
+    from { transform: translateX(-50%) scale(0.8); opacity: 0.6; }
+    to { transform: translateX(-50%) scale(1.2); opacity: 1; }
+}
+
+.card-slot.corrupted-slot {
+    border-color: #8b0000 !important;
+}
+
 @keyframes fadeInOut {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
     20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }

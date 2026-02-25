@@ -950,6 +950,10 @@ function shoot(tower, target, startX, startY) {
         // Damage processing
         let damage = tower.data.damage + (tower.damageBonus || 0);
         
+        // Apply debuffs (Permanent and Temporary)
+        const slotCorruption = parseInt(tower.slotElement.dataset.corruption) || 0;
+        damage = Math.max(1, damage - (tower.atkDebuff || 0) - slotCorruption);
+        
         // Apply defense (Shadow Assassin series ignores)
         if (tower.data.type !== 'assassin' && tower.data.type !== 'abyssal' && tower.data.type !== 'spatial') {
             let defense = target.defense || 0;
@@ -981,6 +985,24 @@ function shoot(tower, target, startX, startY) {
         }
 
         applyDamage(target, damage, tower);
+
+        // [Corruption Abilities] When hit by a tower, these enemies retaliate
+        if (target.isCorrupted) {
+            if (target.type === 'defiled_apprentice') {
+                // 10% chance to curse attacker's damage (-3)
+                if (Math.random() < 0.1) {
+                    tower.atkDebuff = (tower.atkDebuff || 0) + 3;
+                    tower.element.style.filter = 'sepia(1) hue-rotate(300deg)'; // Reddish tint for curse
+                }
+            } else if (target.type === 'abyssal_acolyte') {
+                // Reduces hit source's damage by 4 (Max 3 stacks)
+                tower.acolyeStacks = (tower.acolyeStacks || 0) + 1;
+                if (tower.acolyeStacks <= 3) {
+                    tower.atkDebuff = (tower.atkDebuff || 0) + 4;
+                    tower.element.style.boxShadow = `0 0 ${tower.acolyeStacks * 10}px #4b0082`;
+                }
+            }
+        }
 
         // [Class Characteristic] Talismanist series: AOE and Zones
         if (tower.data.type === 'talisman' || tower.data.type === 'flamemaster' || tower.data.type === 'grandsealer') {

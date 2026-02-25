@@ -45,7 +45,8 @@ function recordUnlock(type, isEnemy = false) {
                 header.innerText = "👻 NEW SPECTER ENCOUNTERED!";
                 header.style.color = "#ff4500";
                 icon.innerText = enemyData.icon;
-                name.innerText = enemyData.name || (enemyData.type.charAt(0).toUpperCase() + enemyData.type.slice(1));
+                const hpVal = Math.floor(enemyData.hp || (enemyData.type === 'normal' ? 100 : 0));
+                name.innerHTML = `${enemyData.name || (enemyData.type.charAt(0).toUpperCase() + enemyData.type.slice(1))} <span style="font-size:10px; color:#aaa;">(HP: ${hpVal})</span>`;
                 desc.innerText = enemyData.desc || enemyData.lore;
                 modal.style.display = 'flex';
                 isPaused = true;
@@ -587,7 +588,7 @@ function showEnemyInfo(enemyData) {
 
     unitInfoDisplay.innerHTML = `
         <div style="color: #ff4500; font-weight: bold; font-size: 13px; margin-bottom: 4px;">${enemyData.icon} ${name}</div>
-        <div style="font-size: 9px; color: #bbb; margin-bottom: 6px;">HP: ${Math.floor(enemyData.hp)} | DEF: ${enemyData.defense || 0}</div>
+        <div style="font-size: 9px; color: #bbb; margin-bottom: 6px;">HP: ${Math.floor(enemyData.hp)} / ${Math.floor(enemyData.maxHp || enemyData.hp)} | DEF: ${enemyData.defense || 0}</div>
         <div style="color: #ddd; font-size: 9px; line-height: 1.3; font-style: italic; border-top: 1px solid #333; padding-top: 4px;">
             "${lore}"
         </div>

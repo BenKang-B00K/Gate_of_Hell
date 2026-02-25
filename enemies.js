@@ -476,6 +476,12 @@ function spawnPassenger(boss) {
 }
 
 // [Corruption] System: Ally becomes an enemy
+const corruptedTypes = {
+    1: { type: 'defiled_apprentice', name: 'Defiled Apprentice', icon: '🥀', speed: 0.6, hp: 400, defense: 5, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3)." },
+    2: { type: 'abyssal_acolyte', name: 'Abyssal Acolyte', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, desc: "A servant of the void. Reduces hit source's damage by 4 (Max 3 stacks)." },
+    3: { type: 'bringer_of_doom', name: 'Bringer of Doom', icon: '⛓️‍💥', speed: 0.3, hp: 3000, defense: 30, desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7." }
+};
+
 function spawnCorruptedEnemy(tower) {
     totalCorruptedCount++;
     const road = document.getElementById('road');
@@ -486,38 +492,70 @@ function spawnCorruptedEnemy(tower) {
     const gameRect = gameContainer.getBoundingClientRect();
     const relX = (centerX - gameRect.left) / gameWidth * 100;
 
+    const tier = Math.min(tower.data.tier, 3);
+    const data = corruptedTypes[tier];
+
+    if (typeof recordUnlock === 'function') {
+        recordUnlock(data.type, true);
+    }
+
     const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy', 'corrupted');
-    enemyDiv.style.backgroundColor = '#4a0000'; 
-    enemyDiv.style.boxShadow = '0 0 15px #ff0000';
-    enemyDiv.innerText = "CORRUPT";
-    enemyDiv.style.fontSize = '8px';
-    enemyDiv.style.color = 'white';
-    enemyDiv.style.display = 'flex';
-    enemyDiv.style.alignItems = 'center';
-    enemyDiv.style.justifyContent = 'center';
+    enemyDiv.classList.add('enemy', 'corrupted', data.type);
+    enemyDiv.innerText = data.icon;
     
+    // HP Bar
+    const hpBg = document.createElement('div');
+    hpBg.className = 'hp-bar-bg';
+    const hpFill = document.createElement('div');
+    hpFill.className = 'hp-bar-fill';
+    hpBg.appendChild(hpFill);
+    enemyDiv.appendChild(hpBg);
+
     road.appendChild(enemyDiv);
     enemyDiv.style.left = `${relX}%`;
     enemyDiv.style.top = `0px`;
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
-    const hpValue = (tower.data.hp || (tower.data.damage * 10)) * hpMult;
+    const hpValue = data.hp * hpMult;
 
     const enemy = {
         element: enemyDiv,
+        hpFill: hpFill,
         initialX: relX,
         x: relX,
         y: 0,
-        baseSpeed: 0.5 * speedMult, 
-        speed: 0.5 * speedMult,
+        baseSpeed: data.speed * speedMult, 
+        speed: data.speed * speedMult,
         maxHp: hpValue, 
         hp: hpValue,
-        defense: 5,
+        defense: data.defense,
         reward: 0, 
-        type: 'corrupted',
+        type: data.type,
         isCorrupted: true 
     };
+
+    // Bringer of Doom Special Ability: Master Corruption
+    if (data.type === 'bringer_of_doom') {
+        // Find 2 random inner slots (closest to road)
+        // Left inner: 2, 5, 8, 11, 14, 17, 20, 23, 26, 29
+        // Right inner: 30, 33, 36, 39, 42, 45, 48, 51, 54, 57
+        const innerIndices = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57];
+        const shuffled = innerIndices.sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 2);
+        
+        selected.forEach(idx => {
+            const slot = slots[idx];
+            if (slot) {
+                slot.classList.add('corrupted-slot');
+                slot.dataset.corruption = (parseInt(slot.dataset.corruption) || 0) + 7;
+                // Visual feedback for the slot
+                const effect = document.createElement('div');
+                effect.style.cssText = 'position:absolute; width:100%; height:100%; background:rgba(139,0,0,0.3); box-shadow:inset 0 0 10px #f00; pointer-events:none;';
+                slot.appendChild(effect);
+            }
+        });
+    }
+
     enemies.push(enemy);
 }
 
