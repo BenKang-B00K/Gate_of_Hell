@@ -772,6 +772,7 @@ body {
     user-select: none;
     z-index: 100;
     box-sizing: border-box;
+    text-align: center;
 }
 
 #purge-card {

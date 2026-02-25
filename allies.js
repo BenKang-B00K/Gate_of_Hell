@@ -41,12 +41,33 @@ function recordUnlock(type, isEnemy = false) {
             const name = document.getElementById('unlock-name');
             const desc = document.getElementById('unlock-desc');
             
+            // Full Name Mapping for Popup
+            const enemyNames = {
+                'normal': 'Whispering Soul',
+                'tank': 'Ironclad Wraith',
+                'runner': 'Haste-Cursed Shadow',
+                'greedy': 'Gluttonous Poltergeist',
+                'dimension': 'Void-Step Phantasm',
+                'deceiver': 'Siren of Despair',
+                'boar': 'Feral Revenant',
+                'frost': 'Cocytus Drifter',
+                'lightspeed': 'Ethereal Streak',
+                'heavy': 'Grave-Bound Behemoth',
+                'lava': 'Magma-Veined Terror',
+                'burning': 'Eternal Zealot',
+                'gold': 'Gilded Apparition',
+                'defiled_apprentice': 'Defiled Apprentice',
+                'abyssal_acolyte': 'Abyssal Acolyte',
+                'bringer_of_doom': 'Bringer of Doom'
+            };
+
             if (modal && header && icon && name && desc) {
                 header.innerText = "👻 NEW SPECTER ENCOUNTERED!";
                 header.style.color = "#ff4500";
                 icon.innerText = enemyData.icon;
                 const hpVal = Math.floor(enemyData.hp || (enemyData.type === 'normal' ? 100 : 0));
-                name.innerHTML = `${enemyData.name || (enemyData.type.charAt(0).toUpperCase() + enemyData.type.slice(1))} <span style="font-size:10px; color:#aaa;">(HP: ${hpVal})</span>`;
+                const fullName = enemyData.name || enemyNames[enemyData.type] || (enemyData.type.charAt(0).toUpperCase() + enemyData.type.slice(1));
+                name.innerHTML = `${fullName} <span style="font-size:10px; color:#aaa;">(HP: ${hpVal})</span>`;
                 desc.innerText = enemyData.desc || enemyData.lore;
                 modal.style.display = 'flex';
                 isPaused = true;
