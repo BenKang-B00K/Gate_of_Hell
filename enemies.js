@@ -71,36 +71,36 @@ function getCorruptionMultipliers() {
 // Enemy data (Categorized)
 const enemyCategories = {
     basic: [
-        { type: 'normal', icon: '👻', speed: 1.5, hp: 100, defense: 0, probability: 0.6, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks." }, 
-        { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.2, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins." },  
-        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.2, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy." }   
+        { type: 'normal', icon: '👻', speed: 1.5, hp: 100, defense: 0, probability: 0.6, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
+        { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.2, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
+        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.2, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
     ],
     pattern: [
-        { type: 'greedy', icon: '💰', speed: 1.2, hp: 150, defense: 5, probability: 0.34, desc: "Forcibly relocates the attacking unit to a random slot on hit.", effectiveness: "High range snipers to minimize movement." }, 
-        { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.33, desc: "Occasionally phases out of existence, becoming immune to attacks.", effectiveness: "Truth-seeking seers or rapid-fire units." }, 
-        { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.33, desc: "Backsteps and evades when an exorcist first targets them.", effectiveness: "Area damage or multiple hunters." }  
+        { type: 'greedy', icon: '💰', speed: 1.2, hp: 150, defense: 5, probability: 0.34, desc: "Forcibly relocates the attacking unit to a random slot on hit.", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
+        { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.33, desc: "Occasionally phases out of existence, becoming immune to attacks.", effectiveness: "Truth-seeking seers or rapid-fire units.", lore: "A hermit who sought to hide from the world, now drifting between dimensions of pain." }, 
+        { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.33, desc: "Backsteps and evades when an exorcist first targets them.", effectiveness: "Area damage or multiple hunters.", lore: "A master of lies whose face was never seen, now eternally hiding behind a spectral mask." }  
     ],
     enhanced: [
-        { type: 'boar', icon: '🐗', speed: 0.5, hp: 250, defense: 8, probability: 0.34, desc: "Accelerates exponentially as it nears the portal.", effectiveness: "Knockback and heavy stuns near the gate." }, 
-        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.33, desc: "Emits a freezing aura that boosts the speed of nearby specters.", effectiveness: "Priority targeting and fire energy." }, 
-        { type: 'lightspeed', icon: '✨', speed: 4.0, hp: 60, defense: 0, probability: 0.33, desc: "Moves at incredible speed and ignores speed-boosting auras.", effectiveness: "Instant-kill guardians or void snipers." } 
+        { type: 'boar', icon: '🐗', speed: 0.5, hp: 250, defense: 8, probability: 0.34, desc: "Accelerates exponentially as it nears the portal.", effectiveness: "Knockback and heavy stuns near the gate.", lore: "A violent hunter who enjoyed the thrill of the chase, now driven by an uncontrollable bloodlust." }, 
+        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.33, desc: "Emits a freezing aura that boosts the speed of nearby specters.", effectiveness: "Priority targeting and fire energy.", lore: "Died alone in a blizzard, their heart frozen by isolation and cold resentment." }, 
+        { type: 'lightspeed', icon: '✨', speed: 4.0, hp: 60, defense: 0, probability: 0.33, desc: "Moves at incredible speed and ignores speed-boosting auras.", effectiveness: "Instant-kill guardians or void snipers.", lore: "A messenger who failed to deliver a life-saving word, now desperate to reach the end." } 
     ],
     armoured: [
-        { type: 'heavy', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8, desc: "An massive behemoth with high defense and knockback resistance.", effectiveness: "Soul link shared damage or high-penetration strikes." }, 
-        { type: 'lava', icon: '🌋', speed: 1.3, hp: 200, defense: 15, probability: 0.33, desc: "Cleanses freeze effects and leaps forward when hit by cold energy.", effectiveness: "Avoid frost; use standard magic or fire." }, 
-        { type: 'burning', icon: '💢', speed: 1.0, hp: 350, defense: 10, probability: 0.33, desc: "Consumes its own vengeful energy to heal every time it is struck.", effectiveness: "High single-hit damage to overwhelm recovery." } 
+        { type: 'heavy', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8, desc: "An massive behemoth with high defense and knockback resistance.", effectiveness: "Soul link shared damage or high-penetration strikes.", lore: "An executioner who took pride in their cruelty, now bound by the very chains they once used." }, 
+        { type: 'lava', icon: '🌋', speed: 1.3, hp: 200, defense: 15, probability: 0.33, desc: "Cleanses freeze effects and leaps forward when hit by cold energy.", effectiveness: "Avoid frost; use standard magic or fire.", lore: "A soul consumed by a fiery temper, now literally burning with an unquenchable rage." }, 
+        { type: 'burning', icon: '💢', speed: 1.0, hp: 350, defense: 10, probability: 0.33, desc: "Consumes its own vengeful energy to heal every time it is struck.", effectiveness: "High single-hit damage to overwhelm recovery.", lore: "A martyr whose sacrifice was forgotten, their pain now fueling a cycle of endless regrowth." } 
     ],
     treasure: [
-        { type: 'gold', icon: '💎', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300, desc: "A rare spirit that grants a massive amount of Soul Energy upon defeat.", effectiveness: "Rapid-fire assassins to bypass high defense." } 
+        { type: 'gold', icon: '💎', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300, desc: "A rare spirit that grants a massive amount of Soul Energy upon defeat.", effectiveness: "Rapid-fire assassins to bypass high defense.", lore: "The residual essence of a king's hoard, still sparkling with the vanity of the past." } 
     ]
 };
 
 // Boss data
 const bossData = {
-    10: { name: "Cerberus", type: "cerberus", icon: '🐕', hp: 5000, speed: 0.3, size: 60, rewardName: "Cerberus's Fang", rewardEffect: 0.1 },
-    20: { name: "Charon", type: "charon", icon: '🛶', hp: 8000, speed: 0.2, size: 60, rewardName: "Stygian Oar", rewardEffect: 0.15 }, 
-    30: { name: "Beelzebub", type: "beelzebub", icon: '🪰', hp: 15000, speed: 0.2, size: 60, rewardName: "Crown of Gluttony", rewardEffect: 0.01 }, 
-    40: { name: "Lucifer", type: "lucifer", icon: '👑', hp: 25000, speed: 0.15, size: 70, rewardName: "Fallen Angel's Wings", rewardEffect: 0.1 } 
+    10: { name: "Cerberus", type: "cerberus", icon: '🐕', hp: 5000, speed: 0.3, size: 60, rewardName: "Cerberus's Fang", rewardEffect: 0.1, lore: "The triple-headed guardian of the gate, driven mad by the endless flow of corrupt souls." },
+    20: { name: "Charon", type: "charon", icon: '🛶', hp: 8000, speed: 0.2, size: 60, rewardName: "Stygian Oar", rewardEffect: 0.15, lore: "The ferryman of the dead, now harvesting souls for himself instead of delivering them." }, 
+    30: { name: "Beelzebub", type: "beelzebub", icon: '🪰', hp: 15000, speed: 0.2, size: 60, rewardName: "Crown of Gluttony", rewardEffect: 0.01, lore: "The Lord of the Flies, spawned from the rot of every broken promise in history." }, 
+    40: { name: "Lucifer", type: "lucifer", icon: '👑', hp: 25000, speed: 0.15, size: 70, rewardName: "Fallen Angel's Wings", rewardEffect: 0.1, lore: "The first to fall, seeking to drag every other light into the same bottomless abyss." } 
 };
 
 // Initialize stage
@@ -244,6 +244,14 @@ function spawnBoss() {
     enemyDiv.classList.add('enemy', 'boss', data.type);
     enemyDiv.innerText = data.icon; 
     
+    // Enemy click event
+    enemyDiv.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        if (typeof window.showEnemyInfo === 'function') {
+            window.showEnemyInfo(boss);
+        }
+    });
+
     road.appendChild(enemyDiv);
     enemyDiv.style.left = '50%';
     enemyDiv.style.top = '0px';
@@ -338,6 +346,14 @@ function spawnEnemy() {
     enemyDiv.classList.add(selectedType.type);
     enemyDiv.innerText = selectedType.icon;
     
+    // Enemy click event
+    enemyDiv.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        if (typeof window.showEnemyInfo === 'function') {
+            window.showEnemyInfo({...selectedType, hp: enemy.hp}); // Pass current state
+        }
+    });
+
     road.appendChild(enemyDiv);
     const randomX = Math.random() * 80 + 10;
     enemyDiv.style.left = `${randomX}%`;

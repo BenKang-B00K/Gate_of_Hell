@@ -131,11 +131,12 @@ body {
     pointer-events: none;
 }
 
-/* 적 유닛 */
+/* 적 유령 */
 .enemy {
     position: absolute;
     transform: translate(-50%, -50%);
-    pointer-events: none;
+    pointer-events: auto; /* Changed from none to make clickable */
+    cursor: help;
     z-index: 10;
     display: flex;
     justify-content: center;

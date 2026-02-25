@@ -381,6 +381,31 @@ function resetUnitInfo() {
     }
 }
 
+function showEnemyInfo(enemyData) {
+    const unitInfoDisplay = document.getElementById('unit-info');
+    if (!unitInfoDisplay) return;
+
+    // Clear existing timeout
+    if (infoResetTimeout) clearTimeout(infoResetTimeout);
+
+    const name = enemyData.name || enemyData.type.toUpperCase();
+    const lore = enemyData.lore || "A lost soul wandering the abyss.";
+
+    unitInfoDisplay.innerHTML = `
+        <div style="color: #ff4500; font-weight: bold; font-size: 13px; margin-bottom: 4px;">${enemyData.icon} ${name}</div>
+        <div style="font-size: 9px; color: #bbb; margin-bottom: 6px;">HP: ${Math.floor(enemyData.hp)} | DEF: ${enemyData.defense || 0}</div>
+        <div style="color: #ddd; font-size: 9px; line-height: 1.3; font-style: italic; border-top: 1px solid #333; padding-top: 4px;">
+            "${lore}"
+        </div>
+    `;
+
+    // Auto-reset after 7 seconds
+    infoResetTimeout = setTimeout(resetUnitInfo, 7000);
+}
+
+// Attach to window
+window.showEnemyInfo = showEnemyInfo;
+
 // Sell tower (Corruption)
 function sellTower(tower) {
     const sellRefund = Math.floor(tower.spentSE * 0.7);
