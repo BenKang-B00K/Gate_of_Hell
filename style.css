@@ -95,7 +95,7 @@ body {
 /* 포탈 (적 소멸 지점) */
 #portal {
     position: absolute;
-    bottom: 20px;
+    bottom: 40px; /* Raised slightly to make room for gauge below */
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -106,6 +106,43 @@ body {
     z-index: 1;
     left: 50%;
     margin-left: -30px; /* 너비의 절반만큼 이동하여 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#portal-energy-label {
+    position: absolute;
+    top: -18px; /* Above the gauge (which is below the portal) */
+    width: 80px;
+    text-align: center;
+    font-size: 9px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 4px #000;
+    pointer-events: none;
+    bottom: -20px;
+    top: auto;
+}
+
+#portal-gauge-container {
+    position: absolute;
+    bottom: -30px;
+    width: 80px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #444;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+#portal-gauge-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #4b0082, #d000ff, #ff00ff);
+    box-shadow: 0 0 10px rgba(208, 0, 255, 0.8);
+    transition: width 0.3s ease;
 }
 
 @keyframes portalPulse {

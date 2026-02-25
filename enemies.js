@@ -181,13 +181,23 @@ function updateGauges() {
         debuffDesc.innerText = `Corruption Level: ${desc}`;
     }
 
-    // Portal Energy Gauge
+    // Portal Energy Gauge (Below Portal)
     const portalFill = document.getElementById('portal-gauge-fill');
-    const portalText = document.getElementById('portal-display-text');
+    const portalText = document.getElementById('portal-energy-label');
+    const portalElement = document.getElementById('portal');
     if (portalFill && portalText) {
-        const portalPercent = Math.min((portalEnergy / maxPortalEnergy) * 100, 100);
+        const portalRatio = Math.min(portalEnergy / maxPortalEnergy, 1);
+        const portalPercent = portalRatio * 100;
         portalFill.style.width = `${portalPercent}%`;
         portalText.innerText = `${Math.floor(portalEnergy)} / ${maxPortalEnergy}`;
+
+        // Portal Glow Effect: More energy = Stronger glow
+        if (portalElement) {
+            const glowStrength = 20 + (portalRatio * 60); // 20px to 80px
+            const borderGlow = portalRatio * 10; // Up to 10px white border glow
+            portalElement.style.boxShadow = `0 0 ${glowStrength}px #9400d3, 0 0 ${borderGlow}px white`;
+            portalElement.style.filter = `brightness(${1 + portalRatio * 0.5})`; // Max 1.5x brightness
+        }
     }
 
     // Soul Energy Gauge

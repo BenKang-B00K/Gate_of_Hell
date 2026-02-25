@@ -20,14 +20,19 @@
             <div id="left-slots" class="slot-area"></div>
             <div id="road">
                 <div id="stage-info" style="display:none;"></div> <!-- Legacy hidden -->
-                <div id="portal"></div>
+                <div id="portal">
+                    <div id="portal-energy-label">0 / 2000</div>
+                    <div id="portal-gauge-container">
+                        <div id="portal-gauge-fill"></div>
+                    </div>
+                </div>
                 <div id="start-timer"></div>
             </div>
             <div id="right-slots" class="slot-area"></div>
         </div>
 
         <div id="bottom-panel">
-            <!-- Triple Gauge Container -->
+            <!-- Dual Gauge Container (SE and Shards only) -->
             <div id="gauges-container">
                 <!-- Soul Energy Gauge (Left) -->
                 <div class="gauge-half">
@@ -37,16 +42,6 @@
                     </div>
                     <div class="gauge-bar-bg se">
                         <div id="se-gauge-fill"></div>
-                    </div>
-                </div>
-                <!-- Portal Energy Gauge (Middle) -->
-                <div class="gauge-half">
-                    <div class="gauge-header">
-                        <span>Portal Energy</span>
-                        <span id="portal-display-text">0 / 2000</span>
-                    </div>
-                    <div class="gauge-bar-bg portal">
-                        <div id="portal-gauge-fill"></div>
                     </div>
                 </div>
                 <!-- Corrupted Shards Gauge (Right) -->
