@@ -1,6 +1,6 @@
 /* allies.js */
 
-const towerCost = 50;
+let towerCost = 40;
 const jobChangeCost = 100; // Promotion cost
 const masterJobCost = 200; // Master promotion cost
 const maxTowers = 12; // Maximum summon count
@@ -151,6 +151,9 @@ function summonTower(targetSlot) {
     if (typeof updateGauges === 'function') {
         updateGauges();
     }
+
+    // Increase cost for next summon
+    towerCost += 5;
 
     // Summon always starts as Apprentice Exorcist
     const selectedUnit = unitTypes[0];
@@ -606,10 +609,10 @@ function updateSummonButtonState() {
         costDiv.innerText = "MAX";
     } else if (money < towerCost) {
         towerCard.classList.add('locked');
-        costDiv.innerText = "50 SE";
+        costDiv.innerText = `${towerCost} SE`;
     } else {
         towerCard.classList.remove('locked');
-        costDiv.innerText = "50 SE";
+        costDiv.innerText = `${towerCost} SE`;
     }
 }
 

@@ -12,7 +12,7 @@ const friendlySkeletons = []; // Ally skeleton soldier list
 const friendlyGhosts = []; // Forsaken King ally ghosts
 
 let stage = 1;
-let money = 100;
+let money = 150;
 let damageMultiplier = 1.0;
 let critChance = 0;
 let corruptedShards = 0;
