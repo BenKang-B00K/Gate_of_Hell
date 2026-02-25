@@ -65,7 +65,7 @@ const unitTypes = [
     { type: 'void_gatekeeper', name: 'Gatekeeper of the Void', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "[Abyss] Cannot attack. Seals the portal until 30 ghosts gather." }
 ];
 
-let draggedUnit = null; // Repurposed for Click-to-Move
+// Use draggedUnit from enemies.js
 let isMovingUnit = false;
 
 // Slot creation function
@@ -448,18 +448,6 @@ function showEnemyInfo(enemyData) {
 
 // Attach to window
 window.showEnemyInfo = showEnemyInfo;
-
-function resetUnitInfo() {
-    const unitInfoDisplay = document.getElementById('unit-info');
-    if (unitInfoDisplay) {
-        unitInfoDisplay.innerHTML = `
-            <div style="color: #444; font-weight: bold; letter-spacing: 1px; font-size: 10px; line-height: 1.4;">
-                GUARDIAN<br>
-                of the<br>
-                UNDERWORLD
-            </div>`;
-    }
-}
 
 // Sell tower (Corruption)
 function sellTower(tower) {

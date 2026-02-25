@@ -1,0 +1,19 @@
+{
+  "name": "gateofhell",
+  "version": "1.0.0",
+  "description": "",
+  "main": "allies.js",
+  "homepage": "https://BenKang-B00K.github.io/Gate_of_Hell/",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "predeploy": "npm install",
+    "deploy": "gh-pages -d ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "wrangler": "^4.68.1"
+  }
+}

@@ -225,15 +225,15 @@ function gameLoop() {
             const idx = slots.indexOf(t.slotElement);
             if (idx === -1) return;
             
-            const isLeft = idx < 30;
-            const localIdx = isLeft ? idx : idx - 30;
+            const isLeft = idx < 27; // Skipping top 3 slots means 27 slots per side
+            const localIdx = isLeft ? idx : idx - 27;
             const row = Math.floor(localIdx / 3);
             const col = localIdx % 3;
             
             // Calculate neighbors (within same grid only)
             const neighbors = [];
             if (row > 0) neighbors.push(idx - 3); // Up
-            if (row < 9) neighbors.push(idx + 3); // Down
+            if (row < 8) neighbors.push(idx + 3); // Down (Total 9 rows: 0 to 8)
             if (col > 0) neighbors.push(idx - 1); // Left
             if (col < 2) neighbors.push(idx + 1); // Right
 
