@@ -583,6 +583,23 @@ function renderBestiary() {
     const bestiaryTab = document.getElementById('bestiary-tab');
     bestiaryTab.innerHTML = '';
 
+    // Enemy Name Mapping
+    const enemyNames = {
+        'normal': 'Whispering Soul',
+        'tank': 'Ironclad Wraith',
+        'runner': 'Haste-Cursed Shadow',
+        'greedy': 'Gluttonous Poltergeist',
+        'dimension': 'Void-Step Phantasm',
+        'deceiver': 'Siren of Despair',
+        'boar': 'Feral Revenant',
+        'frost': 'Cocytus Drifter',
+        'lightspeed': 'Ethereal Streak',
+        'heavy': 'Grave-Bound Behemoth',
+        'lava': 'Magma-Veined Terror',
+        'burning': 'Eternal Zealot',
+        'gold': 'Gilded Apparition'
+    };
+
     // Flatten enemy data
     const allEnemyTypes = [];
     Object.keys(enemyCategories).forEach(cat => {
@@ -595,13 +612,14 @@ function renderBestiary() {
         const kills = killCounts[enemy.type] || 0;
         const bonus = getBestiaryBonus(enemy.type);
         const bonusText = bonus > 1 ? `Damage Bonus: +${((bonus - 1) * 100).toFixed(0)}%` : 'No Bonus (Need 50 kills)';
+        const dispName = enemyNames[enemy.type] || enemy.type.toUpperCase();
 
         const item = document.createElement('div');
         item.className = 'bestiary-item';
         item.innerHTML = `
             <div class="bestiary-icon enemy ${enemy.type}" style="position:static; transform:none; width:20px; height:20px;"></div>
             <div class="bestiary-info">
-                <div class="bestiary-name">${enemy.type.toUpperCase()}</div>
+                <div class="bestiary-name">${dispName}</div>
                 <div class="bestiary-stats">Kills: ${kills}</div>
                 <div class="bestiary-bonus">${bonusText}</div>
             </div>
@@ -615,27 +633,27 @@ function renderPromotionTree() {
     treeTab.innerHTML = '<h3 style="color:#ffd700; font-size:14px; text-align:center; margin-bottom:20px;">Unit Evolution Path</h3>';
 
     const paths = [
-        { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'] },
-        { name: 'Talismanist', type: 'talisman', masters: ['grandsealer', 'flamemaster'] },
-        { name: 'Mace Monk', type: 'monk', masters: ['vajra', 'saint'] },
-        { name: 'Divine Archer', type: 'archer', masters: ['voidsniper', 'thousandhand'] },
-        { name: 'Ice Daoist', type: 'ice', masters: ['absolutezero', 'permafrost'] },
-        { name: 'Fire Mage', type: 'fire', masters: ['hellfire', 'phoenix'] },
-        { name: 'Shadow Assassin', type: 'assassin', masters: ['abyssal', 'spatial'] },
-        { name: 'Soul Tracker', type: 'tracker', masters: ['seer', 'commander'] },
-        { name: 'Necromancer', type: 'necromancer', masters: ['wraithlord', 'cursedshaman'] },
-        { name: 'Sanctuary Guardian', type: 'guardian', masters: ['rampart', 'judgment'] }
+        { name: 'Soul Chainer', type: 'chainer', masters: ['executor', 'binder'], abyss: 'warden' },
+        { name: 'Talismanist', type: 'talisman', masters: ['grandsealer', 'flamemaster'], abyss: 'cursed_talisman' },
+        { name: 'Mace Monk', type: 'monk', masters: ['vajra', 'saint'], abyss: 'asura' },
+        { name: 'Divine Archer', type: 'archer', masters: ['voidsniper', 'thousandhand'], abyss: 'piercing_shadow' },
+        { name: 'Ice Daoist', type: 'ice', masters: ['absolutezero', 'permafrost'], abyss: 'cocytus' },
+        { name: 'Fire Mage', type: 'fire', masters: ['hellfire', 'phoenix'], abyss: 'purgatory' },
+        { name: 'Shadow Assassin', type: 'assassin', masters: ['abyssal', 'spatial'], abyss: 'reaper' },
+        { name: 'Soul Tracker', type: 'tracker', masters: ['seer', 'commander'], abyss: 'doom_guide' },
+        { name: 'Necromancer', type: 'necromancer', masters: ['wraithlord', 'cursedshaman'], abyss: 'forsaken_king' },
+        { name: 'Sanctuary Guardian', type: 'guardian', masters: ['rampart', 'judgment'], abyss: 'void_gatekeeper' }
     ];
 
     const treeContainer = document.createElement('div');
     treeContainer.style.display = 'flex';
     treeContainer.style.flexDirection = 'column';
-    treeContainer.style.gap = '20px';
+    treeContainer.style.gap = '15px';
 
     // Root: Apprentice
     const rootDiv = document.createElement('div');
-    rootDiv.className = 'unit-node tier1';
-    rootDiv.innerText = 'Apprentice Exorcist';
+    rootDiv.style.textAlign = 'center';
+    rootDiv.innerHTML = '<div class="unit-node tier1" style="display:inline-block;">Apprentice Exorcist</div>';
     treeContainer.appendChild(rootDiv);
 
     const arrow = document.createElement('div');
@@ -647,34 +665,55 @@ function renderPromotionTree() {
         const pathRow = document.createElement('div');
         pathRow.style.display = 'flex';
         pathRow.style.alignItems = 'center';
-        pathRow.style.gap = '10px';
-        pathRow.style.marginBottom = '10px';
+        pathRow.style.justifyContent = 'center';
+        pathRow.style.gap = '8px';
+        pathRow.style.marginBottom = '5px';
         pathRow.style.borderBottom = '1px solid #333';
-        pathRow.style.paddingBottom = '10px';
+        pathRow.style.paddingBottom = '8px';
 
+        // Tier 2
         const tier2 = document.createElement('div');
         tier2.className = 'unit-node tier2';
+        tier2.style.minWidth = '70px';
         tier2.innerText = p.name;
         
         const mArrow = document.createElement('div');
         mArrow.innerText = '→';
+        mArrow.style.fontSize = '10px';
 
+        // Tier 3 (Masters)
         const mastersDiv = document.createElement('div');
         mastersDiv.style.display = 'flex';
         mastersDiv.style.flexDirection = 'column';
-        mastersDiv.style.gap = '5px';
+        mastersDiv.style.gap = '3px';
 
         p.masters.forEach(m => {
             const mNode = document.createElement('div');
             mNode.className = 'unit-node tier3';
+            mNode.style.minWidth = '90px';
+            mNode.style.fontSize = '8px';
             const mData = unitTypes.find(u => u.type === m);
             mNode.innerText = mData ? mData.name : m;
             mastersDiv.appendChild(mNode);
         });
 
+        const aArrow = document.createElement('div');
+        aArrow.innerText = '→';
+        aArrow.style.fontSize = '10px';
+
+        // Tier 4 (Abyss)
+        const abyssNode = document.createElement('div');
+        abyssNode.className = 'unit-node tier4';
+        abyssNode.style.minWidth = '90px';
+        abyssNode.style.fontSize = '8px';
+        const aData = unitTypes.find(u => u.type === p.abyss);
+        abyssNode.innerText = aData ? aData.name : p.abyss;
+
         pathRow.appendChild(tier2);
         pathRow.appendChild(mArrow);
         pathRow.appendChild(mastersDiv);
+        pathRow.appendChild(aArrow);
+        pathRow.appendChild(abyssNode);
         treeContainer.appendChild(pathRow);
     });
 

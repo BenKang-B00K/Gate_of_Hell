@@ -71,27 +71,27 @@ function getCorruptionMultipliers() {
 // Enemy data (Categorized)
 const enemyCategories = {
     basic: [
-        { type: 'normal', speed: 1.5, hp: 100, defense: 0, probability: 0.6 }, // Lost Soul (60%)
-        { type: 'tank', speed: 0.75, hp: 300, defense: 10, probability: 0.2 },  // Sin-Heavy Wraith (20%)
-        { type: 'runner', speed: 3.0, hp: 40, defense: 0, probability: 0.2 }   // Hasty Shadow (20%)
+        { type: 'normal', speed: 1.5, hp: 100, defense: 0, probability: 0.6 }, // Whispering Soul
+        { type: 'tank', speed: 0.75, hp: 300, defense: 10, probability: 0.2 },  // Ironclad Wraith
+        { type: 'runner', speed: 3.0, hp: 40, defense: 0, probability: 0.2 }   // Haste-Cursed Shadow
     ],
     pattern: [
-        { type: 'greedy', speed: 1.2, hp: 150, defense: 5, probability: 0.34 }, // Greedy Spirit
-        { type: 'dimension', speed: 1.8, hp: 80, defense: 0, probability: 0.33 }, // Dimensional Shifter
-        { type: 'deceiver', speed: 1.4, hp: 120, defense: 5, probability: 0.33 }  // Deceiving Seductress
+        { type: 'greedy', speed: 1.2, hp: 150, defense: 5, probability: 0.34 }, // Gluttonous Poltergeist
+        { type: 'dimension', speed: 1.8, hp: 80, defense: 0, probability: 0.33 }, // Void-Step Phantasm
+        { type: 'deceiver', speed: 1.4, hp: 120, defense: 5, probability: 0.33 }  // Siren of Despair
     ],
     enhanced: [
-        { type: 'boar', speed: 0.5, hp: 250, defense: 8, probability: 0.34 }, // Charging Boar
-        { type: 'frost', speed: 1.0, hp: 180, defense: 5, probability: 0.33 }, // Frost-Bitten Wraith
-        { type: 'lightspeed', speed: 4.0, hp: 60, defense: 0, probability: 0.33 } // Lightspeed Shadow
+        { type: 'boar', speed: 0.5, hp: 250, defense: 8, probability: 0.34 }, // Feral Revenant
+        { type: 'frost', speed: 1.0, hp: 180, defense: 5, probability: 0.33 }, // Cocytus Drifter
+        { type: 'lightspeed', speed: 4.0, hp: 60, defense: 0, probability: 0.33 } // Ethereal Streak
     ],
     armoured: [
-        { type: 'heavy', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8 }, // Massive Sinner
-        { type: 'lava', speed: 1.3, hp: 200, defense: 15, probability: 0.33 }, // Lava's Craving
-        { type: 'burning', speed: 1.0, hp: 350, defense: 10, probability: 0.33 } // Burning Vengeance
+        { type: 'heavy', speed: 0.4, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8 }, // Grave-Bound Behemoth
+        { type: 'lava', speed: 1.3, hp: 200, defense: 15, probability: 0.33 }, // Magma-Veined Terror
+        { type: 'burning', speed: 1.0, hp: 350, defense: 10, probability: 0.33 } // Eternal Zealot
     ],
     treasure: [
-        { type: 'gold', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300 } // Golden Echo (Bonus SE)
+        { type: 'gold', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 300 } // Gilded Apparition
     ]
 };
 
