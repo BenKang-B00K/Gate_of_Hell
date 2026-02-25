@@ -218,8 +218,8 @@ function showUnitInfo(tower) {
     if (data.type === 'apprentice') {
         const canAfford = money >= jobChangeCost;
         const btnClass = canAfford ? 'active' : 'locked';
-        // 1st Promotion: Ascend
-        buttonsHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">Ascend</span>`;
+        // 1st Promotion: Ascend + Cost
+        buttonsHtml += `<span id="info-job-btn" class="job-btn ${btnClass}">Ascend (100 SE)</span>`;
     }
 
     // [Corruption] (Sell) button - only for Tier 1-3
@@ -251,8 +251,8 @@ function showUnitInfo(tower) {
             const uData = unitTypes.find(u => u.type === abyssType);
             const canAfford = typeof corruptedShards !== 'undefined' && corruptedShards >= 50;
             const btnClass = canAfford ? 'active' : 'locked';
-            // Abyss Promotion: Descent
-            abyssBtnHtml = `<div style="margin-bottom: 6px;"><span id="info-abyss-btn" class="job-btn ${btnClass}">Descent to ${uData.name}</span></div>`;
+            // Abyss Promotion: Descent + Shard Cost
+            abyssBtnHtml = `<div style="margin-bottom: 6px;"><span id="info-abyss-btn" class="job-btn ${btnClass}">Descent to ${uData.name} (50 Shards)</span></div>`;
         }
     }
 
@@ -279,8 +279,8 @@ function showUnitInfo(tower) {
             const btn = document.createElement('div');
             btn.id = `master-btn-${idx}`;
             btn.className = `job-btn ${btnClass}`;
-            // Master Promotion: Unleash
-            btn.innerText = `Unleash ${uData.name}`;
+            // Master Promotion: Unleash + Cost
+            btn.innerText = `Unleash ${uData.name} (200 SE)`;
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (money >= masterJobCost) {
@@ -575,18 +575,21 @@ function updateSummonButtonState() {
     const towerCard = document.getElementById('tower-card');
     if (!towerCard) return;
     
+    const nameDiv = towerCard.querySelector('div:first-child');
     const costDiv = towerCard.querySelector('div:last-child');
-    if (!costDiv) return;
+    if (!nameDiv || !costDiv) return;
     
+    nameDiv.innerText = "Summon / Exorcist";
+
     if (towers.length >= maxTowers) {
         towerCard.classList.add('locked');
         costDiv.innerText = "MAX";
     } else if (money < towerCost) {
         towerCard.classList.add('locked');
-        costDiv.innerText = "50 Energy"; // Changed from LACK to keep cost visible
+        costDiv.innerText = "50 SE";
     } else {
         towerCard.classList.remove('locked');
-        costDiv.innerText = "50 Energy";
+        costDiv.innerText = "50 SE";
     }
 }
 
