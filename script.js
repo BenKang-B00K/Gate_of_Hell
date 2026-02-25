@@ -948,11 +948,20 @@ function shoot(tower, target, startX, startY) {
         }
 
         // Damage processing
-        let damage = tower.data.damage + (tower.damageBonus || 0);
+        let baseDmg = tower.data.damage + (tower.damageBonus || 0);
         
-        // Apply debuffs (Permanent and Temporary)
+        // Handle temporary Acolyte debuff
+        if (tower.acolyteDebuffTime && Date.now() > tower.acolyteDebuffTime) {
+            tower.acolyteStacks = 0;
+            tower.acolyteDebuffTime = 0;
+            tower.element.style.boxShadow = '';
+        }
+
+        const acolyteDmgLoss = (tower.acolyteStacks || 0) * 4;
+        const defiledDmgLoss = tower.defiledDebuff || 0;
         const slotCorruption = parseInt(tower.slotElement.dataset.corruption) || 0;
-        damage = Math.max(1, damage - (tower.atkDebuff || 0) - slotCorruption);
+        
+        let damage = Math.max(1, baseDmg - acolyteDmgLoss - defiledDmgLoss - slotCorruption);
         
         // Apply defense (Shadow Assassin series ignores)
         if (tower.data.type !== 'assassin' && tower.data.type !== 'abyssal' && tower.data.type !== 'spatial') {
@@ -989,18 +998,20 @@ function shoot(tower, target, startX, startY) {
         // [Corruption Abilities] When hit by a tower, these enemies retaliate
         if (target.isCorrupted) {
             if (target.type === 'defiled_apprentice') {
-                // 10% chance to curse attacker's damage (-3)
-                if (Math.random() < 0.1) {
-                    tower.atkDebuff = (tower.atkDebuff || 0) + 3;
+                // 10% chance to curse attacker's damage (-3, No stack)
+                if (Math.random() < 0.1 && !tower.defiledDebuff) {
+                    tower.defiledDebuff = 3;
                     tower.element.style.filter = 'sepia(1) hue-rotate(300deg)'; // Reddish tint for curse
                 }
             } else if (target.type === 'abyssal_acolyte') {
-                // Reduces hit source's damage by 4 (Max 3 stacks)
-                tower.acolyeStacks = (tower.acolyeStacks || 0) + 1;
-                if (tower.acolyeStacks <= 3) {
-                    tower.atkDebuff = (tower.atkDebuff || 0) + 4;
-                    tower.element.style.boxShadow = `0 0 ${tower.acolyeStacks * 10}px #4b0082`;
+                // Reduces hit source's damage by 4 (Max 3 stacks, resets on hit, lasts 2s)
+                if (!tower.acolyteDebuffTime || Date.now() > tower.acolyteDebuffTime) {
+                    tower.acolyteStacks = 1;
+                } else if (tower.acolyteStacks < 3) {
+                    tower.acolyteStacks++;
                 }
+                tower.acolyteDebuffTime = Date.now() + 2000;
+                tower.element.style.boxShadow = `0 0 ${tower.acolyteStacks * 10}px #4b0082`;
             }
         }
 

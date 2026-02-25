@@ -580,7 +580,10 @@ function showEnemyInfo(enemyData) {
         'heavy': 'Grave-Bound Behemoth',
         'lava': 'Magma-Veined Terror',
         'burning': 'Eternal Zealot',
-        'gold': 'Gilded Apparition'
+        'gold': 'Gilded Apparition',
+        'defiled_apprentice': 'Defiled Apprentice',
+        'abyssal_acolyte': 'Abyssal Acolyte',
+        'bringer_of_doom': 'Bringer of Doom'
     };
 
     const name = enemyData.name || enemyNames[enemyData.type] || enemyData.type.toUpperCase();
@@ -927,7 +930,10 @@ function renderBestiary() {
         'heavy': 'Grave-Bound Behemoth',
         'lava': 'Magma-Veined Terror',
         'burning': 'Eternal Zealot',
-        'gold': 'Gilded Apparition'
+        'gold': 'Gilded Apparition',
+        'defiled_apprentice': 'Defiled Apprentice',
+        'abyssal_acolyte': 'Abyssal Acolyte',
+        'bringer_of_doom': 'Bringer of Doom'
     };
 
     // Flatten enemy data
