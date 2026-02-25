@@ -9,17 +9,17 @@ const maxTowers = 12; // Maximum summon count
 const unlockedUnits = new Set(['apprentice']);
 
 function recordUnlock(type, isEnemy = false) {
-    // Check tutorial toggle (If checked, hide alerts)
+    // Check tutorial toggle (If checked, show alerts)
     const tutorialToggle = document.getElementById('tutorial-toggle');
-    const isTutorialEnabled = tutorialToggle ? tutorialToggle.checked : false;
+    const isTutorialEnabled = tutorialToggle ? tutorialToggle.checked : true;
     
     if (isEnemy) {
         if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
         if (window.encounteredEnemies.has(type)) return;
         window.encounteredEnemies.add(type);
 
-        // Skip message if tutorial is enabled
-        if (isTutorialEnabled) return;
+        // Skip message if tutorial is disabled (OFF)
+        if (!isTutorialEnabled) return;
 
         let enemyData = null;
         // Search in categories
@@ -57,8 +57,8 @@ function recordUnlock(type, isEnemy = false) {
     if (!unlockedUnits.has(type)) {
         unlockedUnits.add(type);
         
-        // Skip message if tutorial is enabled
-        if (isTutorialEnabled) return;
+        // Skip message if tutorial is disabled (OFF)
+        if (!isTutorialEnabled) return;
 
         const data = unitTypes.find(u => u.type === type);
         if (data && type !== 'apprentice') {
@@ -501,7 +501,7 @@ function updateUnitOverlayButtons(tower) {
                     updateUnitOverlayButtons(tower);
                 } else {
                     const tutorialToggle = document.getElementById('tutorial-toggle');
-                    if (!tutorialToggle || !tutorialToggle.checked) {
+                    if (tutorialToggle && tutorialToggle.checked) {
                         alert(`Not enough Corrupted Shards! (Need 50, currently have ${corruptedShards || 0})`);
                     }
                 }
@@ -795,7 +795,7 @@ function initAllies() {
 
         if (validSlots.length === 0) {
             const tutorialToggle = document.getElementById('tutorial-toggle');
-            if (!tutorialToggle || !tutorialToggle.checked) {
+            if (tutorialToggle && tutorialToggle.checked) {
                 alert("No more space available!");
             }
             return;
@@ -812,6 +812,7 @@ function initAllies() {
     createSlots('right-slots', 30);
 
     initRecordsUI();
+    initTutorial();
 
     // New Class Unlock Modal Close
     const closeUnlockBtn = document.getElementById('close-unlock');
@@ -1143,4 +1144,17 @@ function renderPromotionTree() {
     });
 
     treeTab.appendChild(treeContainer);
+}
+
+function initTutorial() {
+    const toggle = document.getElementById('tutorial-toggle');
+    const status = document.getElementById('tutorial-status');
+    
+    if (toggle && status) {
+        toggle.addEventListener('change', () => {
+            status.innerText = toggle.checked ? 'ON' : 'OFF';
+        });
+        // Initial state
+        status.innerText = toggle.checked ? 'ON' : 'OFF';
+    }
 }

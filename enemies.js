@@ -120,7 +120,7 @@ function initStage() {
         const bossName = bossData[stage] ? bossData[stage].name : "Unknown Boss";
         
         const tutorialToggle = document.getElementById('tutorial-toggle');
-        if (!tutorialToggle || !tutorialToggle.checked) {
+        if (tutorialToggle && tutorialToggle.checked) {
             alert(`⚠️ Warning! Boss [${bossName}] appeared! ⚠️`);
         }
     }
@@ -333,7 +333,7 @@ function spawnBoss() {
                     target.element.classList.add('frozen-tomb');
                     
                     const tutorialToggle = document.getElementById('tutorial-toggle');
-                    if (!tutorialToggle || !tutorialToggle.checked) {
+                    if (tutorialToggle && tutorialToggle.checked) {
                         alert("🥶 Lucifer's [Absolute Zero]! An exorcist has been permanently frozen!");
                     }
                 }
@@ -640,7 +640,7 @@ function handleEnemyDeath(target, killer = null) {
         // Boss death rewards
         if (target.isBoss) {
             const tutorialToggle = document.getElementById('tutorial-toggle');
-            const showMsg = !tutorialToggle || !tutorialToggle.checked;
+            const showMsg = tutorialToggle && tutorialToggle.checked;
 
             if (target.data.type === 'cerberus') {
                 damageMultiplier += target.data.rewardEffect;
@@ -674,7 +674,7 @@ function handleEnemyDeath(target, killer = null) {
                 updateGauges();
                 
                 const tutorialToggle = document.getElementById('tutorial-toggle');
-                if (!tutorialToggle || !tutorialToggle.checked) {
+                if (tutorialToggle && tutorialToggle.checked) {
                     alert("💠 Obtained a [Corrupted Shard]!");
                 }
             }

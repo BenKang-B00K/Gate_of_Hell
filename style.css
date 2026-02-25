@@ -1124,6 +1124,14 @@ body {
     letter-spacing: 0.5px;
 }
 
+#tutorial-status {
+    font-size: 7px;
+    color: #ffd700;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
+}
+
 /* Switch styling - Smaller */
 .switch {
   position: relative;
