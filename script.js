@@ -201,7 +201,7 @@ function gameLoop() {
             if (currentStageSpawned < totalStageEnemies) {
                 if (Date.now() - lastSpawnTime > spawnInterval) {
                     spawnWave(); 
-                    spawnInterval = Math.random() * 1000 + 1500; // Slower: 1.5-2.5 seconds
+                    spawnInterval = Math.random() * 600 + 800; // Adjusted to 0.8-1.4 seconds
                 }
             }
         }
