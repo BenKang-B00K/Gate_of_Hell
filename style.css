@@ -14,6 +14,70 @@ body {
 }
 
 /* 게임 전체 컨테이너 (16:9 비율) */
+/* Start Screen Overlay */
+#start-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #1a002a 0%, #000 80%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+    text-align: center;
+}
+
+#start-content {
+    animation: fadeInScale 1.2s ease-out;
+}
+
+.start-title {
+    font-family: 'Cinzel', serif;
+    font-size: 48px;
+    color: #ffd700;
+    margin: 0;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 0 40px rgba(255, 0, 0, 0.3);
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+.start-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    color: #9400d3;
+    margin: 10px 0 40px 0;
+    letter-spacing: 2px;
+    opacity: 0.8;
+}
+
+#start-game-btn {
+    background: linear-gradient(145deg, #4b0082, #2e003e);
+    color: #fff;
+    border: 1px solid #9400d3;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(148, 0, 211, 0.4);
+    transition: all 0.3s;
+}
+
+#start-game-btn:hover {
+    transform: scale(1.1);
+    background: linear-gradient(145deg, #9400d3, #4b0082);
+    box-shadow: 0 0 30px rgba(148, 0, 211, 0.8), 0 0 10px #ffd700;
+    border-color: #ffd700;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
 #game-container {
     position: relative;
     width: 360px; /* 모바일 9:16 비율 */

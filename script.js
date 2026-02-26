@@ -74,8 +74,10 @@ function handleSpecialAblities(tower, target) {
     }
 }
 
+let gameStarted = false;
+
 function gameLoop() {
-    if (isPaused) { requestAnimationFrame(gameLoop); return; }
+    if (!gameStarted || isPaused) { requestAnimationFrame(gameLoop); return; }
     const roadRect = road.getBoundingClientRect();
     const targetY = roadRect.height + 10; 
     gameWidth = gameContainer.offsetWidth;
@@ -280,8 +282,19 @@ function shoot(tower, target) {
 document.addEventListener('DOMContentLoaded', () => {
     gameContainer = document.getElementById('game-container');
     road = document.getElementById('road');
-    initStage(); initAllies();
-    updateSummonButtonState();
-    if (typeof updateGauges === 'function') updateGauges();
+    
+    const startBtn = document.getElementById('start-game-btn');
+    const startScreen = document.getElementById('start-screen');
+    if (startBtn && startScreen) {
+        startBtn.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            gameStarted = true;
+            initStage(); 
+            initAllies();
+            updateSummonButtonState();
+            if (typeof updateGauges === 'function') updateGauges();
+        });
+    }
+    
     gameLoop();
 });
