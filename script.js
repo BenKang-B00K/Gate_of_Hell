@@ -404,4 +404,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     gameLoop();
+
+    // Global ESC Key Listener
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const recordsOverlay = document.getElementById('records-overlay');
+            const relicsOverlay = document.getElementById('relics-overlay');
+            const unlockModal = document.getElementById('unlock-modal');
+            const gameOverOverlay = document.getElementById('game-over-overlay');
+            
+            let closedSomething = false;
+
+            if (recordsOverlay && recordsOverlay.style.display === 'flex') {
+                recordsOverlay.style.display = 'none';
+                closedSomething = true;
+            }
+            if (relicsOverlay && relicsOverlay.style.display === 'flex') {
+                relicsOverlay.style.display = 'none';
+                closedSomething = true;
+            }
+            if (unlockModal && unlockModal.style.display === 'flex') {
+                unlockModal.style.display = 'none';
+                closedSomething = true;
+            }
+            // Game over usually shouldn't be closed by ESC unless you want it to, 
+            // but let's stick to informational modals for now.
+            
+            if (closedSomething) {
+                isPaused = false;
+            }
+            
+            // Also deselect units
+            towers.forEach(t => {
+                t.element.classList.remove('selected');
+                const ri = document.getElementById('range-indicator');
+                if (ri) ri.remove();
+            });
+        }
+    });
 });
