@@ -151,7 +151,7 @@ function gameLoop() {
             const dist = Math.sqrt(Math.pow(oX - tX, 2) + Math.pow(oY - tY, 2));
 
             const relicAuraBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('aura_range') : 0;
-            if (dist < (120 + relicAuraBonus)) { // Buff aura range + relic bonus
+            if (dist < (65 + relicAuraBonus)) { // Base range 65px covers ~1 tile cardinal
                 if (other.data.type === 'tracker') {
                     t.rangeBonus += 30; // +30 range
                 } else if (other.data.type === 'seer') {
