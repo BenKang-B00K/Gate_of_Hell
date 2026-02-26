@@ -1,5 +1,5 @@
 /* script.js */
-let spawnInterval = 1000; 
+let spawnInterval = 1200; 
 let isPaused = false;
 let gameWidth = 360; 
 
@@ -93,12 +93,12 @@ function gameLoop() {
     if (!isStageStarting) {
         if (isBossStage) {
             if (bossInstance && bossInstance.hp > 0 && Date.now() - lastSpawnTime > spawnInterval) {
-                spawnWave(); spawnInterval = Math.random() * 1000 + 600;
+                spawnWave(); spawnInterval = Math.random() * 1200 + 800;
             }
         } else {
             if (currentStageSpawned < totalStageEnemies) {
                 if (Date.now() - lastSpawnTime > spawnInterval) {
-                    spawnWave(); spawnInterval = Math.random() * 600 + 300;
+                    spawnWave(); spawnInterval = Math.random() * 800 + 400;
                 }
             } else if (enemies.length === 0) { stage++; initStage(); }
         }
