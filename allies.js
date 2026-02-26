@@ -390,8 +390,15 @@ function renderPromotionTree() {
             const row = document.createElement('div'); row.style.cssText='display:grid; grid-template-columns:70px 12px 85px 12px 105px 12px 105px; align-items:center; justify-content:center; gap:3px; border-bottom:1px solid #222; padding-bottom:4px;';
             const node = (type,tier) => {
                 const d=unitTypes.find(x=>x.type===type); 
-                const n=document.createElement('div'); n.className=`unit-node tier${tier}`; n.style.cssText='position:relative; font-size:7px; padding:2px 4px; min-width:auto;';
-                n.innerHTML = `<div class="custom-tooltip"><strong>${d.name}</strong><br>${d.desc}</div>${d.icon} ${d.name}`; return n;
+                const u=unlockedUnits.has(type);
+                const n=document.createElement('div'); n.className=`unit-node tier${tier} ${u?'':'locked'}`; n.style.cssText='position:relative; font-size:7px; padding:2px 4px; min-width:auto;';
+                if (u) {
+                    n.innerHTML = `<div class="custom-tooltip"><strong>${d.name}</strong><br>${d.desc}</div>${d.icon} ${d.name}`;
+                } else {
+                    n.innerHTML = `<div class="custom-tooltip"><strong>[Hidden Class]</strong><br>Promote to this class during a mission to unlock its records.</div>? ???`;
+                    n.style.color = '#555';
+                }
+                return n;
             };
             const arrow = () => { const a=document.createElement('div'); a.innerText='→'; a.style.fontSize='8px'; return a; };
             row.appendChild(node('apprentice',1)); row.appendChild(arrow()); row.appendChild(node(p.t,2)); row.appendChild(arrow());
