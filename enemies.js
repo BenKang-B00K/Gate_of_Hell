@@ -353,13 +353,12 @@ function updateStageInfo() {
     if (stageDisplay) stageDisplay.innerText = stage;
     
     if (stageNameElem) {
-        let name = "";
-        if (stage >= 51) name = "[Nightmare Realm]";
-        else if (stage >= 41) name = "[The Eternal Abyss]";
-        else if (stage >= 31) name = "[Shadow Sanctum]";
-        else if (stage >= 21) name = "[Wailing Corridors]";
-        else if (stage >= 11) name = "[Desolate Path]";
-        else name = "[Whispering Gates]";
+        let name = "Whispering Gates";
+        if (stage >= 51) name = "Nightmare Realm";
+        else if (stage >= 41) name = "The Eternal Abyss";
+        else if (stage >= 31) name = "Shadow Sanctum";
+        else if (stage >= 21) name = "Wailing Corridors";
+        else if (stage >= 11) name = "Desolate Path";
         stageNameElem.innerText = name;
     }
 
