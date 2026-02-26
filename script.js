@@ -250,7 +250,12 @@ function gameLoop() {
             portalEnergy += enemy.hp + (enemy.isBoss ? 200 : (enemy.isCorrupted ? 50 : 0));
             if (enemy.isBoss) bossInstance = null; // Important: Clear instance if boss escapes
             if (portalEnergy >= maxPortalEnergy) { portalEnergy = maxPortalEnergy; isPaused = true; document.getElementById('game-over-overlay').style.display = 'flex'; return; }
-            updateGauges(); enemy.element.remove(); enemies.splice(i, 1); updateStageInfo(); continue;
+            updateGauges(); 
+            enemy.element.remove(); 
+            enemies.splice(i, 1); 
+            playSound('kill');
+            updateStageInfo(); 
+            continue;
         }
     }
 

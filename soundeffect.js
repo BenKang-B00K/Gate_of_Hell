@@ -5,7 +5,7 @@ const sounds = {
     start: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_2ba65f912e.mp3'),    // Deep cinematic start
     summon: null,   // Placeholder for summon sound
     attack: null,   // Placeholder for attack sound
-    kill: null,     // Placeholder for enemy death sound
+    kill: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_5177f803f3.mp3'),     // Enemy death sound
     gameover: null  // Placeholder for game over sound
 };
 
@@ -47,3 +47,4 @@ function playThunder() {
 setVolume('thunder', 0.4);
 setVolume('hover', 0.3);
 setVolume('start', 0.6);
+setVolume('kill', 0.4);

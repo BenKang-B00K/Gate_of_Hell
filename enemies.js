@@ -896,6 +896,7 @@ function handleEnemyDeath(target, killer = null) {
         if (target.type) recordKill(target.type);
         target.element.remove();
         enemies.splice(idx, 1);
+        playSound('kill');
         updateStageInfo(); 
         
         if (target.isBoss) {
