@@ -497,24 +497,33 @@ function spawnEnemy() {
 
     const relicTreasureBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('treasure_chance') : 0;
     const finalTreasureChance = treasureChance + relicTreasureBonus;
-    let probs = { basic: 0.96, pattern: 0.01, enhanced: 0.01, armoured: 0.01, treasure: finalTreasureChance };
     
+    let probs;
     if (stage === 1) {
         probs = { basic: 1.0, pattern: 0, enhanced: 0, armoured: 0, treasure: 0 };
     } else if (stage >= 51) {
-        probs = { basic: 0.30, pattern: 0.23, enhanced: 0.23, armoured: 0.23, treasure: treasureChance };
+        // Nightmare (50+)
+        probs = { basic: 0.20, pattern: 0.25, enhanced: 0.25, armoured: 0.25, treasure: finalTreasureChance };
+    } else if (stage >= 41) {
+        // Late (41-50)
+        probs = { basic: 0.40, pattern: 0.20, enhanced: 0.20, armoured: 0.15, treasure: finalTreasureChance };
     } else if (stage >= 31) {
-        probs = { basic: 0.55, pattern: 0.14, enhanced: 0.15, armoured: 0.15, treasure: treasureChance };
-    } else if (stage >= 16) {
-        probs = { basic: 0.75, pattern: 0.08, enhanced: 0.08, armoured: 0.08, treasure: treasureChance };
-    } else if (stage >= 6) {
-        probs = { basic: 0.94, pattern: 0.02, enhanced: 0.02, armoured: 0.02, treasure: treasureChance };
+        // Mid-Late (31-40)
+        probs = { basic: 0.55, pattern: 0.15, enhanced: 0.15, armoured: 0.10, treasure: finalTreasureChance };
+    } else if (stage >= 21) {
+        // Mid (21-30)
+        probs = { basic: 0.70, pattern: 0.10, enhanced: 0.10, armoured: 0.05, treasure: finalTreasureChance };
+    } else if (stage >= 11) {
+        // Early-Mid (11-20)
+        probs = { basic: 0.85, pattern: 0.05, enhanced: 0.05, armoured: 0.03, treasure: finalTreasureChance };
     } else {
-        // Stage 1-5: Very low chance for special ghosts
-        probs = { basic: 0.985, pattern: 0.005, enhanced: 0.005, armoured: 0.005, treasure: treasureChance };
+        // Early (2-10)
+        probs = { basic: 0.95, pattern: 0.015, enhanced: 0.015, armoured: 0.01, treasure: finalTreasureChance };
     }
 
-    probs.basic -= treasureChance; // Adjust basic to accommodate treasure chance
+    // Adjust basic to accommodate treasure chance correctly
+    const actualTreasure = probs.treasure;
+    probs.basic = Math.max(0, probs.basic - actualTreasure);
 
     const randCat = Math.random();
     let accumulatedCatProb = 0;
