@@ -136,8 +136,8 @@ body {
     width: 150px;
     height: 35px;
     border-radius: 75px 75px 0 0;
-    background: linear-gradient(to top, rgba(40, 0, 60, 0.7), rgba(148, 0, 211, 0.2));
-    box-shadow: 0 -8px 25px rgba(148, 0, 211, 0.5);
+    background: linear-gradient(to top, rgba(60, 0, 90, 0.9), rgba(148, 0, 211, 0.5));
+    box-shadow: 0 -8px 35px rgba(148, 0, 211, 0.8);
     border: none;
     border-bottom: none;
     z-index: 1;
@@ -148,7 +148,7 @@ body {
     align-items: center;
     justify-content: center;
     overflow: visible;
-    opacity: 0.9; /* Set back to 90% opacity */
+    opacity: 1.0; 
 }
 
 #portal-energy-label {
