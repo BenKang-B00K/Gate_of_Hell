@@ -92,8 +92,13 @@ function gameLoop() {
 
     if (!isStageStarting) {
         if (isBossStage) {
-            if (bossInstance && bossInstance.hp > 0 && Date.now() - lastSpawnTime > spawnInterval) {
-                spawnWave(); spawnInterval = Math.random() * 1200 + 800;
+            if (bossInstance && bossInstance.hp > 0) {
+                if (Date.now() - lastSpawnTime > spawnInterval) {
+                    spawnWave(); spawnInterval = Math.random() * 1200 + 800;
+                }
+            } else if (bossSpawned && enemies.length === 0) {
+                stage++; 
+                initStage(); 
             }
         } else {
             if (currentStageSpawned < totalStageEnemies) {

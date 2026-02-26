@@ -334,8 +334,12 @@ function updateStageInfo() {
     
     if (stageDisplay) stageDisplay.innerText = stage;
     if (enemiesLeft) {
-        const remainingToSpawn = Math.max(0, totalStageEnemies - currentStageSpawned);
-        enemiesLeft.innerText = remainingToSpawn + enemies.length;
+        if (isBossStage) {
+            enemiesLeft.innerText = "BOSS";
+        } else {
+            const remainingToSpawn = Math.max(0, totalStageEnemies - currentStageSpawned);
+            enemiesLeft.innerText = remainingToSpawn + enemies.length;
+        }
     }
 }
 
