@@ -48,3 +48,66 @@ setVolume('thunder', 0.4);
 setVolume('hover', 0.3);
 setVolume('start', 0.6);
 setVolume('kill', 0.4);
+
+// Global state for volume control
+let globalVolume = 0.5;
+let isMuted = false;
+let previousVolume = 0.5;
+
+/**
+ * Update all sounds to the current global volume.
+ */
+function updateAllVolumes() {
+    const currentVol = isMuted ? 0 : globalVolume;
+    for (const key in sounds) {
+        if (sounds[key] && sounds[key] instanceof Audio) {
+            // Apply relative volumes based on original settings
+            let factor = 1.0;
+            if (key === 'thunder') factor = 0.8;
+            if (key === 'hover') factor = 0.6;
+            if (key === 'start') factor = 1.2;
+            if (key === 'kill') factor = 0.8;
+            
+            sounds[key].volume = Math.min(1.0, currentVol * factor);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const volumeSlider = document.getElementById('volume-slider');
+    const muteBtn = document.getElementById('mute-btn');
+    const volumeValue = document.getElementById('volume-value');
+    
+    if (volumeSlider && muteBtn && volumeValue) {
+        // Initial setup
+        volumeSlider.value = globalVolume;
+        volumeValue.innerText = `${Math.round(globalVolume * 100)}%`;
+        updateAllVolumes();
+        
+        volumeSlider.addEventListener('input', (e) => {
+            globalVolume = parseFloat(e.target.value);
+            volumeValue.innerText = `${Math.round(globalVolume * 100)}%`;
+            if (globalVolume > 0) {
+                isMuted = false;
+                muteBtn.innerText = globalVolume > 0.5 ? '🔊' : '🔉';
+            } else {
+                isMuted = true;
+                muteBtn.innerText = '🔇';
+            }
+            updateAllVolumes();
+        });
+        
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            if (isMuted) {
+                previousVolume = globalVolume;
+                // We don't change globalVolume here so it's remembered when unmuting
+                muteBtn.innerText = '🔇';
+            } else {
+                muteBtn.innerText = globalVolume > 0.5 ? '🔊' : '🔉';
+            }
+            updateAllVolumes();
+        });
+    }
+});
+
