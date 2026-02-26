@@ -368,12 +368,12 @@ function showUnitInfo(tower) {
     }
     else if(data.upgrades) { 
         const isToAbyssal = unitTypes.find(x=>x.type===data.upgrades[0]).tier === 4;
-        const costLabel = isToAbyssal ? "Unleash Master (25 Shards):" : "Unleash Master (400 SE):";
+        const costLabel = isToAbyssal ? "Unleash Master (10 Shards):" : "Unleash Master (400 SE):";
         ch=`<div style="font-size:8px; color:#ffd700; margin-bottom:4px;">${costLabel}</div>
            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:6px;">`; 
         data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); 
-            const costTip = ud.tier === 4 ? "25 Shards" : "400 SE";
+            const costTip = ud.tier === 4 ? "10 Shards" : "400 SE";
             ch+=`
                 <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
                     <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)" title="Unleash ${ud.name} (${costTip})" style="background:#222; border:1px solid #aaa; color:#fff; border-radius:4px; cursor:pointer; padding:2px 8px; font-size:10px;">${i===0?'↖️':'↗️'}</button>
@@ -746,7 +746,7 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
 
     // Cost logic based on target tier
     if (nt.tier === 4) {
-        const shardCost = 25;
+        const shardCost = 10;
         if(corruptedShards < shardCost) {
             alert(`Not enough Corrupted Shards for [Abyssal]! Need ${shardCost}.`);
             return;
@@ -802,7 +802,7 @@ function updateUnitOverlayButtons(t) {
     } else if(t.data.upgrades) {
         t.data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); const b=document.createElement('div');
-            const costText = ud.tier === 4 ? "25 Shards" : "400 SE";
+            const costText = ud.tier === 4 ? "10 Shards" : "400 SE";
             b.className=i===0?'unit-overlay-btn promote-btn':'unit-overlay-btn promote-btn-right'; b.innerHTML=i===0?'↖️':'↗️'; b.title=`Unleash ${ud.name} (${costText})`;
             b.addEventListener('click', e=>{ e.stopPropagation(); performMasterJobChange(t,u); }); el.appendChild(b);
         });
