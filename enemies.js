@@ -694,11 +694,11 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
     totalCorruptedCount++;
     const road = document.getElementById('road');
     const slotRect = tower.slotElement.getBoundingClientRect();
+    const roadRect = road.getBoundingClientRect();
     
-    const gameWidth = gameContainer.offsetWidth;
+    // Calculate X relative to the road
     const centerX = slotRect.left + slotRect.width / 2;
-    const gameRect = gameContainer.getBoundingClientRect();
-    const relX = (centerX - gameRect.left) / gameWidth * 100;
+    const relX = ((centerX - roadRect.left) / roadRect.width) * 100;
 
     const tier = Math.min(tower.data.tier, 3);
     const data = forcedType ? corruptedTypes[forcedType] : corruptedTypes[tier];
@@ -728,7 +728,7 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
 
     road.appendChild(enemyDiv);
     enemyDiv.style.left = `${relX}%`;
-    enemyDiv.style.top = `0px`;
+    enemyDiv.style.top = `${tower.slotElement.offsetTop}px`; // Start from their vertical position
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
@@ -739,8 +739,8 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
         hpFill: hpFill,
         initialX: relX,
         x: relX,
-        targetX: Math.random() * 50 + 25, // Within portal arch
-        y: 0,
+        targetX: 50, // Move toward center of road
+        y: tower.slotElement.offsetTop,
         baseSpeed: data.speed * speedMult * speedStageMult, 
         speed: data.speed * speedMult * speedStageMult,
         maxHp: hpValue, 
