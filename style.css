@@ -626,6 +626,7 @@ body {
     color: #ffd700;
     text-shadow: 0 0 5px #ffd700, 0 0 10px #ff8c00, 0 0 15px #ff0000;
     letter-spacing: 1px;
+    line-height: 1.2;
     animation: divinePulse 3s infinite alternate;
     text-transform: uppercase;
 }

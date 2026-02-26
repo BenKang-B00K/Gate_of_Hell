@@ -248,7 +248,7 @@ function startInfoResetTimer() {
     if (infoResetTimer) clearTimeout(infoResetTimer);
     infoResetTimer = setTimeout(() => {
         const d = document.getElementById('unit-info');
-        if (d) d.innerHTML = '<div class="info-default-text">Guardians of the UnderWorld</div>';
+        if (d) d.innerHTML = '<div class="info-default-text">GUARDIANS<br><span style="font-size:10px; opacity:0.8;">of the</span><br>UNDERWORLD</div>';
     }, 10000); // 10 seconds
 }
 
