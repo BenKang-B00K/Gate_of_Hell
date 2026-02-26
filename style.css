@@ -17,7 +17,7 @@ body {
 }
 
 /* Prevent image and element dragging */
-img, .unit, .enemy, .tower-card, .relic-slot {
+img, .enemy, .tower-card, .relic-slot {
     -webkit-user-drag: none;
     -khtml-user-drag: none;
     -moz-user-drag: none;
