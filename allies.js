@@ -283,8 +283,22 @@ function showUnitInfo(tower) {
     let rc = '#ff4500'; if(data.role==='Basic') rc='#00ff00'; else if(data.role==='Support') rc='#00e5ff'; else if(data.role==='Special') rc='#ffd700';
     let th = `<div style="color:#ffd700; font-weight:bold; font-size:13px; margin-bottom:2px;">${data.name}</div><div style="display:inline-block; background:${rc}; color:#000; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">${data.role}</div>`;
     let ih = `<div style="font-size:9px; color:#bbb; margin-bottom:4px;">ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>`;
-    let ch = ''; if(data.type==='apprentice') ch=`<div style="font-size:8px; color:#00ff00; margin-bottom:4px;">↗️ Ascend: 200 SE</div>`;
-    else if(data.upgrades) { ch=`<div style="font-size:8px; color:#ffd700; margin-bottom:2px;">Unleash Master (500 SE):</div>`; data.upgrades.forEach((u,i)=>{const ud=unitTypes.find(x=>x.type===u); ch+=`<div style="font-size:7.5px; color:#aaa;">${i===0?'↖️':'↗️'}: ${ud.name}</div>`;}); }
+    let ch = ''; 
+    if(data.type==='apprentice') {
+        ch = `
+            <div style="font-size:8px; color:#ffd700; margin-bottom:4px; font-weight:bold;">Promotion Paths (200 SE):</div>
+            <div style="font-size:7.5px; color:#ff4500; margin-bottom:2px;">⚔️ Attack: Archer, Mage, Assassin, Knight...</div>
+            <div style="font-size:7.5px; color:#00e5ff; margin-bottom:2px;">🪄 Support: Chainer, Ice, Tracker, Necro...</div>
+            <div style="font-size:7.5px; color:#ffd700; margin-bottom:4px;">💠 Special: Guardian, Alchemist, Mirror...</div>
+        `;
+    }
+    else if(data.upgrades) { 
+        ch=`<div style="font-size:8px; color:#ffd700; margin-bottom:2px;">Unleash Master (500 SE):</div>`; 
+        data.upgrades.forEach((u,i)=>{
+            const ud=unitTypes.find(x=>x.type===u); 
+            ch+=`<div style="font-size:7.5px; color:#aaa;">${i===0?'↖️':'↗️'}: ${ud.name}</div>`;
+        }); 
+    }
     d.innerHTML = `${th}${ch}${ih}<div style="color:#888; font-size:9px; margin-top:2px; line-height:1.2;">${data.desc}</div>`;
     startInfoResetTimer();
 }
