@@ -138,7 +138,8 @@ function gameLoop() {
 
     if (!isStageStarting) {
         if (isBossStage) {
-            if (bossInstance && bossInstance.hp > 0) {
+            // Initial boss spawn or ongoing waves while boss is alive
+            if (!bossSpawned || (bossInstance && bossInstance.hp > 0)) {
                 if (Date.now() - lastSpawnTime > spawnInterval) {
                     spawnWave(); spawnInterval = Math.random() * 1200 + 800;
                 }
@@ -151,7 +152,11 @@ function gameLoop() {
                 if (Date.now() - lastSpawnTime > spawnInterval) {
                     spawnWave(); spawnInterval = Math.random() * 800 + 400;
                 }
-            } else if (enemies.length === 0) { stage++; initStage(); }
+            }
+            if (currentStageSpawned >= totalStageEnemies && enemies.length === 0) {
+                stage++; 
+                initStage(); 
+            }
         }
     }
 
