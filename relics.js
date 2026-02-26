@@ -99,6 +99,49 @@ const relicsData = {
         lore: "Feathers of pure darkness. They guide strikes toward the most vulnerable parts of a soul.", 
         bonus: { type: 'crit_chance', value: 0.1 },
         maxStack: 1, dropSource: 'boss'
+    },
+    // New Relics
+    'requiem_flute': { 
+        name: "Requiem Flute", icon: '🦴', 
+        effect: "Summoned skeletons/ghosts deal +10% damage per stack.", 
+        lore: "The melody brings courage to the summoned and rest to the restless.", 
+        bonus: { type: 'summon_damage', value: 0.1 },
+        maxStack: 10, dropSource: 'specialized'
+    },
+    'soul_candle': { 
+        name: "Soul Candle", icon: '🕯️', 
+        effect: "Apprentice summon cost -1 SE per stack.", 
+        lore: "A faint light that guides wandering souls at a cheaper price.", 
+        bonus: { type: 'summon_cost_reduction', value: 1 },
+        maxStack: 5, dropSource: 'basic'
+    },
+    'blood_ring': { 
+        name: "Bloodstone Ring", icon: '🩸', 
+        effect: "Global Crit Chance +0.5% per stack.", 
+        lore: "Pulses in sync with the wearer's heartbeat, seeking vital spots.", 
+        bonus: { type: 'crit_chance', value: 0.005 },
+        maxStack: 20, dropSource: 'all'
+    },
+    'execution_mark': { 
+        name: "Executioner's Mark", icon: '🗡️', 
+        effect: "Executes enemies below 1% HP per stack.", 
+        lore: "To those marked, the judgment of the abyss is inevitable.", 
+        bonus: { type: 'execute_threshold', value: 0.01 },
+        maxStack: 10, dropSource: 'specialized'
+    },
+    'foresight_eye': { 
+        name: "Eye of Foresight", icon: '🧿', 
+        effect: "Increases aura range of support units by 5 per stack.", 
+        lore: "Reads the invisible threads of causality to strengthen bonds.", 
+        bonus: { type: 'aura_range', value: 5 },
+        maxStack: 10, dropSource: 'specialized'
+    },
+    'cursed_coin': { 
+        name: "Cursed Gold Coin", icon: '🪙', 
+        effect: "Increases SE refund when selling units by 5% per stack.", 
+        lore: "Betrayal has a price, and this coin makes it a bit sweeter.", 
+        bonus: { type: 'sell_refund', value: 0.05 },
+        maxStack: 10, dropSource: 'all'
     }
 };
 
@@ -116,7 +159,12 @@ let totalRelicBonuses = {
     enemy_speed: 0,
     treasure_chance: 0,
     slow_strength: 0,
-    portal_dmg_reduction: 0
+    portal_dmg_reduction: 0,
+    summon_damage: 0,
+    summon_cost_reduction: 0,
+    execute_threshold: 0,
+    aura_range: 0,
+    sell_refund: 0
 };
 
 function initRelics() {
@@ -222,10 +270,18 @@ function renderTotalBonuses() {
         se_gain: "Flat SE Bonus",
         stun_duration: "Stun Duration",
         crit_damage: "Crit Multiplier",
+        crit_chance: "Crit Chance",
         pierce_chance: "Pierce Chance",
         enemy_hp: "Enemy HP Reduction",
+        enemy_speed: "Enemy Speed Reduction",
+        treasure_chance: "Treasure Spawn Rate",
         slow_strength: "Slow Intensity",
-        portal_dmg_reduction: "Portal Stability"
+        portal_dmg_reduction: "Portal Stability",
+        summon_damage: "Summoned Units ATK",
+        summon_cost_reduction: "Summon Cost Reduc.",
+        execute_threshold: "Execute Threshold",
+        aura_range: "Aura Range Bonus",
+        sell_refund: "Sell Refund Bonus"
     };
 
     for (let key in totalRelicBonuses) {
@@ -233,7 +289,9 @@ function renderTotalBonuses() {
         if (val !== 0) {
             hasAnyBonus = true;
             let dispVal = val > 0 ? `+${(val * 100).toFixed(1)}%` : `${(val * 100).toFixed(1)}%`;
-            if (key === 'range' || key === 'se_gain') dispVal = `+${val}`;
+            if (['range', 'se_gain', 'summon_cost_reduction', 'aura_range'].includes(key)) {
+                dispVal = val > 0 ? `+${val.toFixed(0)}` : `${val.toFixed(0)}`;
+            }
             
             bonusHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:9px;">
                 <span>${labels[key]}</span>

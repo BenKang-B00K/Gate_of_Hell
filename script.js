@@ -15,6 +15,15 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
         amount *= getBestiaryBonus(target.type);
     }
     target.hp -= amount;
+
+    // Executioner's Mark Relic Logic
+    const execThreshold = (typeof getRelicBonus === 'function') ? getRelicBonus('execute_threshold') : 0;
+    if (execThreshold > 0 && !target.isBoss) {
+        if (target.hp > 0 && (target.hp / target.maxHp) <= execThreshold) {
+            target.hp = 0; // Execute!
+        }
+    }
+
     if (target.hpFill) {
         const hpPercent = Math.max(0, (target.hp / target.maxHp) * 100);
         target.hpFill.style.width = `${hpPercent}%`;
@@ -141,7 +150,8 @@ function gameLoop() {
             const oY = oRect.top + oRect.height / 2;
             const dist = Math.sqrt(Math.pow(oX - tX, 2) + Math.pow(oY - tY, 2));
 
-            if (dist < 120) { // Buff aura range
+            const relicAuraBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('aura_range') : 0;
+            if (dist < (120 + relicAuraBonus)) { // Buff aura range + relic bonus
                 if (other.data.type === 'tracker') {
                     t.rangeBonus += 30; // +30 range
                 } else if (other.data.type === 'seer') {
@@ -260,6 +270,48 @@ function gameLoop() {
             continue;
         }
     }
+
+    // Friendly Skeletons & Ghosts Logic
+    const relicSummonBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_damage') : 0;
+    
+    [...friendlySkeletons, ...friendlyGhosts].forEach((summon, index, array) => {
+        // Move Up
+        summon.y -= summon.speed || 1.0;
+        if (summon.element) {
+            summon.element.style.top = `${summon.y}px`;
+            summon.element.style.left = `${summon.x}%`;
+        }
+
+        // Cleanup if they go off screen (top)
+        if (summon.y < -50) {
+            if (summon.element) summon.element.remove();
+            if (friendlySkeletons.includes(summon)) friendlySkeletons.splice(friendlySkeletons.indexOf(summon), 1);
+            else friendlyGhosts.splice(friendlyGhosts.indexOf(summon), 1);
+            return;
+        }
+
+        // Attack Logic (Simple proximity)
+        const summonPxX = (summon.x / 100) * gameWidth;
+        const now = Date.now();
+        if (now - (summon.lastAttack || 0) > 1000) {
+            const target = enemies.find(e => {
+                const exPx = (e.x / 100) * gameWidth;
+                return Math.sqrt(Math.pow(exPx - summonPxX, 2) + Math.pow(e.y - summon.y, 2)) < 40;
+            });
+
+            if (target) {
+                const baseDmg = friendlySkeletons.includes(summon) ? 20 : 40;
+                applyDamage(target, baseDmg * (1.0 + relicSummonBonus), null);
+                summon.lastAttack = now;
+                
+                // Visual feedback
+                if (summon.element) {
+                    summon.element.style.transform = 'translate(-50%, -50%) scale(1.3)';
+                    setTimeout(() => { if(summon.element) summon.element.style.transform = 'translate(-50%, -50%) scale(1)'; }, 200);
+                }
+            }
+        }
+    });
 
     towers.forEach(tower => {
         const overlay = tower.element.querySelector('.cooldown-overlay');

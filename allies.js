@@ -226,7 +226,10 @@ function createSlots(containerId, count) {
 function cancelMovement() { if (draggedUnit) draggedUnit.classList.remove('move-ready'); draggedUnit = null; isMovingUnit = false; }
 
 function summonTower(targetSlot) {
-    money -= towerCost;
+    const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
+    const finalTowerCost = Math.max(5, towerCost - reduction);
+
+    money -= finalTowerCost;
     if (typeof updateGauges === 'function') updateGauges();
     towerCost = Math.min(200, towerCost + 5);
     const s = unitTypes[0];
@@ -264,7 +267,7 @@ function summonTower(targetSlot) {
         } 
     });
     targetSlot.appendChild(unit); targetSlot.classList.add('occupied');
-    const tower = { data: s, element: unit, slotElement: targetSlot, range: s.range, cooldown: s.cooldown, lastShot: 0, spentSE: towerCost - 5 };
+    const tower = { data: s, element: unit, slotElement: targetSlot, range: s.range, cooldown: s.cooldown, lastShot: 0, spentSE: finalTowerCost - 5 };
     towers.push(tower); updateUnitOverlayButtons(tower); updateSummonButtonState();
 }
 
@@ -439,7 +442,11 @@ function initAllies() {
             }
             return;
         }
-        if(money < towerCost) return; 
+        
+        const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
+        const finalTowerCost = Math.max(5, towerCost - reduction);
+
+        if(money < finalTowerCost) return; 
         const vs = slots.filter(c => !c.classList.contains('occupied')); 
         if(vs.length === 0) return; 
         summonTower(vs[Math.floor(Math.random()*vs.length)]); 
@@ -719,6 +726,16 @@ function updateUnitOverlayButtons(t) {
 
 function sellTower(t) {
     const s = t.slotElement; s.classList.remove('occupied'); t.element.remove();
+    
+    // Calculate Refund with Relic Bonus
+    const baseRefund = t.spentSE || 0;
+    const relicRefundBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('sell_refund') : 0;
+    const finalRefund = Math.floor(baseRefund * (1.0 + relicRefundBonus));
+    
+    money = Math.min(1000, money + finalRefund);
+    updateGauges();
+    updateSummonButtonState();
+
     const idx = towers.indexOf(t); if(idx>-1) towers.splice(idx,1);
     if(typeof window.spawnCorruptedEnemy === 'function') {
         let ct = 'defiled_apprentice';
@@ -736,13 +753,18 @@ function sellTower(t) {
 function updateSummonButtonState() {
     const tc = document.getElementById('tower-card'); if(!tc) return;
     const scd = document.getElementById('summon-cost-display');
-    if(scd) scd.innerText = `${towerCost} SE`;
+    
+    // Apply Relic Cost Reduction
+    const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
+    const finalTowerCost = Math.max(5, towerCost - reduction); // Min cost 5
+
+    if(scd) scd.innerText = `${finalTowerCost} SE`;
 
     const isMax = towers.length >= maxTowers;
 
     const sw = document.getElementById('summon-warning');
     if(sw) {
-        if (money < towerCost && !isMax) {
+        if (money < finalTowerCost && !isMax) {
             sw.style.display = 'block';
             sw.innerText = 'NOT ENOUGH SE';
         } else {
@@ -750,7 +772,7 @@ function updateSummonButtonState() {
         }
     }
 
-    if(money<towerCost || isMax) tc.classList.add('locked'); else tc.classList.remove('locked');
+    if(money<finalTowerCost || isMax) tc.classList.add('locked'); else tc.classList.remove('locked');
     const pc = document.getElementById('purge-card'); if(!pc) return;
     const pw = document.getElementById('purge-warning');
     if(pw) {
