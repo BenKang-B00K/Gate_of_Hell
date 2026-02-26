@@ -1,19 +1,79 @@
 /* relics.js */
 
 const relicsData = {
-    'cursed_mask': { name: "Cursed Hannya Mask", icon: '👺', effect: "Allies deal +5% damage.", lore: "A mask that vibrates with the screams of a thousand forgotten souls.", bonus: { type: 'damage', value: 0.05 } },
-    'spectral_lantern': { name: "Spectral Lantern", icon: '🏮', effect: "Increases attack range of all units by 10.", lore: "Its light doesn't illuminate the path, it reveals the prey.", bonus: { type: 'range', value: 10 } },
-    'ancient_beads': { name: "Corrupted Prayer Beads", icon: '📿', effect: "Reduces all cooldowns by 5%.", lore: "Each bead is carved from the bone of a fallen saint.", bonus: { type: 'cooldown', value: 0.05 } },
-    'soul_urn': { name: "Soul-Binding Urn", icon: '⚱️', effect: "Gain 5% more Soul Energy from kills.", lore: "It hungers for the essence of the departed.", bonus: { type: 'se_gain', value: 0.05 } },
-    'withered_bell': { name: "Withered Temple Bell", icon: '🔔', effect: "Stuns enemies 10% longer.", lore: "Its toll sounds like a funeral dirge for the living.", bonus: { type: 'stun_duration', value: 0.1 } },
-    'broken_talisman': { name: "Blood-Stained Talisman", icon: '📜', effect: "Crits deal +20% more damage.", lore: "The ink was mixed with the blood of a thousand sacrifices.", bonus: { type: 'crit_damage', value: 0.2 } },
-    'obsidian_mirror': { name: "Obsidian Mirror", icon: '🪞', effect: "Projectiles have a 5% chance to pierce.", lore: "Reflects a world where the sun never rises.", bonus: { type: 'pierce_chance', value: 0.05 } },
-    'rusted_scythe': { name: "Rusted Reaper Scythe", icon: '🧹', effect: "Enemies have 5% less Max HP.", lore: "Even rust cannot dull the edge that harvests souls.", bonus: { type: 'enemy_hp', value: -0.05 } },
-    'spectral_chain': { name: "Chains of the Damned", icon: '⛓️', effect: "Slow effects are 10% stronger.", lore: "The more they struggle, the tighter they bind.", bonus: { type: 'slow_strength', value: 0.1 } },
-    'unholy_grail': { name: "Unholy Grail", icon: '🏆', effect: "Portal Energy increases 10% slower.", lore: "Fills with the tears of those who failed to guard the gate.", bonus: { type: 'portal_dmg_reduction', value: 0.1 } }
+    'cursed_mask': { 
+        name: "Cursed Hannya Mask", icon: '👺', 
+        effect: "Allies deal +1% damage per stack.", 
+        lore: "A mask that vibrates with the screams of a thousand forgotten souls.", 
+        bonus: { type: 'damage', value: 0.01 },
+        maxStack: 20, dropSource: 'basic'
+    },
+    'spectral_lantern': { 
+        name: "Spectral Lantern", icon: '🏮', 
+        effect: "Increases attack range of all units by 10.", 
+        lore: "Its light doesn't illuminate the path, it reveals the prey.", 
+        bonus: { type: 'range', value: 10 },
+        maxStack: 1, dropSource: 'specialized'
+    },
+    'ancient_beads': { 
+        name: "Corrupted Prayer Beads", icon: '📿', 
+        effect: "Reduces all cooldowns by 1% per stack.", 
+        lore: "Each bead is carved from the bone of a fallen saint.", 
+        bonus: { type: 'cooldown', value: 0.01 },
+        maxStack: 10, dropSource: 'all'
+    },
+    'soul_urn': { 
+        name: "Soul-Binding Urn", icon: '⚱️', 
+        effect: "Gain +1 Soul Energy from kills per stack.", 
+        lore: "It hungers for the essence of the departed.", 
+        bonus: { type: 'se_gain', value: 1 },
+        maxStack: 10, dropSource: 'all'
+    },
+    'withered_bell': { 
+        name: "Withered Temple Bell", icon: '🔔', 
+        effect: "Stuns enemies 2% longer per stack.", 
+        lore: "Its toll sounds like a funeral dirge for the living.", 
+        bonus: { type: 'stun_duration', value: 0.02 },
+        maxStack: 5, dropSource: 'all'
+    },
+    'broken_talisman': { 
+        name: "Blood-Stained Talisman", icon: '📜', 
+        effect: "Crit Multiplier +0.5% per stack.", 
+        lore: "The ink was mixed with the blood of a thousand sacrifices.", 
+        bonus: { type: 'crit_damage', value: 0.005 },
+        maxStack: 50, dropSource: 'all'
+    },
+    'obsidian_mirror': { 
+        name: "Obsidian Mirror", icon: '🪞', 
+        effect: "Projectiles gain 2% pierce chance per stack.", 
+        lore: "Reflects a world where the sun never rises.", 
+        bonus: { type: 'pierce_chance', value: 0.02 },
+        maxStack: 10, dropSource: 'all'
+    },
+    'rusted_scythe': { 
+        name: "Rusted Reaper Scythe", icon: '🧹', 
+        effect: "Enemies have 2% less Max HP per stack.", 
+        lore: "Even rust cannot dull the edge that harvests souls.", 
+        bonus: { type: 'enemy_hp', value: -0.02 },
+        maxStack: 10, dropSource: 'all'
+    },
+    'spectral_chain': { 
+        name: "Chains of the Damned", icon: '⛓️', 
+        effect: "Slow effects are 2% stronger per stack.", 
+        lore: "The more they struggle, the tighter they bind.", 
+        bonus: { type: 'slow_strength', value: 0.02 },
+        maxStack: 10, dropSource: 'fast'
+    },
+    'unholy_grail': { 
+        name: "Unholy Grail", icon: '🏆', 
+        effect: "Portal Energy increases 5% slower per stack.", 
+        lore: "Fills with the tears of those who failed to guard the gate.", 
+        bonus: { type: 'portal_dmg_reduction', value: 0.05 },
+        maxStack: 5, dropSource: 'corrupted'
+    }
 };
 
-let collectedRelics = [];
+let collectedRelics = {}; // ID: count
 let totalRelicBonuses = {
     damage: 0,
     range: 0,
@@ -36,6 +96,7 @@ function initRelics() {
         relicsBtn.addEventListener('click', () => {
             renderRelicsGrid();
             relicsOverlay.style.display = 'flex';
+            if (typeof isPaused !== 'undefined') isPaused = true;
         });
         relicsBtn.addEventListener('mouseenter', () => {
             const d = document.getElementById('unit-info');
@@ -53,12 +114,15 @@ function initRelics() {
     if (closeRelics) {
         closeRelics.addEventListener('click', () => {
             relicsOverlay.style.display = 'none';
+            if (typeof isPaused !== 'undefined') isPaused = false;
         });
     }
 
-    // Close on clicking outside content
     relicsOverlay.addEventListener('click', (e) => {
-        if (e.target === relicsOverlay) relicsOverlay.style.display = 'none';
+        if (e.target === relicsOverlay) {
+            relicsOverlay.style.display = 'none';
+            if (typeof isPaused !== 'undefined') isPaused = false;
+        }
     });
 }
 
@@ -71,13 +135,19 @@ function renderRelicsGrid() {
     
     allRelicIds.forEach(id => {
         const slot = document.createElement('div');
-        const isCollected = collectedRelics.includes(id);
+        const count = collectedRelics[id] || 0;
+        const isCollected = count > 0;
         slot.className = `relic-slot ${isCollected ? '' : 'empty'}`;
-        slot.innerHTML = relicsData[id].icon;
+        
+        let inner = relicsData[id].icon;
+        if (count > 1) {
+            inner += `<div style="position:absolute; bottom:2px; right:4px; font-size:8px; color:#fff; text-shadow:1px 1px 2px #000;">x${count}</div>`;
+        }
+        slot.innerHTML = inner;
+        slot.style.position = 'relative';
         
         if (isCollected) {
             slot.addEventListener('click', () => {
-                // Highlight selection
                 document.querySelectorAll('.relic-slot').forEach(s => s.classList.remove('selected'));
                 slot.classList.add('selected');
                 showRelicDetail(id);
@@ -101,9 +171,9 @@ function renderTotalBonuses() {
         damage: "Global Damage",
         range: "Global Range",
         cooldown: "Cooldown Reduction",
-        se_gain: "SE Gain Bonus",
+        se_gain: "Flat SE Bonus",
         stun_duration: "Stun Duration",
-        crit_damage: "Crit Damage",
+        crit_damage: "Crit Multiplier",
         pierce_chance: "Pierce Chance",
         enemy_hp: "Enemy HP Reduction",
         slow_strength: "Slow Intensity",
@@ -114,8 +184,8 @@ function renderTotalBonuses() {
         const val = totalRelicBonuses[key];
         if (val !== 0) {
             hasAnyBonus = true;
-            let dispVal = val > 0 ? `+${Math.round(val * 100)}%` : `${Math.round(val * 100)}%`;
-            if (key === 'range') dispVal = `+${val}`;
+            let dispVal = val > 0 ? `+${(val * 100).toFixed(1)}%` : `${(val * 100).toFixed(1)}%`;
+            if (key === 'range' || key === 'se_gain') dispVal = `+${val}`;
             
             bonusHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:9px;">
                 <span>${labels[key]}</span>
@@ -135,58 +205,92 @@ function showRelicDetail(id) {
     const details = document.getElementById('relic-details');
     if (!details) return;
     const data = relicsData[id];
+    const count = collectedRelics[id] || 0;
     
     details.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div class="relic-detail-title">${data.name}</div>
+            <div class="relic-detail-title">${data.name} ${count > 1 ? '(x' + count + ')' : ''}</div>
             <button onclick="document.querySelectorAll('.relic-slot').forEach(s=>s.classList.remove('selected')); renderRelicsGrid();" style="background:#333; border:none; color:#888; font-size:7px; cursor:pointer; padding:2px 4px; border-radius:3px;">BACK</button>
         </div>
-        <div class="relic-detail-effect">${data.effect}</div>
+        <div class="relic-detail-effect">${data.effect} (Max Stack: ${data.maxStack})</div>
         <div class="relic-detail-lore">"${data.lore}"</div>
     `;
 }
 
 function collectRelic(id) {
-    if (!collectedRelics.includes(id)) {
-        collectedRelics.push(id);
+    const data = relicsData[id];
+    const currentCount = collectedRelics[id] || 0;
+    
+    if (currentCount < data.maxStack) {
+        collectedRelics[id] = currentCount + 1;
         updateRelicBonuses();
-        showRelicToast(relicsData[id]);
-        if (typeof playSound === 'function') playSound('start'); // Use start sound for now
+        showRelicInfoInPanel(data);
+        if (typeof playSound === 'function') playSound('start'); 
         return true;
     }
     return false;
 }
 
 function updateRelicBonuses() {
-    // Reset bonuses
     for (let key in totalRelicBonuses) totalRelicBonuses[key] = 0;
     
-    // Sum up from collected relics
-    collectedRelics.forEach(id => {
+    for (let id in collectedRelics) {
+        const count = collectedRelics[id];
         const bonus = relicsData[id].bonus;
-        totalRelicBonuses[bonus.type] += bonus.value;
-    });
+        totalRelicBonuses[bonus.type] += (bonus.value * count);
+    }
 }
 
-function showRelicToast(relic) {
-    const container = document.getElementById('game-container');
-    const toast = document.createElement('div');
-    toast.className = 'relic-toast';
-    toast.innerHTML = `✨ RELIC FOUND: ${relic.icon} ${relic.name}`;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 1500);
+function showRelicInfoInPanel(relic) {
+    const d = document.getElementById('unit-info');
+    if (!d) return;
+    
+    const count = collectedRelics[relic.id] || 1;
+    
+    d.innerHTML = `
+        <div style="color:#ffd700; font-weight:bold; font-size:13px; margin-bottom:2px;">✨ RELIC FOUND!</div>
+        <div style="color:#ff4500; font-size:11px; font-weight:bold; margin-bottom:4px;">${relic.icon} ${relic.name}</div>
+        <div style="display:inline-block; background:#00ff00; color:#000; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">NEW POWER ACQUIRED</div>
+        <div style="font-size:9px; color:#bbb; line-height:1.2;">${relic.effect}</div>
+        <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"${relic.lore}"</div>
+    `;
+    
+    if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
 }
 
 function checkRelicDrop(enemy) {
-    // 2% chance for a relic drop from any enemy
-    if (Math.random() < 0.02) {
-        const allIds = Object.keys(relicsData);
-        const uncollected = allIds.filter(id => !collectedRelics.includes(id));
-        
-        if (uncollected.length > 0) {
-            const randomId = uncollected[Math.floor(Math.random() * uncollected.length)];
-            collectRelic(randomId);
-        }
+    // 1% drop chance
+    if (Math.random() > 0.01) return;
+
+    const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank'];
+    const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'heavy', 'lava', 'burning'];
+    const fastSpecters = ['runner', 'lightspeed'];
+    const corruptedSpecters = ['defiled_apprentice', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'];
+
+    let possibleIds = [];
+    const allIds = Object.keys(relicsData);
+
+    allIds.forEach(id => {
+        const data = relicsData[id];
+        const currentCount = collectedRelics[id] || 0;
+        if (currentCount >= data.maxStack) return;
+
+        let canDrop = false;
+        if (data.dropSource === 'all') canDrop = true;
+        else if (data.dropSource === 'basic' && basicSpecters.includes(enemy.type)) canDrop = true;
+        else if (data.dropSource === 'specialized' && specializedWraiths.includes(enemy.type)) canDrop = true;
+        else if (data.dropSource === 'fast' && fastSpecters.includes(enemy.type)) canDrop = true;
+        else if (data.dropSource === 'corrupted' && corruptedSpecters.includes(enemy.type)) canDrop = true;
+        else if (enemy.isBoss) canDrop = true; // Bosses can drop anything
+
+        if (canDrop) possibleIds.push(id);
+    });
+
+    if (possibleIds.length > 0) {
+        const randomId = possibleIds[Math.floor(Math.random() * possibleIds.length)];
+        // Pass the ID to showRelicInfoInPanel correctly
+        const relicWithId = { ...relicsData[randomId], id: randomId };
+        collectRelic(randomId);
     }
 }
 

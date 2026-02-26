@@ -239,7 +239,7 @@ function initStage() {
             timerElement.innerText = countdown;
         } else {
             clearInterval(timerInterval);
-            timerElement.innerText = "START!";
+            timerElement.innerText = "SPECTERS INCOMING!";
             
             // [Master] King of the Forsaken logic
             if (typeof towers !== 'undefined') {

@@ -386,13 +386,16 @@ img, .unit, .enemy, .tower-card, .relic-slot {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 40px;
+    font-size: 24px; /* Reduced from 40px */
     font-weight: bold;
     color: #ff0000;
-    text-shadow: 0 0 10px #fff;
+    text-shadow: 0 0 10px #fff, 0 0 20px #ff0000;
     z-index: 100;
     display: none;
     pointer-events: none;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 /* 적 유령 */
