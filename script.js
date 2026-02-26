@@ -140,14 +140,11 @@ function gameLoop() {
 
     if (!isStageStarting) {
         if (isBossStage) {
-            // Initial boss spawn or ongoing waves while boss is alive
-            if (!bossSpawned || (bossInstance && bossInstance.hp > 0)) {
+            // Spawn boss first, then minions until limit
+            if (!bossSpawned || (bossInstance && bossInstance.hp > 0 && currentStageSpawned < totalStageEnemies)) {
                 if (Date.now() - lastSpawnTime > spawnInterval) {
                     spawnWave(); spawnInterval = Math.random() * 1200 + 800;
                 }
-            } else if (bossSpawned && enemies.length === 0) {
-                stage++; 
-                initStage(); 
             }
         } else {
             if (currentStageSpawned < totalStageEnemies) {
@@ -155,10 +152,13 @@ function gameLoop() {
                     spawnWave(); spawnInterval = Math.random() * 800 + 400;
                 }
             }
-            if (currentStageSpawned >= totalStageEnemies && enemies.length === 0) {
-                stage++; 
-                initStage(); 
-            }
+        }
+
+        // Global Stage Progression Check
+        const allSpawned = isBossStage ? (bossSpawned && currentStageSpawned >= totalStageEnemies) : (currentStageSpawned >= totalStageEnemies);
+        if (allSpawned && enemies.length === 0) {
+            stage++; 
+            initStage(); 
         }
     }
 
@@ -209,6 +209,7 @@ function gameLoop() {
 
         if (enemy.y >= targetY) {
             portalEnergy += enemy.hp + (enemy.isBoss ? 200 : (enemy.isCorrupted ? 50 : 0));
+            if (enemy.isBoss) bossInstance = null; // Important: Clear instance if boss escapes
             if (portalEnergy >= maxPortalEnergy) { portalEnergy = maxPortalEnergy; isPaused = true; document.getElementById('game-over-overlay').style.display = 'flex'; return; }
             updateGauges(); enemy.element.remove(); enemies.splice(i, 1); updateStageInfo(); continue;
         }
