@@ -514,14 +514,14 @@ function performJobChange(el) {
     const paths = [ {from:'apprentice', to:['chainer','talisman','monk','archer','ice','fire','assassin','tracker','necromancer','guardian','knight','alchemist','mirror']} ];
     const p = paths.find(x=>x.from===t.data.type); if(!p) return;
 
-    // Filter paths that already exist on the map (Limit 1 for Tier 2+)
+    // Filter paths that already exist on the map (Limit 2 for Tier 2)
     const availablePaths = p.to.filter(type => {
         const count = towers.filter(tw => tw.data.type === type).length;
-        return count < 1;
+        return count < 2;
     });
 
     if (availablePaths.length === 0) {
-        alert("No available classes to ascend! All possible paths already exist on the map.");
+        alert("No available classes to ascend! All possible paths already have 2 units on the map.");
         return;
     }
 
