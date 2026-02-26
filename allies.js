@@ -1,6 +1,6 @@
 /* allies.js */
 
-let towerCost = 40;
+let towerCost = 30;
 const jobChangeCost = 200; 
 const masterJobCost = 500; 
 const maxTowers = 12; 
@@ -228,7 +228,7 @@ function cancelMovement() { if (draggedUnit) draggedUnit.classList.remove('move-
 function summonTower(targetSlot) {
     money -= towerCost;
     if (typeof updateGauges === 'function') updateGauges();
-    towerCost += 5;
+    towerCost = Math.min(200, towerCost + 5);
     const s = unitTypes[0];
     recordUnlock(s.type);
     const unit = document.createElement('div');
