@@ -6,8 +6,15 @@ const sounds = {
     summon: null,   // Placeholder for summon sound
     attack: null,   // Placeholder for attack sound
     kill: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_5177f803f3.mp3'),     // Enemy death sound
-    gameover: null  // Placeholder for game over sound
+    gameover: null,  // Placeholder for game over sound
+    bgm: new Audio('https://cdn.pixabay.com/audio/2021/11/11/audio_40f06f5228.mp3')      // Cave Temple BGM
 };
+
+// Configure BGM loop
+if (sounds.bgm) {
+    sounds.bgm.loop = true;
+}
+
 
 /**
  * Set the volume for a specific sound effect.
@@ -67,9 +74,19 @@ function updateAllVolumes() {
             if (key === 'hover') factor = 0.6;
             if (key === 'start') factor = 1.2;
             if (key === 'kill') factor = 0.8;
+            if (key === 'bgm') factor = 0.5; // BGM is usually quieter
             
             sounds[key].volume = Math.min(1.0, currentVol * factor);
         }
+    }
+}
+
+/**
+ * Start the BGM if it's not already playing.
+ */
+function startBGM() {
+    if (sounds.bgm && sounds.bgm.paused) {
+        sounds.bgm.play().catch(e => console.log("BGM play blocked until interaction"));
     }
 }
 
@@ -95,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 muteBtn.innerText = '🔇';
             }
             updateAllVolumes();
+            startBGM(); // Ensure BGM starts on user interaction
         });
         
         muteBtn.addEventListener('click', () => {
@@ -105,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 muteBtn.innerText = '🔇';
             } else {
                 muteBtn.innerText = globalVolume > 0.5 ? '🔊' : '🔉';
+                startBGM(); // Ensure BGM starts when unmuting if it wasn't playing
             }
             updateAllVolumes();
         });

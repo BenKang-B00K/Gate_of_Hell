@@ -348,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startBtn.addEventListener('click', () => {
             clearInterval(thunderInterval);
             playSound('start');
+            if (typeof startBGM === 'function') startBGM();
             startScreen.classList.add('shrink-to-info');
             
             setTimeout(() => {
