@@ -80,7 +80,8 @@ function getCorruptionMultipliers() {
 }
 
 // Calculate gradual stage-based multipliers
-function getStageMultipliers() {
+function getStageMultipliers(isBoss = false) {
+    if (isBoss) return { hpStageMult: 1.0, speedStageMult: 1.0 };
     // HP increases by 5% per stage (compounded slightly)
     // Speed increases by 0.3% per stage
     const hpStageMult = Math.pow(1.05, stage - 1);
@@ -406,7 +407,7 @@ function spawnBoss() {
     enemyDiv.appendChild(hpBg);
     
     const { hpMult, speedMult } = getCorruptionMultipliers();
-    const { hpStageMult, speedStageMult } = getStageMultipliers();
+    const { hpStageMult, speedStageMult } = getStageMultipliers(true);
 
     const boss = {
         element: enemyDiv,

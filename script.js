@@ -77,7 +77,7 @@ function handleSpecialAblities(tower, target) {
 function gameLoop() {
     if (isPaused) { requestAnimationFrame(gameLoop); return; }
     const roadRect = road.getBoundingClientRect();
-    const targetY = roadRect.height + 40; 
+    const targetY = roadRect.height + 10; 
     gameWidth = gameContainer.offsetWidth;
     const nowTime = Date.now();
 
