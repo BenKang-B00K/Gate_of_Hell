@@ -693,12 +693,9 @@ const corruptedTypes = {
 function spawnCorruptedEnemy(tower, forcedType = null) {
     totalCorruptedCount++;
     const road = document.getElementById('road');
-    const slotRect = tower.slotElement.getBoundingClientRect();
-    const roadRect = road.getBoundingClientRect();
     
-    // Calculate X relative to the road
-    const centerX = slotRect.left + slotRect.width / 2;
-    const relX = ((centerX - roadRect.left) / roadRect.width) * 100;
+    // Spawn from the entrance (top) like regular enemies
+    const randomX = Math.random() * 80 + 10;
 
     const tier = Math.min(tower.data.tier, 3);
     const data = forcedType ? corruptedTypes[forcedType] : corruptedTypes[tier];
@@ -727,8 +724,8 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
     enemyDiv.appendChild(hpBg);
 
     road.appendChild(enemyDiv);
-    enemyDiv.style.left = `${relX}%`;
-    enemyDiv.style.top = `${tower.slotElement.offsetTop}px`; // Start from their vertical position
+    enemyDiv.style.left = `${randomX}%`;
+    enemyDiv.style.top = `0px`;
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
@@ -737,10 +734,10 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
     const enemy = {
         element: enemyDiv,
         hpFill: hpFill,
-        initialX: relX,
-        x: relX,
-        targetX: 50, // Move toward center of road
-        y: tower.slotElement.offsetTop,
+        initialX: randomX,
+        x: randomX,
+        targetX: Math.random() * 50 + 25, // Within portal arch
+        y: 0,
         baseSpeed: data.speed * speedMult * speedStageMult, 
         speed: data.speed * speedMult * speedStageMult,
         maxHp: hpValue, 
