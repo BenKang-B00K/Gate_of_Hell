@@ -64,17 +64,14 @@ function getCorruptionMultipliers() {
     let speedMult = 1.0;
     const s = corruptedShards;
 
-    if (s >= 50) {
-        hpMult = 1.70; // Fixed +70%
-        speedMult = 1.02; // Fixed +2%
-    } else if (s >= 41) {
-        hpMult = 1 + (s * 0.02); // +2% per shard
-        speedMult = 1 + (s * 0.0002); // +0.02% per shard
+    if (s >= 40) {
+        hpMult = 1 + (s * 0.04); // +4% per shard
+        speedMult = 1 + (s * 0.0005); // +0.05% per shard
     } else if (s >= 21) {
-        hpMult = 1 + (s * 0.015); // +1.5% per shard
-        speedMult = 1 + (s * 0.0001); // +0.01% per shard
+        hpMult = 1 + (s * 0.03); // +3% per shard
+        speedMult = 1 + (s * 0.0002); // +0.02% per shard
     } else if (s >= 1) {
-        hpMult = 1 + (s * 0.01); // +1% per shard
+        hpMult = 1 + (s * 0.02); // +2% per shard
     }
     
     // Apply Relic Enemy HP reduction
@@ -274,9 +271,9 @@ function updateGauges() {
     const debuffDesc = document.getElementById('active-debuffs');
     
     if (shardFill && shardText && debuffDesc) {
-        const shardPercent = (corruptedShards / 99) * 100;
+        const shardPercent = (corruptedShards / 49) * 100;
         shardFill.style.width = `${shardPercent}%`;
-        shardText.innerText = `${corruptedShards} / 99`;
+        shardText.innerText = `${corruptedShards} / 49`;
 
         const { hpStageMult, speedStageMult } = getStageMultipliers();
         const debuffHeader = document.getElementById('stage-debuff-header');
@@ -287,10 +284,9 @@ function updateGauges() {
         }
 
         let desc = "Normal";
-        if (corruptedShards >= 50) desc = "⚠️ 70% HP, +2% SPD (FATAL)";
-        else if (corruptedShards >= 41) desc = "🔥 +2% HP/shard, +0.02% SPD/shard";
-        else if (corruptedShards >= 21) desc = "🌑 +1.5% HP/shard, +0.01% SPD/shard";
-        else if (corruptedShards >= 1) desc = "☁️ +1% HP/shard";
+        if (corruptedShards >= 40) desc = "💀 +4% HP/shard, +0.05% SPD/shard (EXTREME)";
+        else if (corruptedShards >= 21) desc = "🔥 +3% HP/shard, +0.02% SPD/shard";
+        else if (corruptedShards >= 1) desc = "🌑 +2% HP/shard";
         debuffDesc.innerText = `Corruption Level: ${desc}`;
     }
 
@@ -978,7 +974,7 @@ function handleEnemyDeath(target, killer = null) {
         }
 
         if (target.isCorrupted) {
-            if (corruptedShards < 99) {
+            if (corruptedShards < 49) {
                 corruptedShards += 1;
                 updateGauges();
                 if (typeof createCSGainEffect === 'function' && target.element) {

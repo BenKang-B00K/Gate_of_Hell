@@ -2,7 +2,6 @@
 
 let towerCost = 30;
 const jobChangeCost = 200; 
-const masterJobCost = 500; 
 const maxTowers = 16; 
 
 // Track unlocked classes for Records
@@ -368,13 +367,13 @@ function showUnitInfo(tower) {
         `;
     }
     else if(data.upgrades) { 
-        ch=`<div style="font-size:8px; color:#ffd700; margin-bottom:4px;">Unleash Master (500 SE):</div>
+        ch=`<div style="font-size:8px; color:#ffd700; margin-bottom:4px;">Unleash Master (25 Shards):</div>
            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:6px;">`; 
         data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); 
             ch+=`
                 <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
-                    <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)" title="Unleash ${ud.name}" style="background:#222; border:1px solid #aaa; color:#fff; border-radius:4px; cursor:pointer; padding:2px 8px; font-size:10px;">${i===0?'↖️':'↗️'}</button>
+                    <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)" title="Unleash ${ud.name} (25 Shards)" style="background:#222; border:1px solid #aaa; color:#fff; border-radius:4px; cursor:pointer; padding:2px 8px; font-size:10px;">${i===0?'↖️':'↗️'}</button>
                     <div style="font-size:7px; color:#aaa; max-width:50px; text-align:center; line-height:1;">${ud.name}</div>
                 </div>
             `;
@@ -740,13 +739,20 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
         return;
     }
 
-    if(money<masterJobCost) return; 
-    money-=masterJobCost; if(typeof updateGauges==='function')updateGauges();
+    const shardCost = 25;
+    if(corruptedShards < shardCost) {
+        alert(`Not enough Corrupted Shards! Need ${shardCost}.`);
+        return;
+    } 
+    
+    corruptedShards -= shardCost;
+    if(typeof updateGauges==='function') updateGauges();
     
     const nt = unitTypes.find(x=>x.type===ntStr); const el = tower.element;
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText=nt.icon;
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
-    recordUnlock(nt.type); tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; tower.spentSE+=masterJobCost;
+    recordUnlock(nt.type); tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; 
+    tower.spentSE += 500; // Add 500 equivalent SE for selling value
     if(nt.type==='rampart') tower.charges=5;
     updateUnitOverlayButtons(tower); updateSummonButtonState();
     if (fromInfo) showUnitInfo(tower);
@@ -779,7 +785,7 @@ function updateUnitOverlayButtons(t) {
     } else if(t.data.upgrades) {
         t.data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); const b=document.createElement('div');
-            b.className=i===0?'unit-overlay-btn promote-btn':'unit-overlay-btn promote-btn-right'; b.innerHTML=i===0?'↖️':'↗️'; b.title=`Unleash ${ud.name} (500 SE)`;
+            b.className=i===0?'unit-overlay-btn promote-btn':'unit-overlay-btn promote-btn-right'; b.innerHTML=i===0?'↖️':'↗️'; b.title=`Unleash ${ud.name} (25 Shards)`;
             b.addEventListener('click', e=>{ e.stopPropagation(); performMasterJobChange(t,u); }); el.appendChild(b);
         });
     }
@@ -846,4 +852,7 @@ function updateSummonButtonState() {
     }
 
     if(money<800 || portalEnergy<=0) pc.classList.add('locked'); else pc.classList.remove('locked');
+    
+    // Optional: Add logic here to highlight units that CAN be upgraded if shards >= 25
+    // But since this function is about the bottom summon buttons, we'll stop here.
 }
