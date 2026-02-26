@@ -1,7 +1,7 @@
 /* script.js */
 const sounds = {
     thunder: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c350677d07.mp3'), // Thunder sound
-    hover: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3'),   // UI Hover
+    hover: new Audio('https://heinig-ton.de/wp-content/uploads/2024/08/elemental-magic-spell-impact-outgoing-228342.mp3'),   // Elemental magic spell hover
     start: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_2ba65f912e.mp3')    // Deep cinematic start
 };
 
