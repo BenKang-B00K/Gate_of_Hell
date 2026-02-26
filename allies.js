@@ -384,7 +384,20 @@ window.showResourceInfo = showResourceInfo;
 
 function initAllies() {
     const tc = document.getElementById('tower-card');
-    if(tc) tc.addEventListener('click', () => { if(money<towerCost) return; const vs=slots.filter(c=>!c.classList.contains('occupied')); if(vs.length===0) return; summonTower(vs[Math.floor(Math.random()*vs.length)]); });
+    if(tc) tc.addEventListener('click', () => { 
+        if (towers.length >= maxTowers) {
+            const warning = document.getElementById('max-units-warning');
+            if (warning) {
+                warning.style.display = 'block';
+                setTimeout(() => { warning.style.display = 'none'; }, 1500);
+            }
+            return;
+        }
+        if(money < towerCost) return; 
+        const vs = slots.filter(c => !c.classList.contains('occupied')); 
+        if(vs.length === 0) return; 
+        summonTower(vs[Math.floor(Math.random()*vs.length)]); 
+    });
     const pc = document.getElementById('purge-card'); if(pc) pc.addEventListener('click', () => purgePortal());
     
     // Resource Label Click Events
@@ -665,15 +678,6 @@ function updateSummonButtonState() {
     if(scd) scd.innerText = `${towerCost} SE`;
 
     const isMax = towers.length >= maxTowers;
-    const warning = document.getElementById('max-units-warning');
-    if(warning && isMax) {
-        warning.style.display = 'block';
-        setTimeout(() => {
-            warning.style.display = 'none';
-        }, 1500); // 1.5 seconds
-    } else if (warning) {
-        warning.style.display = 'none';
-    }
 
     const sw = document.getElementById('summon-warning');
     if(sw) {
