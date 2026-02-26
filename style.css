@@ -457,6 +457,19 @@ body {
 .enemy.burning { font-size: 20px; box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
 .enemy.gold { font-size: 18px; box-shadow: 0 0 20px rgba(255, 215, 0, 1); }
 
+.enemy.crit-hit {
+    animation: critHitPulse 0.3s ease-out;
+    color: #ff0000;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+    z-index: 1000;
+}
+
+@keyframes critHitPulse {
+    0% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+    50% { transform: translate(-50%, -50%) scale(1.5); filter: brightness(2); }
+    100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+}
+
 /* --- 보스(Boss) 스타일 --- */
 .enemy.boss {
     z-index: 100;

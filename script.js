@@ -330,7 +330,38 @@ function shoot(tower, target) {
         
         handleSpecialAblities(tower, target);
         const relicDmgBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('damage') : 0;
-        const finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus);
+        let finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus);
+        
+        // Critical Hit Logic
+        const totalCritChance = critChance + (tower.data.type === 'vajra' ? 0.2 : 0); // Vajra has 20% innate crit
+        if (Math.random() < totalCritChance) {
+            const relicCritBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_damage') : 0;
+            const totalCritMultiplier = critMultiplier + relicCritBonus;
+            finalDamageMultiplier *= totalCritMultiplier;
+            
+            // Critical Visual Effect
+            if (target.element) {
+                target.element.classList.add('crit-hit');
+                setTimeout(() => target.element && target.element.classList.remove('crit-hit'), 300);
+            }
+            
+            // Vajra Special Crit Effect: Massive Knockback
+            if (tower.data.type === 'vajra') {
+                const nearby = enemies.filter(e => {
+                    const exPx = (e.x / 100) * gameWidth;
+                    const ter = target.element.getBoundingClientRect();
+                    const tx = (ter.left + ter.width / 2);
+                    const ty = (ter.top + ter.height / 2);
+                    const dist = Math.sqrt(Math.pow(exPx - tx, 2) + Math.pow(e.y - ty, 2));
+                    return dist < 80;
+                });
+                nearby.forEach(e => {
+                    e.y = Math.max(0, e.y - 40);
+                    if (e.element) e.element.style.top = `${e.y}px`;
+                });
+            }
+        }
+
         applyDamage(target, tower.data.damage * finalDamageMultiplier, tower);
     }, 200);
 }

@@ -15,6 +15,7 @@ let stage = 1;
 let money = 150;
 let damageMultiplier = 1.0;
 let critChance = 0;
+let critMultiplier = 1.5;
 let corruptedShards = 0;
 let totalCorruptedCount = 0;
 let totalStageEnemies = 0;
