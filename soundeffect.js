@@ -63,7 +63,6 @@ setVolume('holy', 0.5);
 // Global state for volume control
 let globalVolume = 0.5;
 let isMuted = false;
-let previousVolume = 0.5;
 let bgmPausedManual = false;
 
 /**
@@ -105,52 +104,4 @@ function startBGM() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const volumeSlider = document.getElementById('volume-slider');
-    const muteBtn = document.getElementById('mute-btn');
-    const bgmToggleBtn = document.getElementById('bgm-toggle-btn');
-    const volumeValue = document.getElementById('volume-value');
-    
-    if (volumeSlider && muteBtn && volumeValue) {
-        // Initial setup
-        volumeSlider.value = globalVolume;
-        volumeValue.innerText = `${Math.round(globalVolume * 100)}%`;
-        updateAllVolumes();
-        
-        volumeSlider.addEventListener('input', (e) => {
-            globalVolume = parseFloat(e.target.value);
-            volumeValue.innerText = `${Math.round(globalVolume * 100)}%`;
-            if (globalVolume > 0) {
-                isMuted = false;
-                muteBtn.innerText = globalVolume > 0.5 ? '🔊' : '🔉';
-            } else {
-                isMuted = true;
-                muteBtn.innerText = '🔇';
-            }
-            updateAllVolumes();
-            startBGM(); 
-        });
-        
-        muteBtn.addEventListener('click', () => {
-            isMuted = !isMuted;
-            if (isMuted) {
-                previousVolume = globalVolume;
-                muteBtn.innerText = '🔇';
-            } else {
-                muteBtn.innerText = globalVolume > 0.5 ? '🔊' : '🔉';
-                startBGM(); 
-            }
-            updateAllVolumes();
-        });
-
-        if (bgmToggleBtn) {
-            bgmToggleBtn.addEventListener('click', () => {
-                bgmPausedManual = !bgmPausedManual;
-                bgmToggleBtn.style.opacity = bgmPausedManual ? '0.4' : '1';
-                bgmToggleBtn.innerText = bgmPausedManual ? '❌' : '🎵';
-                updateAllVolumes();
-            });
-        }
-    }
-});
 

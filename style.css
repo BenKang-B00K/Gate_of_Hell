@@ -1576,56 +1576,6 @@ img, .enemy, .tower-card, .relic-slot {
     transform-origin: right top;
 }
 
-/* Volume Control Styles */
-#volume-control-container {
-    position: absolute;
-    top: 28px; /* Slightly adjusted */
-    right: 6px;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 1px 4px;
-    border-radius: 6px;
-    border: 1px solid #333;
-    transform: scale(0.7); /* Reduced from 0.8 */
-    transform-origin: right top;
-}
-
-.vol-btn {
-    background: none;
-    border: none;
-    color: #ffd700;
-    cursor: pointer;
-    font-size: 10px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 14px;
-    height: 14px;
-}
-
-#mute-btn {
-    font-size: 10px;
-}
-
-#volume-slider {
-    width: 40px; /* Reduced from 60px */
-    height: 3px;
-    cursor: pointer;
-    accent-color: #ffd700;
-}
-
-#volume-value {
-    font-size: 7px;
-    color: #ffd700;
-    font-weight: bold;
-    min-width: 20px;
-    text-align: right;
-}
-
 #tutorial-label {
     font-size: 8px; /* Increased from 7px */
     color: #ffd700;
