@@ -333,7 +333,8 @@ function shoot(tower, target) {
         let finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus);
         
         // Critical Hit Logic
-        const totalCritChance = critChance + (tower.data.type === 'vajra' ? 0.2 : 0); // Vajra has 20% innate crit
+        const relicCritChance = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_chance') : 0;
+        const totalCritChance = critChance + relicCritChance + (tower.data.type === 'vajra' ? 0.2 : 0); // Vajra has 20% innate crit
         if (Math.random() < totalCritChance) {
             const relicCritBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_damage') : 0;
             const totalCritMultiplier = critMultiplier + relicCritBonus;

@@ -70,6 +70,35 @@ const relicsData = {
         lore: "Fills with the tears of those who failed to guard the gate.", 
         bonus: { type: 'portal_dmg_reduction', value: 0.05 },
         maxStack: 5, dropSource: 'corrupted'
+    },
+    // Boss Artifacts
+    'cerberus_fang': { 
+        name: "Cerberus's Fang", icon: '🦴', 
+        effect: "Global ATK +10%.", 
+        lore: "A jagged tooth from the triple-headed guardian. It still carries the heat of hellfire.", 
+        bonus: { type: 'damage', value: 0.1 },
+        maxStack: 1, dropSource: 'boss'
+    },
+    'stygian_oar': { 
+        name: "Stygian Oar", icon: '🛶', 
+        effect: "Global Enemy Speed -15%.", 
+        lore: "Used to ferry souls across the river Styx. Now it slows the very essence of time.", 
+        bonus: { type: 'enemy_speed', value: -0.15 },
+        maxStack: 1, dropSource: 'boss'
+    },
+    'gluttony_crown': { 
+        name: "Crown of Gluttony", icon: '👑', 
+        effect: "Treasure Specter Spawn Rate +1%.", 
+        lore: "A crown that smells of decay. It draws out the greediest spirits from the shadows.", 
+        bonus: { type: 'treasure_chance', value: 0.01 },
+        maxStack: 1, dropSource: 'boss'
+    },
+    'fallen_wings': { 
+        name: "Fallen Angel's Wings", icon: '🪽', 
+        effect: "Global Crit Chance +10%.", 
+        lore: "Feathers of pure darkness. They guide strikes toward the most vulnerable parts of a soul.", 
+        bonus: { type: 'crit_chance', value: 0.1 },
+        maxStack: 1, dropSource: 'boss'
     }
 };
 
@@ -81,8 +110,11 @@ let totalRelicBonuses = {
     se_gain: 0,
     stun_duration: 0,
     crit_damage: 0,
+    crit_chance: 0,
     pierce_chance: 0,
     enemy_hp: 0,
+    enemy_speed: 0,
+    treasure_chance: 0,
     slow_strength: 0,
     portal_dmg_reduction: 0
 };
@@ -132,8 +164,11 @@ function renderRelicsGrid() {
     grid.innerHTML = '';
 
     const allRelicIds = Object.keys(relicsData);
-    
-    allRelicIds.forEach(id => {
+    const normalRelics = allRelicIds.filter(id => relicsData[id].dropSource !== 'boss');
+    const bossArtifacts = allRelicIds.filter(id => relicsData[id].dropSource === 'boss');
+
+    // Helper to create slots
+    const createSlot = (id) => {
         const slot = document.createElement('div');
         const count = collectedRelics[id] || 0;
         const isCollected = count > 0;
@@ -153,9 +188,22 @@ function renderRelicsGrid() {
                 showRelicDetail(id);
             });
         }
-        
-        grid.appendChild(slot);
-    });
+        return slot;
+    };
+
+    // Normal Section
+    const normalHeader = document.createElement('div');
+    normalHeader.style.cssText = 'grid-column: 1 / -1; color: #aaa; font-size: 10px; font-weight: bold; margin-top: 5px; border-bottom: 1px solid #333; padding-bottom: 2px;';
+    normalHeader.innerText = 'NORMAL RELICS';
+    grid.appendChild(normalHeader);
+    normalRelics.forEach(id => grid.appendChild(createSlot(id)));
+
+    // Boss Section
+    const bossHeader = document.createElement('div');
+    bossHeader.style.cssText = 'grid-column: 1 / -1; color: #ff4500; font-size: 10px; font-weight: bold; margin-top: 15px; border-bottom: 1px solid #ff4500; padding-bottom: 2px;';
+    bossHeader.innerText = 'BOSS ARTIFACTS';
+    grid.appendChild(bossHeader);
+    bossArtifacts.forEach(id => grid.appendChild(createSlot(id)));
 
     renderTotalBonuses();
 }

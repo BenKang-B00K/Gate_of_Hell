@@ -82,6 +82,12 @@ function getCorruptionMultipliers() {
     if (relicHPReduction < 0) {
         hpMult *= (1.0 + relicHPReduction);
     }
+
+    // Apply Relic Enemy Speed reduction
+    const relicSpeedReduction = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_speed') : 0;
+    if (relicSpeedReduction < 0) {
+        speedMult *= (1.0 + relicSpeedReduction);
+    }
     
     return { hpMult, speedMult };
 }
@@ -489,7 +495,9 @@ function spawnEnemy() {
     currentStageSpawned++;
     updateStageInfo();
 
-    let probs = { basic: 0.96, pattern: 0.01, enhanced: 0.01, armoured: 0.01, treasure: treasureChance };
+    const relicTreasureBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('treasure_chance') : 0;
+    const finalTreasureChance = treasureChance + relicTreasureBonus;
+    let probs = { basic: 0.96, pattern: 0.01, enhanced: 0.01, armoured: 0.01, treasure: finalTreasureChance };
     
     if (stage === 1) {
         probs = { basic: 1.0, pattern: 0, enhanced: 0, armoured: 0, treasure: 0 };
@@ -910,21 +918,25 @@ function handleEnemyDeath(target, killer = null) {
         if (target.isBoss) {
             let rewardMsg = "";
             let bonusDetail = "";
+            let relicId = "";
 
             if (target.data.type === 'cerberus') {
-                damageMultiplier += target.data.rewardEffect;
+                relicId = 'cerberus_fang';
                 rewardMsg = `Obtained [${target.data.rewardName}]`;
                 bonusDetail = "Global ATK +10%";
             } else if (target.data.type === 'charon') {
-                globalSpeedFactor -= target.data.rewardEffect;
+                relicId = 'stygian_oar';
                 rewardMsg = `Obtained [${target.data.rewardName}]`;
                 bonusDetail = "Enemy Speed -15%";
             } else if (target.data.type === 'beelzebub') {
-                treasureChance += target.data.rewardEffect;
+                relicId = 'gluttony_crown';
                 rewardMsg = `Obtained [${target.data.rewardName}]`;
                 bonusDetail = "Treasure Spawn Rate Up";
             } else if (target.data.type === 'lucifer') {
-                critChance += target.data.rewardEffect;
+                relicId = 'fallen_wings';
+                rewardMsg = `Obtained [${target.data.rewardName}]`;
+                bonusDetail = "Crit Chance +10%";
+                
                 const frozenOverlay = document.getElementById('frozen-overlay');
                 if(frozenOverlay) frozenOverlay.style.opacity = 0; 
                 towers.forEach(t => {
@@ -933,8 +945,10 @@ function handleEnemyDeath(target, killer = null) {
                         t.element.classList.remove('frozen-tomb');
                     }
                 });
-                rewardMsg = `Obtained [${target.data.rewardName}]`;
-                bonusDetail = "Crit Chance +10%";
+            }
+            
+            if (relicId && typeof collectRelic === 'function') {
+                collectRelic(relicId);
             }
             
             showBossVictory(target.data.name, rewardMsg, bonusDetail);
