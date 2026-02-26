@@ -796,6 +796,10 @@ body {
     color: #00e5ff;
 }
 
+.promote-12:hover {
+    transform: translateX(-50%) scale(1.2);
+}
+
 /* 2 o'clock - Special */
 .promote-2 {
     top: -4px;
