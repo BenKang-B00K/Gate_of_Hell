@@ -502,8 +502,22 @@ function initAllies() {
 }
 
 function initRecordsUI() {
-    const rb = document.getElementById('records-btn'); const ro = document.getElementById('records-overlay');
-    if(rb && ro) rb.addEventListener('click', () => { isPaused=true; ro.style.display='flex'; renderBestiary(); });
+        const rb = document.getElementById('records-btn'); const ro = document.getElementById('records-overlay');
+        if(rb && ro) {
+            rb.addEventListener('click', () => { isPaused = true; ro.style.display = 'flex'; renderBestiary(); });
+            rb.addEventListener('mouseenter', () => {
+                const d = document.getElementById('unit-info');
+                if (d && Date.now() >= infoPanelLockedUntil) {
+                    d.innerHTML = `
+                        <div style="color:#ffd700; font-weight:bold; font-size:13px; margin-bottom:2px;">Exorcism Records</div>
+                        <div style="display:inline-block; background:#8b6b00; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">ARCHIVES</div>
+                        <div style="font-size:9px; color:#bbb; line-height:1.2;">Contains the Bestiary of all encountered specters and the Ascendency Tree of your exorcists.</div>
+                        <div style="color:#00ff00; font-size:8px; margin-top:4px;">* Bestiary bonuses increase damage against known specters.</div>
+                        <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"To defeat your enemy, you must first know their name, their sin, and their sorrow."</div>
+                    `;
+                }
+            });
+        }
     const cr = document.getElementById('close-records'); if(cr) cr.addEventListener('click', () => { ro.style.display='none'; isPaused=false; });
     document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', function() {
         document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active')); this.classList.add('active');
