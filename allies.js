@@ -287,8 +287,15 @@ function renderBestiary() {
             if(!d && typeof corruptedTypes!=='undefined') d=corruptedTypes[t]; 
             if(!d) return;
             const kills = killCounts[t] || 0; const bonus = getBestiaryBonus(t); const btx = bonus>1?`DMG +${((bonus-1)*100).toFixed(0)}%`:`No Bonus`;
+            let rVal = d.reward;
+            if (rVal === undefined) {
+                if (g.h === 'Abyss Bosses') rVal = 500;
+                else if (g.h === 'Corrupted Specters') rVal = 0;
+                else rVal = 10;
+            }
+            const rewardText = ` | ✨ ${rVal}`;
             const item = document.createElement('div'); item.className='bestiary-item';
-            item.innerHTML = `<div class="custom-tooltip specter"><strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}</div><div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div><div class="bestiary-info"><div class="bestiary-name">${names[t]||t}</div><div class="bestiary-stats">💀 ${kills} | ${btx}</div></div>`;
+            item.innerHTML = `<div class="custom-tooltip specter"><strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}</div><div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div><div class="bestiary-info"><div class="bestiary-name">${names[t]||t}</div><div class="bestiary-stats">💀 ${kills}${rewardText} | ${btx}</div></div>`;
             bt.appendChild(item);
         });
     });

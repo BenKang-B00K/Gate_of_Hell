@@ -150,7 +150,7 @@ function gameLoop() {
         }
 
         if (enemy.y >= targetY) {
-            portalEnergy += enemy.isBoss ? 100 : (enemy.isCorrupted ? 50 : 10);
+            portalEnergy += enemy.hp + (enemy.isBoss ? 200 : (enemy.isCorrupted ? 50 : 0));
             if (portalEnergy >= maxPortalEnergy) { portalEnergy = maxPortalEnergy; isPaused = true; document.getElementById('game-over-overlay').style.display = 'flex'; return; }
             updateGauges(); enemy.element.remove(); enemies.splice(i, 1); updateStageInfo(); continue;
         }
