@@ -36,14 +36,15 @@ let draggedUnit = null; // Currently dragged unit
 window.encounteredEnemies = new Set();
 
 // --- Exorcism Records Data ---
-const killCounts = {}; // Track kills by type
+window.killCounts = window.killCounts || {}; // Track kills by type
 
 function recordKill(type) {
-    killCounts[type] = (killCounts[type] || 0) + 1;
+    window.killCounts[type] = (window.killCounts[type] || 0) + 1;
+    if (typeof saveGameData === 'function') saveGameData();
 }
 
 function getBestiaryBonus(type) {
-    const kills = killCounts[type] || 0;
+    const kills = window.killCounts[type] || 0;
     const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'];
     const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning'];
     

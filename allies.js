@@ -6,7 +6,42 @@ const masterJobCost = 500;
 const maxTowers = 12; 
 
 // Track unlocked classes for Records
+// --- Persistence System ---
 const unlockedUnits = new Set(['apprentice']);
+
+function saveGameData() {
+    const data = {
+        unlockedUnits: Array.from(unlockedUnits),
+        encounteredEnemies: Array.from(window.encounteredEnemies || []),
+        killCounts: window.killCounts || {}
+    };
+    localStorage.setItem('gateOfHell_saveData', JSON.stringify(data));
+}
+
+function loadGameData() {
+    const saved = localStorage.getItem('gateOfHell_saveData');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            if (data.unlockedUnits) {
+                data.unlockedUnits.forEach(u => unlockedUnits.add(u));
+            }
+            if (data.encounteredEnemies) {
+                if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
+                data.encounteredEnemies.forEach(e => window.encounteredEnemies.add(e));
+            }
+            if (data.killCounts) {
+                if (!window.killCounts) window.killCounts = {};
+                Object.assign(window.killCounts, data.killCounts);
+            }
+        } catch (e) {
+            console.error("Failed to load save data:", e);
+        }
+    }
+}
+
+// Initial load
+loadGameData();
 
 function recordUnlock(type, isEnemy = false) {
     const tutorialToggle = document.getElementById('tutorial-toggle');
@@ -16,6 +51,7 @@ function recordUnlock(type, isEnemy = false) {
         if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
         if (window.encounteredEnemies.has(type)) return;
         window.encounteredEnemies.add(type);
+        saveGameData();
 
         if (!isTutorialEnabled) return;
 
@@ -67,9 +103,11 @@ function recordUnlock(type, isEnemy = false) {
         return;
     }
 
-    if (!unlockedUnits.has(type)) {
-        unlockedUnits.add(type);
-        if (!isTutorialEnabled) return;
+            if (!unlockedUnits.has(type)) {
+                unlockedUnits.add(type);
+                saveGameData();
+    
+                if (!isTutorialEnabled) return;
 
         const data = unitTypes.find(u => u.type === type);
         if (data && type !== 'apprentice') {
