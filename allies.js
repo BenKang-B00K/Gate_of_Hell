@@ -3,7 +3,7 @@
 let towerCost = 30;
 const jobChangeCost = 200; 
 const masterJobCost = 500; 
-const maxTowers = 12; 
+const maxTowers = 16; 
 
 // Track unlocked classes for Records
 // --- Persistence System ---

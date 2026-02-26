@@ -216,7 +216,7 @@ function renderRelicsGrid() {
         
         let inner = relicsData[id].icon;
         if (count > 1) {
-            inner += `<div style="position:absolute; bottom:2px; right:4px; font-size:8px; color:#fff; text-shadow:1px 1px 2px #000;">x${count}</div>`;
+            inner += `<div style="position:absolute; bottom:1px; right:2px; font-size:7px; color:#fff; text-shadow:1px 1px 2px #000;">x${count}</div>`;
         }
         slot.innerHTML = inner;
         slot.style.position = 'relative';
