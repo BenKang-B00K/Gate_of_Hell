@@ -284,9 +284,38 @@ function renderBestiary() {
         'abyssal_acolyte': 'Any Tier 3+',
         'bringer_of_doom': 'Any Tier 4'
     };
+    const corruptTriggerMap = {
+        'defiled_apprentice': ['apprentice'],
+        'cursed_vajra': ['monk', 'vajra', 'saint', 'asura'],
+        'void_piercer': ['archer', 'voidsniper', 'thousandhand', 'piercing_shadow'],
+        'frost_outcast': ['ice', 'absolutezero', 'permafrost', 'cocytus'],
+        'ember_hatred': ['fire', 'hellfire', 'phoenix', 'purgatory'],
+        'betrayer_blade': ['assassin', 'abyssal', 'spatial', 'reaper'],
+        'abyssal_acolyte': ['executor', 'binder', 'grandsealer', 'flamemaster', 'vajra', 'saint', 'voidsniper', 'thousandhand', 'absolutezero', 'permafrost', 'hellfire', 'phoenix', 'abyssal', 'spatial', 'seer', 'commander', 'wraithlord', 'cursedshaman', 'rampart', 'judgment', 'paladin', 'crusader'],
+        'bringer_of_doom': ['warden', 'cursed_talisman', 'asura', 'piercing_shadow', 'cocytus', 'purgatory', 'reaper', 'doom_guide', 'forsaken_king', 'void_gatekeeper', 'eternal_wall']
+    };
+
     groups.forEach(g => {
-        const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px;`; bt.appendChild(h);
+        const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px;`;
+        
+        let hasVisibleItem = false;
+        const tempContainer = document.createDocumentFragment();
+
         g.types.forEach(t => {
+            let isVisible = false;
+            if (g.h === 'Basic Specters') {
+                isVisible = true; // 기본 유령은 항상 보임
+            } else if (g.h === 'Corrupted Specters') {
+                const triggers = corruptTriggerMap[t] || [];
+                isVisible = triggers.some(unit => unlockedUnits.has(unit));
+            } else {
+                // Specialized, Treasure, Bosses는 조우하거나 처치한 적이 있어야 함
+                isVisible = (window.encounteredEnemies && window.encounteredEnemies.has(t)) || (killCounts[t] > 0);
+            }
+
+            if (!isVisible) return;
+            hasVisibleItem = true;
+
             let d; 
             if (typeof bossData !== 'undefined' && bossData) {
                 for (let k in bossData) { if (bossData[k].type === t) { d = bossData[k]; break; } }
@@ -296,6 +325,7 @@ function renderBestiary() {
             }
             if(!d && typeof corruptedTypes!=='undefined') d=corruptedTypes[t]; 
             if(!d) return;
+
             const kills = killCounts[t] || 0; const bonus = getBestiaryBonus(t); const btx = bonus>1?`DMG +${((bonus-1)*100).toFixed(0)}%`:`No Bonus`;
             let rVal = d.reward;
             if (rVal === undefined) {
@@ -307,8 +337,13 @@ function renderBestiary() {
             const originText = corruptInfo[t] ? `<br><strong style="color:#ff0000;">[Origin]</strong> ${corruptInfo[t]}` : '';
             const item = document.createElement('div'); item.className='bestiary-item';
             item.innerHTML = `<div class="custom-tooltip specter"><strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}${originText}</div><div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div><div class="bestiary-info"><div class="bestiary-name">${names[t]||t}</div><div class="bestiary-stats">💀 ${kills}${rewardText} | ${btx}</div></div>`;
-            bt.appendChild(item);
+            tempContainer.appendChild(item);
         });
+
+        if (hasVisibleItem) {
+            bt.appendChild(h);
+            bt.appendChild(tempContainer);
+        }
     });
 }
 
