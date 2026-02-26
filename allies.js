@@ -125,7 +125,7 @@ function recordUnlock(type, isEnemy = false) {
 }
 
 const unitTypes = [
-    { type: 'apprentice', name: 'Apprentice Exorcist', role: 'Basic', tier: 1, icon: '🧑‍🎓', damage: 35, range: 120, cooldown: 833, desc: "Fires a basic bolt of purified energy at a single target." },
+    { type: 'apprentice', name: 'Apprentice Exorcist', role: 'Basic', tier: 1, icon: '🧙', damage: 35, range: 120, cooldown: 833, desc: "Fires a basic bolt of purified energy at a single target." },
     { type: 'chainer', name: 'Soul Chainer', role: 'Support', tier: 2, icon: '⛓️', damage: 15, range: 130, cooldown: 1000, desc: "Launches spiritual chains that damage and slow the target by 30%.", upgrades: ['executor', 'binder'] },
     { type: 'talisman', name: 'Talismanist', role: 'Attack', tier: 2, icon: '📜', damage: 25, range: 120, cooldown: 1500, desc: "Throws an explosive seal that deals area-of-effect damage on impact.", upgrades: ['grandsealer', 'flamemaster'] },
     { type: 'monk', name: 'Mace Monk', role: 'Support', tier: 2, icon: '⛪', damage: 40, range: 100, cooldown: 1200, desc: "Strikes with a heavy mace, knocking back spirits away from the gate.", upgrades: ['vajra', 'saint'] },
