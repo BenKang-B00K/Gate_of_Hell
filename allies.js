@@ -509,19 +509,22 @@ function purgePortal() {
     if(money>=pc && portalEnergy>0) { money-=pc; portalEnergy=Math.max(0,portalEnergy-pa); if(typeof updateGauges==='function')updateGauges(); }
 }
 
-function performJobChange(el) {
+function performJobChange(el, targetRole = null) {
     const t = towers.find(x=>x.element===el); if(!t) return;
     const paths = [ {from:'apprentice', to:['chainer','talisman','monk','archer','ice','fire','assassin','tracker','necromancer','guardian','knight','alchemist','mirror']} ];
     const p = paths.find(x=>x.from===t.data.type); if(!p) return;
 
-    // Filter paths that already exist on the map (Limit 2 for Tier 2)
+    // Filter paths by role and map limit (Limit 2 for Tier 2)
     const availablePaths = p.to.filter(type => {
+        const ud = unitTypes.find(x => x.type === type);
+        if (targetRole && ud.role !== targetRole) return false;
         const count = towers.filter(tw => tw.data.type === type).length;
         return count < 2;
     });
 
     if (availablePaths.length === 0) {
-        alert("No available classes to ascend! All possible paths already have 2 units on the map.");
+        const msg = targetRole ? `No available ${targetRole} classes!` : "No available classes!";
+        alert(msg);
         return;
     }
 
@@ -562,8 +565,23 @@ function updateUnitOverlayButtons(t) {
     const sell = document.createElement('div'); sell.className='unit-overlay-btn sell-btn'; sell.innerHTML='💀'; sell.title='Corrupt Unit (Sell)';
     sell.addEventListener('click', e=>{ e.stopPropagation(); sellTower(t); }); el.appendChild(sell);
     if(t.data.type==='apprentice') {
-        const up = document.createElement('div'); up.className='unit-overlay-btn promote-btn'; up.innerHTML='↗️'; up.title='Ascend (200 SE)';
-        up.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el); }); el.appendChild(up);
+        // Attack Path (10 o'clock)
+        const atk = document.createElement('div'); 
+        atk.className='unit-overlay-btn promote-10'; atk.innerHTML='⚔️'; atk.title='Ascend: Attack Path (200 SE)';
+        atk.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el, 'Attack'); }); 
+        el.appendChild(atk);
+
+        // Support Path (12 o'clock)
+        const sup = document.createElement('div'); 
+        sup.className='unit-overlay-btn promote-12'; sup.innerHTML='🪄'; sup.title='Ascend: Support Path (200 SE)';
+        sup.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el, 'Support'); }); 
+        el.appendChild(sup);
+
+        // Special Path (2 o'clock)
+        const spc = document.createElement('div'); 
+        spc.className='unit-overlay-btn promote-2'; spc.innerHTML='✨'; spc.title='Ascend: Special Path (200 SE)';
+        spc.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el, 'Special'); }); 
+        el.appendChild(spc);
     } else if(t.data.upgrades) {
         t.data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); const b=document.createElement('div');
