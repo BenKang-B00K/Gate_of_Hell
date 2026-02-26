@@ -45,7 +45,7 @@ body {
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0 0 15px rgba(255, 69, 0, 0.8));
     position: relative;
-    animation: lavaFlow 3s infinite alternate ease-in-out, lightningStrike 5s infinite;
+    animation: lavaFlow 3s infinite alternate ease-in-out, lightningStrike 2s infinite;
 }
 
 @keyframes lavaFlow {
@@ -54,9 +54,9 @@ body {
 }
 
 @keyframes lightningStrike {
-    0%, 94%, 100% { filter: brightness(1); }
-    95% { filter: brightness(3) contrast(1.5) drop-shadow(0 0 30px #fff); }
-    97% { filter: brightness(2); }
+    0%, 10%, 16%, 50%, 94%, 100% { filter: brightness(1) contrast(1); }
+    12%, 95% { filter: brightness(4) contrast(2) drop-shadow(0 0 40px #fff); }
+    14%, 97% { filter: brightness(2.5) contrast(1.5); }
 }
 
 .start-subtitle {
