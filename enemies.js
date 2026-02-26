@@ -201,7 +201,7 @@ function initStage() {
     sealedGhostCount = 0; 
 
     if (isBossStage) {
-        totalStageEnemies = 999; 
+        totalStageEnemies = 15; 
         const bossName = bossData[stage] ? bossData[stage].name : "Unknown Boss";
         
         const tutorialToggle = document.getElementById('tutorial-toggle');
@@ -357,7 +357,8 @@ window.updateStageInfo = updateStageInfo;
 
 // Spawn wave
 function spawnWave() {
-    if (!isBossStage && currentStageSpawned >= totalStageEnemies) return;
+    if (currentStageSpawned >= totalStageEnemies && !isBossStage) return;
+    if (isBossStage && bossSpawned && currentStageSpawned >= totalStageEnemies) return;
 
     if (isBossStage && !bossSpawned) {
         spawnBoss();
