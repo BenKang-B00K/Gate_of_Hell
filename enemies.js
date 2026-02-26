@@ -87,8 +87,8 @@ const enemyCategories = {
         { type: 'mist', icon: '🌫️', speed: 1.3, hp: 140, defense: 0, probability: 0.15, reward: 5, desc: "A spectral fog that drifts slowly. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Condensation of thousands of tiny, forgotten sorrows." },
         { type: 'memory', icon: '👣', speed: 1.7, hp: 90, defense: 0, probability: 0.15, reward: 5, desc: "A faint trace of a once-living being. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Not even a full soul, just the impression left by a strong desire to live." },
         { type: 'shade', icon: '👤', speed: 2.2, hp: 60, defense: 0, probability: 0.1, reward: 4, desc: "A weak but fast spirit that moves in a blurring motion.", effectiveness: "Rapid-fire units.", lore: "The faintest remains of a soul, barely holding onto existence." },
-        { type: 'tank', icon: '💀', speed: 0.75, hp: 300, defense: 10, probability: 0.15, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
-        { type: 'runner', icon: '⚡', speed: 3.0, hp: 40, defense: 0, probability: 0.1, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
+        { type: 'tank', icon: '💀', speed: 0.75, hp: 200, defense: 10, probability: 0.15, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
+        { type: 'runner', icon: '⚡', speed: 2.5, hp: 40, defense: 0, probability: 0.1, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
     ],
     pattern: [
         { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.3, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
@@ -391,18 +391,6 @@ function spawnBoss() {
     hpBg.appendChild(hpFill);
     enemyDiv.appendChild(hpBg);
     
-    // Enemy click event
-    enemyDiv.addEventListener('mousedown', (e) => {
-        e.stopPropagation();
-        if (typeof window.showEnemyInfo === 'function') {
-            window.showEnemyInfo(boss);
-        }
-    });
-
-    road.appendChild(enemyDiv);
-    enemyDiv.style.left = '50%';
-    enemyDiv.style.top = '0px';
-
     const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
 
@@ -422,6 +410,19 @@ function spawnBoss() {
         data: data,
         lastAbilityTime: Date.now()
     };
+
+    // Enemy click event
+    enemyDiv.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        if (typeof window.showEnemyInfo === 'function') {
+            window.showEnemyInfo(boss);
+        }
+    });
+
+    road.appendChild(enemyDiv);
+    enemyDiv.style.left = '50%';
+    enemyDiv.style.top = '0px';
+
     enemies.push(boss);
     bossInstance = boss;
 

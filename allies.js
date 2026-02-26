@@ -262,20 +262,29 @@ function initTutorial() {
 
 function renderBestiary() {
     const bt = document.getElementById('bestiary-tab'); bt.innerHTML = '';
-    const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade" };
+    const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade", 'cerberus': 'Cerberus', 'charon': 'Charon', 'beelzebub': 'Beelzebub', 'lucifer': 'Lucifer' };
     const groups = [
         { h: 'Basic Specters', c: '#00e5ff', types: ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'] },
         { h: 'Specialized Wraiths', c: '#ff00ff', types: ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning'] },
         { h: 'Treasure Specters', c: '#ffd700', types: ['gold'] },
-        { h: 'Corrupted Specters', c: '#ff0000', types: ['defiled_apprentice', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'] }
+        { h: 'Corrupted Specters', c: '#ff0000', types: ['defiled_apprentice', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'] },
+        { h: 'Abyss Bosses', c: '#8b0000', types: ['cerberus', 'charon', 'beelzebub', 'lucifer'] }
     ];
     groups.forEach(g => {
         const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px;`; bt.appendChild(h);
         g.types.forEach(t => {
-            let d; for(let k in enemyCategories) { const f=enemyCategories[k].find(x=>x.type===t); if(f){d=f; break;} } if(!d && typeof corruptedTypes!=='undefined') d=corruptedTypes[t]; if(!d) return;
+            let d; 
+            if (typeof bossData !== 'undefined' && bossData) {
+                for (let k in bossData) { if (bossData[k].type === t) { d = bossData[k]; break; } }
+            }
+            if (!d) {
+                for(let k in enemyCategories) { const f=enemyCategories[k].find(x=>x.type===t); if(f){d=f; break;} }
+            }
+            if(!d && typeof corruptedTypes!=='undefined') d=corruptedTypes[t]; 
+            if(!d) return;
             const kills = killCounts[t] || 0; const bonus = getBestiaryBonus(t); const btx = bonus>1?`DMG +${((bonus-1)*100).toFixed(0)}%`:`No Bonus`;
             const item = document.createElement('div'); item.className='bestiary-item';
-            item.innerHTML = `<div class="custom-tooltip specter"><strong style="color:#ffd700;">[Trait]</strong><br>${d.desc}</div><div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div><div class="bestiary-info"><div class="bestiary-name">${names[t]||t}</div><div class="bestiary-stats">💀 ${kills} | ${btx}</div></div>`;
+            item.innerHTML = `<div class="custom-tooltip specter"><strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}</div><div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div><div class="bestiary-info"><div class="bestiary-name">${names[t]||t}</div><div class="bestiary-stats">💀 ${kills} | ${btx}</div></div>`;
             bt.appendChild(item);
         });
     });
@@ -295,9 +304,9 @@ function renderPromotionTree() {
         pg[gn].forEach(p => {
             const row = document.createElement('div'); row.style.cssText='display:grid; grid-template-columns:70px 12px 85px 12px 105px 12px 105px; align-items:center; justify-content:center; gap:3px; border-bottom:1px solid #222; padding-bottom:4px;';
             const node = (type,tier) => {
-                const d=unitTypes.find(x=>x.type===type); const u=unlockedUnits.has(type);
-                const n=document.createElement('div'); n.className=`unit-node tier${tier} ${u?'':'locked'}`; n.style.cssText='position:relative; font-size:7px; padding:2px 4px; min-width:auto;';
-                n.innerHTML = `<div class="custom-tooltip"><strong>${d.name}</strong><br>${d.desc}</div>${u?d.icon:'❓'} ${u?d.name:'Locked'}`; return n;
+                const d=unitTypes.find(x=>x.type===type); 
+                const n=document.createElement('div'); n.className=`unit-node tier${tier}`; n.style.cssText='position:relative; font-size:7px; padding:2px 4px; min-width:auto;';
+                n.innerHTML = `<div class="custom-tooltip"><strong>${d.name}</strong><br>${d.desc}</div>${d.icon} ${d.name}`; return n;
             };
             const arrow = () => { const a=document.createElement('div'); a.innerText='→'; a.style.fontSize='8px'; return a; };
             row.appendChild(node('apprentice',1)); row.appendChild(arrow()); row.appendChild(node(p.t,2)); row.appendChild(arrow());
