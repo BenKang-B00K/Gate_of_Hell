@@ -10,7 +10,10 @@ body {
     height: 100vh;
     font-family: 'Malgun Gothic', sans-serif;
     overflow: hidden;
+    -webkit-user-select: none;
+    -ms-user-select: none;
     user-select: none;
+    touch-action: manipulation;
 }
 
 /* 게임 전체 컨테이너 (16:9 비율) */
