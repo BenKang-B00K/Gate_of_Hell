@@ -218,15 +218,19 @@ function showUnitInfo(tower) {
 
 function showEnemyInfo(enemy) {
     const d = document.getElementById('unit-info');
-    const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade" };
+    const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade", 'cerberus': 'Cerberus', 'charon': 'Charon', 'beelzebub': 'Beelzebub', 'lucifer': 'Lucifer' };
     
     const dispName = enemy.name || names[enemy.type] || enemy.type;
     const hp = Math.floor(enemy.hp);
     const maxHp = Math.floor(enemy.maxHp || hp);
 
+    const bonus = typeof getBestiaryBonus === 'function' ? getBestiaryBonus(enemy.type) : 1;
+    const bonusText = bonus > 1 ? `<div style="color: #00ff00; font-size: 8px; margin-bottom: 4px;">Bestiary Bonus: +${((bonus-1)*100).toFixed(0)}% DMG</div>` : '';
+
     d.innerHTML = `
         <div style="color: #ff4500; font-weight: bold; font-size: 13px; margin-bottom: 2px;">${dispName}</div>
         <div style="display:inline-block; background:#444; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">SPECTER</div>
+        ${bonusText}
         <div style="font-size: 9px; color: #ff0000; margin-bottom: 4px;">HP: ${hp} / ${maxHp}</div>
         <div style="color: #888; font-size: 9px; margin-top: 2px; line-height: 1.2;">${enemy.desc || 'A wandering soul from the abyss.'}</div>
     `;
