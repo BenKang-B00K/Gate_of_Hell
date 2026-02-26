@@ -141,10 +141,10 @@ const enemyCategories = {
 
 // Boss data
 const bossData = {
-    10: { name: "Cerberus", type: "cerberus", icon: '🐕', hp: 5000, speed: 0.3, size: 60, rewardName: "Cerberus's Fang", rewardEffect: 0.1, lore: "The triple-headed guardian of the gate, driven mad by the endless flow of corrupt souls." },
-    20: { name: "Charon", type: "charon", icon: '🛶', hp: 8000, speed: 0.2, size: 60, rewardName: "Stygian Oar", rewardEffect: 0.15, lore: "The ferryman of the dead, now harvesting souls for himself instead of delivering them." }, 
-    30: { name: "Beelzebub", type: "beelzebub", icon: '🪰', hp: 15000, speed: 0.2, size: 60, rewardName: "Crown of Gluttony", rewardEffect: 0.01, lore: "The Lord of the Flies, spawned from the rot of every broken promise in history." }, 
-    40: { name: "Lucifer", type: "lucifer", icon: '👑', hp: 25000, speed: 0.15, size: 70, rewardName: "Fallen Angel's Wings", rewardEffect: 0.1, lore: "The first to fall, seeking to drag every other light into the same bottomless abyss." } 
+    10: { name: "Cerberus", type: "cerberus", icon: '🐕', hp: 2500, speed: 0.35, size: 60, rewardName: "Cerberus's Fang", rewardEffect: 0.1, lore: "The triple-headed guardian of the gate, driven mad by the endless flow of corrupt souls." },
+    20: { name: "Charon", type: "charon", icon: '🛶', hp: 4500, speed: 0.25, size: 60, rewardName: "Stygian Oar", rewardEffect: 0.15, lore: "The ferryman of the dead, now harvesting souls for himself instead of delivering them." }, 
+    30: { name: "Beelzebub", type: "beelzebub", icon: '🪰', hp: 8000, speed: 0.25, size: 60, rewardName: "Crown of Gluttony", rewardEffect: 0.01, lore: "The Lord of the Flies, spawned from the rot of every broken promise in history." }, 
+    40: { name: "Lucifer", type: "lucifer", icon: '👑', hp: 15000, speed: 0.2, size: 70, rewardName: "Fallen Angel's Wings", rewardEffect: 0.1, lore: "The first to fall, seeking to drag every other light into the same bottomless abyss." } 
 };
 
 function showBossWarning(bossName) {
