@@ -37,6 +37,17 @@ function initRelics() {
             renderRelicsGrid();
             relicsOverlay.style.display = 'flex';
         });
+        relicsBtn.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div style="color:#ff4500; font-weight:bold; font-size:13px; margin-bottom:2px;">Abyssal Relics</div>
+                    <div style="display:inline-block; background:#8b2200; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">COLLECTION</div>
+                    <div style="font-size:9px; color:#bbb; line-height:1.2;">Permanent global bonuses found by defeating enemies. Collect them all to dominate the abyss.</div>
+                    <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"Artifacts of power that survived the fall. Each one carries the weight of a legendary soul."</div>
+                `;
+            }
+        });
     }
 
     if (closeRelics) {

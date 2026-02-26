@@ -401,6 +401,13 @@ function showResourceInfo(type) {
             <div style="font-size:9px; color:#bbb; line-height:1.2;">Increases enemy HP and Speed as they accumulate. Obtained by corrupting (selling) your units.</div>
             <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"Echoes of betrayal left behind when an exorcist succumbs to the dark. The abyss hungers for more of its own kind."</div>
         `;
+    } else if (type === 'purge') {
+        d.innerHTML = `
+            <div style="color:#9400d3; font-weight:bold; font-size:13px; margin-bottom:2px;">Purge Portal</div>
+            <div style="display:inline-block; background:#4b0082; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">SANCTIFICATION</div>
+            <div style="font-size:9px; color:#bbb; line-height:1.2;">Instantly removes 50% of current Portal Energy accumulation. Costs 800 SE.</div>
+            <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"A sacred ritual to cleanse the gate of encroaching spirits. It demands a heavy sacrifice of Soul Energy."</div>
+        `;
     }
     startInfoResetTimer();
 }
@@ -422,13 +429,17 @@ function initAllies() {
         if(vs.length === 0) return; 
         summonTower(vs[Math.floor(Math.random()*vs.length)]); 
     });
-    const pc = document.getElementById('purge-card'); if(pc) pc.addEventListener('click', () => purgePortal());
+    const pc = document.getElementById('purge-card'); 
+    if(pc) {
+        pc.addEventListener('click', () => purgePortal());
+        pc.addEventListener('mouseenter', () => showResourceInfo('purge'));
+    }
     
-    // Resource Label Click Events
+    // Resource Label Events
     const sel = document.getElementById('se-label');
-    if(sel) sel.addEventListener('click', () => showResourceInfo('se'));
+    if(sel) sel.addEventListener('mouseenter', () => showResourceInfo('se'));
     const shl = document.getElementById('shards-label');
-    if(shl) shl.addEventListener('click', () => showResourceInfo('shards'));
+    if(shl) shl.addEventListener('mouseenter', () => showResourceInfo('shards'));
 
     slots.length = 0; createSlots('left-slots', 27); createSlots('right-slots', 27);
     initRecordsUI(); initTutorial();
