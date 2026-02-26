@@ -176,12 +176,11 @@ body {
 /* 중앙 길 */
 #road {
     width: 150px;
-    background: linear-gradient(90deg, 
-        #222 0%, 
-        #111 5%, 
-        #0a0a0a 50%, 
-        #111 95%, 
-        #222 100%);
+    background-image: url('https://cdn.pixabay.com/photo/2014/12/31/13/26/lava-584983_1280.jpg');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: multiply;
+    background-color: rgba(0, 0, 0, 0.4);
     box-shadow: 
         inset 10px 0 20px rgba(0,0,0,0.8),
         inset -10px 0 20px rgba(0,0,0,0.8),
