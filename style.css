@@ -35,42 +35,86 @@ body {
 
 .start-title {
     font-family: 'Cinzel', serif;
-    font-size: 48px;
-    color: #ffd700;
+    font-size: 64px;
+    font-weight: 900;
     margin: 0;
-    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 0 40px rgba(255, 0, 0, 0.3);
-    letter-spacing: 5px;
+    letter-spacing: 8px;
     text-transform: uppercase;
+    background: linear-gradient(to bottom, #ffcc00 0%, #ff3300 50%, #000000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(255, 69, 0, 0.8));
+    position: relative;
+    animation: lavaFlow 3s infinite alternate ease-in-out, lightningStrike 5s infinite;
+}
+
+@keyframes lavaFlow {
+    from { filter: drop-shadow(0 0 10px #ff4500) brightness(1); }
+    to { filter: drop-shadow(0 0 25px #ffcc00) brightness(1.2); }
+}
+
+@keyframes lightningStrike {
+    0%, 94%, 100% { filter: brightness(1); }
+    95% { filter: brightness(3) contrast(1.5) drop-shadow(0 0 30px #fff); }
+    97% { filter: brightness(2); }
 }
 
 .start-subtitle {
     font-family: 'Cinzel', serif;
-    font-size: 18px;
-    color: #9400d3;
-    margin: 10px 0 40px 0;
-    letter-spacing: 2px;
-    opacity: 0.8;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 15px 0 50px 0;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ffffff, 0 0 30px #ffd700;
+    opacity: 0.9;
+    animation: divineGlow 2s infinite alternate ease-in-out;
+}
+
+@keyframes divineGlow {
+    from { text-shadow: 0 0 10px #ffd700, 0 0 20px #fff; opacity: 0.8; }
+    to { text-shadow: 0 0 20px #ffd700, 0 0 40px #fff, 0 0 60px #ffd700; opacity: 1; }
 }
 
 #start-game-btn {
-    background: linear-gradient(145deg, #4b0082, #2e003e);
-    color: #fff;
-    border: 1px solid #9400d3;
-    padding: 12px 30px;
-    font-size: 16px;
+    background: transparent;
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    padding: 15px 45px;
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
     font-weight: bold;
-    letter-spacing: 2px;
+    letter-spacing: 4px;
     cursor: pointer;
-    border-radius: 4px;
-    box-shadow: 0 0 15px rgba(148, 0, 211, 0.4);
-    transition: all 0.3s;
+    border-radius: 0;
+    box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    text-transform: uppercase;
+    overflow: hidden;
+    position: relative;
 }
 
 #start-game-btn:hover {
-    transform: scale(1.1);
-    background: linear-gradient(145deg, #9400d3, #4b0082);
-    box-shadow: 0 0 30px rgba(148, 0, 211, 0.8), 0 0 10px #ffd700;
-    border-color: #ffd700;
+    color: #000;
+    background: #ffd700;
+    box-shadow: 0 0 40px #ffd700, 0 0 80px #ff4500;
+    transform: translateY(-3px) scale(1.05);
+}
+
+#start-game-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: 0.5s;
+}
+
+#start-game-btn:hover::before {
+    left: 100%;
 }
 
 @keyframes fadeInScale {
