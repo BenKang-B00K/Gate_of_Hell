@@ -64,6 +64,7 @@ setVolume('holy', 0.5);
 let globalVolume = 0.5;
 let isMuted = false;
 let previousVolume = 0.5;
+let bgmPausedManual = false;
 
 /**
  * Update all sounds to the current global volume.
@@ -80,7 +81,15 @@ function updateAllVolumes() {
             if (key === 'kill') factor = 0.8;
             if (key === 'sword') factor = 0.7;
             if (key === 'holy') factor = 0.8;
-            if (key === 'bgm') factor = 0.5; // BGM is usually quieter
+            if (key === 'bgm') {
+                factor = 0.5; // BGM is usually quieter
+                if (bgmPausedManual) {
+                    if (!sounds[key].paused) sounds[key].pause();
+                    continue;
+                } else if (!isMuted && globalVolume > 0 && sounds[key].paused && typeof gameStarted !== 'undefined' && gameStarted) {
+                    sounds[key].play().catch(() => {});
+                }
+            }
             
             sounds[key].volume = Math.min(1.0, currentVol * factor);
         }
@@ -88,10 +97,10 @@ function updateAllVolumes() {
 }
 
 /**
- * Start the BGM if it's not already playing.
+ * Start the BGM if it's not already playing and not manually paused.
  */
 function startBGM() {
-    if (sounds.bgm && sounds.bgm.paused) {
+    if (sounds.bgm && sounds.bgm.paused && !bgmPausedManual) {
         sounds.bgm.play().catch(e => console.log("BGM play blocked until interaction"));
     }
 }
@@ -99,6 +108,7 @@ function startBGM() {
 document.addEventListener('DOMContentLoaded', () => {
     const volumeSlider = document.getElementById('volume-slider');
     const muteBtn = document.getElementById('mute-btn');
+    const bgmToggleBtn = document.getElementById('bgm-toggle-btn');
     const volumeValue = document.getElementById('volume-value');
     
     if (volumeSlider && muteBtn && volumeValue) {
@@ -118,21 +128,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 muteBtn.innerText = '🔇';
             }
             updateAllVolumes();
-            startBGM(); // Ensure BGM starts on user interaction
+            startBGM(); 
         });
         
         muteBtn.addEventListener('click', () => {
             isMuted = !isMuted;
             if (isMuted) {
                 previousVolume = globalVolume;
-                // We don't change globalVolume here so it's remembered when unmuting
                 muteBtn.innerText = '🔇';
             } else {
                 muteBtn.innerText = globalVolume > 0.5 ? '🔊' : '🔉';
-                startBGM(); // Ensure BGM starts when unmuting if it wasn't playing
+                startBGM(); 
             }
             updateAllVolumes();
         });
+
+        if (bgmToggleBtn) {
+            bgmToggleBtn.addEventListener('click', () => {
+                bgmPausedManual = !bgmPausedManual;
+                bgmToggleBtn.style.opacity = bgmPausedManual ? '0.4' : '1';
+                bgmToggleBtn.innerText = bgmPausedManual ? '❌' : '🎵';
+                updateAllVolumes();
+            });
+        }
     }
 });
 
