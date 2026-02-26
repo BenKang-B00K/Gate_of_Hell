@@ -321,8 +321,24 @@ function showUnitInfo(tower) {
     const d = document.getElementById('unit-info');
     const data = tower.data;
     let rc = '#ff4500'; if(data.role==='Basic') rc='#00ff00'; else if(data.role==='Support') rc='#00e5ff'; else if(data.role==='Special') rc='#ffd700';
+    
+    // Calculate display bonuses
+    const rb = tower.rangeBonus || 0;
+    const sb = Math.round((tower.speedBonus || 0) * 100);
+    const db = Math.round((tower.damageBonus || 0) * 100);
+    
+    let bonusText = '';
+    if (rb > 0) bonusText += `<span style="color:#00ff00; font-size:8px;"> +${rb} Range</span>`;
+    if (sb > 0) bonusText += `<span style="color:#00ff00; font-size:8px;"> +${sb}% ATK SPD</span>`;
+    if (sb < 0) bonusText += `<span style="color:#ff4444; font-size:8px;"> ${sb}% ATK SPD</span>`;
+    if (db > 0) bonusText += `<span style="color:#00ff00; font-size:8px;"> +${db}% DMG</span>`;
+    
+    const finalDmg = Math.round(data.damage * damageMultiplier * (1.0 + (tower.damageBonus || 0)));
+    
     let th = `<div style="color:#ffd700; font-weight:bold; font-size:13px; margin-bottom:2px;">${data.name}</div><div style="display:inline-block; background:${rc}; color:#000; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">${data.role}</div>`;
-    let ih = `<div style="font-size:9px; color:#bbb; margin-bottom:4px;">ATK: ${data.damage} | Range: ${data.range} | CD: ${(data.cooldown/1000).toFixed(1)}s</div>`;
+    let ih = `<div style="font-size:9px; color:#bbb; margin-bottom:4px;">ATK: ${finalDmg} | Range: ${data.range}${rb > 0 ? '(+' + rb + ')' : ''} | CD: ${((tower.cooldown / (1.0 + (tower.speedBonus || 0))) / 1000).toFixed(1)}s</div>`;
+    if (bonusText) th += `<div style="margin-bottom:4px;">${bonusText}</div>`;
+    
     let ch = ''; 
     if(data.type==='apprentice') {
         ch = `

@@ -1,22 +1,4 @@
 /* script.js */
-const sounds = {
-    thunder: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c350677d07.mp3'), // Thunder sound
-    hover: new Audio('https://heinig-ton.de/wp-content/uploads/2024/08/elemental-magic-spell-impact-outgoing-228342.mp3'),   // Elemental magic spell hover
-    start: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_2ba65f912e.mp3')    // Deep cinematic start
-};
-
-// Configure sounds
-sounds.thunder.volume = 0.4;
-sounds.hover.volume = 0.3;
-sounds.start.volume = 0.6;
-
-function playThunder() {
-    if (gameStarted) return;
-    // Play thunder at random intervals matching the 'lightningStrike' animation cycle (2s)
-    sounds.thunder.currentTime = 0;
-    sounds.thunder.play().catch(e => console.log("Audio play blocked until interaction"));
-}
-
 let thunderInterval;
 
 let spawnInterval = 1200; 
@@ -113,7 +95,21 @@ function gameLoop() {
         e.isSilenced = false; e.inBlizzard = false; e.inPurgatory = false;
         if(e.element) e.element.classList.remove('silenced');
         if (e.type === 'betrayer_blade') {
-            const cycle = (nowTime % 3000); e.isStealthed = (cycle < 1000);
+            const cycle = (nowTime % 3000); 
+            let shouldBeStealthed = (cycle < 1000);
+            
+            // Seer check
+            const seers = towers.filter(t => t.data.type === 'seer');
+            const gameW = gameContainer.offsetWidth;
+            const exPx = (e.x / 100) * gameW;
+            const revealed = seers.some(s => {
+                const sRect = s.slotElement.getBoundingClientRect();
+                const sx = sRect.left + sRect.width / 2;
+                const sy = sRect.top + sRect.height / 2;
+                return Math.sqrt(Math.pow(exPx - sx, 2) + Math.pow(e.y - sy, 2)) < 120;
+            });
+            
+            e.isStealthed = shouldBeStealthed && !revealed;
             if (e.element) e.element.style.opacity = e.isStealthed ? 0.1 : 1;
         }
     });
@@ -125,11 +121,33 @@ function gameLoop() {
         const tRect = t.slotElement.getBoundingClientRect();
         const tX = tRect.left + tRect.width / 2;
         const tY = tRect.top + tRect.height / 2;
+
+        // Debuffs from enemies
         enemies.forEach(e => {
             if (e.type === 'frost_outcast' && e.hp > 0) {
                 const exPx = (e.x / 100) * gameW;
                 const dist = Math.sqrt(Math.pow(exPx - tX, 2) + Math.pow(e.y - tY, 2));
                 if (dist < 120) t.speedBonus -= 0.2;
+            }
+        });
+
+        // Buffs from nearby allies (Tracker, Seer, Commander)
+        towers.forEach(other => {
+            if (other === t || !other.slotElement) return;
+            const oRect = other.slotElement.getBoundingClientRect();
+            const oX = oRect.left + oRect.width / 2;
+            const oY = oRect.top + oRect.height / 2;
+            const dist = Math.sqrt(Math.pow(oX - tX, 2) + Math.pow(oY - tY, 2));
+
+            if (dist < 120) { // Buff aura range
+                if (other.data.type === 'tracker') {
+                    t.rangeBonus += 30; // +30 range
+                } else if (other.data.type === 'seer') {
+                    t.rangeBonus += 50; // +50 range
+                } else if (other.data.type === 'commander') {
+                    t.speedBonus += 0.2; // +20% attack speed
+                    t.damageBonus += 0.2; // +20% damage
+                }
             }
         });
     });
@@ -176,7 +194,7 @@ function gameLoop() {
         }
 
         // Global Stage Progression Check
-        const allSpawned = isBossStage ? (bossSpawned && currentStageSpawned >= totalStageEnemies) : (currentStageSpawned >= totalStageEnemies);
+        const allSpawned = isBossStage ? (currentStageSpawned >= totalStageEnemies || (bossSpawned && !bossInstance)) : (currentStageSpawned >= totalStageEnemies);
         if (allSpawned && enemies.length === 0) {
             stage++; 
             initStage(); 
@@ -297,7 +315,8 @@ function shoot(tower, target) {
         if (target.type === 'soul_eater') target.lastHitTime = Date.now();
         
         handleSpecialAblities(tower, target);
-        applyDamage(target, tower.data.damage * damageMultiplier, tower);
+        const finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0));
+        applyDamage(target, tower.data.damage * finalDamageMultiplier, tower);
     }, 200);
 }
 
@@ -317,14 +336,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (startBtn && startScreen) {
         startBtn.addEventListener('mouseenter', () => {
             if (!gameStarted) {
-                sounds.hover.currentTime = 0;
-                sounds.hover.play().catch(() => {});
+                playSound('hover');
             }
         });
 
         startBtn.addEventListener('click', () => {
             clearInterval(thunderInterval);
-            sounds.start.play().catch(() => {});
+            playSound('start');
             startScreen.classList.add('shrink-to-info');
             
             setTimeout(() => {
