@@ -277,6 +277,40 @@ function startInfoResetTimer() {
     }, 10000); // 10 seconds
 }
 
+function showRangeIndicator(tower) {
+    // Remove existing indicator if any
+    const existing = document.getElementById('range-indicator');
+    if (existing) existing.remove();
+
+    const indicator = document.createElement('div');
+    indicator.id = 'range-indicator';
+    indicator.className = 'range-indicator';
+    
+    // Calculate total range including bonuses
+    const totalRange = tower.range + (tower.rangeBonus || 0);
+    const size = totalRange * 2;
+    
+    indicator.style.width = `${size}px`;
+    indicator.style.height = `${size}px`;
+    
+    // Position it centered on the unit's slot
+    const slotRect = tower.slotElement.getBoundingClientRect();
+    const gameRect = gameContainer.getBoundingClientRect();
+    
+    const centerX = (slotRect.left + slotRect.width / 2) - gameRect.left;
+    const centerY = (slotRect.top + slotRect.height / 2) - gameRect.top;
+    
+    indicator.style.left = `${centerX}px`;
+    indicator.style.top = `${centerY}px`;
+    
+    gameContainer.appendChild(indicator);
+    
+    // Auto-remove after some time
+    setTimeout(() => {
+        if (indicator.parentElement) indicator.remove();
+    }, 3000);
+}
+
 function showUnitInfo(tower) {
     const d = document.getElementById('unit-info');
     const data = tower.data;
@@ -554,6 +588,7 @@ function performJobChange(el, targetRole = null) {
     recordUnlock(nt.type); t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
     updateUnitOverlayButtons(t); updateSummonButtonState();
     startInfoResetTimer();
+    showRangeIndicator(t);
 }
 
 function performMasterJobChange(tower, ntStr) {
@@ -574,6 +609,7 @@ function performMasterJobChange(tower, ntStr) {
     if(nt.type==='rampart') tower.charges=5;
     updateUnitOverlayButtons(tower); updateSummonButtonState();
     startInfoResetTimer();
+    showRangeIndicator(tower);
 }
 
 function updateUnitOverlayButtons(t) {

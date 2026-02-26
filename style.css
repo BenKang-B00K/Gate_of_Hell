@@ -711,6 +711,23 @@ body {
     display: none;
 }
 
+.range-indicator {
+    position: absolute;
+    border: 1px dashed rgba(0, 229, 255, 0.5);
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+    animation: rangePulse 2s infinite ease-in-out;
+}
+
+@keyframes rangePulse {
+    0% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.02); }
+    100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+}
+
 .card-warning::after {
     content: "";
     position: absolute;
