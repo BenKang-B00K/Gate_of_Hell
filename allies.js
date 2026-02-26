@@ -536,15 +536,25 @@ function initAllies() {
         });
     }
 
-    slots.length = 0; createSlots('left-slots', 24); createSlots('right-slots', 24);
-    initRecordsUI(); initTutorial();
-    const modal = document.getElementById('unlock-modal'); if(modal) modal.addEventListener('click', () => { modal.style.display='none'; isPaused=false; });
-    const retry = document.getElementById('retry-btn'); if(retry) retry.addEventListener('click', () => location.reload());
-    const rbt = document.getElementById('restart-btn-top'); if(rbt) rbt.addEventListener('click', () => { isPaused=true; const go=document.getElementById('game-over-overlay'); if(go) go.style.display='flex'; });
-}
-    const modal = document.getElementById('unlock-modal'); if(modal) modal.addEventListener('click', () => { modal.style.display='none'; isPaused=false; });
-    const retry = document.getElementById('retry-btn'); if(retry) retry.addEventListener('click', () => location.reload());
-    const rbt = document.getElementById('restart-btn-top'); if(rbt) rbt.addEventListener('click', () => { isPaused=true; const go=document.getElementById('game-over-overlay'); if(go) go.style.display='flex'; });
+    slots.length = 0; 
+    createSlots('left-slots', 24); 
+    createSlots('right-slots', 24);
+    
+    initRecordsUI(); 
+    initTutorial();
+    
+    const modal = document.getElementById('unlock-modal'); 
+    if(modal) modal.addEventListener('click', () => { modal.style.display='none'; isPaused=false; });
+    
+    const retry = document.getElementById('retry-btn'); 
+    if(retry) retry.addEventListener('click', () => location.reload());
+    
+    const rbt = document.getElementById('restart-btn-top'); 
+    if(rbt) rbt.addEventListener('click', () => { 
+        isPaused=true; 
+        const go=document.getElementById('game-over-overlay'); 
+        if(go) go.style.display='flex'; 
+    });
 }
 
 function initRecordsUI() {
