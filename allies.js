@@ -384,8 +384,8 @@ function renderPromotionTree() {
     };
     Object.keys(pg).forEach(gn => {
         const h = document.createElement('h3'); let c="#ff4500"; if(gn.includes('Support')) c="#00e5ff"; if(gn.includes('Special')) c="#ffd700";
-        h.innerText=gn; h.style.cssText=`color:${c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px; text-align:center;`; tt.appendChild(h);
-        const tc = document.createElement('div'); tc.className='tree-main-container'; tc.style.cssText='display:flex; flex-direction:column; gap:6px;';
+        h.innerText=gn; h.style.cssText=`color:${c}; border-bottom:1px solid #333; margin:8px 0 4px 0; font-size:13px; text-align:center;`; tt.appendChild(h);
+        const tc = document.createElement('div'); tc.className='tree-main-container'; tc.style.cssText='display:flex; flex-direction:column; gap:4px;';
         pg[gn].forEach(p => {
             const row = document.createElement('div'); row.style.cssText='display:grid; grid-template-columns:70px 12px 85px 12px 105px 12px 105px; align-items:center; justify-content:center; gap:3px; border-bottom:1px solid #222; padding-bottom:4px;';
             const node = (type,tier) => {

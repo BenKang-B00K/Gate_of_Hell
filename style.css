@@ -1108,7 +1108,8 @@ body {
 }
 
 .tree-main-container {
-    padding-top: 60px; /* Increased space for top-row tooltips */
+    padding-top: 5px; 
+    margin-top: 25px; /* Added some margin for the tooltips of the top row instead of massive padding */
 }
 
 .bestiary-item {
