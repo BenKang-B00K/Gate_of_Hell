@@ -1087,10 +1087,16 @@ body {
 #tab-content {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
     padding: 15px;
+    box-sizing: border-box;
 }
 
-.tab-pane { display: none !important; }
+.tab-pane { 
+    display: none !important; 
+    width: 100%;
+    box-sizing: border-box;
+}
 .tab-pane.active { display: block !important; }
 
 /* Bestiary Styles - Card Grid */
@@ -1103,9 +1109,11 @@ body {
 }
 
 #bestiary-tab {
-    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Slightly reduced min-width to prevent overflow */
     gap: 8px;
     padding-top: 60px; /* Increased space for top-row tooltips */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tree-main-container {
