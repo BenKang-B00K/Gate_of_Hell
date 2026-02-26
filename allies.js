@@ -286,10 +286,38 @@ function showEnemyInfo(enemy) {
 }
 window.showEnemyInfo = showEnemyInfo;
 
+function showResourceInfo(type) {
+    const d = document.getElementById('unit-info');
+    if (type === 'se') {
+        d.innerHTML = `
+            <div style="color:#00e5ff; font-weight:bold; font-size:13px; margin-bottom:2px;">Soul Energy (SE)</div>
+            <div style="display:inline-block; background:#008ba3; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">ESSENCE</div>
+            <div style="font-size:9px; color:#bbb; line-height:1.2;">Used to summon and promote exorcists. Obtained by defeating specters.</div>
+            <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"The crystalline fragments of purified regrets, fueling the sacred arts of those who guard the living world."</div>
+        `;
+    } else if (type === 'shards') {
+        d.innerHTML = `
+            <div style="color:#ff4444; font-weight:bold; font-size:13px; margin-bottom:2px;">Corrupted Shards</div>
+            <div style="display:inline-block; background:#8b0000; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">CURSE</div>
+            <div style="font-size:9px; color:#bbb; line-height:1.2;">Increases enemy HP and Speed as they accumulate. Obtained by corrupting (selling) your units.</div>
+            <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"Echoes of betrayal left behind when an exorcist succumbs to the dark. The abyss hungers for more of its own kind."</div>
+        `;
+    }
+    startInfoResetTimer();
+}
+window.showResourceInfo = showResourceInfo;
+
 function initAllies() {
     const tc = document.getElementById('tower-card');
     if(tc) tc.addEventListener('click', () => { if(money<towerCost) return; const vs=slots.filter(c=>!c.classList.contains('occupied')); if(vs.length===0) return; summonTower(vs[Math.floor(Math.random()*vs.length)]); });
     const pc = document.getElementById('purge-card'); if(pc) pc.addEventListener('click', () => purgePortal());
+    
+    // Resource Label Click Events
+    const sel = document.getElementById('se-label');
+    if(sel) sel.addEventListener('click', () => showResourceInfo('se'));
+    const shl = document.getElementById('shards-label');
+    if(shl) shl.addEventListener('click', () => showResourceInfo('shards'));
+
     slots.length = 0; createSlots('left-slots', 27); createSlots('right-slots', 27);
     initRecordsUI(); initTutorial();
     const modal = document.getElementById('unlock-modal'); if(modal) modal.addEventListener('click', () => { modal.style.display='none'; isPaused=false; });
