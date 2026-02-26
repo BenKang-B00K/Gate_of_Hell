@@ -138,7 +138,7 @@ function gameLoop() {
             if (e.type === 'frost_outcast' && e.hp > 0) {
                 const exPx = (e.x / 100) * gameW;
                 const dist = Math.sqrt(Math.pow(exPx - tX, 2) + Math.pow(e.y - tY, 2));
-                if (dist < 120) t.speedBonus -= 0.2;
+                if (dist < 360) t.speedBonus -= 0.2;
             }
         });
 
@@ -151,11 +151,11 @@ function gameLoop() {
             const dist = Math.sqrt(Math.pow(oX - tX, 2) + Math.pow(oY - tY, 2));
 
             const relicAuraBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('aura_range') : 0;
-            if (dist < (65 + relicAuraBonus)) { // Base range 65px covers ~1 tile cardinal
+            if (dist < (195 + relicAuraBonus)) { // Base range 195px covers ~1 tile cardinal in 1080p
                 if (other.data.type === 'tracker') {
-                    t.rangeBonus += 30; // +30 range
+                    t.rangeBonus += 90; // +90 range (scaled from 30)
                 } else if (other.data.type === 'seer') {
-                    t.rangeBonus += 50; // +50 range
+                    t.rangeBonus += 150; // +150 range (scaled from 50)
                 } else if (other.data.type === 'commander') {
                     t.speedBonus += 0.2; // +20% attack speed
                     t.damageBonus += 0.2; // +20% damage
