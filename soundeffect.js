@@ -1,107 +1,172 @@
-/* soundeffect.js */
-const sounds = {
-    thunder: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c350677d07.mp3'), // Thunder sound
-    hover: new Audio('https://heinig-ton.de/wp-content/uploads/2024/08/elemental-magic-spell-impact-outgoing-228342.mp3'),   // Elemental magic spell hover
-    start: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_2ba65f912e.mp3'),    // Deep cinematic start
-    summon: null,   // Placeholder for summon sound
-    attack: null,   // Placeholder for attack sound
-    sword: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_73d8102377.mp3'),    // Sword attack sound
-    holy: new Audio('https://cdn.pixabay.com/audio/2024/05/22/audio_0af0ba0604.mp3'),     // Holy magic sound
-    kill: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_5177f803f3.mp3'),     // Enemy death sound
-    gameover: null,  // Placeholder for game over sound
-    bgm: new Audio('https://cdn.pixabay.com/audio/2021/11/11/audio_40f06f5228.mp3')      // Cave Temple BGM
+/* soundeffect.js - Web Audio API Implementation */
+
+const audioUrls = {
+    thunder: 'https://cdn.pixabay.com/audio/2022/03/10/audio_c350677d07.mp3',
+    hover: 'https://heinig-ton.de/wp-content/uploads/2024/08/elemental-magic-spell-impact-outgoing-228342.mp3',
+    start: 'https://cdn.pixabay.com/audio/2022/03/10/audio_2ba65f912e.mp3',
+    sword: 'https://cdn.pixabay.com/audio/2022/03/15/audio_73d8102377.mp3',
+    holy: 'https://cdn.pixabay.com/audio/2024/05/22/audio_0af0ba0604.mp3',
+    kill: 'https://cdn.pixabay.com/audio/2022/03/15/audio_5177f803f3.mp3',
+    bgm: 'https://cdn.pixabay.com/audio/2021/11/11/audio_40f06f5228.mp3',
+    summon: null,
+    attack: null,
+    gameover: null
 };
 
-// Configure BGM loop
-if (sounds.bgm) {
-    sounds.bgm.loop = true;
-}
+const soundBuffers = {};
+let audioCtx = null;
+let masterGain = null;
+let bgmSource = null;
+let bgmElement = null;
+let bgmGain = null;
 
-
-/**
- * Set the volume for a specific sound effect.
- * @param {string} soundName 
- * @param {number} volume - 0.0 to 1.0
- */
-function setVolume(soundName, volume) {
-    if (sounds[soundName] && sounds[soundName] instanceof Audio) {
-        sounds[soundName].volume = volume;
-    }
-}
-
-/**
- * Play a specific sound by name.
- * @param {string} soundName 
- */
-function playSound(soundName) {
-    if (sounds[soundName] && sounds[soundName] instanceof Audio) {
-        sounds[soundName].currentTime = 0;
-        sounds[soundName].play().catch(e => console.log(`Audio play for ${soundName} blocked`, e));
-    }
-}
-
-/**
- * Play the thunder background sound if the game hasn't started.
- */
-function playThunder() {
-    if (typeof gameStarted !== 'undefined' && gameStarted) return;
-    // Play thunder at random intervals matching the 'lightningStrike' animation cycle (2s)
-    if (sounds.thunder) {
-        sounds.thunder.currentTime = 0;
-        sounds.thunder.play().catch(e => console.log("Audio play blocked until interaction"));
-    }
-}
-
-// Initial Volume Configuration
-setVolume('thunder', 0.4);
-setVolume('hover', 0.3);
-setVolume('start', 0.6);
-setVolume('kill', 0.4);
-setVolume('sword', 0.5);
-setVolume('holy', 0.5);
-
-// Global state for volume control
+// Global state
 let globalVolume = 0.5;
 let isMuted = false;
 let bgmPausedManual = false;
 
+// Relative volume factors
+const volumeFactors = {
+    thunder: 0.4,
+    hover: 0.3,
+    start: 0.6,
+    kill: 0.4,
+    sword: 0.5,
+    holy: 0.5,
+    bgm: 0.25,
+    summon: 0.5,
+    attack: 0.5,
+    gameover: 0.6
+};
+
 /**
- * Update all sounds to the current global volume.
+ * Initialize Audio Context and Master Gain.
+ * Must be triggered by user interaction.
+ */
+function initAudioContext() {
+    if (audioCtx) return audioCtx;
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.connect(audioCtx.destination);
+    masterGain.gain.value = isMuted ? 0 : globalVolume;
+
+    // Initialize BGM element
+    bgmElement = new Audio(audioUrls.bgm);
+    bgmElement.loop = true;
+    bgmElement.crossOrigin = "anonymous";
+    
+    bgmSource = audioCtx.createMediaElementSource(bgmElement);
+    bgmGain = audioCtx.createGain();
+    bgmGain.gain.value = volumeFactors.bgm;
+    
+    bgmSource.connect(bgmGain);
+    bgmGain.connect(masterGain);
+
+    // Preload other sounds
+    for (const name in audioUrls) {
+        if (name !== 'bgm') {
+            loadSound(name, audioUrls[name]);
+        }
+    }
+
+    return audioCtx;
+}
+
+/**
+ * Fetch and decode audio data into a buffer.
+ */
+async function loadSound(name, url) {
+    if (!url) return;
+    try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        soundBuffers[name] = audioBuffer;
+    } catch (e) {
+        console.error(`Failed to load sound: ${name}`, e);
+    }
+}
+
+/**
+ * Play a specific sound effect using Web Audio API.
+ */
+function playSound(soundName) {
+    if (!audioCtx) initAudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const buffer = soundBuffers[soundName];
+    if (!buffer) return;
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = buffer;
+
+    // Per-sound gain node to apply relative factors
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = volumeFactors[soundName] || 1.0;
+
+    source.connect(gainNode);
+    gainNode.connect(masterGain);
+    source.start(0);
+}
+
+/**
+ * Start or resume BGM.
+ */
+function startBGM() {
+    if (!audioCtx) initAudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    if (bgmElement && bgmElement.paused && !bgmPausedManual) {
+        bgmElement.play().catch(e => console.log("BGM play blocked", e));
+    }
+}
+
+/**
+ * Play thunder sound (special case for start screen).
+ */
+function playThunder() {
+    if (typeof gameStarted !== 'undefined' && gameStarted) return;
+    playSound('thunder');
+}
+
+/**
+ * Update global volume and individual gain nodes.
  */
 function updateAllVolumes() {
+    if (!masterGain) return;
+
     const currentVol = isMuted ? 0 : globalVolume;
-    for (const key in sounds) {
-        if (sounds[key] && sounds[key] instanceof Audio) {
-            // Apply relative volumes based on original settings
-            let factor = 1.0;
-            if (key === 'thunder') factor = 0.8;
-            if (key === 'hover') factor = 0.6;
-            if (key === 'start') factor = 1.2;
-            if (key === 'kill') factor = 0.8;
-            if (key === 'sword') factor = 0.7;
-            if (key === 'holy') factor = 0.8;
-            if (key === 'bgm') {
-                factor = 0.5; // BGM is usually quieter
-                if (bgmPausedManual) {
-                    if (!sounds[key].paused) sounds[key].pause();
-                    continue;
-                } else if (!isMuted && globalVolume > 0 && sounds[key].paused && typeof gameStarted !== 'undefined' && gameStarted) {
-                    sounds[key].play().catch(() => {});
-                }
-            }
-            
-            sounds[key].volume = Math.min(1.0, currentVol * factor);
+    masterGain.gain.setTargetAtTime(currentVol, audioCtx.currentTime, 0.05);
+
+    if (bgmElement) {
+        if (bgmPausedManual || isMuted || globalVolume === 0) {
+            bgmElement.pause();
+        } else if (typeof gameStarted !== 'undefined' && gameStarted) {
+            bgmElement.play().catch(() => {});
         }
     }
 }
 
 /**
- * Start the BGM if it's not already playing and not manually paused.
+ * Set the volume for a specific sound (updates factors).
  */
-function startBGM() {
-    if (sounds.bgm && sounds.bgm.paused && !bgmPausedManual) {
-        sounds.bgm.play().catch(e => console.log("BGM play blocked until interaction"));
+function setVolume(soundName, volume) {
+    volumeFactors[soundName] = volume;
+    if (soundName === 'bgm' && bgmGain) {
+        bgmGain.gain.setTargetAtTime(volume, audioCtx.currentTime, 0.05);
     }
+    updateAllVolumes();
 }
 
+// Initial placeholder for 'sounds' object if other scripts expect it
+const sounds = {
+    get thunder() { return { play: () => playSound('thunder') }; },
+    get bgm() { return bgmElement; }
+};
 
+// Handle initial interaction to unlock audio
+window.addEventListener('click', () => {
+    if (!audioCtx) initAudioContext();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}, { once: true });
