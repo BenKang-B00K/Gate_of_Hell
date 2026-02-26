@@ -226,13 +226,6 @@ function createSlots(containerId, count) {
 function cancelMovement() { if (draggedUnit) draggedUnit.classList.remove('move-ready'); draggedUnit = null; isMovingUnit = false; }
 
 function summonTower(targetSlot) {
-    const s = unitTypes[0];
-    const existingCount = towers.filter(t => t.data.type === s.type).length;
-    if (existingCount >= 2) {
-        alert(`You can only have up to 2 ${s.name}s at once!`);
-        return;
-    }
-
     money -= towerCost;
     if (typeof updateGauges === 'function') updateGauges();
     towerCost += 5;
@@ -521,14 +514,14 @@ function performJobChange(el) {
     const paths = [ {from:'apprentice', to:['chainer','talisman','monk','archer','ice','fire','assassin','tracker','necromancer','guardian','knight','alchemist','mirror']} ];
     const p = paths.find(x=>x.from===t.data.type); if(!p) return;
 
-    // Filter paths that already have 2 units
+    // Filter paths that already exist on the map (Limit 1 for Tier 2+)
     const availablePaths = p.to.filter(type => {
         const count = towers.filter(tw => tw.data.type === type).length;
-        return count < 2;
+        return count < 1;
     });
 
     if (availablePaths.length === 0) {
-        alert("No available classes to ascend! All paths already have 2 units.");
+        alert("No available classes to ascend! All possible paths already exist on the map.");
         return;
     }
 
@@ -546,9 +539,9 @@ function performJobChange(el) {
 
 function performMasterJobChange(tower, ntStr) {
     const existingCount = towers.filter(t => t.data.type === ntStr).length;
-    if (existingCount >= 2) {
+    if (existingCount >= 1) {
         const nt = unitTypes.find(x => x.type === ntStr);
-        alert(`You can only have up to 2 ${nt.name}s at once!`);
+        alert(`You can only have 1 ${nt.name} at a time!`);
         return;
     }
 
