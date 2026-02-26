@@ -173,14 +173,15 @@ function drawPortal() {
     if (typeof portalEnergy !== 'undefined') {
         ctx.save();
         ctx.imageSmoothingEnabled = true;
-        const textY = py - 10;
-        ctx.font = 'bold 10px Cinzel, serif';
+        // Move text inside the portal at the bottom
+        const textY = cy - 5; 
+        ctx.font = 'bold 8px Cinzel, serif';
         ctx.textAlign = 'center';
         ctx.shadowColor = '#9400d3';
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 6;
         ctx.fillStyle = '#e0b0ff';
-        ctx.fillText(`[ PORTAL ENERGY ]`, cx, textY - 12);
-        ctx.font = '9px Arial, sans-serif';
+        ctx.fillText(`[ PORTAL ENERGY ]`, cx, textY - 10);
+        ctx.font = '7px Arial, sans-serif';
         ctx.fillStyle = '#fff';
         ctx.fillText(`${Math.floor(portalEnergy)} / ${maxPortalEnergy}`, cx, textY);
         ctx.restore();
@@ -238,42 +239,56 @@ function drawUnits() {
 }
 
 /**
- * Renders the Apprentice Exorcist pixel art.
+ * Renders the Apprentice Exorcist pixel art with higher detail.
  */
 function drawApprentice(cx, cy) {
-    const ds = DOT_SIZE;
+    const ds = 2; // Increased resolution for units
     
-    // 1. Gray Robe (Body)
-    ctx.fillStyle = '#777777';
-    ctx.fillRect(cx - ds, cy - ds, ds * 2, ds * 3); // Main body
-    ctx.fillStyle = '#555555';
-    ctx.fillRect(cx - ds, cy + ds, ds * 2, ds); // Lower robe shadow
+    // 1. Robe (Gray with shading)
+    ctx.fillStyle = '#555555'; // Darker base/shadow
+    ctx.fillRect(cx - ds*4, cy + ds, ds*8, ds*5); // Bottom wide robe
+    ctx.fillStyle = '#777777'; // Mid tone
+    ctx.fillRect(cx - ds*3, cy - ds*3, ds*6, ds*6); // Body
+    ctx.fillStyle = '#999999'; // Highlights
+    ctx.fillRect(cx - ds*3, cy - ds*3, ds*2, ds*4); // Left highlight
     
-    // 2. Head/Hood
-    ctx.fillStyle = '#888888';
-    ctx.fillRect(cx - ds, cy - ds * 2, ds * 2, ds); // Hood top
-    ctx.fillStyle = '#ffdbac'; // Skin color (Face)
-    ctx.fillRect(cx - ds/2, cy - ds - ds/2, ds, ds);
+    // 2. Face & Hair
+    ctx.fillStyle = '#ffdbac'; // Skin
+    ctx.fillRect(cx - ds*2, cy - ds*6, ds*4, ds*3);
+    ctx.fillStyle = '#443322'; // Brown hair/hood shadow
+    ctx.fillRect(cx - ds*2, cy - ds*7, ds*4, ds); // Hair top
     
-    // 3. Fancy Staff with Cross
-    const staffX = cx + ds + 2;
-    const staffY = cy - ds * 2;
+    // 3. Divine Eyes (Glow)
+    const eyePulse = (Math.sin(lavaPhase * 5) + 1) / 2;
+    ctx.fillStyle = `rgba(0, 229, 255, ${0.6 + 0.4 * eyePulse})`;
+    ctx.fillRect(cx - ds*1.5, cy - ds*5, ds, ds); // Left eye
+    ctx.fillRect(cx + ds*0.5, cy - ds*5, ds, ds); // Right eye
     
-    // Staff Handle (Wooden/Brown)
+    // 4. Waist Belt
+    ctx.fillStyle = '#333333';
+    ctx.fillRect(cx - ds*3, cy + ds, ds*6, ds);
+    
+    // 5. Fancy Staff with Golden Cross
+    const staffX = cx + ds*4 + 1;
+    const staffY = cy - ds*8;
+    
+    // Wooden Staff
     ctx.fillStyle = '#5d4037';
-    ctx.fillRect(staffX, staffY, 2, ds * 5);
+    ctx.fillRect(staffX, staffY, ds, ds*12);
     
-    // Golden Cross at the end
+    // Golden Cross Head
     ctx.fillStyle = '#ffd700';
-    // Vertical part of cross
-    ctx.fillRect(staffX - 1, staffY - 4, 4, 10);
-    // Horizontal part of cross
-    ctx.fillRect(staffX - 4, staffY - 1, 10, 3);
+    ctx.fillRect(staffX - ds*2, staffY, ds*5, ds*1.5); // Horizontal
+    ctx.fillRect(staffX, staffY - ds*2, ds, ds*6); // Vertical
     
-    // Glowing gem in center of cross
-    const pulse = (Math.sin(lavaPhase * 2) + 1) / 2;
-    ctx.fillStyle = `rgba(0, 255, 255, ${0.5 + 0.5 * pulse})`;
-    ctx.fillRect(staffX, staffY, 2, 2);
+    // Center Gem in Staff
+    const gemPulse = (Math.sin(lavaPhase * 3) + 1) / 2;
+    ctx.fillStyle = `rgba(0, 255, 255, ${0.8 + 0.2 * gemPulse})`;
+    ctx.fillRect(staffX, staffY, ds, ds);
+    
+    // Staff Glow
+    ctx.fillStyle = `rgba(255, 215, 0, ${0.2 * gemPulse})`;
+    ctx.fillRect(staffX - ds*3, staffY - ds*3, ds*7, ds*7);
 }
 
 /**
