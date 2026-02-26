@@ -154,8 +154,8 @@ img, .enemy, .tower-card, .relic-slot {
 
 #game-container {
     position: relative;
-    width: 360px; /* 모바일 9:16 비율 */
-    height: 640px;
+    width: 1080px; /* High Res 9:16 */
+    height: 1920px;
     background: radial-gradient(circle at center, #2a0505, #000000); /* 어두운 붉은 동굴 배경 */
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
     overflow: hidden;
@@ -187,7 +187,7 @@ img, .enemy, .tower-card, .relic-slot {
 
 /* 중앙 길 */
 #road {
-    width: 100px;
+    width: 120px;
     background: transparent;
     box-shadow: 
         inset 10px 0 20px rgba(0,0,0,0.8),
@@ -222,8 +222,8 @@ img, .enemy, .tower-card, .relic-slot {
     top: 0; /* Align with top of the road */
     left: 50%;
     transform: translateX(-50%);
-    width: 140px;
-    height: 80px;
+    width: 160px;
+    height: 100px;
     background: radial-gradient(ellipse at center, rgba(30, 0, 50, 0.8) 0%, rgba(0, 0, 0, 0.5) 40%, transparent 80%);
     filter: blur(10px);
     z-index: 1;
@@ -294,9 +294,9 @@ img, .enemy, .tower-card, .relic-slot {
 #portal {
     position: absolute;
     bottom: 0;
-    width: 150px;
-    height: 35px;
-    border-radius: 75px 75px 0 0;
+    width: 180px;
+    height: 45px;
+    border-radius: 90px 90px 0 0;
     background: transparent;
     box-shadow: none;
     border: none;
@@ -2537,4 +2537,4 @@ input:checked + .slider:before {
     to { transform: rotate(360deg) scale(1); }
 }
 
-.projectile.fire { background: radial-gradient(circle, #ff4500, #8b0000); box-shadow: 0 0 10px #ff4500; }
+projectile.fire { background: radial-gradient(circle, #ff4500, #8b0000); box-shadow: 0 0 10px #ff4500; }
