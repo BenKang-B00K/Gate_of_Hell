@@ -140,10 +140,11 @@ function gameLoop() {
 
     if (!isStageStarting) {
         if (isBossStage) {
-            // Spawn boss first, then minions until limit
+            // Spawn boss first, then minions until limit - Slower spawn for boss stage
             if (!bossSpawned || (bossInstance && bossInstance.hp > 0 && currentStageSpawned < totalStageEnemies)) {
                 if (Date.now() - lastSpawnTime > spawnInterval) {
-                    spawnWave(); spawnInterval = Math.random() * 1200 + 800;
+                    spawnWave(); 
+                    spawnInterval = Math.random() * 2000 + 2000; // Much slower: 2-4 seconds
                 }
             }
         } else {
