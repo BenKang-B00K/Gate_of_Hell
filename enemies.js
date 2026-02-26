@@ -32,7 +32,7 @@ let isTimeFrozen = false;
 let timeFreezeEndTime = 0;
 let sealedGhostCount = 0;
 let portalEnergy = 0;
-const maxPortalEnergy = 2000;
+const maxPortalEnergy = 1500;
 let draggedUnit = null; // Currently dragged unit
 window.encounteredEnemies = new Set();
 
