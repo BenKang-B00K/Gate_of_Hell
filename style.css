@@ -16,6 +16,15 @@ body {
     touch-action: manipulation;
 }
 
+/* Prevent image and element dragging */
+img, .unit, .enemy, .tower-card, .relic-slot {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
 /* 게임 전체 컨테이너 (16:9 비율) */
 /* Start Screen Overlay */
 #start-screen {
