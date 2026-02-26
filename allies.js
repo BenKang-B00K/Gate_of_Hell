@@ -494,6 +494,22 @@ function initAllies() {
     const shl = document.getElementById('shards-label');
     if(shl) shl.addEventListener('mouseenter', () => showResourceInfo('shards'));
 
+    const sdh = document.getElementById('stage-debuff-header');
+    if(sdh) {
+        sdh.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d && Date.now() >= infoPanelLockedUntil) {
+                d.innerHTML = `
+                    <div style="color:#ff0000; font-weight:bold; font-size:13px; margin-bottom:2px;">Stage Debuff</div>
+                    <div style="display:inline-block; background:#8b0000; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">ENVIRONMENTAL CURSE</div>
+                    <div style="font-size:9px; color:#bbb; line-height:1.2;">Every stage may carry a unique curse that hinders your exorcists or empowers the specters.</div>
+                    <div style="color:#ff4500; font-size:8px; margin-top:4px;">* Check the active debuff description below the gauges.</div>
+                    <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"The very air of the abyss is thick with the regrets of the dead, choking the will of the living."</div>
+                `;
+            }
+        });
+    }
+
     slots.length = 0; createSlots('left-slots', 27); createSlots('right-slots', 27);
     initRecordsUI(); initTutorial();
     const modal = document.getElementById('unlock-modal'); if(modal) modal.addEventListener('click', () => { modal.style.display='none'; isPaused=false; });
