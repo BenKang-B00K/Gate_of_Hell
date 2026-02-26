@@ -81,10 +81,10 @@ function getCorruptionMultipliers() {
 
 // Calculate gradual stage-based multipliers
 function getStageMultipliers() {
-    // HP increases by 8% per stage (compounded slightly)
-    // Speed increases by 0.5% per stage
-    const hpStageMult = Math.pow(1.08, stage - 1);
-    const speedStageMult = 1 + (stage - 1) * 0.005;
+    // HP increases by 5% per stage (compounded slightly)
+    // Speed increases by 0.3% per stage
+    const hpStageMult = Math.pow(1.05, stage - 1);
+    const speedStageMult = 1 + (stage - 1) * 0.003;
     return { hpStageMult, speedStageMult };
 }
 
