@@ -115,8 +115,8 @@ function gameLoop() {
     });
 
     towers.forEach(t => {
-        t.speedBonus = (typeof totalRelicBonuses !== 'undefined') ? totalRelicBonuses.cooldown : 0;
-        t.rangeBonus = (typeof totalRelicBonuses !== 'undefined') ? totalRelicBonuses.range : 0;
+        t.speedBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('cooldown') : 0;
+        t.rangeBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('range') : 0;
         t.damageBonus = 0;
         if (!t.slotElement) return;
         const gameW = gameContainer.offsetWidth;
@@ -322,7 +322,7 @@ function shoot(tower, target) {
         if (target.type === 'soul_eater') target.lastHitTime = Date.now();
         
         handleSpecialAblities(tower, target);
-        const relicDmgBonus = (typeof totalRelicBonuses !== 'undefined') ? totalRelicBonuses.damage : 0;
+        const relicDmgBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('damage') : 0;
         const finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus);
         applyDamage(target, tower.data.damage * finalDamageMultiplier, tower);
     }, 200);

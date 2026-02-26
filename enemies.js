@@ -77,8 +77,9 @@ function getCorruptionMultipliers() {
     }
     
     // Apply Relic Enemy HP reduction
-    if (typeof totalRelicBonuses !== 'undefined' && totalRelicBonuses.enemy_hp < 0) {
-        hpMult *= (1.0 + totalRelicBonuses.enemy_hp);
+    const relicHPReduction = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_hp') : 0;
+    if (relicHPReduction < 0) {
+        hpMult *= (1.0 + relicHPReduction);
     }
     
     return { hpMult, speedMult };
@@ -951,8 +952,9 @@ function handleEnemyDeath(target, killer = null) {
         }
         
         // Add Relic SE Gain Bonus
-        if (typeof totalRelicBonuses !== 'undefined' && totalRelicBonuses.se_gain > 0) {
-            reward = Math.floor(reward * (1.0 + totalRelicBonuses.se_gain));
+        const relicSEBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('se_gain') : 0;
+        if (relicSEBonus > 0) {
+            reward = Math.floor(reward * (1.0 + relicSEBonus));
         }
 
         money = Math.min(1000, money + reward);

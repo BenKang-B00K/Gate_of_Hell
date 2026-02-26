@@ -137,5 +137,18 @@ function checkRelicDrop(enemy) {
 window.checkRelicDrop = checkRelicDrop;
 window.totalRelicBonuses = totalRelicBonuses;
 
+/**
+ * Get the total bonus value for a specific relic effect type.
+ * @param {string} type - The bonus type (e.g., 'damage', 'range')
+ * @returns {number} The sum of all collected relic bonuses for this type.
+ */
+function getRelicBonus(type) {
+    if (typeof totalRelicBonuses !== 'undefined' && totalRelicBonuses[type] !== undefined) {
+        return totalRelicBonuses[type];
+    }
+    return 0;
+}
+window.getRelicBonus = getRelicBonus;
+
 // Initialize when DOM loaded
 document.addEventListener('DOMContentLoaded', initRelics);
