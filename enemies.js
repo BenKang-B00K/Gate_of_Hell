@@ -48,14 +48,13 @@ function getBestiaryBonus(type) {
     const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'];
     const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning'];
     
-    let bonusPerTen = 0;
     if (basicSpecters.includes(type)) {
-        bonusPerTen = 0.05; // +5% per 10 kills
+        return 1 + (Math.floor(kills / 20) * 0.05); // +5% per 20 kills
     } else if (specializedWraiths.includes(type)) {
-        bonusPerTen = 0.08; // +8% per 10 kills
+        return 1 + (Math.floor(kills / 10) * 0.08); // +8% per 10 kills
     }
 
-    return 1 + (Math.floor(kills / 10) * bonusPerTen);
+    return 1;
 }
 
 // Calculate debuff multipliers based on corrupted shards
