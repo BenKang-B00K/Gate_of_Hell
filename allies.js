@@ -560,6 +560,9 @@ function sellTower(t) {
 
 function updateSummonButtonState() {
     const tc = document.getElementById('tower-card'); if(!tc) return;
+    const scd = document.getElementById('summon-cost-display');
+    if(scd) scd.innerText = `${towerCost} SE`;
+
     if(money<towerCost || towers.length>=maxTowers) tc.classList.add('locked'); else tc.classList.remove('locked');
     const pc = document.getElementById('purge-card'); if(!pc) return;
     if(money<800 || portalEnergy<=0) pc.classList.add('locked'); else pc.classList.remove('locked');
