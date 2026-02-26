@@ -630,7 +630,27 @@ function updateSummonButtonState() {
     const warning = document.getElementById('max-units-warning');
     if(warning) warning.style.display = isMax ? 'block' : 'none';
 
+    const sw = document.getElementById('summon-warning');
+    if(sw) {
+        if (money < towerCost && !isMax) {
+            sw.style.display = 'block';
+            sw.innerText = 'NOT ENOUGH SE';
+        } else {
+            sw.style.display = 'none';
+        }
+    }
+
     if(money<towerCost || isMax) tc.classList.add('locked'); else tc.classList.remove('locked');
     const pc = document.getElementById('purge-card'); if(!pc) return;
+    const pw = document.getElementById('purge-warning');
+    if(pw) {
+        if (money < 800 && portalEnergy > 0) {
+            pw.style.display = 'block';
+            pw.innerText = 'NOT ENOUGH SE';
+        } else {
+            pw.style.display = 'none';
+        }
+    }
+
     if(money<800 || portalEnergy<=0) pc.classList.add('locked'); else pc.classList.remove('locked');
 }
