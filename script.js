@@ -367,8 +367,12 @@ function shoot(tower, target) {
         
         // Play attack sound based on unit type
         const swordUnits = ['assassin', 'abyssal', 'spatial', 'knight', 'paladin', 'crusader', 'reaper', 'asura'];
+        const holyUnits = ['apprentice', 'monk', 'saint', 'chainer', 'executor', 'binder', 'grandsealer', 'guardian', 'judgment', 'talisman', 'cursed_talisman'];
+        
         if (swordUnits.includes(tower.data.type)) {
             playSound('sword');
+        } else if (holyUnits.includes(tower.data.type)) {
+            playSound('holy');
         }
 
         if (target.type === 'cursed_vajra' && Math.random() < 0.15) {

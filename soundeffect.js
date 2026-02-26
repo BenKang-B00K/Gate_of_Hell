@@ -6,6 +6,7 @@ const sounds = {
     summon: null,   // Placeholder for summon sound
     attack: null,   // Placeholder for attack sound
     sword: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_73d8102377.mp3'),    // Sword attack sound
+    holy: new Audio('https://cdn.pixabay.com/audio/2024/05/22/audio_0af0ba0604.mp3'),     // Holy magic sound
     kill: new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_5177f803f3.mp3'),     // Enemy death sound
     gameover: null,  // Placeholder for game over sound
     bgm: new Audio('https://cdn.pixabay.com/audio/2021/11/11/audio_40f06f5228.mp3')      // Cave Temple BGM
@@ -57,6 +58,7 @@ setVolume('hover', 0.3);
 setVolume('start', 0.6);
 setVolume('kill', 0.4);
 setVolume('sword', 0.5);
+setVolume('holy', 0.5);
 
 // Global state for volume control
 let globalVolume = 0.5;
@@ -77,6 +79,7 @@ function updateAllVolumes() {
             if (key === 'start') factor = 1.2;
             if (key === 'kill') factor = 0.8;
             if (key === 'sword') factor = 0.7;
+            if (key === 'holy') factor = 0.8;
             if (key === 'bgm') factor = 0.5; // BGM is usually quieter
             
             sounds[key].volume = Math.min(1.0, currentVol * factor);
