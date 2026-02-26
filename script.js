@@ -23,8 +23,54 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
         linkedEnemies.forEach(e => applyDamage(e, sharedAmount, sourceTower, true));
     }
     if (target.hp <= 0) {
+        if (sourceTower && sourceTower.data.type === 'midas') {
+            money = Math.min(1000, money + 15);
+            if (typeof updateGauges === 'function') updateGauges();
+        }
+        if (sourceTower && sourceTower.data.type === 'transmuter') {
+            money = Math.min(1000, money + 25);
+            if (typeof updateGauges === 'function') updateGauges();
+        }
         if (typeof handleEnemyDeath === 'function') handleEnemyDeath(target, sourceTower);
         else { const idx = enemies.indexOf(target); if(idx>-1){ target.element.remove(); enemies.splice(idx,1); }}
+    }
+}
+
+function handleSpecialAblities(tower, target) {
+    const type = tower.data.type;
+    if (type === 'alchemist' && Math.random() < 0.05) {
+        money = Math.min(1000, money + 2);
+        if (typeof updateGauges === 'function') updateGauges();
+    }
+    if (type === 'mirror') {
+        const others = enemies.filter(e => e !== target && e.hp > 0);
+        if (others.length > 0) {
+            const secondary = others[Math.floor(Math.random() * others.length)];
+            applyDamage(secondary, tower.data.damage * 0.3 * damageMultiplier, tower, true);
+        }
+    }
+    if (type === 'guardian' && Math.random() < 0.05 && !target.isBoss) {
+        applyDamage(target, target.hp + 1, tower);
+    }
+    if (type === 'philosopher') {
+        target.defense = Math.max(0, (target.defense || 0) - 1);
+    }
+    if (type === 'reflection') {
+        const others = enemies.filter(e => e !== target && e.hp > 0);
+        if (others.length > 0) {
+            const secondary = others[Math.floor(Math.random() * others.length)];
+            setTimeout(() => {
+                if (secondary.hp > 0) applyDamage(secondary, tower.data.damage * 0.5 * damageMultiplier, tower);
+            }, 100);
+        }
+    }
+    if (type === 'illusion' && Math.random() < 0.2) {
+        target.vxSign = (Math.random() < 0.5 ? -1 : 1);
+        target.swayPhase = Math.random() * Math.PI * 2;
+    }
+    if (type === 'oracle') {
+        target.speed *= 0.5;
+        setTimeout(() => { if (target.hp > 0) target.speed = target.baseSpeed; }, 1000);
     }
 }
 
@@ -220,6 +266,8 @@ function shoot(tower, target) {
         if (target.type === 'void_piercer' && tower.range > 150 && Math.random() < 0.5) return;
         if (target.type === 'mimic' && Math.random() < 0.2) { target.y += 40; if (target.element) target.element.style.top = `${target.y}px`; }
         if (target.type === 'soul_eater') target.lastHitTime = Date.now();
+        
+        handleSpecialAblities(tower, target);
         applyDamage(target, tower.data.damage * damageMultiplier, tower);
     }, 200);
 }

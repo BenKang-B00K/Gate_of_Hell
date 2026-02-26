@@ -137,9 +137,15 @@ const unitTypes = [
     { type: 'tracker', name: 'Soul Tracker', role: 'Support', tier: 2, icon: '👁️', damage: 10, range: 100, cooldown: 1000, desc: "Increases the range of nearby allies.", upgrades: ['seer', 'commander'] },
     { type: 'necromancer', name: 'Necromancer', role: 'Support', tier: 2, icon: '🔮', damage: 30, range: 120, cooldown: 1200, desc: "Summons spirit walls that block paths.", upgrades: ['wraithlord', 'cursedshaman'] },
     { type: 'guardian', name: 'Sanctuary Guardian', role: 'Special', tier: 2, icon: '🛡️', damage: 50, range: 120, cooldown: 1500, desc: "Chance to instantly kill enemies on hit (5%).", upgrades: ['rampart', 'judgment'] },
+    { type: 'alchemist', name: 'Exorcist Alchemist', role: 'Special', tier: 2, icon: '🧪', damage: 30, range: 110, cooldown: 1200, desc: "Transmutes minor regrets into SE upon hit (5%).", upgrades: ['midas', 'philosopher'] },
+    { type: 'mirror', name: 'Mirror Oracle', role: 'Special', tier: 2, icon: '🪞', damage: 25, range: 130, cooldown: 1500, desc: "Reflects a portion of damage to a nearby enemy.", upgrades: ['illusion', 'reflection'] },
     { type: 'knight', name: 'Exorcist Knight', role: 'Attack', tier: 2, icon: '⚔️', damage: 45, range: 110, cooldown: 1000, desc: "Balanced stats warrior.", upgrades: ['paladin', 'crusader'] },
     { type: 'paladin', name: 'Holy Paladin', role: 'Attack', tier: 3, icon: '⛪', damage: 55, range: 130, cooldown: 1000, desc: "[Master] 5th attack deals 3x damage and stuns.", upgrades: ['eternal_wall'] },
     { type: 'crusader', name: 'Blood Crusader', role: 'Attack', tier: 3, icon: '🚩', damage: 80, range: 120, cooldown: 1500, desc: "[Master] Bonus damage based on enemy missing HP.", upgrades: ['eternal_wall'] },
+    { type: 'midas', name: 'Golden Midas', role: 'Special', tier: 3, icon: '💰', damage: 40, range: 120, cooldown: 1200, desc: "[Master] Significant SE gain on kill.", upgrades: ['transmuter'] },
+    { type: 'philosopher', name: 'Philosopher of Void', role: 'Special', tier: 3, icon: '💎', damage: 50, range: 130, cooldown: 1500, desc: "[Master] Hits weaken enemy defense permanently.", upgrades: ['transmuter'] },
+    { type: 'illusion', name: 'Illusion Weaver', role: 'Special', tier: 3, icon: '🎭', damage: 35, range: 140, cooldown: 1200, desc: "[Master] Confuses enemies, making them wander.", upgrades: ['oracle'] },
+    { type: 'reflection', name: 'Reflection Master', role: 'Special', tier: 3, icon: '🪩', damage: 45, range: 150, cooldown: 1500, desc: "[Master] Projectiles bounce between enemies.", upgrades: ['oracle'] },
     { type: 'executor', name: 'Underworld Executor', role: 'Special', tier: 3, icon: '⚖️', damage: 40, range: 150, cooldown: 1000, desc: "[Master] Returns enemies to start (10%).", upgrades: ['warden'] },
     { type: 'binder', name: 'Soul Binder', role: 'Support', tier: 3, icon: '🔗', damage: 30, range: 140, cooldown: 1000, desc: "[Master] Links enemies to share damage.", upgrades: ['warden'] },
     { type: 'grandsealer', name: 'Grand Sealer', role: 'Support', tier: 3, icon: '🛐', damage: 30, range: 130, cooldown: 1500, desc: "[Master] Neutralizes enemy special abilities.", upgrades: ['cursed_talisman'] },
@@ -160,6 +166,8 @@ const unitTypes = [
     { type: 'cursedshaman', name: 'Cursed Shaman', role: 'Support', tier: 3, icon: '🎭', damage: 20, range: 130, cooldown: 1500, desc: "[Master] Max HP reduction curse.", upgrades: ['forsaken_king'] },
     { type: 'rampart', name: 'Holy Rampart', role: 'Support', tier: 3, icon: '🏰', damage: 40, range: 120, cooldown: 1500, desc: "[Master] Return reaching gate.", upgrades: ['void_gatekeeper'] },
     { type: 'judgment', name: 'Knight of Judgment', role: 'Attack', tier: 3, icon: '⚔️', damage: 60, range: 130, cooldown: 1500, desc: "[Master] Holy AOE chance.", upgrades: ['void_gatekeeper'] },
+    { type: 'transmuter', name: 'Void Transmuter', role: 'Special', tier: 4, icon: '⚛️', damage: 60, range: 140, cooldown: 1000, desc: "[Abyss] Turns enemies into Soul Energy." },
+    { type: 'oracle', name: 'Oracle of Eternity', role: 'Special', tier: 4, icon: '💠', damage: 70, range: 160, cooldown: 1200, desc: "[Abyss] Projectiles stop enemy movement." },
     { type: 'warden', name: 'Warden of the Abyss', role: 'Support', tier: 4, icon: '🗝️', damage: 100, range: 200, cooldown: 10000, desc: "[Abyss] Pull all to center." },
     { type: 'cursed_talisman', name: 'Cursed Sect', role: 'Attack', tier: 4, icon: '⛩️', damage: 80, range: 150, cooldown: 1200, desc: "[Abyss] Explode on death mark." },
     { type: 'asura', name: 'Hell Crushing Asura', role: 'Attack', tier: 4, icon: '👹', damage: 60, range: 120, cooldown: 400, desc: "[Abyss] 12 strikes." },
@@ -385,8 +393,8 @@ function renderBestiary() {
         'frost_outcast': ['ice', 'absolutezero', 'permafrost', 'cocytus'],
         'ember_hatred': ['fire', 'hellfire', 'phoenix', 'purgatory'],
         'betrayer_blade': ['assassin', 'abyssal', 'spatial', 'reaper'],
-        'abyssal_acolyte': ['executor', 'binder', 'grandsealer', 'flamemaster', 'vajra', 'saint', 'voidsniper', 'thousandhand', 'absolutezero', 'permafrost', 'hellfire', 'phoenix', 'abyssal', 'spatial', 'seer', 'commander', 'wraithlord', 'cursedshaman', 'rampart', 'judgment', 'paladin', 'crusader'],
-        'bringer_of_doom': ['warden', 'cursed_talisman', 'asura', 'piercing_shadow', 'cocytus', 'purgatory', 'reaper', 'doom_guide', 'forsaken_king', 'void_gatekeeper', 'eternal_wall']
+        'abyssal_acolyte': ['executor', 'binder', 'grandsealer', 'flamemaster', 'vajra', 'saint', 'voidsniper', 'thousandhand', 'absolutezero', 'permafrost', 'hellfire', 'phoenix', 'abyssal', 'spatial', 'seer', 'commander', 'wraithlord', 'cursedshaman', 'rampart', 'judgment', 'paladin', 'crusader', 'midas', 'philosopher', 'illusion', 'reflection'],
+        'bringer_of_doom': ['warden', 'cursed_talisman', 'asura', 'piercing_shadow', 'cocytus', 'purgatory', 'reaper', 'doom_guide', 'forsaken_king', 'void_gatekeeper', 'eternal_wall', 'transmuter', 'oracle']
     };
 
     groups.forEach(g => {
@@ -463,7 +471,11 @@ function renderPromotionTree() {
     const pg = {
         'Attack Paths': [ {n:'Talismanist',t:'talisman',m:['grandsealer','flamemaster'],a:'cursed_talisman'}, {n:'Divine Archer',t:'archer',m:['voidsniper','thousandhand'],a:'piercing_shadow'}, {n:'Fire Mage',t:'fire',m:['hellfire','phoenix'],a:'purgatory'}, {n:'Shadow Assassin',t:'assassin',m:['abyssal','spatial'],a:'reaper'}, {n:'Exorcist Knight',t:'knight',m:['paladin','crusader'],a:'eternal_wall'} ],
         'Support Paths': [ {n:'Soul Chainer',t:'chainer',m:['executor','binder'],a:'warden'}, {n:'Mace Monk',t:'monk',m:['vajra','saint'],a:'asura'}, {n:'Ice Daoist',t:'ice',m:['absolutezero','permafrost'],a:'cocytus'}, {n:'Soul Tracker',t:'tracker',m:['seer','commander'],a:'doom_guide'}, {n:'Necromancer',t:'necromancer',m:['wraithlord','cursedshaman'],a:'forsaken_king'} ],
-        'Special Paths': [ {n:'Sanctuary Guardian',t:'guardian',m:['rampart','judgment'],a:'void_gatekeeper'} ]
+        'Special Paths': [ 
+            {n:'Sanctuary Guardian',t:'guardian',m:['rampart','judgment'],a:'void_gatekeeper'},
+            {n:'Exorcist Alchemist',t:'alchemist',m:['midas','philosopher'],a:'transmuter'},
+            {n:'Mirror Oracle',t:'mirror',m:['illusion','reflection'],a:'oracle'}
+        ]
     };
     Object.keys(pg).forEach(gn => {
         const h = document.createElement('h3'); let c="#ff4500"; if(gn.includes('Support')) c="#00e5ff"; if(gn.includes('Special')) c="#ffd700";
