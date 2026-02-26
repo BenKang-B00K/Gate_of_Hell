@@ -220,11 +220,11 @@ function initStage() {
         }
     }
     else if (stage <= 2) {
-        totalStageEnemies = Math.floor(Math.random() * 11) + 20; // 20-30
+        totalStageEnemies = Math.floor(Math.random() * 6) + 12; // 12-17 (Reduced from 20-30)
     } else {
-        // Gradually increase from stage 3 to stage 19, then cap at 60-70 from stage 20
-        const baseMin = Math.min(60, 20 + (stage - 2) * 2.5);
-        totalStageEnemies = Math.floor(Math.random() * 11) + Math.floor(baseMin);
+        // Gradually increase, then cap at 40-45 from stage 20 (Reduced from 60-70)
+        const baseMin = Math.min(40, 15 + (stage - 2) * 1.5);
+        totalStageEnemies = Math.floor(Math.random() * 6) + Math.floor(baseMin);
     }
     currentStageSpawned = 0;
     updateStageInfo();
@@ -386,12 +386,12 @@ function spawnWave() {
         bossSpawned = true;
     }
 
-    let min = 2, max = 10;
+    let min = 1, max = 2; // Default small wave
     if (isBossStage) {
-        min = 1; max = 3; // Reduced from 5-10
-    } else if (stage <= 5) { 
         min = 1; max = 2; 
-    } else if (stage <= 10) {
+    } else if (stage >= 20) {
+        min = 2; max = 4; // Max 4 even in late game
+    } else if (stage >= 10) {
         min = 1; max = 3;
     }
     
