@@ -76,6 +76,11 @@ function getCorruptionMultipliers() {
         hpMult = 1 + (s * 0.01); // +1% per shard
     }
     
+    // Apply Relic Enemy HP reduction
+    if (typeof totalRelicBonuses !== 'undefined' && totalRelicBonuses.enemy_hp < 0) {
+        hpMult *= (1.0 + totalRelicBonuses.enemy_hp);
+    }
+    
     return { hpMult, speedMult };
 }
 
@@ -897,6 +902,7 @@ function handleEnemyDeath(target, killer = null) {
         target.element.remove();
         enemies.splice(idx, 1);
         playSound('kill');
+        if (typeof checkRelicDrop === 'function') checkRelicDrop(target);
         updateStageInfo(); 
         
         if (target.isBoss) {
@@ -943,6 +949,12 @@ function handleEnemyDeath(target, killer = null) {
         if (killer && killer.data && killer.data.type === 'abyssal') {
             reward = Math.floor(reward * 1.5);
         }
+        
+        // Add Relic SE Gain Bonus
+        if (typeof totalRelicBonuses !== 'undefined' && totalRelicBonuses.se_gain > 0) {
+            reward = Math.floor(reward * (1.0 + totalRelicBonuses.se_gain));
+        }
+
         money = Math.min(1000, money + reward);
         updateGauges();
 
