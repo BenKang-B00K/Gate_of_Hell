@@ -1,4 +1,24 @@
 /* script.js */
+const sounds = {
+    thunder: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_c350677d07.mp3'), // Thunder sound
+    hover: new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_0625c1539c.mp3'),   // UI Hover
+    start: new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_2ba65f912e.mp3')    // Deep cinematic start
+};
+
+// Configure sounds
+sounds.thunder.volume = 0.4;
+sounds.hover.volume = 0.3;
+sounds.start.volume = 0.6;
+
+function playThunder() {
+    if (gameStarted) return;
+    // Play thunder at random intervals matching the 'lightningStrike' animation cycle (2s)
+    sounds.thunder.currentTime = 0;
+    sounds.thunder.play().catch(e => console.log("Audio play blocked until interaction"));
+}
+
+let thunderInterval;
+
 let spawnInterval = 1200; 
 let isPaused = false;
 let gameWidth = 360; 
@@ -287,8 +307,24 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const startBtn = document.getElementById('start-game-btn');
     const startScreen = document.getElementById('start-screen');
+    
+    // Start thunder sound loop (will be blocked by browser until first click anywhere)
+    thunderInterval = setInterval(() => {
+        if (!gameStarted) playThunder();
+        else clearInterval(thunderInterval);
+    }, 2000);
+
     if (startBtn && startScreen) {
+        startBtn.addEventListener('mouseenter', () => {
+            if (!gameStarted) {
+                sounds.hover.currentTime = 0;
+                sounds.hover.play().catch(() => {});
+            }
+        });
+
         startBtn.addEventListener('click', () => {
+            clearInterval(thunderInterval);
+            sounds.start.play().catch(() => {});
             startScreen.classList.add('shrink-to-info');
             
             setTimeout(() => {
