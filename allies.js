@@ -626,7 +626,11 @@ function updateSummonButtonState() {
     const scd = document.getElementById('summon-cost-display');
     if(scd) scd.innerText = `${towerCost} SE`;
 
-    if(money<towerCost || towers.length>=maxTowers) tc.classList.add('locked'); else tc.classList.remove('locked');
+    const isMax = towers.length >= maxTowers;
+    const warning = document.getElementById('max-units-warning');
+    if(warning) warning.style.display = isMax ? 'block' : 'none';
+
+    if(money<towerCost || isMax) tc.classList.add('locked'); else tc.classList.remove('locked');
     const pc = document.getElementById('purge-card'); if(!pc) return;
     if(money<800 || portalEnergy<=0) pc.classList.add('locked'); else pc.classList.remove('locked');
 }
