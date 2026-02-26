@@ -213,6 +213,13 @@ function createSlots(containerId, count) {
         const cell = document.createElement('div');
         if (i < 3) { container.appendChild(cell); continue; }
         cell.classList.add('card-slot');
+        
+        // Store column index (0, 1, or 2). Columns are 3 wide.
+        // For Left Slots: 0 is leftmost (outer), 2 is rightmost (inner)
+        // For Right Slots: 0 is leftmost (inner), 2 is rightmost (outer)
+        cell.dataset.col = i % 3;
+        cell.dataset.area = containerId;
+
         slots.push(cell);
         container.appendChild(cell);
         cell.addEventListener('click', function() { if (isMovingUnit && draggedUnit) executeMove(draggedUnit, this); });
@@ -464,9 +471,27 @@ function initAllies() {
             const finalTowerCost = Math.max(5, towerCost - reduction);
 
             if(money < finalTowerCost) return; 
-            const vs = slots.filter(c => !c.classList.contains('occupied')); 
-            if(vs.length === 0) return; 
-            summonTower(vs[Math.floor(Math.random()*vs.length)]); 
+            
+            // Filter slots to only innermost and second innermost rows
+            // Left area: col 1 and 2 (inner)
+            // Right area: col 0 and 1 (inner)
+            const vs = slots.filter(c => {
+                if (c.classList.contains('occupied')) return false;
+                const col = parseInt(c.dataset.col);
+                const area = c.dataset.area;
+                if (area === 'left-slots') return col >= 1;
+                if (area === 'right-slots') return col <= 1;
+                return false;
+            });
+
+            if(vs.length === 0) {
+                // If inner slots are full, allow summoning anywhere available
+                const fallbackVs = slots.filter(c => !c.classList.contains('occupied'));
+                if (fallbackVs.length === 0) return;
+                summonTower(fallbackVs[Math.floor(Math.random()*fallbackVs.length)]);
+            } else {
+                summonTower(vs[Math.floor(Math.random()*vs.length)]); 
+            }
         });
 
         tc.addEventListener('mouseenter', () => {
