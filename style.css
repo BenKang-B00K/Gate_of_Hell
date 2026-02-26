@@ -560,6 +560,40 @@ img, .enemy, .tower-card, .relic-slot {
 }
 
 /* Thematic Header (Now inside bottom panel) */
+/* Top Status Bar */
+#top-status-bar {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+    pointer-events: none;
+}
+
+#enemy-counter {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #4a0000;
+    border-radius: 15px;
+    padding: 2px 12px;
+    color: #ffd700;
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8), inset 0 0 5px rgba(255, 0, 0, 0.2);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#enemies-left {
+    color: #ff0000;
+    font-size: 12px;
+    text-shadow: 0 0 5px #ff0000;
+}
+
 #thematic-header {
     width: 100%;
     text-align: center;
