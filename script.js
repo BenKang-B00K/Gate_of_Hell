@@ -312,6 +312,13 @@ function shoot(tower, target) {
     setTimeout(() => {
         proj.remove();
         if (typeof createAttackEffect === 'function') createAttackEffect(tower.data.type, target, gameContainer);
+        
+        // Play attack sound based on unit type
+        const swordUnits = ['assassin', 'abyssal', 'spatial', 'knight', 'paladin', 'crusader', 'reaper', 'asura'];
+        if (swordUnits.includes(tower.data.type)) {
+            playSound('sword');
+        }
+
         if (target.type === 'cursed_vajra' && Math.random() < 0.15) {
             tower.isStunned = true; tower.stunEndTime = Date.now() + 1000;
             if (tower.element) tower.element.classList.add('feared');
