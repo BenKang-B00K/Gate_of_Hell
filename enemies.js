@@ -366,7 +366,7 @@ function spawnWave() {
 
     let min = 2, max = 10;
     if (isBossStage) {
-        min = 5; max = 10;
+        min = 1; max = 3; // Reduced from 5-10
     } else if (stage <= 5) { 
         min = 1; max = 2; 
     } else if (stage <= 10) {
