@@ -293,7 +293,8 @@ function showRelicInfoInPanel(relic) {
     const d = document.getElementById('unit-info');
     if (!d) return;
     
-    const count = collectedRelics[relic.id] || 1;
+    // Set lock for 4 seconds
+    window.infoPanelLockedUntil = Date.now() + 4000;
     
     d.innerHTML = `
         <div style="color:#ffd700; font-weight:bold; font-size:13px; margin-bottom:2px;">✨ RELIC FOUND!</div>
@@ -303,7 +304,15 @@ function showRelicInfoInPanel(relic) {
         <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"${relic.lore}"</div>
     `;
     
-    if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+    // Auto reset after lock expires
+    setTimeout(() => {
+        if (typeof window.startInfoResetTimer === 'function') {
+            // Force reset since lock might still be technically active by a few ms
+            const oldLock = window.infoPanelLockedUntil;
+            window.infoPanelLockedUntil = 0; 
+            window.startInfoResetTimer();
+        }
+    }, 4050);
 }
 
 function checkRelicDrop(enemy) {

@@ -269,9 +269,13 @@ function summonTower(targetSlot) {
 }
 
 let infoResetTimer = null;
+let infoPanelLockedUntil = 0;
+
 function startInfoResetTimer() {
+    if (Date.now() < infoPanelLockedUntil) return;
     if (infoResetTimer) clearTimeout(infoResetTimer);
     infoResetTimer = setTimeout(() => {
+        if (Date.now() < infoPanelLockedUntil) return;
         const d = document.getElementById('unit-info');
         if (d) d.innerHTML = '<div class="info-default-text">GUARDIANS<br><span style="font-size:10px; opacity:0.8;">of the</span><br>UNDERWORLD</div>';
         
@@ -318,6 +322,7 @@ function showRangeIndicator(tower) {
 }
 
 function showUnitInfo(tower) {
+    if (Date.now() < infoPanelLockedUntil) return;
     const d = document.getElementById('unit-info');
     const data = tower.data;
     let rc = '#ff4500'; if(data.role==='Basic') rc='#00ff00'; else if(data.role==='Support') rc='#00e5ff'; else if(data.role==='Special') rc='#ffd700';
@@ -364,6 +369,7 @@ function showUnitInfo(tower) {
 }
 
 function showEnemyInfo(enemy) {
+    if (Date.now() < infoPanelLockedUntil) return;
     const d = document.getElementById('unit-info');
     const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade", 'cerberus': 'Cerberus', 'charon': 'Charon', 'beelzebub': 'Beelzebub', 'lucifer': 'Lucifer' };
     
@@ -386,6 +392,7 @@ function showEnemyInfo(enemy) {
 window.showEnemyInfo = showEnemyInfo;
 
 function showResourceInfo(type) {
+    if (Date.now() < infoPanelLockedUntil) return;
     const d = document.getElementById('unit-info');
     if (type === 'se') {
         d.innerHTML = `
@@ -412,6 +419,14 @@ function showResourceInfo(type) {
     startInfoResetTimer();
 }
 window.showResourceInfo = showResourceInfo;
+window.startInfoResetTimer = startInfoResetTimer;
+
+// Expose lock variable via getter/setter or directly
+Object.defineProperty(window, 'infoPanelLockedUntil', {
+    get: function() { return infoPanelLockedUntil; },
+    set: function(val) { infoPanelLockedUntil = val; },
+    configurable: true
+});
 
 function initAllies() {
     const tc = document.getElementById('tower-card');
