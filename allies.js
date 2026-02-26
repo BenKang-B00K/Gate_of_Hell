@@ -287,9 +287,11 @@ function showUnitInfo(tower) {
     if(data.type==='apprentice') {
         ch = `
             <div style="font-size:8px; color:#ffd700; margin-bottom:4px; font-weight:bold;">Promotion Paths (200 SE):</div>
-            <div style="font-size:7.5px; color:#ff4500; margin-bottom:2px;">⚔️ Attack: Archer, Mage, Assassin, Knight...</div>
-            <div style="font-size:7.5px; color:#00e5ff; margin-bottom:2px;">🪄 Support: Chainer, Ice, Tracker, Necro...</div>
-            <div style="font-size:7.5px; color:#ffd700; margin-bottom:4px;">💠 Special: Guardian, Alchemist, Mirror...</div>
+            <div style="font-size:8px; display:flex; gap:8px; justify-content:center;">
+                <span style="color:#ff4500;">⚔️ Attack</span>
+                <span style="color:#00e5ff;">🪄 Support</span>
+                <span style="color:#ffd700;">💠 Special</span>
+            </div>
         `;
     }
     else if(data.upgrades) { 
