@@ -307,25 +307,18 @@ function renderBestiary() {
     };
 
     groups.forEach(g => {
-        const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px;`;
+        const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px;`; bt.appendChild(h);
         
-        let hasVisibleItem = false;
-        const tempContainer = document.createDocumentFragment();
-
         g.types.forEach(t => {
-            let isVisible = false;
+            let isKnown = false;
             if (g.h === 'Basic Specters') {
-                isVisible = true; // 기본 유령은 항상 보임
+                isKnown = true; 
             } else if (g.h === 'Corrupted Specters') {
                 const triggers = corruptTriggerMap[t] || [];
-                isVisible = triggers.some(unit => unlockedUnits.has(unit));
+                isKnown = triggers.some(unit => unlockedUnits.has(unit));
             } else {
-                // Specialized, Treasure, Bosses는 조우하거나 처치한 적이 있어야 함
-                isVisible = (window.encounteredEnemies && window.encounteredEnemies.has(t)) || (killCounts[t] > 0);
+                isKnown = (window.encounteredEnemies && window.encounteredEnemies.has(t)) || (killCounts[t] > 0);
             }
-
-            if (!isVisible) return;
-            hasVisibleItem = true;
 
             let d; 
             if (typeof bossData !== 'undefined' && bossData) {
@@ -337,7 +330,10 @@ function renderBestiary() {
             if(!d && typeof corruptedTypes!=='undefined') d=corruptedTypes[t]; 
             if(!d) return;
 
-            const kills = killCounts[t] || 0; const bonus = getBestiaryBonus(t); const btx = bonus>1?`DMG +${((bonus-1)*100).toFixed(0)}%`:`No Bonus`;
+            const kills = killCounts[t] || 0; 
+            const bonus = getBestiaryBonus(t); 
+            const btx = bonus>1?`DMG +${((bonus-1)*100).toFixed(0)}%`:`No Bonus`;
+            
             let rVal = d.reward;
             if (rVal === undefined) {
                 if (g.h === 'Abyss Bosses') rVal = 500;
@@ -346,15 +342,33 @@ function renderBestiary() {
             }
             const rewardText = ` | ✨ ${rVal}`;
             const originText = corruptInfo[t] ? `<br><strong style="color:#ff0000;">[Origin]</strong> ${corruptInfo[t]}` : '';
-            const item = document.createElement('div'); item.className='bestiary-item';
-            item.innerHTML = `<div class="custom-tooltip specter"><strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}${originText}</div><div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div><div class="bestiary-info"><div class="bestiary-name">${names[t]||t}</div><div class="bestiary-stats">💀 ${kills}${rewardText} | ${btx}</div></div>`;
-            tempContainer.appendChild(item);
+            
+            const item = document.createElement('div'); 
+            item.className = `bestiary-item ${isKnown ? '' : 'locked'}`;
+            
+            if (isKnown) {
+                item.innerHTML = `
+                    <div class="custom-tooltip specter">
+                        <strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}${originText}
+                    </div>
+                    <div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div>
+                    <div class="bestiary-info">
+                        <div class="bestiary-name">${names[t]||t}</div>
+                        <div class="bestiary-stats">💀 ${kills}${rewardText} | ${btx}</div>
+                    </div>`;
+            } else {
+                item.innerHTML = `
+                    <div class="custom-tooltip specter">
+                        <strong style="color:#ffd700;">[Information Unavailable]</strong><br>Defeat this specter or unlock its related class to reveal details.
+                    </div>
+                    <div class="bestiary-icon" style="position:static; transform:none; display:flex; justify-content:center; align-items:center; background:#222; color:#555; font-size:20px; border:1px dashed #444;">?</div>
+                    <div class="bestiary-info">
+                        <div class="bestiary-name" style="color:#555;">???</div>
+                        <div class="bestiary-stats" style="color:#333;">💀 Locked</div>
+                    </div>`;
+            }
+            bt.appendChild(item);
         });
-
-        if (hasVisibleItem) {
-            bt.appendChild(h);
-            bt.appendChild(tempContainer);
-        }
     });
 }
 
