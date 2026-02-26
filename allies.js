@@ -226,6 +226,13 @@ function createSlots(containerId, count) {
 function cancelMovement() { if (draggedUnit) draggedUnit.classList.remove('move-ready'); draggedUnit = null; isMovingUnit = false; }
 
 function summonTower(targetSlot) {
+    const s = unitTypes[0];
+    const existingCount = towers.filter(t => t.data.type === s.type).length;
+    if (existingCount >= 2) {
+        alert(`You can only have up to 2 ${s.name}s at once!`);
+        return;
+    }
+
     money -= towerCost;
     if (typeof updateGauges === 'function') updateGauges();
     towerCost += 5;
@@ -510,11 +517,26 @@ function purgePortal() {
 }
 
 function performJobChange(el) {
-    if(money<jobChangeCost) return; money-=jobChangeCost; if(typeof updateGauges==='function')updateGauges();
     const t = towers.find(x=>x.element===el); if(!t) return;
-    const paths = [ {from:'apprentice', to:['chainer','talisman','monk','archer','ice','fire','assassin','tracker','necromancer','guardian','knight']} ];
+    const paths = [ {from:'apprentice', to:['chainer','talisman','monk','archer','ice','fire','assassin','tracker','necromancer','guardian','knight','alchemist','mirror']} ];
     const p = paths.find(x=>x.from===t.data.type); if(!p) return;
-    const ntStr = p.to[Math.floor(Math.random()*p.to.length)]; const nt = unitTypes.find(x=>x.type===ntStr);
+
+    // Filter paths that already have 2 units
+    const availablePaths = p.to.filter(type => {
+        const count = towers.filter(tw => tw.data.type === type).length;
+        return count < 2;
+    });
+
+    if (availablePaths.length === 0) {
+        alert("No available classes to ascend! All paths already have 2 units.");
+        return;
+    }
+
+    if(money<jobChangeCost) return; 
+    money-=jobChangeCost; if(typeof updateGauges==='function')updateGauges();
+    
+    const ntStr = availablePaths[Math.floor(Math.random()*availablePaths.length)]; 
+    const nt = unitTypes.find(x=>x.type===ntStr);
     el.className=`unit ${nt.type}`; el.title=nt.name; el.innerText=nt.icon;
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     recordUnlock(nt.type); t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
@@ -523,7 +545,16 @@ function performJobChange(el) {
 }
 
 function performMasterJobChange(tower, ntStr) {
-    if(money<masterJobCost) return; money-=masterJobCost; if(typeof updateGauges==='function')updateGauges();
+    const existingCount = towers.filter(t => t.data.type === ntStr).length;
+    if (existingCount >= 2) {
+        const nt = unitTypes.find(x => x.type === ntStr);
+        alert(`You can only have up to 2 ${nt.name}s at once!`);
+        return;
+    }
+
+    if(money<masterJobCost) return; 
+    money-=masterJobCost; if(typeof updateGauges==='function')updateGauges();
+    
     const nt = unitTypes.find(x=>x.type===ntStr); const el = tower.element;
     el.className=`unit ${nt.type}`; el.title=nt.name; el.innerText=nt.icon;
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
