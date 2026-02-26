@@ -848,6 +848,9 @@ function updateUnitOverlayButtons(t) {
 }
 
 function sellTower(t) {
+    const confirmMsg = `정말로 이 퇴마사를 타락시키겠습니까?\n\n타락한 퇴마사는 심연의 힘에 잠식되어 강력한 '타락한 유령'이 되어 다시 돌아올 수 있습니다!`;
+    if (!confirm(confirmMsg)) return;
+
     const s = t.slotElement; s.classList.remove('occupied'); t.element.remove();
     
     // Calculate Refund with Relic Bonus
@@ -856,20 +859,28 @@ function sellTower(t) {
     const finalRefund = Math.floor(baseRefund * (1.0 + relicRefundBonus));
     
     money = Math.min(1000, money + finalRefund);
-    updateGauges();
+    if (typeof updateGauges === 'function') updateGauges();
     updateSummonButtonState();
 
     const idx = towers.indexOf(t); if(idx>-1) towers.splice(idx,1);
-    if(typeof window.spawnCorruptedEnemy === 'function') {
-        let ct = 'defiled_apprentice';
-        if(['monk','vajra','saint'].includes(t.data.type)) ct='cursed_vajra';
-        else if(['archer','voidsniper','thousandhand'].includes(t.data.type)) ct='void_piercer';
-        else if(['ice','absolutezero','permafrost'].includes(t.data.type)) ct='frost_outcast';
-        else if(['fire','hellfire','phoenix'].includes(t.data.type)) ct='ember_hatred';
-        else if(['assassin','abyssal','spatial'].includes(t.data.type)) ct='betrayer_blade';
+    
+    // Use window scope or direct call if available
+    const spawnFn = window.spawnCorruptedEnemy || (typeof spawnCorruptedEnemy === 'function' ? spawnCorruptedEnemy : null);
+    if(spawnFn) {
+        let ct = null; // Default to tier-based if ct remains null
+        const type = t.data.type;
+        
+        if(['monk','vajra','saint'].includes(type)) ct='cursed_vajra';
+        else if(['archer','voidsniper','thousandhand'].includes(type)) ct='void_piercer';
+        else if(['ice','absolutezero','permafrost'].includes(type)) ct='frost_outcast';
+        else if(['fire','hellfire','phoenix'].includes(type)) ct='ember_hatred';
+        else if(['assassin','abyssal','spatial'].includes(type)) ct='betrayer_blade';
         else if(t.data.tier>=3) ct='abyssal_acolyte';
+        
         if(t.data.tier===4) ct='bringer_of_doom';
-        window.spawnCorruptedEnemy(t, ct);
+        if(type === 'apprentice') ct='defiled_apprentice';
+
+        spawnFn(t, ct);
     }
 }
 
