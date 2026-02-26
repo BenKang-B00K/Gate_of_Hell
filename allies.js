@@ -630,7 +630,14 @@ function updateSummonButtonState() {
 
     const isMax = towers.length >= maxTowers;
     const warning = document.getElementById('max-units-warning');
-    if(warning) warning.style.display = isMax ? 'block' : 'none';
+    if(warning && isMax) {
+        warning.style.display = 'block';
+        setTimeout(() => {
+            warning.style.display = 'none';
+        }, 1500); // 1.5 seconds
+    } else if (warning) {
+        warning.style.display = 'none';
+    }
 
     const sw = document.getElementById('summon-warning');
     if(sw) {
