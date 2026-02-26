@@ -774,7 +774,7 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
                 slot.dataset.corruption = (parseInt(slot.dataset.corruption) || 0) + 7;
                 // Visual feedback for the slot
                 const effect = document.createElement('div');
-                effect.style.cssText = 'position:absolute; width:100%; height:100%; background:rgba(139,0,0,0.3); box-shadow:inset 0 0 10px #f00; pointer-events:none;';
+                effect.style.cssText = 'position:absolute; width:100%; height:100%; background:rgba(139,0,0,0.3); box-shadow:inset 0 0 30px #f00; pointer-events:none;';
                 slot.appendChild(effect);
             }
         });

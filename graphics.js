@@ -262,14 +262,228 @@ function drawUnits() {
     const scaleY = LOGICAL_HEIGHT / containerRect.height;
 
     towers.forEach(tower => {
-        if (tower.data.type === 'apprentice') {
-            const rect = tower.element.getBoundingClientRect();
-            const cx = ((rect.left + rect.width / 2) - containerRect.left) * scaleX;
-            const cy = ((rect.top + rect.height / 2) - containerRect.top) * scaleY;
-            
-            drawApprentice(cx, cy);
+        const rect = tower.element.getBoundingClientRect();
+        const cx = ((rect.left + rect.width / 2) - containerRect.left) * scaleX;
+        const cy = ((rect.top + rect.height / 2) - containerRect.top) * scaleY;
+
+        switch(tower.data.type) {
+            case 'apprentice': drawApprentice(cx, cy); break;
+            case 'chainer': drawChainer(cx, cy); break;
+            case 'monk': drawMonk(cx, cy); break;
+            case 'talisman': drawTalisman(cx, cy); break;
+            case 'archer': drawArcher(cx, cy); break;
+            case 'assassin': drawAssassin(cx, cy); break;
+            case 'ice': drawIce(cx, cy); break;
+            case 'fire': drawFire(cx, cy); break;
+            case 'tracker': drawTracker(cx, cy); break;
+            case 'necromancer': drawNecromancer(cx, cy); break;
+            case 'guardian': drawGuardian(cx, cy); break;
         }
     });
+}
+
+function drawIce(cx, cy) {
+    const time = lavaPhase;
+    const y = cy;
+    const p = (ox, oy, color, w=1, h=1) => { ctx.fillStyle = color; ctx.fillRect(cx + ox, y + oy, w, h); };
+
+    // Outline
+    p(-5, -8, '#000', 10, 16);
+    // Light Blue Robe
+    p(-4, -7, '#ADD8E6', 8, 14);
+    p(-3, -7, '#00FFFF', 6, 4);
+    // Ice Crystals
+    const crys = (Math.sin(time * 4) + 1) / 2;
+    p(-7, -4 + crys*2, '#FFF', 2, 2);
+    p(5, 2 - crys*2, '#FFF', 2, 2);
+}
+
+function drawFire(cx, cy) {
+    const time = lavaPhase;
+    const y = cy;
+    const p = (ox, oy, color, w=1, h=1) => { ctx.fillStyle = color; ctx.fillRect(cx + ox, y + oy, w, h); };
+
+    // Outline
+    p(-5, -10, '#000', 10, 18);
+    // Red Robe
+    p(-4, -1, '#8B0000', 8, 9);
+    // Flaming Hair
+    const flame = (Math.sin(time * 10) + 1) / 2;
+    p(-4, -9 - flame, '#FF4500', 8, 8);
+    p(-3, -8 - flame, '#FFD700', 6, 4);
+}
+
+function drawTracker(cx, cy) {
+    const y = cy;
+    const p = (ox, oy, color, w=1, h=1) => { ctx.fillStyle = color; ctx.fillRect(cx + ox, y + oy, w, h); };
+
+    // Outline
+    p(-5, -8, '#000', 10, 16);
+    // Gray Cloak
+    p(-4, -7, '#696969', 8, 14);
+    // Goggles
+    p(-3, -5, '#00FF00', 6, 2);
+    // Rifle
+    p(4, -2, '#3E2723', 8, 2);
+    p(10, -3, '#000', 2, 1);
+}
+
+function drawNecromancer(cx, cy) {
+    const time = lavaPhase;
+    const y = cy + Math.sin(time * 2) * 2;
+    const p = (ox, oy, color, w=1, h=1) => { ctx.fillStyle = color; ctx.fillRect(cx + ox, y + oy, w, h); };
+
+    // Outline
+    p(-5, -9, '#000', 10, 18);
+    // Dark Purple Robe
+    p(-4, -8, '#4B0082', 8, 16);
+    // Skull Mask
+    p(-2, -6, '#FFF', 4, 4);
+    p(-1, -4, '#000', 1, 1);
+    p(1, -4, '#000', 1, 1);
+}
+
+function drawGuardian(cx, cy) {
+    const y = cy;
+    const p = (ox, oy, color, w=1, h=1) => { ctx.fillStyle = color; ctx.fillRect(cx + ox, y + oy, w, h); };
+
+    // Outline
+    p(-7, -9, '#000', 14, 18);
+    // Heavy Plate (Silver)
+    p(-6, -8, '#C0C0C0', 12, 16);
+    // Gold Trim
+    p(-6, -8, '#FFD700', 12, 2);
+    p(-6, 6, '#FFD700', 12, 2);
+    // Shield
+    p(-9, -4, '#B8860B', 4, 10);
+    p(-8, -3, '#FFD700', 2, 8);
+}
+
+function drawTalisman(cx, cy) {
+    const time = lavaPhase;
+    const y = cy + Math.sin(time * 3) * 3;
+    const p = (ox, oy, color, w=1, h=1) => { ctx.fillStyle = color; ctx.fillRect(cx + ox, y + oy, w, h); };
+
+    // Scroll Outline
+    p(-4, -8, '#000', 8, 16);
+    // Scroll Body (Parchment)
+    p(-3, -7, '#F5DEB3', 6, 14);
+    // Glowing Runes
+    const glow = (Math.sin(time * 5) + 1) / 2;
+    const runeColor = `rgba(255, 140, 0, ${0.6 + 0.4 * glow})`;
+    p(-1, -5, runeColor, 2, 2);
+    p(-1, -1, runeColor, 2, 2);
+    p(-1, 3, runeColor, 2, 2);
+}
+
+function drawArcher(cx, cy) {
+    const time = lavaPhase;
+    const y = cy;
+    const p = (ox, oy, color, w=1, h=1) => { ctx.fillStyle = color; ctx.fillRect(cx + ox, y + oy, w, h); };
+
+    // Outline
+    p(-5, -8, '#000', 10, 16);
+    // Green Hood
+    p(-4, -7, '#228B22', 8, 8);
+    p(-3, -7, '#32CD32', 6, 2);
+    // Face shadow
+    p(-2, -4, '#1a1a1a', 4, 3);
+    // Leather Tunic
+    p(-4, 1, '#8B4513', 8, 7);
+    // Bow
+    p(4, -6, '#5D4037', 2, 12);
+    p(5, -4, '#DEB887', 1, 8); // Bowstring
+}
+
+function drawAssassin(cx, cy) {
+    const time = lavaPhase;
+    const y = cy;
+    const p = (ox, oy, color, w=1, h=1) => { ctx.fillStyle = color; ctx.fillRect(cx + ox, y + oy, w, h); };
+
+    // Outline
+    p(-6, -6, '#000', 12, 12);
+    // Dark Cloak
+    p(-5, -5, '#333', 10, 10);
+    p(-4, -5, '#111', 8, 8);
+    // Glowing Eyes (Red)
+    const eyePulse = (Math.sin(time * 6) + 1) / 2;
+    p(-2, -3, `rgba(255, 0, 0, ${0.8 + 0.2 * eyePulse})`, 1, 1);
+    p(1, -3, `rgba(255, 0, 0, ${0.8 + 0.2 * eyePulse})`, 1, 1);
+    // Blades
+    p(-8, 2, '#708090', 3, 1); // Left blade
+    p(5, 2, '#708090', 3, 1); // Right blade
+}
+
+function drawChainer(cx, cy) {
+    const time = lavaPhase;
+    const floatingY = Math.sin(time * 1.5) * 2; 
+    const y = cy + floatingY;
+
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        ctx.fillRect(cx + ox, y + oy, w, h);
+    };
+
+    // --- Outline ---
+    p(-6, -4, '#000', 12, 14); 
+    p(-2, 10, '#000', 4, 4); 
+
+    // --- Body ---
+    p(-5, -3, '#483D8B', 10, 12); // Dark Slate Blue robe
+    p(-4, -3, '#9370DB', 8, 10);  // Medium Purple inner
+    
+    // --- Iron Hood ---
+    p(-3, -6, '#2F4F4F', 6, 4); // Dark Slate Gray hood
+    p(-2, -5, '#1a1a1a', 4, 3); // Face shadow
+    
+    const eyeGlow = (Math.sin(time * 3) + 1) / 2;
+    p(-1, -4, `rgba(147, 112, 219, ${0.7 + 0.3 * eyeGlow})`, 1, 1);
+    p(1, -4, `rgba(147, 112, 219, ${0.7 + 0.3 * eyeGlow})`, 1, 1);
+
+    // --- Floating Chains ---
+    const chainPulse = Math.sin(time * 5) * 2;
+    // Left Chain
+    p(-8, -2 + chainPulse, '#708090', 2, 2); 
+    p(-10, 2 + chainPulse, '#778899', 2, 2);
+    p(-9, 6 + chainPulse, '#000', 1, 4);
+    // Right Chain
+    p(6, -2 - chainPulse, '#708090', 2, 2); 
+    p(8, 2 - chainPulse, '#778899', 2, 2);
+    p(7, 6 - chainPulse, '#000', 1, 4);
+}
+
+function drawMonk(cx, cy) {
+    const time = lavaPhase;
+    const y = cy;
+
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        ctx.fillRect(cx + ox, y + oy, w, h);
+    };
+
+    // --- Outline ---
+    p(-5, -8, '#000', 10, 18);
+
+    // --- Robe (Dark Saffron) ---
+    p(-4, -1, '#8B4513', 8, 10); // Saddle Brown base
+    p(-3, -1, '#D2691E', 6, 9);  // Chocolate inner
+    p(-4, 2, '#DAA520', 1, 6);   // Goldenrod sash
+
+    // --- Head ---
+    p(-3, -7, '#FFDBAC', 6, 6); // Bald head
+    p(-2, -4, '#000', 4, 1);    // Eyes closed in prayer
+    
+    // --- Prayer Beads ---
+    p(-3, 0, '#3E2723', 6, 1);
+    p(-4, 1, '#3E2723', 1, 1);
+    p(3, 1, '#3E2723', 1, 1);
+
+    // --- Holy Palm Aura ---
+    const auraScale = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 215, 0, ${0.2 * auraScale})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy + 4, 8 + auraScale * 4, 0, Math.PI * 2);
+    ctx.fill();
 }
 
 function drawApprentice(cx, cy) {

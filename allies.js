@@ -619,7 +619,7 @@ function renderBestiary() {
     };
 
     groups.forEach(g => {
-        const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:1px solid #333; margin:15px 0 8px 0; font-size:14px;`; bt.appendChild(h);
+        const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:2px solid #333; margin:45px 0 24px 0; font-size:42px;`; bt.appendChild(h);
         
         g.types.forEach(t => {
             let isKnown = false;
@@ -653,7 +653,7 @@ function renderBestiary() {
                 else rVal = 10;
             }
             const rewardText = ` | ✨ ${rVal}`;
-            const originText = (g.h === 'Corrupted Specters' && corruptInfo[t]) ? `<div style="font-size:7px; color:#ff4444; margin-bottom:2px; font-weight:bold;">[ORIGIN: ${corruptInfo[t]}]</div>` : '';
+            const originText = (g.h === 'Corrupted Specters' && corruptInfo[t]) ? `<div style="font-size:21px; color:#ff4444; margin-bottom:6px; font-weight:bold;">[ORIGIN: ${corruptInfo[t]}]</div>` : '';
             const traitOriginText = (g.h !== 'Corrupted Specters' && corruptInfo[t]) ? `<br><strong style="color:#ff0000;">[Origin]</strong> ${corruptInfo[t]}` : '';
             
             const item = document.createElement('div'); 
@@ -676,7 +676,7 @@ function renderBestiary() {
                     <div class="custom-tooltip specter">
                         <strong style="color:#ffd700;">[Information Unavailable]</strong><br>Defeat this specter or unlock its related class to reveal details.
                     </div>
-                    <div class="bestiary-icon" style="position:static; transform:none; display:flex; justify-content:center; align-items:center; background:#222; color:#555; font-size:20px; border:1px dashed #444;">?</div>
+                    <div class="bestiary-icon" style="position:static; transform:none; display:flex; justify-content:center; align-items:center; background:#222; color:#555; font-size:60px; border:2px dashed #444;">?</div>
                     <div class="bestiary-info">
                         <div class="bestiary-name" style="color:#555;">???</div>
                         <div class="bestiary-stats" style="color:#333;">💀 Locked</div>
@@ -700,14 +700,14 @@ function renderPromotionTree() {
     };
     Object.keys(pg).forEach(gn => {
         const h = document.createElement('h3'); let c="#ff4500"; if(gn.includes('Support')) c="#00e5ff"; if(gn.includes('Special')) c="#ffd700";
-        h.innerText=gn; h.style.cssText=`color:${c}; border-bottom:1px solid #333; margin:8px 0 4px 0; font-size:13px; text-align:center;`; tt.appendChild(h);
-        const tc = document.createElement('div'); tc.className='tree-main-container'; tc.style.cssText='display:flex; flex-direction:column; gap:4px;';
+        h.innerText=gn; h.style.cssText=`color:${c}; border-bottom:2px solid #333; margin:24px 0 12px 0; font-size:39px; text-align:center;`; tt.appendChild(h);
+        const tc = document.createElement('div'); tc.className='tree-main-container'; tc.style.cssText='display:flex; flex-direction:column; gap:12px;';
         pg[gn].forEach(p => {
-            const row = document.createElement('div'); row.style.cssText='display:grid; grid-template-columns:70px 12px 85px 12px 105px 12px 105px; align-items:center; justify-content:center; gap:3px; border-bottom:1px solid #222; padding-bottom:4px;';
+            const row = document.createElement('div'); row.style.cssText='display:grid; grid-template-columns:210px 36px 255px 36px 315px 36px 315px; align-items:center; justify-content:center; gap:9px; border-bottom:2px solid #222; padding-bottom:12px;';
             const node = (type,tier) => {
                 const d=unitTypes.find(x=>x.type===type); 
                 const u=unlockedUnits.has(type);
-                const n=document.createElement('div'); n.className=`unit-node tier${tier} ${u?'':'locked'}`; n.style.cssText='position:relative; font-size:7px; padding:2px 4px; min-width:auto;';
+                const n=document.createElement('div'); n.className=`unit-node tier${tier} ${u?'':'locked'}`; n.style.cssText='position:relative; font-size:21px; padding:6px 12px; min-width:auto;';
                 if (u) {
                     n.innerHTML = `<div class="custom-tooltip"><strong>${d.name}</strong><br>${d.desc}</div>${d.icon} ${d.name}`;
                 } else {
@@ -716,9 +716,9 @@ function renderPromotionTree() {
                 }
                 return n;
             };
-            const arrow = () => { const a=document.createElement('div'); a.innerText='→'; a.style.fontSize='8px'; return a; };
+            const arrow = () => { const a=document.createElement('div'); a.innerText='→'; a.style.fontSize='24px'; return a; };
             row.appendChild(node('apprentice',1)); row.appendChild(arrow()); row.appendChild(node(p.t,2)); row.appendChild(arrow());
-            const mdiv = document.createElement('div'); mdiv.style.cssText='display:flex; flex-direction:column; gap:2px;';
+            const mdiv = document.createElement('div'); mdiv.style.cssText='display:flex; flex-direction:column; gap:6px;';
             p.m.forEach(m=>mdiv.appendChild(node(m,3))); row.appendChild(mdiv); row.appendChild(arrow()); row.appendChild(node(p.a,4));
             tc.appendChild(row);
         }); tt.appendChild(tc);

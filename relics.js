@@ -132,7 +132,7 @@ const relicsData = {
     'cursed_coin': { 
         name: "Cursed Gold Coin", icon: '🪙', 
         effect: "Increases SE refund when selling units by 2% per stack.", 
-        lore: "Betrayal has a price, and this coin makes it a bit sweeter.", 
+        lore: "Betrayer has a price, and this coin makes it a bit sweeter.", 
         bonus: { type: 'sell_refund', value: 0.02 },
         maxStack: 5, dropSource: 'all'
     }
@@ -174,10 +174,10 @@ function initRelics() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#ff4500; font-weight:bold; font-size:13px; margin-bottom:2px;">Abyssal Relics</div>
-                    <div style="display:inline-block; background:#8b2200; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">COLLECTION</div>
-                    <div style="font-size:9px; color:#bbb; line-height:1.2;">Permanent global bonuses found by defeating enemies. Collect them all to dominate the abyss.</div>
-                    <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"Artifacts of power that survived the fall. Each one carries the weight of a legendary soul."</div>
+                    <div style="color:#ff4500; font-weight:bold; font-size:39px; margin-bottom:6px;">Abyssal Relics</div>
+                    <div style="display:inline-block; background:#8b2200; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">COLLECTION</div>
+                    <div style="font-size:27px; color:#bbb; line-height:1.2;">Permanent global bonuses found by defeating enemies. Collect them all to dominate the abyss.</div>
+                    <div style="color:#555; font-size:25px; margin-top:18px; font-style:italic; line-height:1.2;">"Artifacts of power that survived the fall. Each one carries the weight of a legendary soul."</div>
                 `;
             }
         });
@@ -216,7 +216,7 @@ function renderRelicsGrid() {
         
         let inner = relicsData[id].icon;
         if (count > 1) {
-            inner += `<div style="position:absolute; bottom:1px; right:2px; font-size:7px; color:#fff; text-shadow:1px 1px 2px #000;">x${count}</div>`;
+            inner += `<div style="position:absolute; bottom:3px; right:6px; font-size:21px; color:#fff; text-shadow:3px 3px 6px #000;">x${count}</div>`;
         }
         slot.innerHTML = inner;
         slot.style.position = 'relative';
@@ -233,14 +233,14 @@ function renderRelicsGrid() {
 
     // Normal Section
     const normalHeader = document.createElement('div');
-    normalHeader.style.cssText = 'grid-column: 1 / -1; color: #aaa; font-size: 10px; font-weight: bold; margin-top: 5px; border-bottom: 1px solid #333; padding-bottom: 2px;';
+    normalHeader.style.cssText = 'grid-column: 1 / -1; color: #aaa; font-size: 30px; font-weight: bold; margin-top: 15px; border-bottom: 3px solid #333; padding-bottom: 6px;';
     normalHeader.innerText = 'NORMAL RELICS';
     grid.appendChild(normalHeader);
     normalRelics.forEach(id => grid.appendChild(createSlot(id)));
 
     // Boss Section
     const bossHeader = document.createElement('div');
-    bossHeader.style.cssText = 'grid-column: 1 / -1; color: #ff4500; font-size: 10px; font-weight: bold; margin-top: 15px; border-bottom: 1px solid #ff4500; padding-bottom: 2px;';
+    bossHeader.style.cssText = 'grid-column: 1 / -1; color: #ff4500; font-size: 30px; font-weight: bold; margin-top: 45px; border-bottom: 3px solid #ff4500; padding-bottom: 6px;';
     bossHeader.innerText = 'BOSS ARTIFACTS';
     grid.appendChild(bossHeader);
     bossArtifacts.forEach(id => grid.appendChild(createSlot(id)));
@@ -284,7 +284,7 @@ function renderTotalBonuses() {
                 dispVal = val > 0 ? `+${val.toFixed(0)}` : `${val.toFixed(0)}`;
             }
             
-            bonusHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:9px;">
+            bonusHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:27px;">
                 <span>${labels[key]}</span>
                 <span style="color:#00ff00;">${dispVal}</span>
             </div>`;
@@ -292,7 +292,7 @@ function renderTotalBonuses() {
     }
 
     if (!hasAnyBonus) {
-        bonusHtml += '<div style="color:#666; font-style:italic; margin-top:10px;">No relics collected yet. Defeat specters to find them.</div>';
+        bonusHtml += '<div style="color:#666; font-style:italic; margin-top:30px; font-size:24px;">No relics collected yet. Defeat specters to find them.</div>';
     }
 
     details.innerHTML = bonusHtml;
@@ -307,7 +307,7 @@ function showRelicDetail(id) {
     details.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="relic-detail-title">${data.name} ${count > 1 ? '(x' + count + ')' : ''}</div>
-            <button onclick="document.querySelectorAll('.relic-slot').forEach(s=>s.classList.remove('selected')); renderRelicsGrid();" style="background:#333; border:none; color:#888; font-size:7px; cursor:pointer; padding:2px 4px; border-radius:3px;">BACK</button>
+            <button onclick="document.querySelectorAll('.relic-slot').forEach(s=>s.classList.remove('selected')); renderRelicsGrid();" style="background:#333; border:none; color:#888; font-size:21px; cursor:pointer; padding:6px 12px; border-radius:9px;">BACK</button>
         </div>
         <div class="relic-detail-effect">${data.effect} (Max Stack: ${data.maxStack})</div>
         <div class="relic-detail-lore">"${data.lore}"</div>
@@ -346,11 +346,11 @@ function showRelicInfoInPanel(relic) {
     window.infoPanelLockedUntil = Date.now() + 4000;
     
     d.innerHTML = `
-        <div style="color:#ffd700; font-weight:bold; font-size:13px; margin-bottom:2px;">✨ RELIC FOUND!</div>
-        <div style="color:#ff4500; font-size:11px; font-weight:bold; margin-bottom:4px;">${relic.icon} ${relic.name}</div>
-        <div style="display:inline-block; background:#00ff00; color:#000; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">NEW POWER ACQUIRED</div>
-        <div style="font-size:9px; color:#bbb; line-height:1.2;">${relic.effect}</div>
-        <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"${relic.lore}"</div>
+        <div style="color:#ffd700; font-weight:bold; font-size:39px; margin-bottom:6px;">✨ RELIC FOUND!</div>
+        <div style="color:#ff4500; font-size:33px; font-weight:bold; margin-bottom:12px;">${relic.icon} ${relic.name}</div>
+        <div style="display:inline-block; background:#00ff00; color:#000; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">NEW POWER ACQUIRED</div>
+        <div style="font-size:27px; color:#bbb; line-height:1.2;">${relic.effect}</div>
+        <div style="color:#555; font-size:25px; margin-top:18px; font-style:italic; line-height:1.2;">"${relic.lore}"</div>
     `;
     
     // Auto reset after lock expires
@@ -368,7 +368,7 @@ function checkRelicDrop(enemy) {
 
     const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank'];
     const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'heavy', 'lava', 'burning'];
-    const fastSpecters =FastSpecters = ['runner', 'lightspeed'];
+    const FastSpecters = ['runner', 'lightspeed'];
     const corruptedSpecters = ['defiled_apprentice', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'];
 
     let possibleIds = [];
