@@ -447,24 +447,41 @@ Object.defineProperty(window, 'infoPanelLockedUntil', {
 
 function initAllies() {
     const tc = document.getElementById('tower-card');
-    if(tc) tc.addEventListener('click', () => { 
-        if (towers.length >= maxTowers) {
-            const warning = document.getElementById('max-units-warning');
-            if (warning) {
-                warning.style.display = 'block';
-                setTimeout(() => { warning.style.display = 'none'; }, 1500);
+    if(tc) {
+        tc.addEventListener('click', () => { 
+            if (towers.length >= maxTowers) {
+                const warning = document.getElementById('max-units-warning');
+                if (warning) {
+                    warning.style.display = 'block';
+                    setTimeout(() => { warning.style.display = 'none'; }, 1500);
+                }
+                return;
             }
-            return;
-        }
-        
-        const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
-        const finalTowerCost = Math.max(5, towerCost - reduction);
+            
+            const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
+            const finalTowerCost = Math.max(5, towerCost - reduction);
 
-        if(money < finalTowerCost) return; 
-        const vs = slots.filter(c => !c.classList.contains('occupied')); 
-        if(vs.length === 0) return; 
-        summonTower(vs[Math.floor(Math.random()*vs.length)]); 
-    });
+            if(money < finalTowerCost) return; 
+            const vs = slots.filter(c => !c.classList.contains('occupied')); 
+            if(vs.length === 0) return; 
+            summonTower(vs[Math.floor(Math.random()*vs.length)]); 
+        });
+
+        tc.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d && Date.now() >= infoPanelLockedUntil) {
+                const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
+                const finalTowerCost = Math.max(5, towerCost - reduction);
+                d.innerHTML = `
+                    <div style="color:#00ff00; font-weight:bold; font-size:13px; margin-bottom:2px;">Summon Exorcist</div>
+                    <div style="display:inline-block; background:#006400; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">SUMMON</div>
+                    <div style="font-size:9px; color:#bbb; line-height:1.2;">Calls a basic Exorcist Apprentice to a random available slot. Base cost increases with each summon.</div>
+                    <div style="color:#ffd700; font-size:9px; margin-top:4px;">Current Cost: ${finalTowerCost} SE</div>
+                    <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"To stand against the night, one must first call upon those who do not fear the dark."</div>
+                `;
+            }
+        });
+    }
     const pc = document.getElementById('purge-card'); 
     if(pc) {
         pc.addEventListener('click', () => purgePortal());
