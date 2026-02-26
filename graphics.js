@@ -239,56 +239,85 @@ function drawUnits() {
 }
 
 /**
- * Renders the Apprentice Exorcist pixel art with higher detail.
+ * Renders the Apprentice Exorcist with professional pixel art detail.
  */
 function drawApprentice(cx, cy) {
-    const ds = 2; // Increased resolution for units
-    
-    // 1. Robe (Gray with shading)
-    ctx.fillStyle = '#555555'; // Darker base/shadow
-    ctx.fillRect(cx - ds*4, cy + ds, ds*8, ds*5); // Bottom wide robe
+    const ds = 1; // Maximum resolution (1 pixel per dot)
+    const time = lavaPhase;
+    const floatingY = Math.sin(time * 2) * 2; // Subtle floating animation
+    const y = cy + floatingY;
+
+    // --- 1. DARK SILHOUETTE (For Cleanliness) ---
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(cx - 6, y - 10, 12, 22); // Outer shadow
+
+    // --- 2. LAYERED ROBE (Grey/Silver) ---
+    // Main Body
+    ctx.fillStyle = '#444444'; // Deep shadow
+    ctx.fillRect(cx - 5, y, 10, 10);
     ctx.fillStyle = '#777777'; // Mid tone
-    ctx.fillRect(cx - ds*3, cy - ds*3, ds*6, ds*6); // Body
-    ctx.fillStyle = '#999999'; // Highlights
-    ctx.fillRect(cx - ds*3, cy - ds*3, ds*2, ds*4); // Left highlight
+    ctx.fillRect(cx - 4, y - 2, 8, 10);
+    ctx.fillStyle = '#AAAAAA'; // Highlight
+    ctx.fillRect(cx - 4, y - 2, 2, 8);
     
-    // 2. Face & Hair
-    ctx.fillStyle = '#ffdbac'; // Skin
-    ctx.fillRect(cx - ds*2, cy - ds*6, ds*4, ds*3);
-    ctx.fillStyle = '#443322'; // Brown hair/hood shadow
-    ctx.fillRect(cx - ds*2, cy - ds*7, ds*4, ds); // Hair top
-    
-    // 3. Divine Eyes (Glow)
-    const eyePulse = (Math.sin(lavaPhase * 5) + 1) / 2;
-    ctx.fillStyle = `rgba(0, 229, 255, ${0.6 + 0.4 * eyePulse})`;
-    ctx.fillRect(cx - ds*1.5, cy - ds*5, ds, ds); // Left eye
-    ctx.fillRect(cx + ds*0.5, cy - ds*5, ds, ds); // Right eye
-    
-    // 4. Waist Belt
+    // Bottom Hem (Detail)
     ctx.fillStyle = '#333333';
-    ctx.fillRect(cx - ds*3, cy + ds, ds*6, ds);
+    ctx.fillRect(cx - 5, y + 8, 10, 2);
+
+    // --- 3. HOOD & FACE ---
+    // Hood Outer
+    ctx.fillStyle = '#666666';
+    ctx.fillRect(cx - 4, y - 10, 8, 8);
+    ctx.fillStyle = '#888888';
+    ctx.fillRect(cx - 3, y - 10, 6, 2);
     
-    // 5. Fancy Staff with Golden Cross
-    const staffX = cx + ds*4 + 1;
-    const staffY = cy - ds*8;
+    // Face Shadow (Inside Hood)
+    ctx.fillStyle = '#222222';
+    ctx.fillRect(cx - 3, y - 8, 6, 6);
     
-    // Wooden Staff
-    ctx.fillStyle = '#5d4037';
-    ctx.fillRect(staffX, staffY, ds, ds*12);
+    // Skin (Lower face)
+    ctx.fillStyle = '#FFDBAC';
+    ctx.fillRect(cx - 2, y - 5, 4, 3);
     
-    // Golden Cross Head
-    ctx.fillStyle = '#ffd700';
-    ctx.fillRect(staffX - ds*2, staffY, ds*5, ds*1.5); // Horizontal
-    ctx.fillRect(staffX, staffY - ds*2, ds, ds*6); // Vertical
+    // Divine Eyes (Cyan Glow)
+    const eyeGlow = (Math.sin(time * 4) + 1) / 2;
+    ctx.fillStyle = `rgba(0, 255, 255, ${0.7 + 0.3 * eyeGlow})`;
+    ctx.fillRect(cx - 2, y - 7, 1, 1);
+    ctx.fillRect(cx + 1, y - 7, 1, 1);
+
+    // --- 4. ORNATE STAFF (Gold & Wood) ---
+    const staffX = cx + 6;
+    const staffBaseY = y - 12;
     
-    // Center Gem in Staff
-    const gemPulse = (Math.sin(lavaPhase * 3) + 1) / 2;
-    ctx.fillStyle = `rgba(0, 255, 255, ${0.8 + 0.2 * gemPulse})`;
-    ctx.fillRect(staffX, staffY, ds, ds);
+    // Wooden Pole
+    ctx.fillStyle = '#3E2723';
+    ctx.fillRect(staffX, staffBaseY + 4, 1, 18);
     
-    // Staff Glow
-    ctx.fillStyle = `rgba(255, 215, 0, ${0.2 * gemPulse})`;
-    ctx.fillRect(staffX - ds*3, staffY - ds*3, ds*7, ds*7);
+    // Golden Ornament (Sun Cross Shape)
+    ctx.fillStyle = '#B8860B'; // Dark gold
+    ctx.fillRect(staffX - 2, staffBaseY + 1, 5, 5);
+    ctx.fillStyle = '#FFD700'; // Bright gold
+    ctx.fillRect(staffX - 1, staffBaseY, 3, 7); // Vertical
+    ctx.fillRect(staffX - 3, staffBaseY + 2, 7, 3); // Horizontal
+    
+    // Inner Jewel
+    ctx.fillStyle = '#00FFFF';
+    ctx.fillRect(staffX, staffBaseY + 2, 1, 1);
+    
+    // Staff Sparkle
+    if (eyeGlow > 0.8) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(staffX - 2, staffBaseY, 1, 1);
+        ctx.fillRect(staffX + 2, staffBaseY + 4, 1, 1);
+    }
+
+    // --- 5. MAGICAL PARTICLES (Holy Aura) ---
+    ctx.fillStyle = `rgba(255, 215, 0, ${0.2 * eyeGlow})`;
+    for(let i=0; i<3; i++) {
+        const px = cx + Math.cos(time + i*2) * 8;
+        const py = y + Math.sin(time + i*2) * 8;
+        ctx.fillRect(px, py, 1, 1);
+    }
 }
 
 /**
