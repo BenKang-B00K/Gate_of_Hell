@@ -96,10 +96,13 @@ function getStageMultipliers(isBoss = false) {
     let hpRate = 1.05;
     let speedRate = 0.003;
 
-    // Difficulty spike starting from stage 5
-    if (stage >= 5) {
-        hpRate = 1.06; // Lowered from 1.07
-        speedRate = 0.005;
+    // Difficulty scaling
+    if (stage >= 15) {
+        hpRate = 1.08; // Increased from 1.06 for late game challenge
+        speedRate = 0.008; // Faster specters in late game
+    } else if (stage >= 5) {
+        hpRate = 1.07; // Increased from 1.06
+        speedRate = 0.006; // Increased from 0.005
     }
 
     const hpStageMult = Math.pow(hpRate, stage - 1);
