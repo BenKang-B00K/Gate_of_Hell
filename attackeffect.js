@@ -26,10 +26,16 @@ function createAttackEffect(unitType, target, container) {
         case 'tracker': createTrackerEffect(x, y, container); break;
         case 'necromancer': createNecromancerEffect(x, y, container); break;
         case 'guardian': createGuardianEffect(x, y, container); break;
+        case 'alchemist': createAlchemistEffect(x, y, container); break;
+        case 'mirror': createMirrorEffect(x, y, container); break;
         case 'knight': createKnightEffect(x, y, container); break;
         // Master Effects
         case 'paladin': createPaladinEffect(x, y, container); break;
         case 'crusader': createCrusaderEffect(x, y, container); break;
+        case 'midas': createMidasEffect(x, y, container); break;
+        case 'philosopher': createPhilosopherEffect(x, y, container); break;
+        case 'illusion': createIllusionEffect(x, y, container); break;
+        case 'reflection': createReflectionEffect(x, y, container); break;
         case 'executor': createExecutorEffect(x, y, container); break;
         case 'binder': createBinderEffect(x, y, container); break;
         case 'grandsealer': createSealerEffect(x, y, container); break;
@@ -51,6 +57,8 @@ function createAttackEffect(unitType, target, container) {
         case 'rampart': createRampartEffect(x, y, container); break;
         case 'judgment': createJudgmentEffect(x, y, container); break;
         // Abyss Effects
+        case 'transmuter': createTransmuterEffect(x, y, container); break;
+        case 'oracle': createOracleEffect(x, y, container); break;
         case 'warden': createWardenEffect(x, y, container); break;
         case 'cursed_talisman': createCursedTalismanEffect(x, y, container); break;
         case 'asura': createAsuraEffect(x, y, container); break;
@@ -66,6 +74,24 @@ function createAttackEffect(unitType, target, container) {
 }
 
 /* --- Abyss Effect Functions --- */
+
+function createTransmuterEffect(x, y, container) {
+    const effect = document.createElement('div');
+    effect.className = 'attack-effect abyss-effect transmuter-effect';
+    effect.style.left = `${x}px`; effect.style.top = `${y}px`;
+    effect.innerText = '⚛️';
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 800);
+}
+
+function createOracleEffect(x, y, container) {
+    const effect = document.createElement('div');
+    effect.className = 'attack-effect abyss-effect oracle-effect';
+    effect.style.left = `${x}px`; effect.style.top = `${y}px`;
+    effect.innerText = '💠';
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 1000);
+}
 
 function createWardenEffect(x, y, container) {
     const effect = document.createElement('div');
@@ -167,6 +193,42 @@ function createEternalWallEffect(x, y, container) {
 }
 
 /* --- Master Effect Functions --- */
+
+function createMidasEffect(x, y, container) {
+    const effect = document.createElement('div');
+    effect.className = 'attack-effect master-effect midas-effect';
+    effect.style.left = `${x}px`; effect.style.top = `${y}px`;
+    effect.innerText = '💰';
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 600);
+}
+
+function createPhilosopherEffect(x, y, container) {
+    const effect = document.createElement('div');
+    effect.className = 'attack-effect master-effect philosopher-effect';
+    effect.style.left = `${x}px`; effect.style.top = `${y}px`;
+    effect.innerText = '💎';
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 700);
+}
+
+function createIllusionEffect(x, y, container) {
+    const effect = document.createElement('div');
+    effect.className = 'attack-effect master-effect illusion-effect';
+    effect.style.left = `${x}px`; effect.style.top = `${y}px`;
+    effect.innerText = '🎭';
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 800);
+}
+
+function createReflectionEffect(x, y, container) {
+    const effect = document.createElement('div');
+    effect.className = 'attack-effect master-effect reflection-effect';
+    effect.style.left = `${x}px`; effect.style.top = `${y}px`;
+    effect.innerText = '🪩';
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 500);
+}
 
 function createPaladinEffect(x, y, container) {
     const effect = document.createElement('div');
@@ -462,6 +524,26 @@ function createKnightEffect(x, y, container) {
     effect.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 45 - 22.5}deg)`;
     container.appendChild(effect);
     setTimeout(() => effect.remove(), 300);
+}
+
+/** Alchemist: Transmutation Spark */
+function createAlchemistEffect(x, y, container) {
+    const effect = document.createElement('div');
+    effect.className = 'attack-effect alchemist-effect';
+    effect.style.left = `${x}px`; effect.style.top = `${y}px`;
+    effect.innerText = '🧪';
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 400);
+}
+
+/** Mirror Oracle: Reflective Shimmer */
+function createMirrorEffect(x, y, container) {
+    const effect = document.createElement('div');
+    effect.className = 'attack-effect mirror-effect';
+    effect.style.left = `${x}px`; effect.style.top = `${y}px`;
+    effect.innerText = '🪞';
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 500);
 }
 
 /**
