@@ -352,9 +352,18 @@ function showUnitInfo(tower) {
         ch = `
             <div style="font-size:8px; color:#ffd700; margin-bottom:4px; font-weight:bold;">Promotion Paths (200 SE):</div>
             <div style="font-size:10px; display:flex; gap:12px; justify-content:center; margin-bottom:6px;">
-                <button class="info-promo-btn" onclick="performJobChange(null, 'Attack', true)" title="Ascend to Attack Path" style="background:#442222; border:1px solid #ff4500; color:#fff; border-radius:4px; cursor:pointer; padding:2px 6px;">⚔️</button>
-                <button class="info-promo-btn" onclick="performJobChange(null, 'Support', true)" title="Ascend to Support Path" style="background:#224444; border:1px solid #00e5ff; color:#fff; border-radius:4px; cursor:pointer; padding:2px 6px;">🪄</button>
-                <button class="info-promo-btn" onclick="performJobChange(null, 'Special', true)" title="Ascend to Special Path" style="background:#444422; border:1px solid #ffd700; color:#fff; border-radius:4px; cursor:pointer; padding:2px 6px;">💠</button>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Attack', true)" title="Ascend to Attack Path" style="background:#442222; border:1px solid #ff4500; color:#fff; border-radius:4px; cursor:pointer; padding:2px 6px;">⚔️</button>
+                    <div style="font-size:7px; color:#ff4500;">Attack</div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Support', true)" title="Ascend to Support Path" style="background:#224444; border:1px solid #00e5ff; color:#fff; border-radius:4px; cursor:pointer; padding:2px 6px;">🪄</button>
+                    <div style="font-size:7px; color:#00e5ff;">Support</div>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Special', true)" title="Ascend to Special Path" style="background:#444422; border:1px solid #ffd700; color:#fff; border-radius:4px; cursor:pointer; padding:2px 6px;">💠</button>
+                    <div style="font-size:7px; color:#ffd700;">Special</div>
+                </div>
             </div>
         `;
     }
@@ -363,7 +372,12 @@ function showUnitInfo(tower) {
            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:6px;">`; 
         data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); 
-            ch+=`<button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)" title="Unleash ${ud.name}" style="background:#222; border:1px solid #aaa; color:#fff; border-radius:4px; cursor:pointer; padding:2px 8px; font-size:10px;">${i===0?'↖️':'↗️'}</button>`;
+            ch+=`
+                <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+                    <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)" title="Unleash ${ud.name}" style="background:#222; border:1px solid #aaa; color:#fff; border-radius:4px; cursor:pointer; padding:2px 8px; font-size:10px;">${i===0?'↖️':'↗️'}</button>
+                    <div style="font-size:7px; color:#aaa; max-width:50px; text-align:center; line-height:1;">${ud.name}</div>
+                </div>
+            `;
         }); 
         ch+=`</div>`;
     }
