@@ -96,24 +96,17 @@ const relicsData = {
     'fallen_wings': { 
         name: "Fallen Angel's Wings", icon: '🪽', 
         effect: "Global Crit Chance +10%.", 
-        lore: "Feathers of pure darkness. They guide strikes toward the most vulnerable parts of a soul.", 
+        lore: "Feathers of pure darkness. They guides strikes toward the most vulnerable parts of a soul.", 
         bonus: { type: 'crit_chance', value: 0.1 },
         maxStack: 1, dropSource: 'boss'
     },
-    // New Relics
-    'requiem_flute': { 
-        name: "Requiem Flute", icon: '🦴', 
-        effect: "Summoned skeletons/ghosts deal +10% damage per stack.", 
-        lore: "The melody brings courage to the summoned and rest to the restless.", 
-        bonus: { type: 'summon_damage', value: 0.1 },
-        maxStack: 10, dropSource: 'specialized'
-    },
+    // Balanced Normal Relics
     'soul_candle': { 
         name: "Soul Candle", icon: '🕯️', 
-        effect: "Apprentice summon cost -1 SE per stack.", 
+        effect: "Apprentice summon cost -2 SE per stack.", 
         lore: "A faint light that guides wandering souls at a cheaper price.", 
-        bonus: { type: 'summon_cost_reduction', value: 1 },
-        maxStack: 5, dropSource: 'basic'
+        bonus: { type: 'summon_cost_reduction', value: 2 },
+        maxStack: 10, dropSource: 'basic'
     },
     'blood_ring': { 
         name: "Bloodstone Ring", icon: '🩸', 
@@ -127,7 +120,7 @@ const relicsData = {
         effect: "Executes enemies below 1% HP per stack.", 
         lore: "To those marked, the judgment of the abyss is inevitable.", 
         bonus: { type: 'execute_threshold', value: 0.01 },
-        maxStack: 10, dropSource: 'specialized'
+        maxStack: 5, dropSource: 'specialized'
     },
     'foresight_eye': { 
         name: "Eye of Foresight", icon: '🧿', 
@@ -138,10 +131,10 @@ const relicsData = {
     },
     'cursed_coin': { 
         name: "Cursed Gold Coin", icon: '🪙', 
-        effect: "Increases SE refund when selling units by 5% per stack.", 
+        effect: "Increases SE refund when selling units by 2% per stack.", 
         lore: "Betrayal has a price, and this coin makes it a bit sweeter.", 
-        bonus: { type: 'sell_refund', value: 0.05 },
-        maxStack: 10, dropSource: 'all'
+        bonus: { type: 'sell_refund', value: 0.02 },
+        maxStack: 5, dropSource: 'all'
     }
 };
 
@@ -160,7 +153,6 @@ let totalRelicBonuses = {
     treasure_chance: 0,
     slow_strength: 0,
     portal_dmg_reduction: 0,
-    summon_damage: 0,
     summon_cost_reduction: 0,
     execute_threshold: 0,
     aura_range: 0,
@@ -277,7 +269,6 @@ function renderTotalBonuses() {
         treasure_chance: "Treasure Spawn Rate",
         slow_strength: "Slow Intensity",
         portal_dmg_reduction: "Portal Stability",
-        summon_damage: "Summoned Units ATK",
         summon_cost_reduction: "Summon Cost Reduc.",
         execute_threshold: "Execute Threshold",
         aura_range: "Aura Range Bonus",
@@ -365,8 +356,6 @@ function showRelicInfoInPanel(relic) {
     // Auto reset after lock expires
     setTimeout(() => {
         if (typeof window.startInfoResetTimer === 'function') {
-            // Force reset since lock might still be technically active by a few ms
-            const oldLock = window.infoPanelLockedUntil;
             window.infoPanelLockedUntil = 0; 
             window.startInfoResetTimer();
         }
@@ -379,7 +368,7 @@ function checkRelicDrop(enemy) {
 
     const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank'];
     const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'heavy', 'lava', 'burning'];
-    const fastSpecters = ['runner', 'lightspeed'];
+    const fastSpecters =FastSpecters = ['runner', 'lightspeed'];
     const corruptedSpecters = ['defiled_apprentice', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'];
 
     let possibleIds = [];
@@ -394,7 +383,7 @@ function checkRelicDrop(enemy) {
         if (data.dropSource === 'all') canDrop = true;
         else if (data.dropSource === 'basic' && basicSpecters.includes(enemy.type)) canDrop = true;
         else if (data.dropSource === 'specialized' && specializedWraiths.includes(enemy.type)) canDrop = true;
-        else if (data.dropSource === 'fast' && fastSpecters.includes(enemy.type)) canDrop = true;
+        else if (data.dropSource === 'fast' && FastSpecters.includes(enemy.type)) canDrop = true;
         else if (data.dropSource === 'corrupted' && corruptedSpecters.includes(enemy.type)) canDrop = true;
         else if (enemy.isBoss) canDrop = true; // Bosses can drop anything
 
@@ -403,8 +392,6 @@ function checkRelicDrop(enemy) {
 
     if (possibleIds.length > 0) {
         const randomId = possibleIds[Math.floor(Math.random() * possibleIds.length)];
-        // Pass the ID to showRelicInfoInPanel correctly
-        const relicWithId = { ...relicsData[randomId], id: randomId };
         collectRelic(randomId);
     }
 }
@@ -412,6 +399,7 @@ function checkRelicDrop(enemy) {
 // Global expose
 window.checkRelicDrop = checkRelicDrop;
 window.totalRelicBonuses = totalRelicBonuses;
+window.collectRelic = collectRelic;
 
 /**
  * Get the total bonus value for a specific relic effect type.
