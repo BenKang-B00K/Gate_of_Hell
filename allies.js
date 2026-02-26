@@ -472,7 +472,7 @@ function initAllies() {
                 const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
                 const finalTowerCost = Math.max(5, towerCost - reduction);
                 d.innerHTML = `
-                    <div style="color:#00ff00; font-weight:bold; font-size:13px; margin-bottom:2px;">Summon Exorcist</div>
+                    <div style="color:#00ff00; font-weight:bold; font-size:13px; margin-bottom:2px;">🪄 Summon Exorcist</div>
                     <div style="display:inline-block; background:#006400; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">SUMMON</div>
                     <div style="font-size:9px; color:#bbb; line-height:1.2;">Calls a basic Exorcist Apprentice to a random available slot. Base cost increases with each summon.</div>
                     <div style="color:#ffd700; font-size:9px; margin-top:4px;">Current Cost: ${finalTowerCost} SE</div>

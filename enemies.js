@@ -65,13 +65,13 @@ function getCorruptionMultipliers() {
     const s = corruptedShards;
 
     if (s >= 40) {
-        hpMult = 1 + (s * 0.04); // +4% per shard
-        speedMult = 1 + (s * 0.0005); // +0.05% per shard
+        hpMult = 1 + (s * 0.02); // Reduced from 4% to 2%
+        speedMult = 1 + (s * 0.0002); // Reduced from 0.05% to 0.02%
     } else if (s >= 21) {
-        hpMult = 1 + (s * 0.03); // +3% per shard
-        speedMult = 1 + (s * 0.0002); // +0.02% per shard
+        hpMult = 1 + (s * 0.015); // Reduced from 3% to 1.5%
+        speedMult = 1 + (s * 0.0001); // Reduced from 0.02% to 0.01%
     } else if (s >= 1) {
-        hpMult = 1 + (s * 0.02); // +2% per shard
+        hpMult = 1 + (s * 0.01); // Reduced from 2% to 1%
     }
     
     // Apply Relic Enemy HP reduction
@@ -284,9 +284,9 @@ function updateGauges() {
         }
 
         let desc = "Normal";
-        if (corruptedShards >= 40) desc = "💀 +4% HP/shard, +0.05% SPD/shard (EXTREME)";
-        else if (corruptedShards >= 21) desc = "🔥 +3% HP/shard, +0.02% SPD/shard";
-        else if (corruptedShards >= 1) desc = "🌑 +2% HP/shard";
+        if (corruptedShards >= 40) desc = "💀 +2% HP/shard, +0.02% SPD/shard (SEVERE)";
+        else if (corruptedShards >= 21) desc = "🔥 +1.5% HP/shard, +0.01% SPD/shard";
+        else if (corruptedShards >= 1) desc = "🌑 +1% HP/shard";
         debuffDesc.innerText = `Corruption Level: ${desc}`;
     }
 
