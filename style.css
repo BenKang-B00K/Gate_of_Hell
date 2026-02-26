@@ -78,6 +78,24 @@ body {
     to { opacity: 1; transform: scale(1); }
 }
 
+.shrink-to-info {
+    animation: shrinkAndMove 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    pointer-events: none;
+}
+
+@keyframes shrinkAndMove {
+    0% {
+        transform: scale(1) translate(0, 0);
+        opacity: 1;
+        border-radius: 0;
+    }
+    100% {
+        transform: scale(0.1) translate(400%, 400%);
+        opacity: 0;
+        border-radius: 20px;
+    }
+}
+
 #game-container {
     position: relative;
     width: 360px; /* 모바일 9:16 비율 */

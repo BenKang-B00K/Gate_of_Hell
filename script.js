@@ -287,12 +287,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const startScreen = document.getElementById('start-screen');
     if (startBtn && startScreen) {
         startBtn.addEventListener('click', () => {
-            startScreen.style.display = 'none';
-            gameStarted = true;
-            initStage(); 
-            initAllies();
-            updateSummonButtonState();
-            if (typeof updateGauges === 'function') updateGauges();
+            startScreen.classList.add('shrink-to-info');
+            
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                gameStarted = true;
+                initStage(); 
+                initAllies();
+                updateSummonButtonState();
+                if (typeof updateGauges === 'function') updateGauges();
+            }, 800); // Match animation duration
         });
     }
     
