@@ -82,10 +82,18 @@ function getCorruptionMultipliers() {
 // Calculate gradual stage-based multipliers
 function getStageMultipliers(isBoss = false) {
     if (isBoss) return { hpStageMult: 1.0, speedStageMult: 1.0 };
-    // HP increases by 5% per stage (compounded slightly)
-    // Speed increases by 0.3% per stage
-    const hpStageMult = Math.pow(1.05, stage - 1);
-    const speedStageMult = 1 + (stage - 1) * 0.003;
+    
+    let hpRate = 1.05;
+    let speedRate = 0.003;
+
+    // Difficulty spike starting from stage 5
+    if (stage >= 5) {
+        hpRate = 1.07;
+        speedRate = 0.005;
+    }
+
+    const hpStageMult = Math.pow(hpRate, stage - 1);
+    const speedStageMult = 1 + (stage - 1) * speedRate;
     return { hpStageMult, speedStageMult };
 }
 
