@@ -537,8 +537,8 @@ function initAllies() {
     }
 
     slots.length = 0; 
-    createSlots('left-slots', 21); 
-    createSlots('right-slots', 21);
+    createSlots('left-slots', 24); 
+    createSlots('right-slots', 24);
     
     initRecordsUI(); 
     initTutorial();

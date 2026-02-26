@@ -169,15 +169,17 @@ img, .enemy, .tower-card, .relic-slot {
     display: flex;
     width: 100%;
     position: relative;
-    border-bottom: 1px solid #4a0000; /* Reduced from 3px */
+    border-bottom: 1px solid #4a0000;
+    padding-top: 148px; /* Reserved space for Restart & Tutorial */
+    box-sizing: border-box;
 }
 
 /* 좌우 카드 배치 구역 */
 .slot-area {
-    flex: 1;
+    flex: 1; /* This will naturally take (1080 - 340) / 2 = 370px */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(7, 1fr);
+    grid-template-rows: repeat(8, 1fr); /* Changed from 7 to 8 */
     gap: 2px;
     padding: 4px;
     z-index: 5;
@@ -187,7 +189,7 @@ img, .enemy, .tower-card, .relic-slot {
 
 /* 중앙 길 */
 #road {
-    width: 120px;
+    width: 340px; /* Changed from 120px */
     background: transparent;
     box-shadow: 
         inset 10px 0 20px rgba(0,0,0,0.8),

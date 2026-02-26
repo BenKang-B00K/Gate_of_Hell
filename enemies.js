@@ -596,13 +596,14 @@ function spawnEnemy() {
     const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
 
-    const randomX = Math.random() * 80 + 10;
+    // Road is 340px wide, centered in 1080px (approx 34.2% to 65.8%)
+    const randomX = Math.random() * 20 + 40; 
     const enemy = {
         element: enemyDiv,
         hpFill: hpFill,
         initialX: randomX,
         x: randomX,
-        targetX: Math.random() * 50 + 25, // Narrower range (25% to 75%) to fit portal arch
+        targetX: Math.random() * 20 + 40, // Narrower range to stay within the 340px road
         y: -40, // Spawn higher up inside the mist
         swayPhase: Math.random() * Math.PI * 2, // Random starting phase for swaying
         swaySpeed: 0.02 + Math.random() * 0.03, // Unique swaying speed
@@ -697,8 +698,8 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
     totalCorruptedCount++;
     const road = document.getElementById('road');
     
-    // Spawn from the entrance (top) like regular enemies
-    const randomX = Math.random() * 80 + 10;
+    // Road is 340px wide, centered in 1080px (approx 34.2% to 65.8%)
+    const randomX = Math.random() * 20 + 40;
 
     const tier = Math.min(tower.data.tier, 3);
     const data = forcedType ? corruptedTypes[forcedType] : corruptedTypes[tier];
@@ -790,7 +791,8 @@ function spawnFriendlyGhost() {
     ghostDiv.classList.add('friendly-ghost');
     road.appendChild(ghostDiv);
     
-    const randomX = Math.random() * 80 + 10;
+    // Road is 340px wide, centered in 1080px (approx 34.2% to 65.8%)
+    const randomX = Math.random() * 20 + 40; 
     ghostDiv.style.left = `${randomX}%`;
     
     // Start at bottom
