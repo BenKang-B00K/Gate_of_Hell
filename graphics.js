@@ -26,6 +26,9 @@ function initGraphics() {
         disableSmoothing();
         generateRoadCracks();
     });
+    
+    const legacyLabel = document.getElementById('portal-energy-label');
+    if (legacyLabel) legacyLabel.style.display = 'none';
 }
 
 function disableSmoothing() {
@@ -81,6 +84,8 @@ function renderGraphics() {
     drawRoad();
     drawPortal();
     drawSlots();
+    drawUnits(); // Draw custom pixel art units
+    drawSelectionHalo(); 
     
     lavaPhase += 0.03; 
     portalPhase += 0.08;
@@ -137,14 +142,25 @@ function drawPortal() {
     const cx = px + pw / 2;
     const cy = py + ph;
 
-    for (let layer = 0; layer < 4; layer++) {
+    for (let layer = 4; layer >= 0; layer--) {
         const radiusX = (pw / 2) - (layer * DOT_SIZE);
         const radiusY = ph - (layer * DOT_SIZE);
-        const alpha = 0.8 - (layer * 0.2);
-        const p = (Math.sin(portalPhase - layer * 0.5) + 1) / 2;
-        const r = Math.floor(40 + (60 * p));
-        const b = Math.floor(100 + (155 * p));
-        ctx.fillStyle = `rgba(${r}, 0, ${b}, ${alpha})`;
+        if (radiusX < 0 || radiusY < 0) continue;
+        const p = (Math.sin(portalPhase - layer * 0.4) + 1) / 2;
+        const r = Math.floor(20 + (30 * p));
+        const b = Math.floor(60 + (100 * p));
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, radiusX, radiusY, 0, Math.PI, Math.PI * 2);
+        ctx.fillStyle = `rgb(${r}, 0, ${b})`;
+        ctx.fill();
+    }
+
+    for (let layer = 0; layer < 2; layer++) {
+        const radiusX = (pw / 2) - (layer * DOT_SIZE);
+        const radiusY = ph - (layer * DOT_SIZE);
+        const p = (Math.sin(portalPhase) + 1) / 2;
+        const r = Math.floor(100 + (155 * p));
+        ctx.fillStyle = `rgba(${r}, 0, 255, ${0.8 - layer * 0.3})`;
         for (let angle = Math.PI; angle <= Math.PI * 2; angle += 0.05) {
             const dx = Math.cos(angle) * radiusX;
             const dy = Math.sin(angle) * radiusY;
@@ -153,15 +169,29 @@ function drawPortal() {
             ctx.fillRect(sx, sy, DOT_SIZE, DOT_SIZE);
         }
     }
+
+    if (typeof portalEnergy !== 'undefined') {
+        ctx.save();
+        ctx.imageSmoothingEnabled = true;
+        const textY = py - 10;
+        ctx.font = 'bold 10px Cinzel, serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#9400d3';
+        ctx.shadowBlur = 8;
+        ctx.fillStyle = '#e0b0ff';
+        ctx.fillText(`[ PORTAL ENERGY ]`, cx, textY - 12);
+        ctx.font = '9px Arial, sans-serif';
+        ctx.fillStyle = '#fff';
+        ctx.fillText(`${Math.floor(portalEnergy)} / ${maxPortalEnergy}`, cx, textY);
+        ctx.restore();
+        disableSmoothing();
+    }
 }
 
-/**
- * Draws "Sacred Stone Tablets" at each card-slot position.
- */
 function drawSlots() {
     const cardSlots = document.querySelectorAll('.card-slot');
     const containerRect = document.getElementById('game-container').getBoundingClientRect();
-    const pulse = (Math.sin(lavaPhase * 1.5) + 1) / 2; // Use lavaPhase for pulsing
+    const pulse = (Math.sin(lavaPhase * 1.5) + 1) / 2; 
 
     cardSlots.forEach(slot => {
         const rect = slot.getBoundingClientRect();
@@ -169,38 +199,122 @@ function drawSlots() {
         const sy = rect.top - containerRect.top;
         const sw = rect.width;
         const sh = rect.height;
-
-        // Sacred Stone Tablet Shape
         const inset = 2;
-        
-        // 1. Tablet Base (Dark/Black Stone)
         ctx.fillStyle = '#0a0a0a';
         ctx.fillRect(sx + inset, sy + inset, sw - inset * 2, sh - inset * 2);
-
-        // 2. Golden Carved Border
-        // Outer border
         ctx.strokeStyle = `rgb(${Math.floor(180 + 75 * pulse)}, ${Math.floor(140 + 60 * pulse)}, 0)`;
         ctx.lineWidth = 2;
         ctx.strokeRect(sx + inset + 2, sy + inset + 2, sw - inset * 2 - 4, sh - inset * 2 - 4);
-
-        // 3. Corner Decorations (Holy Symbols)
         ctx.fillStyle = '#ffd700';
-        const cs = DOT_SIZE; // Corner size
-        // TL
+        const cs = DOT_SIZE; 
         ctx.fillRect(sx + inset, sy + inset, cs, cs);
-        // TR
         ctx.fillRect(sx + sw - inset - cs, sy + inset, cs, cs);
-        // BL
         ctx.fillRect(sx + inset, sy + sh - inset - cs, cs, cs);
-        // BR
         ctx.fillRect(sx + sw - inset - cs, sy + sh - inset - cs, cs, cs);
 
-        // 4. Subtle center glow if occupied
         if (slot.classList.contains('occupied')) {
             ctx.fillStyle = `rgba(255, 215, 0, ${0.1 + 0.1 * pulse})`;
             ctx.fillRect(sx + inset + 4, sy + inset + 4, sw - inset * 2 - 8, sh - inset * 2 - 8);
         }
     });
+}
+
+/**
+ * Draws custom pixel art for active units.
+ */
+function drawUnits() {
+    if (typeof towers === 'undefined') return;
+    const containerRect = document.getElementById('game-container').getBoundingClientRect();
+
+    towers.forEach(tower => {
+        if (tower.data.type === 'apprentice') {
+            const rect = tower.element.getBoundingClientRect();
+            const cx = (rect.left + rect.width / 2) - containerRect.left;
+            const cy = (rect.top + rect.height / 2) - containerRect.top;
+            
+            drawApprentice(cx, cy);
+        }
+    });
+}
+
+/**
+ * Renders the Apprentice Exorcist pixel art.
+ */
+function drawApprentice(cx, cy) {
+    const ds = DOT_SIZE;
+    
+    // 1. Gray Robe (Body)
+    ctx.fillStyle = '#777777';
+    ctx.fillRect(cx - ds, cy - ds, ds * 2, ds * 3); // Main body
+    ctx.fillStyle = '#555555';
+    ctx.fillRect(cx - ds, cy + ds, ds * 2, ds); // Lower robe shadow
+    
+    // 2. Head/Hood
+    ctx.fillStyle = '#888888';
+    ctx.fillRect(cx - ds, cy - ds * 2, ds * 2, ds); // Hood top
+    ctx.fillStyle = '#ffdbac'; // Skin color (Face)
+    ctx.fillRect(cx - ds/2, cy - ds - ds/2, ds, ds);
+    
+    // 3. Fancy Staff with Cross
+    const staffX = cx + ds + 2;
+    const staffY = cy - ds * 2;
+    
+    // Staff Handle (Wooden/Brown)
+    ctx.fillStyle = '#5d4037';
+    ctx.fillRect(staffX, staffY, 2, ds * 5);
+    
+    // Golden Cross at the end
+    ctx.fillStyle = '#ffd700';
+    // Vertical part of cross
+    ctx.fillRect(staffX - 1, staffY - 4, 4, 10);
+    // Horizontal part of cross
+    ctx.fillRect(staffX - 4, staffY - 1, 10, 3);
+    
+    // Glowing gem in center of cross
+    const pulse = (Math.sin(lavaPhase * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(0, 255, 255, ${0.5 + 0.5 * pulse})`;
+    ctx.fillRect(staffX, staffY, 2, 2);
+}
+
+/**
+ * Draws a divine, pulsing golden halo around the selected unit.
+ */
+function drawSelectionHalo() {
+    const selectedUnit = document.querySelector('.unit.selected');
+    if (!selectedUnit) return;
+
+    const containerRect = document.getElementById('game-container').getBoundingClientRect();
+    const rect = selectedUnit.getBoundingClientRect();
+    const cx = (rect.left + rect.width / 2) - containerRect.left;
+    const cy = (rect.top + rect.height / 2) - containerRect.top;
+    
+    const pulse = (Math.sin(lavaPhase * 4) + 1) / 2; // Fast pulse for attention
+    const radius = (rect.width / 2) + 4 + (pulse * 2);
+    
+    ctx.save();
+    ctx.imageSmoothingEnabled = true; 
+    
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius + 2, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(255, 215, 0, ${0.3 + 0.2 * pulse})`;
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgb(255, 215, 0)`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    ctx.fillStyle = '#ffd700';
+    const markSize = 4;
+    ctx.fillRect(cx - 1, cy - radius - markSize, 2, markSize * 2); 
+    ctx.fillRect(cx - 1, cy + radius - markSize, 2, markSize * 2); 
+    ctx.fillRect(cx - radius - markSize, cy - 1, markSize * 2, 2); 
+    ctx.fillRect(cx + radius - markSize, cy - 1, markSize * 2, 2); 
+
+    ctx.restore();
+    disableSmoothing();
 }
 
 if (document.readyState === 'loading') {
