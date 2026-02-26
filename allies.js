@@ -235,9 +235,31 @@ function summonTower(targetSlot) {
     cd.className = 'cooldown-overlay'; cd.style.pointerEvents = 'none';
     unit.appendChild(cd);
     let ds;
-    unit.addEventListener('dragstart', function() { draggedUnit = this; isMovingUnit = true; this.classList.add('selected'); const t = towers.find(x => x.element === this); if(t){showUnitInfo(t); showRangeIndicator(t);} });
+    unit.addEventListener('dragstart', function() { 
+        draggedUnit = this; 
+        isMovingUnit = true; 
+        this.classList.add('selected'); 
+        const t = towers.find(x => x.element === this); 
+        if(t){
+            showUnitInfo(t); 
+            showRangeIndicator(t);
+            startInfoResetTimer();
+        } 
+    });
     unit.addEventListener('mousedown', function(e) { if(e.button!==0)return; ds=Date.now(); });
-    unit.addEventListener('click', function(e) { e.stopPropagation(); if(Date.now()-ds<400) { if(this.classList.contains('selected') && !isMovingUnit) { isMovingUnit=true; draggedUnit=this; this.classList.add('move-ready'); return; } document.querySelectorAll('.unit').forEach(u=>u.classList.remove('selected','move-ready')); this.classList.add('selected'); isMovingUnit=false; draggedUnit=null; const t=towers.find(x=>x.element===this); if(t){showUnitInfo(t); showRangeIndicator(t);} } });
+    unit.addEventListener('click', function(e) { 
+        e.stopPropagation(); 
+        if(Date.now()-ds<400) { 
+            document.querySelectorAll('.unit').forEach(u=>u.classList.remove('selected')); 
+            this.classList.add('selected'); 
+            const t=towers.find(x=>x.element===this); 
+            if(t){
+                showUnitInfo(t); 
+                showRangeIndicator(t);
+                startInfoResetTimer(); // Ensure reset timer starts when unit is selected
+            } 
+        } 
+    });
     targetSlot.appendChild(unit); targetSlot.classList.add('occupied');
     const tower = { data: s, element: unit, slotElement: targetSlot, range: s.range, cooldown: s.cooldown, lastShot: 0, spentSE: towerCost - 5 };
     towers.push(tower); updateUnitOverlayButtons(tower); updateSummonButtonState();
@@ -490,6 +512,7 @@ function performJobChange(el) {
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     recordUnlock(nt.type); t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
     updateUnitOverlayButtons(t); updateSummonButtonState();
+    startInfoResetTimer();
 }
 
 function performMasterJobChange(tower, ntStr) {
@@ -500,6 +523,7 @@ function performMasterJobChange(tower, ntStr) {
     recordUnlock(nt.type); tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; tower.spentSE+=masterJobCost;
     if(nt.type==='rampart') tower.charges=5;
     updateUnitOverlayButtons(tower); updateSummonButtonState();
+    startInfoResetTimer();
 }
 
 function updateUnitOverlayButtons(t) {
