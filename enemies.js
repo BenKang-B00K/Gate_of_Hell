@@ -955,3 +955,25 @@ function handleEnemyDeath(target, killer = null) {
         }
     }
 }
+
+function createSEGainEffect(x, y, amount, container) {
+    if (!container) return;
+    const effect = document.createElement('div');
+    effect.className = 'se-gain-effect';
+    effect.innerText = `+${amount}`;
+    effect.style.left = `${x}px`;
+    effect.style.top = `${y}px`;
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 600);
+}
+
+function createCSGainEffect(x, y, amount, container) {
+    if (!container) return;
+    const effect = document.createElement('div');
+    effect.className = 'cs-gain-effect';
+    effect.innerText = `+🏮`;
+    effect.style.left = `${x}px`;
+    effect.style.top = `${y}px`;
+    container.appendChild(effect);
+    setTimeout(() => effect.remove(), 600);
+}
