@@ -177,7 +177,7 @@ img, .enemy, .tower-card, .relic-slot {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+    grid-template-rows: repeat(7, 1fr);
     gap: 2px;
     padding: 4px;
     z-index: 5;
