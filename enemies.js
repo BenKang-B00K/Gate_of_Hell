@@ -200,10 +200,12 @@ function initStage() {
             showBossWarning(bossName);
         }
     }
-    else if (stage <= 10) {
-        totalStageEnemies = Math.floor(Math.random() * 31) + 20;
+    else if (stage <= 2) {
+        totalStageEnemies = Math.floor(Math.random() * 11) + 20; // 20-30
     } else {
-        totalStageEnemies = 30 + (stage * 2) + Math.floor(Math.random() * 21);
+        // Gradually increase from stage 3 to stage 19, then cap at 60-70 from stage 20
+        const baseMin = Math.min(60, 20 + (stage - 2) * 2.5);
+        totalStageEnemies = Math.floor(Math.random() * 11) + Math.floor(baseMin);
     }
     currentStageSpawned = 0;
     updateStageInfo();
