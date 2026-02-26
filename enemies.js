@@ -351,9 +351,22 @@ function updateGauges() {
 // Update stage information display
 function updateStageInfo() {
     const stageDisplay = document.getElementById('stage-display');
+    const stageNameElem = document.getElementById('stage-name');
     const enemiesLeft = document.getElementById('enemies-left');
     
     if (stageDisplay) stageDisplay.innerText = stage;
+    
+    if (stageNameElem) {
+        let name = "";
+        if (stage >= 51) name = "[Nightmare Realm]";
+        else if (stage >= 41) name = "[The Eternal Abyss]";
+        else if (stage >= 31) name = "[Shadow Sanctum]";
+        else if (stage >= 21) name = "[Wailing Corridors]";
+        else if (stage >= 11) name = "[Desolate Path]";
+        else name = "[Whispering Gates]";
+        stageNameElem.innerText = name;
+    }
+
     if (enemiesLeft) {
         if (isBossStage) {
             enemiesLeft.innerText = "BOSS";
