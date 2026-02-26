@@ -242,81 +242,80 @@ function drawUnits() {
  * Renders the Apprentice Exorcist with professional pixel art detail.
  */
 function drawApprentice(cx, cy) {
-    const ds = 1; // Maximum resolution (1 pixel per dot)
     const time = lavaPhase;
-    const floatingY = Math.sin(time * 2) * 2; // Subtle floating animation
+    const floatingY = Math.sin(time * 2) * 2.5; 
     const y = cy + floatingY;
 
-    // --- 1. DARK SILHOUETTE (For Cleanliness) ---
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-    ctx.fillRect(cx - 6, y - 10, 12, 22); // Outer shadow
+    // Helper to draw a pixel with optional scale
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        ctx.fillRect(cx + ox, y + oy, w, h);
+    };
 
-    // --- 2. LAYERED ROBE (Grey/Silver) ---
-    // Main Body
-    ctx.fillStyle = '#444444'; // Deep shadow
-    ctx.fillRect(cx - 5, y, 10, 10);
-    ctx.fillStyle = '#777777'; // Mid tone
-    ctx.fillRect(cx - 4, y - 2, 8, 10);
-    ctx.fillStyle = '#AAAAAA'; // Highlight
-    ctx.fillRect(cx - 4, y - 2, 2, 8);
+    // --- 1. BLACK OUTLINE (1px) ---
+    // Body Outline
+    p(-6, -2, '#000', 12, 13); // Robe outline
+    p(-5, -11, '#000', 10, 10); // Hood outline
     
-    // Bottom Hem (Detail)
-    ctx.fillStyle = '#333333';
-    ctx.fillRect(cx - 5, y + 8, 10, 2);
+    // Staff Outline
+    p(5, -13, '#000', 3, 20); // Staff pole outline
+    p(3, -14, '#000', 7, 7);  // Staff head outline
+
+    // --- 2. ROBE (Deep Indigo) ---
+    p(-5, -1, '#2E1A47', 10, 11); // Deep Shadow
+    p(-4, -1, '#4B0082', 8, 10);  // Mid Tone
+    p(-4, -1, '#6A0DAD', 2, 9);   // Left Highlight
+    
+    // Gold Trim (Bottom)
+    p(-5, 8, '#B8860B', 10, 2);
+    p(-4, 8, '#FFD700', 8, 1);
 
     // --- 3. HOOD & FACE ---
-    // Hood Outer
-    ctx.fillStyle = '#666666';
-    ctx.fillRect(cx - 4, y - 10, 8, 8);
-    ctx.fillStyle = '#888888';
-    ctx.fillRect(cx - 3, y - 10, 6, 2);
+    p(-4, -10, '#4B0082', 8, 8);  // Hood Inner
+    p(-3, -10, '#6A0DAD', 6, 2);  // Hood Top Highlight
     
-    // Face Shadow (Inside Hood)
-    ctx.fillStyle = '#222222';
-    ctx.fillRect(cx - 3, y - 8, 6, 6);
+    // Face Shadow
+    p(-3, -8, 6, 6, '#111');
+    p(-3, -8, '#1a1a1a', 6, 6); 
     
-    // Skin (Lower face)
-    ctx.fillStyle = '#FFDBAC';
-    ctx.fillRect(cx - 2, y - 5, 4, 3);
+    // Skin
+    p(-2, -5, '#FFDBAC', 4, 3);
     
     // Divine Eyes (Cyan Glow)
     const eyeGlow = (Math.sin(time * 4) + 1) / 2;
-    ctx.fillStyle = `rgba(0, 255, 255, ${0.7 + 0.3 * eyeGlow})`;
-    ctx.fillRect(cx - 2, y - 7, 1, 1);
-    ctx.fillRect(cx + 1, y - 7, 1, 1);
+    const eyeColor = `rgba(0, 255, 255, ${0.8 + 0.2 * eyeGlow})`;
+    p(-2, -7, eyeColor, 1, 1);
+    p(1, -7, eyeColor, 1, 1);
+    
+    // Eye Trails (Subtle)
+    ctx.fillStyle = `rgba(0, 255, 255, ${0.2 * eyeGlow})`;
+    ctx.fillRect(cx - 2, y - 7, -2, 1);
+    ctx.fillRect(cx + 2, y - 7, 2, 1);
 
-    // --- 4. ORNATE STAFF (Gold & Wood) ---
-    const staffX = cx + 6;
-    const staffBaseY = y - 12;
+    // --- 4. ORNATE STAFF ---
+    const staffX = 6;
+    // Wood Pole
+    p(staffX, -12, '#3E2723', 1, 18);
+    p(staffX, -8, '#5D4037', 1, 4); // Pole highlight
     
-    // Wooden Pole
-    ctx.fillStyle = '#3E2723';
-    ctx.fillRect(staffX, staffBaseY + 4, 1, 18);
+    // Golden Head
+    p(4, -13, '#B8860B', 5, 5); // Base gold
+    p(5, -14, '#FFD700', 1, 7); // Vertical
+    p(3, -12, '#FFD700', 7, 1); // Horizontal
     
-    // Golden Ornament (Sun Cross Shape)
-    ctx.fillStyle = '#B8860B'; // Dark gold
-    ctx.fillRect(staffX - 2, staffBaseY + 1, 5, 5);
-    ctx.fillStyle = '#FFD700'; // Bright gold
-    ctx.fillRect(staffX - 1, staffBaseY, 3, 7); // Vertical
-    ctx.fillRect(staffX - 3, staffBaseY + 2, 7, 3); // Horizontal
-    
-    // Inner Jewel
-    ctx.fillStyle = '#00FFFF';
-    ctx.fillRect(staffX, staffBaseY + 2, 1, 1);
-    
-    // Staff Sparkle
-    if (eyeGlow > 0.8) {
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(staffX - 2, staffBaseY, 1, 1);
-        ctx.fillRect(staffX + 2, staffBaseY + 4, 1, 1);
-    }
+    // Holy Orb
+    const orbGlow = (Math.cos(time * 3) + 1) / 2;
+    p(5, -12, '#00FFFF', 1, 1); // Center gem
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.3 * orbGlow})`;
+    ctx.fillRect(cx + 4, y - 13, 3, 3);
 
-    // --- 5. MAGICAL PARTICLES (Holy Aura) ---
-    ctx.fillStyle = `rgba(255, 215, 0, ${0.2 * eyeGlow})`;
-    for(let i=0; i<3; i++) {
-        const px = cx + Math.cos(time + i*2) * 8;
-        const py = y + Math.sin(time + i*2) * 8;
-        ctx.fillRect(px, py, 1, 1);
+    // --- 5. HOLY AURA PARTICLES ---
+    for(let i=0; i<4; i++) {
+        const angle = time * 1.5 + (i * Math.PI / 2);
+        const dist = 9 + Math.sin(time * 2 + i) * 2;
+        const px = Math.cos(angle) * dist;
+        const py = Math.sin(angle) * dist;
+        p(Math.round(px), Math.round(py), `rgba(255, 215, 0, ${0.4 * orbGlow})`);
     }
 }
 
