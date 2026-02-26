@@ -908,18 +908,21 @@ function handleEnemyDeath(target, killer = null) {
         updateStageInfo(); 
         
         if (target.isBoss) {
-            const tutorialToggle = document.getElementById('tutorial-toggle');
-            const showMsg = tutorialToggle && tutorialToggle.checked;
+            let rewardMsg = "";
+            let bonusDetail = "";
 
             if (target.data.type === 'cerberus') {
                 damageMultiplier += target.data.rewardEffect;
-                if (showMsg) alert(`🎉 Defeated! Obtained [${target.data.rewardName}]!\n⚔️ ATK +10%!`);
+                rewardMsg = `Obtained [${target.data.rewardName}]`;
+                bonusDetail = "Global ATK +10%";
             } else if (target.data.type === 'charon') {
                 globalSpeedFactor -= target.data.rewardEffect;
-                if (showMsg) alert(`🎉 Defeated! Obtained [${target.data.rewardName}]!\n🐢 Enemy Speed -15%!`);
+                rewardMsg = `Obtained [${target.data.rewardName}]`;
+                bonusDetail = "Enemy Speed -15%";
             } else if (target.data.type === 'beelzebub') {
                 treasureChance += target.data.rewardEffect;
-                if (showMsg) alert(`🎉 Defeated! Obtained [${target.data.rewardName}]!\n💰 Treasure Spawn Rate Up!`);
+                rewardMsg = `Obtained [${target.data.rewardName}]`;
+                bonusDetail = "Treasure Spawn Rate Up";
             } else if (target.data.type === 'lucifer') {
                 critChance += target.data.rewardEffect;
                 const frozenOverlay = document.getElementById('frozen-overlay');
@@ -930,8 +933,11 @@ function handleEnemyDeath(target, killer = null) {
                         t.element.classList.remove('frozen-tomb');
                     }
                 });
-                if (showMsg) alert(`🎉 Defeated! Obtained [${target.data.rewardName}]!\n⚡ Crit Chance +10%!`);
+                rewardMsg = `Obtained [${target.data.rewardName}]`;
+                bonusDetail = "Crit Chance +10%";
             }
+            
+            showBossVictory(target.data.name, rewardMsg, bonusDetail);
             bossInstance = null;
         }
 
@@ -971,6 +977,37 @@ function handleEnemyDeath(target, killer = null) {
             window.updateSummonButtonState();
         }
     }
+}
+
+function showBossVictory(bossName, rewardMsg, bonusDetail) {
+    const container = document.getElementById('game-container');
+    const overlay = document.createElement('div');
+    overlay.className = 'boss-victory-overlay';
+    
+    overlay.innerHTML = `
+        <div class="boss-victory-content">
+            <div class="boss-victory-header">ABYSSAL ENTITY BANISHED</div>
+            <div class="boss-victory-name">${bossName} DEFEATED</div>
+            <div class="boss-victory-reward">${rewardMsg}</div>
+            <div class="boss-victory-bonus">${bonusDetail}</div>
+            <div class="boss-victory-hint">(Click to continue)</div>
+        </div>
+    `;
+    
+    container.appendChild(overlay);
+    isPaused = true;
+    
+    if (typeof playSound === 'function') {
+        playSound('start'); // Impactful sound
+    }
+
+    overlay.addEventListener('click', () => {
+        overlay.classList.add('fade-out');
+        setTimeout(() => {
+            overlay.remove();
+            isPaused = false;
+        }, 500);
+    });
 }
 
 function createSEGainEffect(x, y, amount, container) {
