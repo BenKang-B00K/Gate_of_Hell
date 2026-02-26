@@ -98,7 +98,7 @@ function getStageMultipliers(isBoss = false) {
 
     // Difficulty spike starting from stage 5
     if (stage >= 5) {
-        hpRate = 1.07;
+        hpRate = 1.06; // Lowered from 1.07
         speedRate = 0.005;
     }
 
@@ -511,20 +511,20 @@ function spawnEnemy() {
     if (stage === 1) {
         probs = { basic: 1.0, pattern: 0, enhanced: 0, armoured: 0, treasure: 0 };
     } else if (stage >= 51) {
-        // Nightmare (50+)
-        probs = { basic: 0.20, pattern: 0.25, enhanced: 0.25, armoured: 0.25, treasure: finalTreasureChance };
+        // Nightmare (50+) - Adjusted basic from 0.20 to 0.30
+        probs = { basic: 0.30, pattern: 0.23, enhanced: 0.23, armoured: 0.23, treasure: finalTreasureChance };
     } else if (stage >= 41) {
-        // Late (41-50)
-        probs = { basic: 0.40, pattern: 0.20, enhanced: 0.20, armoured: 0.15, treasure: finalTreasureChance };
+        // Late (41-50) - Adjusted basic from 0.40 to 0.50
+        probs = { basic: 0.50, pattern: 0.17, enhanced: 0.17, armoured: 0.15, treasure: finalTreasureChance };
     } else if (stage >= 31) {
-        // Mid-Late (31-40)
-        probs = { basic: 0.55, pattern: 0.15, enhanced: 0.15, armoured: 0.10, treasure: finalTreasureChance };
+        // Mid-Late (31-40) - Adjusted basic from 0.55 to 0.65
+        probs = { basic: 0.65, pattern: 0.12, enhanced: 0.12, armoured: 0.10, treasure: finalTreasureChance };
     } else if (stage >= 21) {
-        // Mid (21-30)
-        probs = { basic: 0.70, pattern: 0.10, enhanced: 0.10, armoured: 0.05, treasure: finalTreasureChance };
+        // Mid (21-30) - Adjusted basic from 0.70 to 0.80
+        probs = { basic: 0.80, pattern: 0.07, enhanced: 0.07, armoured: 0.05, treasure: finalTreasureChance };
     } else if (stage >= 11) {
-        // Early-Mid (11-20)
-        probs = { basic: 0.85, pattern: 0.05, enhanced: 0.05, armoured: 0.03, treasure: finalTreasureChance };
+        // Early-Mid (11-20) - Adjusted basic from 0.85 to 0.90
+        probs = { basic: 0.90, pattern: 0.03, enhanced: 0.04, armoured: 0.02, treasure: finalTreasureChance };
     } else {
         // Early (2-10)
         probs = { basic: 0.95, pattern: 0.015, enhanced: 0.015, armoured: 0.01, treasure: finalTreasureChance };
