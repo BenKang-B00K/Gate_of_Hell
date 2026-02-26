@@ -274,6 +274,12 @@ function startInfoResetTimer() {
     infoResetTimer = setTimeout(() => {
         const d = document.getElementById('unit-info');
         if (d) d.innerHTML = '<div class="info-default-text">GUARDIANS<br><span style="font-size:10px; opacity:0.8;">of the</span><br>UNDERWORLD</div>';
+        
+        // Deselect units to hide overlay buttons
+        document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected'));
+        // Hide range indicator if active
+        const ri = document.getElementById('range-indicator');
+        if (ri) ri.remove();
     }, 10000); // 10 seconds
 }
 
