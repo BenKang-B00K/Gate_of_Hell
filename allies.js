@@ -579,7 +579,7 @@ function updateUnitOverlayButtons(t) {
 
         // Special Path (2 o'clock)
         const spc = document.createElement('div'); 
-        spc.className='unit-overlay-btn promote-2'; spc.innerHTML='✨'; spc.title='Ascend: Special Path (200 SE)';
+        spc.className='unit-overlay-btn promote-2'; spc.innerHTML='💠'; spc.title='Ascend: Special Path (200 SE)';
         spc.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el, 'Special'); }); 
         el.appendChild(spc);
     } else if(t.data.upgrades) {
