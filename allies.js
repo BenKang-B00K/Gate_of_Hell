@@ -205,6 +205,15 @@ function summonTower(targetSlot) {
     towers.push(tower); updateUnitOverlayButtons(tower); updateSummonButtonState();
 }
 
+let infoResetTimer = null;
+function startInfoResetTimer() {
+    if (infoResetTimer) clearTimeout(infoResetTimer);
+    infoResetTimer = setTimeout(() => {
+        const d = document.getElementById('unit-info');
+        if (d) d.innerHTML = 'Select a unit to view information.';
+    }, 10000); // 10 seconds
+}
+
 function showUnitInfo(tower) {
     const d = document.getElementById('unit-info');
     const data = tower.data;
@@ -214,6 +223,7 @@ function showUnitInfo(tower) {
     let ch = ''; if(data.type==='apprentice') ch=`<div style="font-size:8px; color:#00ff00; margin-bottom:4px;">↗️ Ascend: 200 SE</div>`;
     else if(data.upgrades) { ch=`<div style="font-size:8px; color:#ffd700; margin-bottom:2px;">Unleash Master (500 SE):</div>`; data.upgrades.forEach((u,i)=>{const ud=unitTypes.find(x=>x.type===u); ch+=`<div style="font-size:7.5px; color:#aaa;">${i===0?'↖️':'↗️'}: ${ud.name}</div>`;}); }
     d.innerHTML = `${th}${ch}${ih}<div style="color:#888; font-size:9px; margin-top:2px; line-height:1.2;">${data.desc}</div>`;
+    startInfoResetTimer();
 }
 
 function showEnemyInfo(enemy) {
@@ -234,6 +244,7 @@ function showEnemyInfo(enemy) {
         <div style="font-size: 9px; color: #ff0000; margin-bottom: 4px;">HP: ${hp} / ${maxHp}</div>
         <div style="color: #888; font-size: 9px; margin-top: 2px; line-height: 1.2;">${enemy.desc || 'A wandering soul from the abyss.'}</div>
     `;
+    startInfoResetTimer();
 }
 window.showEnemyInfo = showEnemyInfo;
 
