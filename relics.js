@@ -75,6 +75,49 @@ function renderRelicsGrid() {
         
         grid.appendChild(slot);
     });
+
+    renderTotalBonuses();
+}
+
+function renderTotalBonuses() {
+    const details = document.getElementById('relic-details');
+    if (!details || document.querySelector('.relic-slot.selected')) return;
+
+    let bonusHtml = '<div class="relic-detail-title">Current Abyssal Power</div>';
+    let hasAnyBonus = false;
+
+    const labels = {
+        damage: "Global Damage",
+        range: "Global Range",
+        cooldown: "Cooldown Reduction",
+        se_gain: "SE Gain Bonus",
+        stun_duration: "Stun Duration",
+        crit_damage: "Crit Damage",
+        pierce_chance: "Pierce Chance",
+        enemy_hp: "Enemy HP Reduction",
+        slow_strength: "Slow Intensity",
+        portal_dmg_reduction: "Portal Stability"
+    };
+
+    for (let key in totalRelicBonuses) {
+        const val = totalRelicBonuses[key];
+        if (val !== 0) {
+            hasAnyBonus = true;
+            let dispVal = val > 0 ? `+${Math.round(val * 100)}%` : `${Math.round(val * 100)}%`;
+            if (key === 'range') dispVal = `+${val}`;
+            
+            bonusHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:9px;">
+                <span>${labels[key]}</span>
+                <span style="color:#00ff00;">${dispVal}</span>
+            </div>`;
+        }
+    }
+
+    if (!hasAnyBonus) {
+        bonusHtml += '<div style="color:#666; font-style:italic; margin-top:10px;">No relics collected yet. Defeat specters to find them.</div>';
+    }
+
+    details.innerHTML = bonusHtml;
 }
 
 function showRelicDetail(id) {
@@ -83,7 +126,10 @@ function showRelicDetail(id) {
     const data = relicsData[id];
     
     details.innerHTML = `
-        <div class="relic-detail-title">${data.name}</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="relic-detail-title">${data.name}</div>
+            <button onclick="document.querySelectorAll('.relic-slot').forEach(s=>s.classList.remove('selected')); renderRelicsGrid();" style="background:#333; border:none; color:#888; font-size:7px; cursor:pointer; padding:2px 4px; border-radius:3px;">BACK</button>
+        </div>
         <div class="relic-detail-effect">${data.effect}</div>
         <div class="relic-detail-lore">"${data.lore}"</div>
     `;
