@@ -488,14 +488,24 @@ function spawnEnemy() {
         }
     }
 
-    const enemyTypes = enemyCategories[category];
+    let enemyTypes = enemyCategories[category];
+    
+    // Stage 1 special restriction: Only Normal and Shade
+    if (stage === 1 && category === 'basic') {
+        enemyTypes = enemyTypes.filter(e => e.type === 'normal' || e.type === 'shade');
+    }
+
     const randEnemy = Math.random();
     let accumulatedEnemyProb = 0;
     let selectedType = enemyTypes[0];
 
+    // Calculate total probability of current set to normalize
+    const totalSetProb = enemyTypes.reduce((sum, e) => sum + e.probability, 0);
+    let currentRand = Math.random() * totalSetProb;
+
     for (const enemyType of enemyTypes) {
-        accumulatedEnemyProb += enemyType.probability;
-        if (randEnemy < accumulatedEnemyProb) {
+        currentRand -= enemyType.probability;
+        if (currentRand <= 0) {
             selectedType = enemyType;
             break;
         }
@@ -523,22 +533,10 @@ function spawnEnemy() {
     hpBg.appendChild(hpFill);
     enemyDiv.appendChild(hpBg);
 
-    // Enemy click event
-    enemyDiv.addEventListener('mousedown', (e) => {
-        e.stopPropagation();
-        if (typeof window.showEnemyInfo === 'function') {
-            window.showEnemyInfo({...selectedType, hp: enemy.hp}); // Pass current state
-        }
-    });
-
-    road.appendChild(enemyDiv);
-    const randomX = Math.random() * 80 + 10;
-    enemyDiv.style.left = `${randomX}%`;
-    enemyDiv.style.top = '-40px';
-
     const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
 
+    const randomX = Math.random() * 80 + 10;
     const enemy = {
         element: enemyDiv,
         hpFill: hpFill,
@@ -555,12 +553,26 @@ function spawnEnemy() {
         hp: selectedType.hp * hpMult * hpStageMult,
         reward: selectedType.reward || 10,
         type: selectedType.type,
+        icon: selectedType.icon,
+        desc: selectedType.desc,
         isPhasing: false,
         isSilenced: false,
         isFrozen: false,
         isSlowed: false,
         hasBackstepped: false
     };
+
+    // Enemy click event
+    enemyDiv.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        if (typeof window.showEnemyInfo === 'function') {
+            window.showEnemyInfo(enemy); 
+        }
+    });
+
+    road.appendChild(enemyDiv);
+    enemyDiv.style.left = `${randomX}%`;
+    enemyDiv.style.top = '-40px';
 
     // Special initialization for Boar (Feral Revenant)
     if (selectedType.type === 'boar') {
@@ -679,8 +691,18 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
         defense: data.defense,
         reward: 0, 
         type: data.type,
+        name: data.name,
+        desc: data.desc,
         isCorrupted: true 
     };
+
+    // Enemy click event
+    enemyDiv.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        if (typeof window.showEnemyInfo === 'function') {
+            window.showEnemyInfo(enemy); 
+        }
+    });
 
     // Bringer of Doom Special Ability: Master Corruption
     if (data.type === 'bringer_of_doom') {
