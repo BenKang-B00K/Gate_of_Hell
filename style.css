@@ -619,6 +619,17 @@ body {
     -ms-overflow-style: none; /* IE and Edge */
 }
 
+.info-default-text {
+    font-family: 'Cinzel', serif; /* Or any thematic font if available, fallback to serif */
+    font-weight: bold;
+    font-size: 14px;
+    color: #ffd700;
+    text-shadow: 0 0 5px #ffd700, 0 0 10px #ff8c00, 0 0 15px #ff0000;
+    letter-spacing: 1px;
+    animation: divinePulse 3s infinite alternate;
+    text-transform: uppercase;
+}
+
 /* Default Logo Text Glow */
 .divine-glow {
     color: #ffd700;

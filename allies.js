@@ -210,7 +210,7 @@ function startInfoResetTimer() {
     if (infoResetTimer) clearTimeout(infoResetTimer);
     infoResetTimer = setTimeout(() => {
         const d = document.getElementById('unit-info');
-        if (d) d.innerHTML = 'Select a unit to view information.';
+        if (d) d.innerHTML = '<div class="info-default-text">Guardians of the UnderWorld</div>';
     }, 10000); // 10 seconds
 }
 
@@ -332,7 +332,7 @@ function renderBestiary() {
 
             const kills = killCounts[t] || 0; 
             const bonus = getBestiaryBonus(t); 
-            const btx = bonus>1?`DMG +${((bonus-1)*100).toFixed(0)}%`:`No Bonus`;
+            const btx = bonus>1?`<br>DMG +${((bonus-1)*100).toFixed(0)}%`:`<br>No Bonus`;
             
             let rVal = d.reward;
             if (rVal === undefined) {
@@ -341,20 +341,23 @@ function renderBestiary() {
                 else rVal = 10;
             }
             const rewardText = ` | ✨ ${rVal}`;
-            const originText = corruptInfo[t] ? `<br><strong style="color:#ff0000;">[Origin]</strong> ${corruptInfo[t]}` : '';
+            const originText = (g.h === 'Corrupted Specters' && corruptInfo[t]) ? `<div style="font-size:7px; color:#ff4444; margin-bottom:2px; font-weight:bold;">[ORIGIN: ${corruptInfo[t]}]</div>` : '';
+            const traitOriginText = (g.h !== 'Corrupted Specters' && corruptInfo[t]) ? `<br><strong style="color:#ff0000;">[Origin]</strong> ${corruptInfo[t]}` : '';
             
             const item = document.createElement('div'); 
             item.className = `bestiary-item ${isKnown ? '' : 'locked'}`;
             
             if (isKnown) {
+                const statsDisplay = g.h === 'Corrupted Specters' ? `💀 ${kills}${rewardText}` : `💀 ${kills}${rewardText}${btx}`;
                 item.innerHTML = `
                     <div class="custom-tooltip specter">
-                        <strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}${originText}
+                        <strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}${traitOriginText}
                     </div>
+                    ${originText}
                     <div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div>
                     <div class="bestiary-info">
                         <div class="bestiary-name">${names[t]||t}</div>
-                        <div class="bestiary-stats">💀 ${kills}${rewardText} | ${btx}</div>
+                        <div class="bestiary-stats">${statsDisplay}</div>
                     </div>`;
             } else {
                 item.innerHTML = `
