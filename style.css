@@ -258,9 +258,8 @@ img, .enemy, .tower-card, .relic-slot {
 .card-slot {
     position: relative;
     box-sizing: border-box;
-    border: 1px solid rgba(255, 215, 0, 0.15); /* Very faint golden border */
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.05) 0%, transparent 70%);
-    border-radius: 50%; /* Circular for a more natural ritual look */
+    border: none; 
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -270,17 +269,15 @@ img, .enemy, .tower-card, .relic-slot {
 
 /* 마우스를 올렸을 때 타일 효과 */
 .card-slot:hover {
-    background: radial-gradient(circle, rgba(0, 229, 255, 0.15) 0%, transparent 80%);
-    border-color: rgba(0, 229, 255, 0.4);
-    box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 80%);
     transform: scale(1.05);
 }
 
 /* 퇴마사가 배치된 타일 */
 .card-slot.occupied {
-    border: 1px solid rgba(255, 215, 0, 0.4);
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 75%);
-    box-shadow: 0 0 12px rgba(255, 215, 0, 0.15);
+    border: none;
+    background: transparent;
+    box-shadow: none;
 }
 
 .card-slot.drag-over {
@@ -300,8 +297,8 @@ img, .enemy, .tower-card, .relic-slot {
     width: 150px;
     height: 35px;
     border-radius: 75px 75px 0 0;
-    background: linear-gradient(to top, rgba(60, 0, 90, 0.9), rgba(148, 0, 211, 0.5));
-    box-shadow: 0 -8px 35px rgba(148, 0, 211, 0.8);
+    background: transparent;
+    box-shadow: none;
     border: none;
     border-bottom: none;
     z-index: 1;
