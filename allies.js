@@ -211,7 +211,6 @@ function createSlots(containerId, count) {
     container.innerHTML = '';
     for (let i = 0; i < count; i++) {
         const cell = document.createElement('div');
-        if (i < 3) { container.appendChild(cell); continue; }
         cell.classList.add('card-slot');
         
         // Store column index (0, 1, or 2). Columns are 3 wide.
@@ -537,8 +536,12 @@ function initAllies() {
         });
     }
 
-    slots.length = 0; createSlots('left-slots', 27); createSlots('right-slots', 27);
+    slots.length = 0; createSlots('left-slots', 24); createSlots('right-slots', 24);
     initRecordsUI(); initTutorial();
+    const modal = document.getElementById('unlock-modal'); if(modal) modal.addEventListener('click', () => { modal.style.display='none'; isPaused=false; });
+    const retry = document.getElementById('retry-btn'); if(retry) retry.addEventListener('click', () => location.reload());
+    const rbt = document.getElementById('restart-btn-top'); if(rbt) rbt.addEventListener('click', () => { isPaused=true; const go=document.getElementById('game-over-overlay'); if(go) go.style.display='flex'; });
+}
     const modal = document.getElementById('unlock-modal'); if(modal) modal.addEventListener('click', () => { modal.style.display='none'; isPaused=false; });
     const retry = document.getElementById('retry-btn'); if(retry) retry.addEventListener('click', () => location.reload());
     const rbt = document.getElementById('restart-btn-top'); if(rbt) rbt.addEventListener('click', () => { isPaused=true; const go=document.getElementById('game-over-overlay'); if(go) go.style.display='flex'; });
