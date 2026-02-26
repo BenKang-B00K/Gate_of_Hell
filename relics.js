@@ -212,7 +212,7 @@ function renderTotalBonuses() {
     const details = document.getElementById('relic-details');
     if (!details || document.querySelector('.relic-slot.selected')) return;
 
-    let bonusHtml = '<div class="relic-detail-title">Current Abyssal Power</div>';
+    let bonusHtml = '<div class="relic-detail-title">Total Relic Buffs</div>';
     let hasAnyBonus = false;
 
     const labels = {
