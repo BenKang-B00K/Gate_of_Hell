@@ -340,6 +340,10 @@ function gameLoop() {
             }
         }
     });
+
+    // Render custom canvas graphics (Road effects, etc.)
+    if (typeof renderGraphics === 'function') renderGraphics();
+
     requestAnimationFrame(gameLoop);
 }
 
