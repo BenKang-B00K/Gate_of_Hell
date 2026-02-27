@@ -358,14 +358,16 @@ function shoot(tower, target) {
 
     // Special case: Apprentice staff head origin
     if (tower.data.type === 'apprentice') {
-        const LOGICAL_WIDTH = 360;
+        const LOGICAL_WIDTH = 1080;
         const scaleX = gr.width / LOGICAL_WIDTH;
-        const scaleY = gr.height / 640;
+        const scaleY = gr.height / 1920;
         const cx = ((tr.left + tr.width / 2) - gr.left) / scaleX;
         const cy = ((tr.top + tr.height / 2) - gr.top) / scaleY;
-        // New coordinates: staffX+1, -13 (logical jewel center)
-        sx = (cx + 8) * scaleX;
-        sy = (cy - 13) * scaleY;
+        
+        // Logical Jewel Pos: staffX+1 = 8, Y = -13
+        // Multiply by S=3.0 used in drawApprentice
+        sx = (cx + (8 * 3.0)) * scaleX;
+        sy = (cy + (-13 * 3.0)) * scaleY;
     }
 
     proj.style.left = `${sx}px`; proj.style.top = `${sy}px`;
