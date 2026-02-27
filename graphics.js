@@ -419,9 +419,115 @@ function drawTalisman(cx, cy, tower) {
     p(-4, -7, '#DAA520', 24, 42);
 }
 function drawArcher(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#006400', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 350; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
+
+    // --- 1. BODY & ELVEN-STYLE ROBES (Emerald/White Palette) ---
+    const robeColor = '#2E7D32'; // Emerald green
+    const robeDetail = '#C8E6C9'; // Light mint/White
+    const trimColor = '#FFD700'; // Gold trim
+    
+    // Tunic & Cape
+    p(-5, 0, '#000', 11, 15); // Outline
+    p(-4, 1, robeColor, 9, 13);
+    p(-4, 1, robeDetail, 2, 11); // Cape shoulder
+    p(-4, 11, '#1B5E20', 9, 3); // Bottom shadow
+    
+    // Belt
+    p(-4, 7, '#3E2723', 9, 1);
+    p(0, 7, trimColor, 1, 1); // Small gold buckle
+
+    // Boots (Leather)
+    p(-3, 14, '#000', 3, 3);
+    p(1, 14, '#000', 3, 3);
+
+    // Head & Hair (Long, Silver/White)
+    const skinColor = '#F5DDC7';
+    const hairColor = '#ECEFF1';
+    p(-4, -10, '#000', 9, 10); // Head outline
+    p(-3, -9, skinColor, 7, 7);
+    
+    // Silver Hair
+    p(-4, -11, '#000', 9, 3); // Top outline
+    p(-4, -11, hairColor, 9, 2);
+    p(-4, -9, hairColor, 2, 8); // Side hair
+    p(3, -9, hairColor, 2, 8);
+    
+    // Focused Eyes
+    p(-2, -6, isAttacking ? '#00E5FF' : '#333', 1, 1);
+    p(1, -6, isAttacking ? '#00E5FF' : '#333', 1, 1);
+
+    // --- 2. DIVINE BOWL (Ornate & Blessed) ---
+    // Bow draws back during attack
+    let drawBack = isAttacking ? (1.0 - flashIntensity) * 6 : 0;
+    let bowOX = 8;
+    let bowOY = -12;
+    
+    const woodColor = '#5D4037';
+    const bowString = '#B3E5FC';
+    
+    // Bow Limbs (Curved)
+    p(bowOX, bowOY, '#000', 3, 24); // Main vertical
+    p(bowOX - 1, bowOY - 1, '#000', 3, 3); // Upper curve
+    p(bowOX - 2, bowOY - 2, '#000', 3, 2); 
+    p(bowOX - 1, bowOY + 22, '#000', 3, 3); // Lower curve
+    p(bowOX - 2, bowOY + 24, '#000', 3, 2);
+    
+    p(bowOX, bowOY + 1, woodColor, 2, 22);
+    p(bowOX - 1, bowOY, woodColor, 1, 1);
+    p(bowOX + 1, bowOY + 5, trimColor, 1, 14); // Gold inlay
+
+    // Bow String
+    const stringX = bowOX - drawBack;
+    ctx.strokeStyle = bowString;
+    ctx.lineWidth = S * 0.5;
+    const sTopX = isLeft ? cx + (bowOX * S) : cx - (bowOX * S);
+    const sBotX = isLeft ? cx + (bowOX * S) : cx - (bowOX * S);
+    const sMidX = isLeft ? cx + (stringX * S) : cx - (stringX * S);
+    
+    ctx.beginPath();
+    ctx.moveTo(sTopX, cy + (bowOY * S));
+    ctx.lineTo(sMidX, cy + (cy + (bowOY + 12) * S - cy)); // Mid point where arrow sits
+    ctx.lineTo(sBotX, cy + ((bowOY + 24) * S));
+    ctx.stroke();
+
+    // Arrow (During Attack)
+    if (isAttacking) {
+        const arrowX = bowOX - drawBack;
+        p(arrowX - 4, bowOY + 11, '#ECEFF1', 8, 1); // Shaft
+        p(arrowX + 4, bowOY + 11, '#00E5FF', 2, 1); // Tip
+        
+        // Firing Sparkle
+        if (flashIntensity > 0.8) {
+            ctx.save();
+            ctx.shadowBlur = 30 * flashIntensity;
+            ctx.shadowColor = '#00e5ff';
+            p(arrowX + 5, bowOY + 10, '#fff', 3, 3);
+            ctx.restore();
+        }
+    }
+
+    // --- 3. AMBIENT NATURE MAGIC ---
+    const leafGlow = (Math.sin(time * 2) + 1) / 2;
+    for(let i=0; i<4; i++) {
+        const py = -5 + Math.sin(time + i) * 15;
+        const px = -12 + (i * 8);
+        p(Math.round(px), Math.round(py), `rgba(76, 175, 80, ${0.15 * leafGlow})`, 2, 2);
+    }
 }
 function drawAssassin(cx, cy, tower) {
     const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
