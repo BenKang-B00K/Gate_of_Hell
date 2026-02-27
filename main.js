@@ -6,31 +6,40 @@ class PreloadScene extends Phaser.Scene {
     constructor() { super('PreloadScene'); }
 
     preload() {
-        this.load.on('filecomplete', (key, type, data) => {
-            if (type === 'image' || type === 'spritesheet') {
-                const texture = this.textures.get(key);
-                texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+        // [수정] Graphics로 실시간 텍스처 생성 (Base64 에러 방지)
+        const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+        
+        graphics.lineStyle(2, 0x00aaff);
+        graphics.strokeRect(0, 0, 32, 32);
+        graphics.generateTexture('unit_placeholder', 32, 32);
+        graphics.clear();
+
+        graphics.lineStyle(2, 0xff4444);
+        graphics.strokeRect(0, 0, 32, 32);
+        graphics.generateTexture('enemy_placeholder', 32, 32);
+
+        this.load.on('filecomplete', (key, type) => {
+            if (type === 'spritesheet') {
+                const tex = this.textures.get(key);
+                if (tex) tex.setFilter(Phaser.Textures.FilterMode.NEAREST);
             }
         });
 
-        this.load.image('unit_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
-        this.load.image('enemy_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
-
         const tierPaths = {
             'apprentice': 'ImageSample/Tier1/견습퇴마사.png',
+            'knight': 'ImageSample/Tier2/퇴마 기사.png',
+            'archer': 'ImageSample/Tier2/신성한 궁수.png',
+            'fire': 'ImageSample/Tier2/화염 마법사.png',
+            'ice': 'ImageSample/Tier2/빙결 도사.png',
             'necromancer': 'ImageSample/Tier2/강령술사.png',
             'mirror': 'ImageSample/Tier2/거울 예언자.png',
             'assassin': 'ImageSample/Tier2/그림자 암살자.png',
             'talisman': 'ImageSample/Tier2/부적술사.png',
-            'ice': 'ImageSample/Tier2/빙결 도사.png',
             'guardian_unit': 'ImageSample/Tier2/성소 수호자.png',
-            'archer': 'ImageSample/Tier2/신성한 궁수.png',
             'tracker': 'ImageSample/Tier2/영혼 추적자.png',
             'chainer': 'ImageSample/Tier2/영혼의 결박자.png',
             'monk': 'ImageSample/Tier2/철퇴 승려.png',
-            'knight': 'ImageSample/Tier2/퇴마 기사.png',
-            'alchemist': 'ImageSample/Tier2/퇴마 연금술사.png',
-            'fire': 'ImageSample/Tier2/화염 마법사.png'
+            'alchemist': 'ImageSample/Tier2/퇴마 연금술사.png'
         };
 
         Object.entries(tierPaths).forEach(([key, path]) => {
@@ -41,13 +50,13 @@ class PreloadScene extends Phaser.Scene {
     }
 
     create() {
-        const unitKeys = ['apprentice', 'necromancer', 'mirror', 'assassin', 'talisman', 'ice', 'guardian_unit', 'archer', 'tracker', 'chainer', 'monk', 'knight', 'alchemist', 'fire', 'ghost_basic'];
-        unitKeys.forEach(key => {
-            if (this.textures.exists(key)) {
-                this.anims.create({ key: `${key}_idle`, frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }), frameRate: 4, repeat: -1 });
-                this.anims.create({ key: `${key}_walk`, frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }), frameRate: 6, repeat: -1 });
-                this.anims.create({ key: `${key}_attack`, frames: this.anims.generateFrameNumbers(key, { start: 2, end: 3 }), frameRate: 10, repeat: 0 });
-                this.anims.create({ key: `${key}_dead`, frames: this.anims.generateFrameNumbers(key, { start: 4, end: 5 }), frameRate: 8, repeat: 0 });
+        const keys = ['apprentice', 'knight', 'archer', 'fire', 'ice', 'necromancer', 'mirror', 'assassin', 'talisman', 'guardian_unit', 'tracker', 'chainer', 'monk', 'alchemist', 'ghost_basic'];
+        keys.forEach(k => {
+            if (this.textures.exists(k)) {
+                this.anims.create({ key: `${k}_idle`, frames: this.anims.generateFrameNumbers(k, { start: 0, end: 1 }), frameRate: 4, repeat: -1 });
+                this.anims.create({ key: `${k}_walk`, frames: this.anims.generateFrameNumbers(k, { start: 0, end: 1 }), frameRate: 6, repeat: -1 });
+                this.anims.create({ key: `${k}_attack`, frames: this.anims.generateFrameNumbers(k, { start: 2, end: 3 }), frameRate: 10 });
+                this.anims.create({ key: `${k}_dead`, frames: this.anims.generateFrameNumbers(k, { start: 4, end: 5 }), frameRate: 8 });
             }
         });
         this.scene.start('MainScene');
@@ -62,26 +71,26 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. 시스템 매니저 초기화
+        // 1. 매니저 초기화
         this.dataManager = new DataManager(this);
         this.vfx = new VFXManager(this);
 
-        // 2. 물리 그룹 및 풀링
+        // [강제 초기 UI 업데이트] 레지스트리 세팅 후 즉시 반영
+        if (window.syncUIWithRegistry) window.syncUIWithRegistry();
+
+        // 2. 물리 그룹
         this.allies = this.add.group({ runChildUpdate: true });
         this.enemies = this.physics.add.group({ classType: Specter, runChildUpdate: true });
         this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
         
-        // 3. 레이아웃
         this.slots = this.add.group();
         this.createSlots();
 
-        // 4. 전투 설정
         this.setupCombat();
         this.setupInteractions();
         this.initWaveState();
 
-        // 5. 스폰 루프
-        this.spawnEvent = this.time.addEvent({
+        this.time.addEvent({
             delay: 2000,
             callback: this.spawnWave,
             callbackScope: this,
@@ -91,7 +100,7 @@ class MainScene extends Phaser.Scene {
 
     initWaveState() {
         this.waveSpawnedCount = 0;
-        this.totalWaveEnemies = 8 + (this.registry.get('stage') * 2);
+        this.totalWaveEnemies = 10 + (this.registry.get('stage') * 2);
         this.registry.set('enemiesLeft', 0);
     }
 
@@ -170,11 +179,10 @@ class MainScene extends Phaser.Scene {
     }
 
     createSlots() {
-        // Corrected loop with defined column variable
         for (let row = 0; row < 6; row++) {
-            for (let col = 0; col < 2; col++) {
-                this.addSlot(30 + col * 40, 100 + row * 55, 'left');
-                this.addSlot(290 + col * 40, 100 + row * 55, 'right');
+            for (let col = 0; col < 3; col++) {
+                this.addSlot(20 + col * 40, 80 + row * 50, 'left');
+                this.addSlot(260 + col * 40, 80 + row * 50, 'right');
             }
         }
     }
@@ -226,7 +234,6 @@ class MainScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        // Game Over Check
         const pe = this.registry.get('portalEnergy');
         if (pe >= this.registry.get('maxPortalEnergy')) {
             this.scene.pause();
@@ -234,7 +241,6 @@ class MainScene extends Phaser.Scene {
             return;
         }
 
-        // Stage Progression
         const activeEnemies = this.enemies.countActive(true);
         if (this.waveSpawnedCount >= this.totalWaveEnemies && activeEnemies === 0) {
             this.startNextStage();
