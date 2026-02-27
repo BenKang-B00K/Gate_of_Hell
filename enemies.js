@@ -697,6 +697,7 @@ const corruptedTypes = {
 function spawnCorruptedEnemy(tower, forcedType = null) {
     totalCorruptedCount++;
     const road = document.getElementById('road');
+    if (!road) return;
     
     // Road is 340px wide, centered in 1080px (approx 34.2% to 65.8%)
     const randomX = Math.random() * 20 + 40;
@@ -729,7 +730,7 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
 
     road.appendChild(enemyDiv);
     enemyDiv.style.left = `${randomX}%`;
-    enemyDiv.style.top = `0px`;
+    enemyDiv.style.top = `-40px`; // Spawn at Spawning Pool height
 
     const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
@@ -741,7 +742,7 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
         initialX: randomX,
         x: randomX,
         targetX: Math.random() * 50 + 25, // Within portal arch
-        y: 0,
+        y: -40, // Match spawn height
         baseSpeed: data.speed * speedMult * speedStageMult, 
         speed: data.speed * speedMult * speedStageMult,
         maxHp: hpValue, 
@@ -783,6 +784,7 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
 
     enemies.push(enemy);
 }
+window.spawnCorruptedEnemy = spawnCorruptedEnemy;
 
 // Spawns a friendly ghost (Forsaken King ability)
 function spawnFriendlyGhost() {
