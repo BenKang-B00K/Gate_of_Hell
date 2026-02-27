@@ -1,6 +1,8 @@
 import { Guardian, Specter, Projectile } from './entities.js';
+import { DataManager } from './data_manager.js';
 
 class PreloadScene extends Phaser.Scene {
+// ... (PreloadScene content remains same)
     constructor() { super('PreloadScene'); }
 
     preload() {
@@ -54,35 +56,44 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. 경제 시스템 초기화 (Phaser Registry)
+        // 1. 데이터 매니저 초기화 (Registry 데이터 로드)
+        this.dataManager = new DataManager(this);
+
+        // 2. 경제 및 상태 시스템 초기화
         this.initEconomy();
 
-        // 2. 물리 그룹 및 풀링 초기화
+        // 3. 물리 그룹 및 풀링 초기화
         this.allies = this.add.group({ runChildUpdate: true });
         this.enemies = this.physics.add.group({ classType: Specter, runChildUpdate: true });
         this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
         
-        // 3. 필드 레이아웃 (슬롯)
+        // 4. 필드 레이아웃 (슬롯)
         this.slots = this.add.group();
         this.createSlots();
 
-        // 4. 상호작용 및 물리 설정
+        // 5. 상호작용 및 물리 설정
         this.setupInteractions();
         this.physics.add.overlap(this.projectiles, this.enemies, this.handleCombat, null, this);
 
-        // 5. 스폰 루프
+        // 6. 스폰 루프
         this.time.addEvent({ delay: 2000, callback: this.spawnWave, callbackScope: this, loop: true });
     }
 
     initEconomy() {
-        this.registry.set('money', 150);
-        this.registry.set('stage', 1);
-        this.registry.set('portalEnergy', 0);
+        // DataManager가 로드하지 않는 세션 전용 변수 설정
+        if (!this.registry.has('portalEnergy')) this.registry.set('portalEnergy', 0);
         this.registry.set('maxPortalEnergy', 1500);
         this.registry.set('enemiesLeft', 0);
         this.registry.set('critChance', 0.1);
 
-        // Registry -> DOM UI 싱크
+        // Registry -> DOM UI 싱크 리스너 설정
+        this.setupUIListeners();
+        
+        // 초기 UI 강제 업데이트
+        this.updateAllUI();
+    }
+
+    setupUIListeners() {
         this.registry.events.on('changedata-money', (p, v) => {
             document.getElementById('se-display-text').innerText = Math.floor(v);
             document.getElementById('se-gauge-fill').style.width = `${Math.min(v/10, 100)}%`;
@@ -97,6 +108,20 @@ class MainScene extends Phaser.Scene {
         this.registry.events.on('changedata-enemiesLeft', (p, v) => document.getElementById('enemies-left').innerText = v);
     }
 
+    updateAllUI() {
+        const money = this.registry.get('money');
+        const pe = this.registry.get('portalEnergy');
+        const stage = this.registry.get('stage');
+        const el = this.registry.get('enemiesLeft');
+
+        document.getElementById('se-display-text').innerText = Math.floor(money);
+        document.getElementById('stage-display').innerText = stage;
+        document.getElementById('enemies-left').innerText = el;
+        
+        const max = this.registry.get('maxPortalEnergy');
+        document.getElementById('portal-energy-label').innerText = `${Math.floor(pe)} / ${max}`;
+    }
+
     handleCombat(projectile, enemy) {
         const isCrit = Math.random() < this.registry.get('critChance');
         const damage = projectile.source.damage * (isCrit ? 2 : 1);
@@ -104,7 +129,6 @@ class MainScene extends Phaser.Scene {
         enemy.takeDamage(damage, isCrit);
         projectile.disableBody(true, true);
 
-        // 전투 피드백 (attackeffect.js)
         this.createHitEffect(enemy.x, enemy.y, projectile.source.type);
     }
 
@@ -156,11 +180,15 @@ class MainScene extends Phaser.Scene {
     }
 
     spawnGuardian(slot) {
-        const unit = new Guardian(this, slot.x, slot.y, window.unitTypes[0], 'apprentice');
+        const unitData = window.unitTypes[0];
+        const unit = new Guardian(this, slot.x, slot.y, unitData, 'apprentice');
         unit.currentSlot = slot;
         slot.isOccupied = true;
         this.input.setDraggable(unit);
         this.allies.add(unit);
+
+        // 전역 잠금 해제 데이터 기록
+        this.dataManager.unlockUnit(unitData.type);
     }
 
     createSlots() {
@@ -189,6 +217,9 @@ class MainScene extends Phaser.Scene {
         if (enemy) {
             enemy.spawn(x, -50, data, 'ghost_basic');
             this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
+            
+            // 조우한 적 기록
+            this.dataManager.recordEncounter(data.type);
         }
     }
 
