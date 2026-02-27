@@ -170,7 +170,7 @@ img, .enemy, .tower-card, .relic-slot {
     width: 100%;
     position: relative;
     border-bottom: 1px solid #4a0000;
-    padding-top: 148px; /* Reserved space for Restart & Tutorial */
+    padding-top: 0; /* Road now touches the top */
     box-sizing: border-box;
 }
 
@@ -185,6 +185,7 @@ img, .enemy, .tower-card, .relic-slot {
     z-index: 5;
     background: rgba(0, 0, 0, 0.2);
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+    margin-top: 148px; /* Slots start below the reserved button area */
 }
 
 /* 중앙 길 - 현무암 및 용암 균열 효과 */
@@ -398,11 +399,11 @@ img, .enemy, .tower-card, .relic-slot {
 /* 스테이지 정보 (길 위쪽 표시) */
 #stage-info {
     position: absolute;
-    top: 10px;
+    top: 150px; /* Adjusted to be below the top buttons */
     width: 100%;
     text-align: center;
     color: #ffffff;
-    font-size: 14px;
+    font-size: 24px; /* Scaled up for 1080p */
     font-weight: bold;
     text-shadow: 0 0 4px #000000;
     z-index: 20;
@@ -592,7 +593,7 @@ img, .enemy, .tower-card, .relic-slot {
 /* Top Status Bar */
 #top-status-bar {
     position: absolute;
-    top: 5px;
+    top: 60px; /* Below Restart/Tutorial */
     left: 0;
     width: 100%;
     display: flex;
@@ -603,24 +604,24 @@ img, .enemy, .tower-card, .relic-slot {
 
 #enemy-counter {
     background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #4a0000;
-    border-radius: 15px;
-    padding: 2px 12px;
+    border: 2px solid #4a0000;
+    border-radius: 30px;
+    padding: 10px 30px;
     color: #ffd700;
-    font-size: 10px;
+    font-size: 24px; /* Scaled for 1080p */
     font-weight: bold;
-    letter-spacing: 1px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8), inset 0 0 5px rgba(255, 0, 0, 0.2);
+    letter-spacing: 2px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 0, 0, 0.2);
     text-transform: uppercase;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 15px;
 }
 
 #enemies-left {
     color: #ff0000;
-    font-size: 12px;
-    text-shadow: 0 0 5px #ff0000;
+    font-size: 30px; /* Scaled for 1080p */
+    text-shadow: 0 0 10px #ff0000;
 }
 
 #thematic-header {
@@ -1648,35 +1649,34 @@ img, .enemy, .tower-card, .relic-slot {
 .enemy.stunned { filter: grayscale(100%) brightness(1.5); animation: shake 0.2s infinite; }
 .enemy.cursed { filter: sepia(1) hue-rotate(250deg) saturate(3); border: 3px dashed #800080; }
 
-/* Tutorial Toggle Styles - Made Even Smaller */
+/* Tutorial Toggle Styles - Made significantly smaller */
 #tutorial-toggle-container {
     position: absolute;
-    top: 18px; /* Scaled from 6px */
-    right: 18px;
+    top: 15px;
+    right: 15px;
     z-index: 1000;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
     background: rgba(0, 0, 0, 0.6);
-    padding: 3px 12px;
-    border-radius: 24px;
-    border: 3px solid #333;
-    transform: scale(2.0); /* Scaled up */
-    transform-origin: right top;
+    padding: 5px 15px;
+    border-radius: 30px;
+    border: 2px solid #333;
+    transform: none; /* Removed the scale(2.0) */
 }
 
 #tutorial-label {
-    font-size: 24px; /* Scaled from 8px */
+    font-size: 18px; /* Smaller font */
     color: #ffd700;
     font-weight: bold;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
 }
 
 #tutorial-status {
-    font-size: 24px; /* Scaled from 8px */
+    font-size: 18px;
     color: #ffd700;
     font-weight: bold;
-    min-width: 54px;
+    min-width: 40px;
     text-align: center;
 }
 
@@ -1684,8 +1684,8 @@ img, .enemy, .tower-card, .relic-slot {
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px; /* Scaled from 20px */
-  height: 36px; /* Scaled from 12px */
+  width: 40px;
+  height: 22px;
 }
 
 .switch input { 
@@ -1708,10 +1708,10 @@ img, .enemy, .tower-card, .relic-slot {
 .slider:before {
   position: absolute;
   content: "";
-  height: 24px; /* Scaled from 8px */
-  width: 24px; /* Scaled from 8px */
-  left: 6px;
-  bottom: 6px;
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
   transition: .4s;
 }
@@ -1725,27 +1725,27 @@ input:focus + .slider {
 }
 
 input:checked + .slider:before {
-  transform: translateX(24px);
+  transform: translateX(18px);
 }
 
-/* Restart Button (Top Left) */
+/* Restart Button (Top Left) - Made significantly smaller */
 #restart-btn-top {
     position: absolute;
-    top: 18px;
-    left: 18px;
+    top: 15px;
+    left: 15px;
     z-index: 1000;
     background: linear-gradient(135deg, #2a0505, #000000);
     color: #ff4500;
-    border: 3px solid #8b0000;
-    border-radius: 12px;
-    font-size: 24px;
-    padding: 12px 24px;
+    border: 2px solid #8b0000;
+    border-radius: 8px;
+    font-size: 18px; /* Smaller font */
+    padding: 8px 16px; /* Smaller padding */
     cursor: pointer;
     font-weight: bold;
-    letter-spacing: 3px;
+    letter-spacing: 1px;
     text-transform: uppercase;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
     transform-origin: left top;
 }
 
