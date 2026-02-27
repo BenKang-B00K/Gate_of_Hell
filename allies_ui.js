@@ -278,7 +278,11 @@ function initAllies() {
 function initRecordsUI() {
     const rb = document.getElementById('records-btn'); const ro = document.getElementById('records-overlay');
     if(rb && ro) {
-        rb.addEventListener('click', () => { isPaused = true; ro.style.display = 'flex'; renderBestiary(); });
+        rb.addEventListener('click', () => { 
+            isPaused = true; 
+            ro.style.display = 'flex'; 
+            if(typeof renderSpecters === 'function') renderSpecters(); 
+        });
         rb.addEventListener('mouseenter', () => {
             const d = document.getElementById('unit-info');
             if (d && Date.now() >= infoPanelLockedUntil) {
@@ -292,229 +296,13 @@ function initRecordsUI() {
             }
         });
     }
-    const cr = document.getElementById('close-records'); if(cr) cr.addEventListener('click', () => { ro.style.display='none'; isPaused=false; });
-    document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', function() {
-        document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active')); this.classList.add('active');
-        document.querySelectorAll('.tab-pane').forEach(x=>x.classList.remove('active')); document.getElementById(`${this.dataset.tab}-tab`).classList.add('active');
-        if(this.dataset.tab==='bestiary') renderBestiary(); else renderPromotionTree();
-    }));
+    // Note: Tab switching logic is now handled in records.js initRecords()
+    if(typeof initRecords === 'function') initRecords();
 }
 
 function initTutorial() {
     const t = document.getElementById('tutorial-toggle'); const s = document.getElementById('tutorial-status');
     if(t && s) { t.addEventListener('change', () => s.innerText=t.checked?'ON':'OFF'); s.innerText=t.checked?'ON':'OFF'; }
-}
-
-function renderBestiary() {
-    const bt = document.getElementById('bestiary-tab'); bt.innerHTML = '';
-    const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade", 'cerberus': 'Cerberus', 'charon': 'Charon', 'beelzebub': 'Beelzebub', 'lucifer': 'Lucifer' };
-    const groups = [
-        { h: 'Allied Exorcists', c: '#ffd700', types: ['apprentice', 'chainer', 'talisman', 'monk', 'archer', 'ice', 'fire', 'assassin', 'tracker', 'necromancer', 'guardian', 'knight', 'alchemist', 'mirror'] },
-        { h: 'Basic Specters', c: '#00e5ff', types: ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'] },
-        { h: 'Specialized Wraiths', c: '#ff00ff', types: ['defiled_apprentice', 'greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'] },
-        { h: 'Treasure Specters', c: '#ffd700', types: ['gold'] },
-        { h: 'Abyss Bosses', c: '#ff0000', types: ['cerberus', 'charon', 'beelzebub', 'lucifer'] }
-    ];
-
-    groups.forEach(g => {
-        const h = document.createElement('h3'); 
-        h.innerText = g.h; 
-        h.style.cssText = `grid-column:1/-1; color:${g.c}; border-bottom:3px solid ${g.c}33; padding-bottom:15px; margin:60px 0 30px 0; font-size:48px; font-family:'Cinzel', serif; text-transform:uppercase; letter-spacing:4px; text-align:center;`; 
-        bt.appendChild(h);
-        
-        g.types.forEach(t => {
-            let isKnown = false;
-            if (g.h === 'Basic Specters' || g.h === 'Allied Exorcists') {
-                // If it's basic specter, it's known.
-                // For allies, check unlockedUnits set.
-                isKnown = (g.h === 'Allied Exorcists') ? unlockedUnits.has(t) : true;
-            } else {
-                isKnown = (window.encounteredEnemies && window.encounteredEnemies.has(t)) || (killCounts[t] > 0);
-            }
-            
-            let d; 
-            const isAllied = g.h === 'Allied Exorcists';
-            if (isAllied) {
-                d = unitTypes.find(x => x.type === t);
-            } else {
-                if (typeof bossData !== 'undefined' && bossData) {
-                    for (let k in bossData) { if (bossData[k].type === t) { d = bossData[k]; break; } }
-                }
-                if (!d) {
-                    for(let k in enemyCategories) { const f=enemyCategories[k].find(x=>x.type===t); if(f){d=f; break;} }
-                }
-            }
-            if(!d) return;
-            const kills = killCounts[t] || 0; 
-            const bonus = getBestiaryBonus(t); 
-            
-            let rVal = d.reward;
-            if (rVal === undefined) {
-                if (g.h === 'Abyss Bosses') rVal = 500;
-                else if (isAllied) rVal = 0;
-                else rVal = 10;
-            }
-
-            const item = document.createElement('div'); 
-            item.className = `bestiary-item ${isKnown ? '' : 'locked'}`;
-            if (isKnown) {
-                const tooltipHeader = isAllied ? d.name : (names[t] || t);
-                const tooltipRole = isAllied ? `TIER ${d.tier} ${d.role}` : 'SPECTER';
-                const roleColor = isAllied ? '#ffd700' : '#ff4500';
-                
-                item.innerHTML = `
-                    <div class="custom-tooltip">
-                        <strong style="color:#ffd700; font-size:28px;">${tooltipHeader}</strong><br>
-                        <span style="color:${roleColor}; font-size:20px; font-weight:bold;">${tooltipRole}</span><hr style="border-color:#333;">
-                        ${d.desc || d.lore || 'A powerful soul from the abyss.'}
-                    </div>
-                    ${isAllied ? '<canvas class="bestiary-sprite-canvas" width="120" height="120"></canvas>' : `<div class="bestiary-icon">${d.icon}</div>`}
-                    <div class="bestiary-name">${isAllied ? d.name : (names[t]||t)}</div>
-                    <div class="bestiary-stats">
-                        ${isAllied ? `<div style="color: #00e5ff; font-weight: bold;">Role: ${d.role}</div>` : 
-                        `<div style="margin-bottom: 8px; color:#fff;">💀 Kills: ${kills}</div>
-                        <div style="color: #ffd700; font-weight: bold;">✨ Reward: ${rVal} SE</div>
-                        ${bonus > 1 ? `<div style="color: #00ff00; font-size: 16px; margin-top: 8px; font-weight:bold;">DMG +${((bonus-1)*100).toFixed(0)}%</div>` : ''}`}
-                    </div>`;
-                
-                if (isAllied) {
-                    const cvs = item.querySelector('.bestiary-sprite-canvas');
-                    if (cvs) {
-                        const pCtx = cvs.getContext('2d');
-                        drawUnitPreview(t, pCtx, 120, 120);
-                    }
-                }
-            } else {
-                item.innerHTML = `
-                    <div class="custom-tooltip">
-                        <strong style="color:#ffd700; font-size:28px;">[Unknown ${isAllied ? 'Class' : 'Entity'}]</strong><hr style="border-color:#333;">
-                        ${isAllied ? 'Unlock this class during your journey to see its details.' : 'Defeat this specter in the abyss to reveal its nature.'}
-                    </div>
-                    <div class="bestiary-icon" style="color:#222;">?</div>
-                    <div class="bestiary-name" style="color:#444;">???</div>
-                    <div class="bestiary-stats" style="color:#333; border: 1px dashed #333;">LOCKED</div>`;
-            }
-            bt.appendChild(item);
-        });
-    });
-}
-
-function renderPromotionTree() {
-    const tt = document.getElementById('tree-tab'); tt.innerHTML = '';
-    const pg = {
-        'Attack Paths': { 
-            class: 'attack',
-            paths: [
-                {n:'Talismanist',t:'talisman',m:['grandsealer','flamemaster'],a:'cursed_talisman'},
-                {n:'Divine Archer',t:'archer',m:['voidsniper','thousandhand'],a:'piercing_shadow'},
-                {n:'Fire Mage',t:'fire',m:['hellfire','phoenix'],a:'purgatory'},
-                {n:'Shadow Assassin',t:'assassin',m:['abyssal','spatial'],a:'reaper'},
-                {n:'Exorcist Knight',t:'knight',m:['paladin','crusader'],a:'eternal_wall'}
-            ]
-        },
-        'Support Paths': {
-            class: 'support',
-            paths: [
-                {n:'Soul Chainer',t:'chainer',m:['executor','binder'],a:'warden'},
-                {n:'Mace Monk',t:'monk',m:['vajra','saint'],a:'asura'},
-                {n:'Ice Daoist',t:'ice',m:['absolutezero','permafrost'],a:'cocytus'},
-                {n:'Soul Tracker',t:'tracker',m:['seer','commander'],a:'doom_guide'},
-                {n:'Necromancer',t:'necromancer',m:['wraithlord','cursedshaman'],a:'forsaken_king'}
-            ]
-        },
-        'Special Paths': {
-            class: 'special',
-            paths: [
-                {n:'Sanctuary Guardian',t:'guardian',m:['rampart','judgment'],a:'void_gatekeeper'},
-                {n:'Exorcist Alchemist',t:'alchemist',m:['midas','philosopher'],a:'transmuter'},
-                {n:'Mirror Oracle',t:'mirror',m:['illusion','reflection'],a:'oracle'}
-            ]
-        }
-    };
-
-    const createNode = (type, tier) => {
-        const d = unitTypes.find(x => x.type === type);
-        const isUnlocked = unlockedUnits.has(type);
-        const node = document.createElement('div');
-        node.className = `unit-node tier${tier} ${isUnlocked ? '' : 'locked'}`;
-        
-        if (isUnlocked) {
-            node.innerHTML = `
-                <div class="custom-tooltip">
-                    <strong style="color:#ffd700; font-size:28px;">${d.name}</strong><br>
-                    <span style="color:#aaa; font-size:20px; font-style:italic;">Tier ${tier} ${d.role}</span><hr style="border-color:#333;">
-                    ${d.desc}
-                </div>
-                <canvas class="node-sprite-canvas" width="120" height="120"></canvas>
-                <div class="node-name">${d.name}</div>
-            `;
-            const cvs = node.querySelector('.node-sprite-canvas');
-            if (cvs) {
-                const pCtx = cvs.getContext('2d');
-                drawUnitPreview(type, pCtx, 120, 120);
-            }
-        } else {
-            node.innerHTML = `
-                <div class="custom-tooltip">
-                    <strong style="color:#ffd700; font-size:28px;">[Unknown Class]</strong><br>
-                    <span style="color:#aaa; font-size:20px;">Tier ${tier} Promotion Required</span><hr style="border-color:#333;">
-                    This exorcist class has not been witnessed in battle yet. Reach this stage to unlock its secrets.
-                </div>
-                <div class="node-icon">?</div>
-                <div class="node-name">???</div>
-            `;
-        }
-        return node;
-    };
-
-    const arrow = () => {
-        const a = document.createElement('div');
-        a.className = 'tree-arrow';
-        a.innerText = '→';
-        return a;
-    };
-
-    Object.keys(pg).forEach(gn => {
-        const group = pg[gn];
-        const gdiv = document.createElement('div');
-        gdiv.className = `tree-group ${group.class}`;
-        
-        const gtitle = document.createElement('div');
-        gtitle.className = 'tree-group-title';
-        gtitle.innerText = gn;
-        gdiv.appendChild(gtitle);
-
-        const mcont = document.createElement('div');
-        mcont.className = 'tree-main-container';
-
-        group.paths.forEach(p => {
-            const row = document.createElement('div');
-            row.className = 'tree-row';
-            
-            // Tier 1 (Apprentice)
-            row.appendChild(createNode('apprentice', 1));
-            row.appendChild(arrow());
-            
-            // Tier 2
-            row.appendChild(createNode(p.t, 2));
-            row.appendChild(arrow());
-            
-            // Tier 3 (Choice)
-            const choiceDiv = document.createElement('div');
-            choiceDiv.className = 'tier3-choice';
-            p.m.forEach(m => choiceDiv.appendChild(createNode(m, 3)));
-            row.appendChild(choiceDiv);
-            row.appendChild(arrow());
-            
-            // Tier 4 (Ultimate)
-            row.appendChild(createNode(p.a, 4));
-            
-            mcont.appendChild(row);
-        });
-
-        gdiv.appendChild(mcont);
-        tt.appendChild(gdiv);
-    });
 }
 
 function updateUnitOverlayButtons(t) {
