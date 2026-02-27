@@ -167,6 +167,9 @@ function drawUnits() {
             case 'flamemaster': drawFlameMaster(cx, cy, tower); break;
             case 'voidsniper': drawVoidSniper(cx, cy, tower); break;
             case 'vajra': drawVajrapani(cx, cy, tower); break;
+            case 'absolutezero': drawAbsoluteZero(cx, cy, tower); break;
+            case 'hellfire': drawHellfireAlchemist(cx, cy, tower); break;
+            case 'phoenix': drawPhoenixSummoner(cx, cy, tower); break;
         }
     });
 }
@@ -2493,6 +2496,299 @@ function drawVajrapani(cx, cy, tower) {
     ctx.fillStyle = `rgba(255, 215, 0, ${0.1 * auraPulse})`;
     ctx.beginPath();
     ctx.arc(cx, cy, 38 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawAbsoluteZero(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & FROZEN ROBES (Cyan / White / Crystal Palette) ---
+    const robeColor = '#E0F7FA'; // Near white
+    const iceColor = '#00E5FF'; // Cyan ice
+    const trimColor = '#81D4FA'; 
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-5, 1, iceColor, 2, 13); // Ice shoulder detail
+    p(4, 1, iceColor, 2, 13);
+    
+    // Crystalline Sash
+    p(-5, 7, '#00B8D4', 11, 2);
+
+    // Boots (Frosty)
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Frozen Crown
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Crown of Absolute Zero
+    p(-5, -11, '#000', 11, 4);
+    p(-4, -10, iceColor, 9, 3);
+    p(-2, -12, '#FFF', 1, 3); // Center shard
+    p(2, -12, '#FFF', 1, 3);
+
+    // Eyes (Bright Cyan Glow)
+    p(-2, -5, '#00E5FF', 1, 1);
+    p(2, -5, '#00E5FF', 1, 1);
+
+    // --- 2. THE GLACIAL STAFF (Winter's Grasp) ---
+    let staffOX = isAttacking ? 10 : 8;
+    let staffOY = -14;
+    
+    // Staff Handle
+    p(staffOX, staffOY, '#000', 3, 28);
+    p(staffOX + 1, staffOY, '#BDBDBD', 1, 28);
+    
+    // Staff Head (Massive Gem)
+    p(staffOX - 4, staffOY - 5, '#000', 10, 10); // Outline
+    p(staffOX - 3, staffOY - 4, iceColor, 8, 8);
+    p(staffOX - 1, staffOY - 2, '#FFF', 3, 4); // Shine
+
+    // --- 3. ZERO-POINT BURST (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 45 * flashIntensity;
+        ctx.shadowColor = '#00E5FF';
+        
+        // Glacial Explosion
+        const blastX = isLeft ? cx + (staffOX * S) : cx - (staffOX * S);
+        const blastY = cy + (staffOY * S);
+        
+        ctx.fillStyle = `rgba(129, 212, 250, ${0.4 * flashIntensity})`;
+        ctx.beginPath();
+        ctx.arc(blastX, blastY, 25 * flashIntensity * S, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Ice Spikes
+        for(let i=0; i<6; i++) {
+            const sang = (i / 6) * Math.PI * 2 + time * 3;
+            const sdist = 15 + flashIntensity * 35;
+            const sx = staffOX + Math.cos(sang) * sdist/S;
+            const sy = staffOY + Math.sin(sang) * sdist/S;
+            p(Math.round(sx - 1), Math.round(sy - 1), '#FFF', 3, 3);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. PERMAFROST AURA ---
+    const frostPulse = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(129, 212, 250, ${0.1 * frostPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawHellfireAlchemist(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 350; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
+
+    // --- 1. BODY & HELL-FORGE GEAR (Black / Dark Red / Toxic Orange Palette) ---
+    const robeColor = '#1B1B1B'; // Charcoal black
+    const forgeColor = '#B71C1C'; // Dark red detail
+    const toxicColor = '#FF3D00'; // Intense toxic orange
+    
+    // Heavy Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-5, 1, forgeColor, 2, 13); // Red side trim L
+    p(4, 1, forgeColor, 2, 13);  // Red side trim R
+    
+    // Alchemical Bandolier
+    p(-5, 5, '#3E2723', 11, 3);
+    p(-3, 6, toxicColor, 2, 1); // Glowing vial
+
+    // Boots (Reinforced)
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head (Gas Mask / Hood)
+    p(-5, -10, '#000', 11, 10); 
+    p(-4, -9, robeColor, 9, 8);
+    
+    // The Gas Mask (Infernal design)
+    p(-3, -6, '#212121', 7, 5); // Mask base
+    p(-2, -5, toxicColor, 2, 2); // Lens L
+    p(1, -5, toxicColor, 2, 2);  // Lens R
+    p(-1, -2, '#424242', 3, 2); // Filter
+
+    // --- 2. HELLFIRE FLASKS (Volatile Concoctions) ---
+    let flaskFloat = Math.cos(time * 3) * 3;
+    let flaOX = isAttacking ? 11 : 9;
+    let flaOY = -2 + flaskFloat;
+    
+    // Toxic Flask (Erlenmeyer style)
+    p(flaOX - 3, flaOY - 4, '#000', 7, 10); // Outline
+    p(flaOX - 2, flaOY - 3, '#BDBDBD', 5, 8); // Glass
+    p(flaOX - 2, flaOY + 1, toxicColor, 5, 4); // Hellfire liquid
+    
+    // Bubbling Smoke
+    const sPhase = (time * 10) % 6;
+    p(flaOX, flaOY - 6 - sPhase, `rgba(255, 61, 0, ${0.4 * (1 - sPhase/6)})`, 2, 2);
+
+    // --- 3. HELLISH EXPLOSION (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 50 * flashIntensity;
+        ctx.shadowColor = '#FF3D00';
+        
+        // Napalm Burst
+        const blastX = isLeft ? cx + (flaOX * S) : cx - (flaOX * S);
+        const blastY = cy + (flaOY * S);
+        
+        ctx.fillStyle = `rgba(255, 61, 0, ${0.4 * flashIntensity})`;
+        ctx.beginPath();
+        ctx.arc(blastX, blastY, 20 * flashIntensity * S, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Flying Ash
+        for(let i=0; i<8; i++) {
+            const px = blastX + (Math.random() - 0.5) * 60;
+            const py = blastY + (Math.random() - 0.5) * 60;
+            p(Math.round((px-cx)/S), Math.round((py-cy)/S), '#424242', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. COMBUSTION AURA ---
+    const heatGlow = (Math.sin(time * 4) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 61, 0, ${0.08 * heatGlow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawPhoenixSummoner(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 500; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 500) : 0;
+
+    // --- 1. BODY & SOLAR ROBES (Bright Orange / Yellow / Gold Palette) ---
+    const robeColor = '#E65100'; // Intense orange
+    const solarColor = '#FFD600'; // Bright yellow
+    const trimColor = '#FFAB00'; // Amber gold
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-2, 1, solarColor, 3, 11); // Center sun panel
+    p(-5, 11, '#EF6C00', 11, 3); // Shadow
+    
+    // Sun Medallion
+    p(-1, 5, '#000', 3, 3);
+    p(0, 6, '#FFF176', 1, 1);
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Solar Tiara
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Sun Tiara
+    p(-4, -10, trimColor, 9, 2);
+    p(0, -12, solarColor, 1, 3); // Center sun spike
+
+    // --- 2. THE PHOENIX COMPANION (Fledgling Phoenix) ---
+    let phxFloat = Math.sin(time * 3) * 6;
+    let phxOX = isAttacking ? 15 : 12;
+    let phxOY = -10 + phxFloat;
+    
+    const fireColor = '#FF6F00';
+    const lightColor = '#FFF59D';
+    
+    // Phoenix Body (Ethereal Bird)
+    p(phxOX - 2, phxOY - 2, '#000', 5, 5); // Outline
+    p(phxOX - 1, phxOY - 1, fireColor, 3, 3); // Body
+    p(phxOX, phxOY, lightColor, 1, 1); // Glowing core
+    
+    // Wings (Flapping)
+    const wingWarp = Math.sin(time * 8) * 4;
+    p(phxOX - 6, phxOY - 1 + wingWarp, fireColor, 4, 2); // Wing L
+    p(phxOX + 3, phxOY - 1 - wingWarp, fireColor, 4, 2); // Wing R
+    
+    // Tail Feathers
+    const tailWarp = Math.cos(time * 5) * 3;
+    p(phxOX - 1, phxOY + 3 + tailWarp, '#FF9100', 3, 5);
+
+    // --- 3. SOLAR FLARE (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 60 * flashIntensity;
+        ctx.shadowColor = '#FFD600';
+        
+        // Solar Beam from Phoenix
+        const beamX = isLeft ? cx + (phxOX * S) : cx - (phxOX * S);
+        const beamY = cy + (phxOY * S);
+        
+        ctx.strokeStyle = `rgba(255, 214, 0, ${flashIntensity})`;
+        ctx.lineWidth = 6 * S;
+        ctx.beginPath();
+        ctx.moveTo(beamX, beamY);
+        ctx.lineTo(beamX + 150*(isLeft?1:-1)*flashIntensity, beamY);
+        ctx.stroke();
+        
+        // Fire Particles
+        for(let i=0; i<10; i++) {
+            const px = beamX + (Math.random() * 120 * (isLeft?1:-1));
+            const py = beamY + (Math.random() - 0.5) * 30;
+            p(Math.round((px-cx)/S), Math.round((py-cy)/S), '#FF6D00', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. RADIANT AURA ---
+    const radiantPulse = (Math.sin(time * 1.5) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 214, 0, ${0.1 * radiantPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 35 * S, 0, Math.PI * 2);
     ctx.fill();
 }
 
