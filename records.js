@@ -1,8 +1,37 @@
 /* records.js - Exorcism Records System */
 
 function initRecords() {
+    console.log("Initializing Exorcism Records...");
+    const rb = document.getElementById('records-btn');
     const ro = document.getElementById('records-overlay');
-    if(!ro) return;
+    if(!ro) {
+        console.error("Records overlay not found!");
+        return;
+    }
+
+    // Open Button
+    if(rb) {
+        rb.addEventListener('click', () => {
+            console.log("Records button clicked");
+            window.isPaused = true;
+            ro.style.display = 'flex';
+            renderSpecters(); // Default tab
+        });
+        
+        rb.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            const locked = window.infoPanelLockedUntil || 0;
+            if (d && Date.now() >= locked) {
+                d.innerHTML = `
+                    <div style="color:#ffd700; font-weight:bold; font-size:39px; margin-bottom:6px;">Exorcism Records</div>
+                    <div style="display:inline-block; background:#8b6b00; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">ARCHIVES</div>
+                    <div style="font-size:27px; color:#bbb; line-height:1.2;">Contains the Bestiary of all encountered specters and the Ascendency Tree of your exorcists.</div>
+                    <div style="color:#00ff00; font-size:24px; margin-top:12px;">* Bestiary bonuses increase damage against known specters.</div>
+                    <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"To defeat your enemy, you must first know their name, their sin, and their sorrow."</div>
+                `;
+            }
+        });
+    }
 
     // Handle Tab Switching
     document.querySelectorAll('#records-tabs .tab-btn').forEach(btn => {
@@ -29,7 +58,7 @@ function initRecords() {
     if(closeBtn) {
         closeBtn.addEventListener('click', () => {
             ro.style.display = 'none';
-            isPaused = false;
+            window.isPaused = false;
         });
     }
 }
@@ -46,24 +75,29 @@ function renderSpecters() {
         { h: 'Bosses', types: ['cerberus', 'charon', 'beelzebub', 'lucifer'] }
     ];
 
+    const encountered = window.encounteredEnemies || new Set();
+    const kc = window.killCounts || {};
+
     groups.forEach(g => {
         g.types.forEach(t => {
-            const isKnown = (window.encounteredEnemies && window.encounteredEnemies.has(t)) || (killCounts[t] > 0) || (g.h === 'Minions');
+            const isKnown = encountered.has(t) || (kc[t] > 0) || (g.h === 'Minions');
             let data;
             // Search in enemyCategories
-            for(let cat in enemyCategories) {
-                const found = enemyCategories[cat].find(e => e.type === t);
-                if(found) { data = found; break; }
+            if(window.enemyCategories) {
+                for(let cat in window.enemyCategories) {
+                    const found = window.enemyCategories[cat].find(e => e.type === t);
+                    if(found) { data = found; break; }
+                }
             }
             // Search in bossData
-            if(!data && typeof bossData !== 'undefined') {
-                for(let key in bossData) { if(bossData[key].type === t) { data = bossData[key]; break; } }
+            if(!data && window.bossData) {
+                for(let key in window.bossData) { if(window.bossData[key].type === t) { data = window.bossData[key]; break; } }
             }
             if(!data) return;
 
-            const kills = killCounts[t] || 0;
+            const kills = kc[t] || 0;
             const reward = data.reward || (g.h === 'Bosses' ? 500 : 10);
-            const bonus = typeof getBestiaryBonus === 'function' ? getBestiaryBonus(t) : 1;
+            const bonus = typeof window.getBestiaryBonus === 'function' ? window.getBestiaryBonus(t) : 1;
 
             const card = document.createElement('div');
             card.className = `specter-card ${isKnown ? '' : 'locked'}`;
@@ -98,6 +132,9 @@ function renderExorcists() {
     pane.innerHTML = '';
 
     const tiers = [1, 2, 3, 4];
+    const unlocked = window.unlockedUnits || new Set(['apprentice']);
+    const uTypes = window.unitTypes || [];
+
     tiers.forEach(tier => {
         const section = document.createElement('div');
         section.className = 'tier-section';
@@ -106,9 +143,9 @@ function renderExorcists() {
         const grid = document.createElement('div');
         grid.className = 'exorcist-grid';
         
-        const units = unitTypes.filter(u => u.tier === tier);
+        const units = uTypes.filter(u => u.tier === tier);
         units.forEach(u => {
-            const isUnlocked = unlockedUnits.has(u.type);
+            const isUnlocked = unlocked.has(u.type);
             const card = document.createElement('div');
             card.className = `exorcist-card ${isUnlocked ? '' : 'locked'}`;
             
@@ -125,7 +162,9 @@ function renderExorcists() {
                 `;
                 setTimeout(() => {
                     const cvs = document.getElementById(`prev-ex-${u.type}`);
-                    if(cvs) drawUnitPreview(u.type, cvs.getContext('2d'), 120, 120);
+                    if(cvs && typeof window.drawUnitPreview === 'function') {
+                        window.drawUnitPreview(u.type, cvs.getContext('2d'), 120, 120);
+                    }
                 }, 0);
             } else {
                 card.innerHTML = `
@@ -172,9 +211,12 @@ function renderPromotionTree() {
         ]}
     };
 
+    const unlocked = window.unlockedUnits || new Set(['apprentice']);
+    const uTypes = window.unitTypes || [];
+
     const createNode = (type, tier) => {
-        const d = unitTypes.find(x => x.type === type);
-        const isUnlocked = unlockedUnits.has(type);
+        const d = uTypes.find(x => x.type === type);
+        const isUnlocked = unlocked.has(type);
         const node = document.createElement('div');
         node.className = `unit-node tier${tier} ${isUnlocked ? '' : 'locked'}`;
         
@@ -189,7 +231,9 @@ function renderPromotionTree() {
                 <div class="effect-box">${d.desc}</div>
             `;
             const cvs = node.querySelector('.node-sprite-canvas');
-            if (cvs) drawUnitPreview(type, cvs.getContext('2d'), 120, 120);
+            if (cvs && typeof window.drawUnitPreview === 'function') {
+                window.drawUnitPreview(type, cvs.getContext('2d'), 120, 120);
+            }
             
             node.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -243,6 +287,7 @@ function renderPromotionTree() {
 }
 
 // Global initialization override
-window.renderBestiary = renderSpecters; // Legacy support
+window.initRecords = initRecords;
+window.renderSpecters = renderSpecters;
+window.renderExorcists = renderExorcists;
 window.renderPromotionTree = renderPromotionTree;
-window.initRecordsUI = initRecords;
