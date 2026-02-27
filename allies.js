@@ -572,11 +572,25 @@ function initAllies() {
     if(retry) retry.addEventListener('click', () => location.reload());
     
     const rbt = document.getElementById('restart-btn-top'); 
-    if(rbt) rbt.addEventListener('click', () => { 
-        isPaused=true; 
-        const go=document.getElementById('game-over-overlay'); 
-        if(go) go.style.display='flex'; 
-    });
+    if(rbt) {
+        rbt.addEventListener('click', () => { 
+            isPaused = true; 
+            const ro = document.getElementById('restart-confirm-overlay');
+            if (ro) ro.style.display = 'flex';
+        });
+    }
+
+    const crb = document.getElementById('confirm-restart-btn');
+    if(crb) crb.addEventListener('click', () => location.reload());
+
+    const canrb = document.getElementById('cancel-restart-btn-actual');
+    if(canrb) {
+        canrb.addEventListener('click', () => {
+            const ro = document.getElementById('restart-confirm-overlay');
+            if (ro) ro.style.display = 'none';
+            isPaused = false;
+        });
+    }
 }
 
 function initRecordsUI() {
