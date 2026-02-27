@@ -181,19 +181,26 @@
 
 #start-timer {
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 24px;
-    font-weight: bold;
+    font-family: 'Cinzel', serif;
+    font-size: 120px;
+    font-weight: 900;
     color: #ff0000;
-    text-shadow: 0 0 10px #fff, 0 0 20px #ff0000;
-    z-index: 100;
+    text-shadow: 0 0 30px #fff, 0 0 60px #ff0000, 0 0 100px #8b0000;
+    z-index: 1000;
     display: none;
     pointer-events: none;
     white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 15px;
+    animation: timerPulse 1s infinite alternate;
+}
+
+@keyframes timerPulse {
+    from { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    to { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
 }
 
 #game-canvas {
