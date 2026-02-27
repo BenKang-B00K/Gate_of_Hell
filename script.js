@@ -127,6 +127,12 @@ function gameLoop() {
         t.speedBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('cooldown') : 0;
         t.rangeBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('range') : 0;
         t.damageBonus = 0;
+
+        // Apply Cursed SPD Penalty (Portal Energy based)
+        const peRatio = portalEnergy / maxPortalEnergy;
+        if (peRatio >= 0.75) t.speedBonus -= 0.2; // -20% speed
+        else if (peRatio >= 0.5) t.speedBonus -= 0.1; // -10% speed
+
         if (!t.slotElement) return;
         const gameW = gameContainer.offsetWidth;
         const tRect = t.slotElement.getBoundingClientRect();

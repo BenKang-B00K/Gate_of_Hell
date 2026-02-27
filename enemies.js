@@ -249,11 +249,34 @@ function updateGauges() {
     const portalFill = document.getElementById('portal-gauge-fill');
     const portalText = document.getElementById('portal-energy-label');
     const portalElement = document.getElementById('portal');
+    const cursedElem = document.getElementById('cursed-status');
     if (portalFill && portalText) {
         const portalRatio = Math.min(portalEnergy / maxPortalEnergy, 1);
         const portalPercent = portalRatio * 100;
         portalFill.style.width = `${portalPercent}%`;
         portalText.innerText = `${Math.floor(portalEnergy)} / ${maxPortalEnergy}`;
+
+        // Cursed Logic
+        if (cursedElem) {
+            if (portalRatio < 0.25) {
+                cursedElem.innerText = "Cursed: Whispering Dread";
+                cursedElem.style.color = "#aaa";
+                window.damageMultiplier = 1.0; 
+            } else if (portalRatio < 0.5) {
+                cursedElem.innerText = "Cursed: Creeping Weakness (-5% DMG)";
+                cursedElem.style.color = "#ffeb3b";
+                window.damageMultiplier = 0.95;
+            } else if (portalRatio < 0.75) {
+                cursedElem.innerText = "Cursed: Spectral Blight (-10% DMG & SPD)";
+                cursedElem.style.color = "#ff9800";
+                window.damageMultiplier = 0.9;
+                // Note: Speed multiplier should be applied in script.js attack logic
+            } else {
+                cursedElem.innerText = "Cursed: Abyssal Suffocation (-20% ALL)";
+                cursedElem.style.color = "#f44336";
+                window.damageMultiplier = 0.8;
+            }
+        }
 
         // Portal Glow Effect: Transitions to dark red as it fills
         if (portalElement) {
