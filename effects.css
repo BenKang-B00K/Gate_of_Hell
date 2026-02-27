@@ -16,6 +16,22 @@
     border-radius: 50%; transform: translate(-50%, -50%);
 }
 
+@keyframes lavaFlow {
+    from { filter: drop-shadow(0 0 20px #ff4500) brightness(1); }
+    to { filter: drop-shadow(0 0 50px #ffcc00) brightness(1.2); }
+}
+
+@keyframes lightningStrike {
+    0%, 10%, 16%, 50%, 94%, 100% { filter: brightness(1) contrast(1); }
+    12%, 95% { filter: brightness(4) contrast(2) drop-shadow(0 0 80px #fff); }
+    14%, 97% { filter: brightness(2.5) contrast(1.5); }
+}
+
+@keyframes divineGlow {
+    from { text-shadow: 0 0 20px #ffd700, 0 0 40px #fff; opacity: 0.8; }
+    to { text-shadow: 0 0 40px #ffd700, 0 0 80px #fff, 0 0 120px #ffd700; opacity: 1; }
+}
+
 @keyframes lavaFlowAnim { from { transform: translateY(0); } to { transform: translateY(400px); } }
 @keyframes lavaPulse { 0% { opacity: 0.4; } 100% { opacity: 0.8; } }
 @keyframes portalSwirl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
