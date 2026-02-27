@@ -105,10 +105,10 @@
 }
 .gauge-wrapper#pe-label .gauge-info span:last-child { color: #ff00ff; text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
 
-/* TBD Specific */
-.gauge-wrapper.tbd { opacity: 0.4; }
-.gauge-bar.tbd-bar { border-color: #444; }
-.gauge-bar.tbd-bar .fill { width: 0%; height: 100%; background: #333; }
+/* RS Specific */
+.gauge-bar.rs { border-color: rgba(255, 0, 0, 0.3); }
+#rs-gauge-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #b71c1c, #ff1744); box-shadow: 0 0 20px rgba(255, 23, 68, 0.6); transition: width 0.3s ease; }
+.gauge-wrapper#rs-label .gauge-info span:last-child { color: #ff1744; text-shadow: 0 0 10px rgba(255, 23, 68, 0.5); }
 
 #stage-debuff-header { font-size: 21px; color: #ff0000; text-align: center; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
 

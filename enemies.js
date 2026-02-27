@@ -320,9 +320,18 @@ function updateStageInfo() {
     if (enemiesLeft) {
         if (isBossStage) {
             enemiesLeft.innerText = "BOSS";
+            const rsFill = document.getElementById('rs-gauge-fill');
+            if (rsFill) rsFill.style.width = '100%';
         } else {
             const remainingToSpawn = Math.max(0, totalStageEnemies - currentStageSpawned);
-            enemiesLeft.innerText = remainingToSpawn + enemies.length;
+            const currentTotal = remainingToSpawn + enemies.length;
+            enemiesLeft.innerText = currentTotal;
+            
+            const rsFill = document.getElementById('rs-gauge-fill');
+            if (rsFill && totalStageEnemies > 0) {
+                const ratio = currentTotal / totalStageEnemies;
+                rsFill.style.width = `${ratio * 100}%`;
+            }
         }
     }
 }

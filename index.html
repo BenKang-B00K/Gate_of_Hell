@@ -43,11 +43,6 @@
 
         <div id="frozen-overlay"></div>
         
-        <!-- Top Status Bar -->
-        <div id="top-status-bar">
-            <div id="enemy-counter">Remaining Specters: <span id="enemies-left">0</span></div>
-        </div>
-
         <div id="game-layout">
             <div id="left-slots" class="slot-area"></div>
             <div id="road">
@@ -89,13 +84,13 @@
                     <div class="gauge-bar pe"><div id="portal-gauge-fill"></div></div>
                 </div>
 
-                <!-- TBD Gauge -->
-                <div class="gauge-wrapper tbd">
+                <!-- Remaining Specters Gauge -->
+                <div class="gauge-wrapper rs" id="rs-label">
                     <div class="gauge-info">
-                        <span>🔒 TBD</span>
-                        <span>0%</span>
+                        <span>💀 REMAINING SPECTERS</span>
+                        <span id="enemies-left">0</span>
                     </div>
-                    <div class="gauge-bar tbd-bar"><div class="fill"></div></div>
+                    <div class="gauge-bar rs"><div id="rs-gauge-fill"></div></div>
                 </div>
 
                 <div class="spacer"></div>
