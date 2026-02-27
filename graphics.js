@@ -163,6 +163,8 @@ function drawUnits() {
             case 'midas': drawMidas(cx, cy, tower); break;
             case 'illusion': drawIllusion(cx, cy, tower); break;
             case 'philosopher': drawPhilosopher(cx, cy, tower); break;
+            case 'reflection': drawReflection(cx, cy, tower); break;
+            case 'flamemaster': drawFlameMaster(cx, cy, tower); break;
         }
     });
 }
@@ -2097,6 +2099,195 @@ function drawPhilosopher(cx, cy, tower) {
     ctx.fillStyle = `rgba(105, 240, 174, ${0.06 * acidPulse})`;
     ctx.beginPath();
     ctx.arc(cx, cy, 30 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawReflection(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & PRISMATIC ROBES (Cyan / Silver / White Palette) ---
+    const robeColor = '#E0F7FA'; // Very light cyan
+    const highlightColor = '#FFFFFF';
+    const silverColor = '#BDBDBD';
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-5, 1, silverColor, 2, 13); // Silver edge L
+    p(4, 1, silverColor, 2, 13);  // Silver edge R
+    
+    // Crystal Heart (Center Medallion)
+    p(-1, 5, '#000', 3, 3);
+    p(0, 6, '#00E5FF', 1, 1);
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head (Crystalline Tiara)
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // Silver Tiara with Jewels
+    p(-4, -10, silverColor, 9, 2);
+    p(-2, -11, '#00E5FF', 1, 1);
+    p(2, -11, '#00E5FF', 1, 1);
+    p(0, -12, '#00E5FF', 1, 1);
+
+    // --- 2. THE REFLECTIVE SHARDS (Floating Mirrors) ---
+    const shardCount = 4;
+    for(let i=0; i<shardCount; i++) {
+        const ang = (time * 2.5) + (i * (Math.PI * 2 / shardCount));
+        const floatY = Math.cos(time * 4 + i) * 3;
+        const dist = 18 + (isAttacking ? flashIntensity * 12 : 0);
+        
+        let sx = Math.cos(ang) * dist;
+        let sy = -2 + Math.sin(ang) * (dist * 0.4) + floatY;
+        
+        // Crystalline Shard
+        p(Math.round(sx - 1), Math.round(sy - 3), '#000', 3, 7); // Outline
+        p(Math.round(sx), Math.round(sy - 2), '#E1F5FE', 1, 5); // Core
+        p(Math.round(sx), Math.round(sy - 1), '#FFF', 1, 3); // Shine
+    }
+
+    // --- 3. PRISMATIC BOUNCE (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 40 * flashIntensity;
+        ctx.shadowColor = '#00E5FF';
+        
+        // Multi-directional Laser Bounce
+        const bX = isLeft ? cx + (15 * S) : cx - (15 * S);
+        const bY = cy + (5 * S);
+        
+        ctx.strokeStyle = `rgba(0, 229, 255, ${flashIntensity})`;
+        ctx.lineWidth = 1.5 * S;
+        for(let i=0; i<5; i++) {
+            const sang = (i / 5) * Math.PI - 0.5;
+            ctx.beginPath();
+            ctx.moveTo(bX, bY);
+            ctx.lineTo(bX + Math.cos(sang)*60*flashIntensity*(isLeft?1:-1), bY + Math.sin(sang)*60*flashIntensity);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    // --- 4. CRYSTALLINE AURA ---
+    const glassPulse = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(129, 212, 250, ${0.05 * glassPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 35 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawFlameMaster(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 400; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
+
+    // --- 1. BODY & VOLCANIC ROBES (Red / Orange / Charcoal Palette) ---
+    const robeColor = '#D84315'; // Deep orange-red
+    const charcoalColor = '#212121';
+    const flameColor = '#FF9800'; // Bright orange
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-1, 1, charcoalColor, 3, 11); // Center panel
+    p(-5, 11, '#BF360C', 11, 3); // Shadow
+    
+    // Magma Cracks on Robe
+    p(-4, 4, flameColor, 2, 1);
+    p(3, 8, flameColor, 2, 1);
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Firemaster's Crown
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Crown of Embers
+    p(-4, -11, '#000', 9, 3);
+    p(-4, -10, '#BF360C', 9, 2);
+    p(-3, -12, flameColor, 1, 2);
+    p(0, -13, flameColor, 1, 3);
+    p(3, -12, flameColor, 1, 2);
+
+    // --- 2. THE VOLCANIC TALISMANS (Magma Seals) ---
+    const talismanCount = 2;
+    for(let i=0; i<talismanCount; i++) {
+        const floatY = Math.sin(time * 3 + i) * 5;
+        let tox = i === 0 ? -12 : 12;
+        let toy = -4 + floatY;
+        
+        // Talisman Outline
+        p(tox - 2, toy - 4, '#000', 5, 10);
+        p(tox - 1, toy - 3, '#FFB74D', 3, 8); // Orange paper
+        
+        // Glowing Red Rune
+        p(tox, toy - 1, '#D50000', 1, 4);
+        
+        // Small flames rising from talisman
+        const fPhase = (time * 10 + i) % 5;
+        p(tox, toy - 5 - fPhase, `rgba(255, 69, 0, ${0.5 - fPhase/10})`, 1, 1);
+    }
+
+    // --- 3. INFERNO CARPET (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 45 * flashIntensity;
+        ctx.shadowColor = '#FF4500';
+        
+        // Ground Fire Burst
+        const fireX = isLeft ? cx + (15 * S) : cx - (15 * S);
+        const fireY = cy + (10 * S);
+        
+        for(let i=0; i<5; i++) {
+            const fx = fireX + (i-2) * 20;
+            const fy = fireY + (Math.random()-0.5) * 10;
+            ctx.fillStyle = `rgba(255, 69, 0, ${flashIntensity})`;
+            ctx.fillRect(fx - 10, fy - 15 * flashIntensity, 20, 30 * flashIntensity);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. MAGMA AURA ---
+    const heatGlow = (Math.sin(time * 4) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 69, 0, ${0.08 * heatGlow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
     ctx.fill();
 }
 
