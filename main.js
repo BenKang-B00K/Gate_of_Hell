@@ -1,16 +1,79 @@
 import { Guardian, Specter, Projectile } from './entities.js';
 
+class PreloadScene extends Phaser.Scene {
+    constructor() {
+        super('PreloadScene');
+    }
+
+    preload() {
+        // Pixel Art Filter Setting (Global for loaded textures)
+        this.load.on('filecomplete', (key, type, data) => {
+            if (type === 'image' || type === 'spritesheet') {
+                const texture = this.textures.get(key);
+                texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+            }
+        });
+
+        // Placeholder textures
+        this.load.image('unit_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
+        this.load.image('enemy_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
+
+        // Loading SpriteSheets (30x34 based on guidelines)
+        // Mapping Tier 1
+        this.load.spritesheet('apprentice', 'ImageSample/Tier1/견습퇴마사.png', { frameWidth: 30, frameHeight: 34 });
+        
+        // Mapping Tier 2
+        this.load.spritesheet('necromancer', 'ImageSample/Tier2/강령술사.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('mirror', 'ImageSample/Tier2/거울 예언자.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('assassin', 'ImageSample/Tier2/그림자 암살자.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('talisman', 'ImageSample/Tier2/부적술사.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('ice', 'ImageSample/Tier2/빙결 도사.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('guardian_unit', 'ImageSample/Tier2/성소 수호자.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('archer', 'ImageSample/Tier2/신성한 궁수.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('tracker', 'ImageSample/Tier2/영혼 추적자.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('chainer', 'ImageSample/Tier2/영혼의 결박자.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('monk', 'ImageSample/Tier2/철퇴 승려.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('knight', 'ImageSample/Tier2/퇴마 기사.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('alchemist', 'ImageSample/Tier2/퇴마 연금술사.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('fire', 'ImageSample/Tier2/화염 마법사.png', { frameWidth: 30, frameHeight: 34 });
+
+        // Mapping Tier 3
+        this.load.spritesheet('blood_knight', 'ImageSample/Tier3/혈기사.png', { frameWidth: 30, frameHeight: 34 });
+        this.load.spritesheet('illusionist', 'ImageSample/Tier3/환영술사.png', { frameWidth: 30, frameHeight: 34 });
+        // ... Load others as needed
+    }
+
+    create() {
+        // Define Animations
+        // Assuming 6 frames: 0:Idle-L, 1:Idle-R, 2:Attack-L, 3:Attack-R, 4:Special-L, 5:Special-R
+        const units = ['apprentice', 'necromancer', 'mirror', 'assassin', 'talisman', 'ice', 'guardian_unit', 'archer', 'tracker', 'chainer', 'monk', 'knight', 'alchemist', 'fire'];
+        
+        units.forEach(key => {
+            if (this.textures.exists(key)) {
+                this.anims.create({
+                    key: `${key}_idle`,
+                    frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }),
+                    frameRate: 4,
+                    repeat: -1
+                });
+                this.anims.create({
+                    key: `${key}_attack`,
+                    frames: this.anims.generateFrameNumbers(key, { start: 2, end: 3 }),
+                    frameRate: 8,
+                    repeat: 0
+                });
+            }
+        });
+
+        this.scene.start('MainScene');
+    }
+}
+
 class MainScene extends Phaser.Scene {
     constructor() {
         super('MainScene');
         this.LOGICAL_WIDTH = 360;
         this.LOGICAL_HEIGHT = 640;
-    }
-
-    preload() {
-        // Placeholder textures for physics bodies
-        this.load.image('unit_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
-        this.load.image('enemy_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
     }
 
     create() {
@@ -43,31 +106,12 @@ class MainScene extends Phaser.Scene {
         });
     }
 
-    spawnWave() {
-        const categories = ['basic']; // Expand based on stage later
-        const category = categories[Math.floor(Math.random() * categories.length)];
-        const types = window.enemyCategories[category];
-        const typeData = types[Math.floor(Math.random() * types.length)];
-
-        this.spawnEnemy(typeData);
-    }
-
-    spawnEnemy(data) {
-        const x = Phaser.Math.Between(100, 260); // Centered on road
-        const y = -50;
-        const enemy = new Specter(this, x, y, data);
-        this.enemies.add(enemy);
-    }
-
     createSlots() {
-        // Create 16 slots (8 left, 8 right) matching the logical layout
-        // Left slots (Area 1)
         for (let i = 0; i < 8; i++) {
             const x = 50;
             const y = 100 + i * 60;
             this.addSlot(x, y, 'left');
         }
-        // Right slots (Area 2)
         for (let i = 0; i < 8; i++) {
             const x = 310;
             const y = 100 + i * 60;
@@ -79,17 +123,13 @@ class MainScene extends Phaser.Scene {
         const slot = this.add.zone(x, y, 50, 50).setRectangleDropZone(50, 50);
         slot.isOccupied = false;
         slot.side = side;
-        
-        // Visual indicator for slot
         this.add.rectangle(x, y, 40, 40, 0x555555, 0.3).setStrokeStyle(2, 0x888888);
-        
         this.slots.add(slot);
     }
 
     setupDragAndDrop() {
         this.input.on('dragstart', (pointer, gameObject) => {
             this.children.bringToTop(gameObject);
-            if (gameObject.iconText) this.children.bringToTop(gameObject.iconText);
             gameObject.setAlpha(0.8);
         });
 
@@ -101,7 +141,6 @@ class MainScene extends Phaser.Scene {
         this.input.on('dragend', (pointer, gameObject, dropped) => {
             gameObject.setAlpha(1);
             if (!dropped) {
-                // Return to original slot if not dropped on a zone
                 gameObject.x = gameObject.input.dragStartX;
                 gameObject.y = gameObject.input.dragStartY;
             }
@@ -109,10 +148,8 @@ class MainScene extends Phaser.Scene {
 
         this.input.on('drop', (pointer, gameObject, dropZone) => {
             if (dropZone.isOccupied) {
-                // Swap logic if target is occupied
                 const occupyingUnit = this.allies.getChildren().find(u => u.currentSlot === dropZone);
                 const oldSlot = gameObject.currentSlot;
-
                 if (occupyingUnit) {
                     occupyingUnit.x = oldSlot.x;
                     occupyingUnit.y = oldSlot.y;
@@ -140,7 +177,9 @@ class MainScene extends Phaser.Scene {
     summonGuardian(slot, unitData) {
         if (slot.isOccupied) return;
 
-        const guardian = new Guardian(this, slot.x, slot.y, unitData);
+        // Use 'guardian_unit' key for Sanctuary Guardian to avoid conflict with class name
+        const textureKey = unitData.type === 'guardian' ? 'guardian_unit' : unitData.type;
+        const guardian = new Guardian(this, slot.x, slot.y, unitData, textureKey);
         guardian.setInteractive();
         this.input.setDraggable(guardian);
         guardian.currentSlot = slot;
@@ -153,7 +192,6 @@ class MainScene extends Phaser.Scene {
     getNearestEnemy(source) {
         let nearest = null;
         let minDist = Infinity;
-
         this.enemies.getChildren().forEach(enemy => {
             const dist = Phaser.Math.Distance.Between(source.x, source.y, enemy.x, enemy.y);
             if (dist < minDist) {
@@ -161,12 +199,26 @@ class MainScene extends Phaser.Scene {
                 nearest = enemy;
             }
         });
-
         return nearest;
     }
 
+    spawnWave() {
+        const categories = ['basic'];
+        const category = categories[Math.floor(Math.random() * categories.length)];
+        const types = window.enemyCategories[category];
+        const typeData = types[Math.floor(Math.random() * types.length)];
+        this.spawnEnemy(typeData);
+    }
+
+    spawnEnemy(data) {
+        const x = Phaser.Math.Between(100, 260);
+        const y = -50;
+        // For now, Specters use enemy_placeholder or same mapping if exists
+        const enemy = new Specter(this, x, y, data, 'enemy_placeholder');
+        this.enemies.add(enemy);
+    }
+
     update(time, delta) {
-        // Scene-wide updates (targeting logic)
         this.allies.getChildren().forEach(guardian => {
             if (time - guardian.lastShot >= guardian.cooldown) {
                 const target = this.getNearestEnemy(guardian);
@@ -176,6 +228,11 @@ class MainScene extends Phaser.Scene {
                         const projectile = new Projectile(this, guardian.x, guardian.y, target, guardian);
                         this.projectiles.add(projectile);
                         guardian.lastShot = time;
+                        
+                        // Play attack animation
+                        if (guardian.anims.exists(`${guardian.textureKey}_attack`)) {
+                            guardian.play(`${guardian.textureKey}_attack`).chain(`${guardian.textureKey}_idle`);
+                        }
                     }
                 }
             }
@@ -188,6 +245,7 @@ const config = {
     width: 360,
     height: 640,
     parent: 'game-container',
+    pixelArt: true, // Crucial for dot art
     physics: {
         default: 'arcade',
         arcade: {
@@ -195,7 +253,7 @@ const config = {
             debug: false
         }
     },
-    scene: MainScene
+    scene: [PreloadScene, MainScene]
 };
 
 const game = new Phaser.Game(config);
