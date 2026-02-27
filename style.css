@@ -2273,64 +2273,75 @@ input:checked + .slider:before {
     display: flex;
     justify-content: center;
     align-items: center;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(15px);
 }
 
 #relics-content {
-    width: 320px;
+    width: 960px; /* Scaled from 320px */
     max-height: 85%;
-    background: #1a1a1a;
-    border: 2px solid #ff4500;
-    border-radius: 12px;
-    padding: 15px;
+    background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+    border: 6px solid #ff4500; /* Scaled from 2px */
+    border-radius: 36px; /* Scaled from 12px */
+    padding: 45px; /* Scaled from 15px */
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 40px rgba(255, 69, 0, 0.3);
+    box-shadow: 0 0 120px rgba(255, 69, 0, 0.3);
 }
 
 #relics-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #333;
-    padding-bottom: 8px;
-    margin-bottom: 12px;
+    border-bottom: 3px solid #333; /* Scaled from 1px */
+    padding-bottom: 24px; /* Scaled from 8px */
+    margin-bottom: 36px; /* Scaled from 12px */
 }
 
 #relics-header h2 {
     color: #ff4500;
     margin: 0;
-    font-size: 16px;
+    font-size: 48px; /* Scaled from 16px */
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 6px;
+    text-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
 }
 
 #close-relics {
     background: none;
     border: none;
     color: #888;
-    font-size: 18px;
+    font-size: 54px; /* Scaled from 18px */
     cursor: pointer;
+    transition: color 0.2s;
+}
+
+#close-relics:hover {
+    color: #fff;
 }
 
 #relics-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* Increased columns from 4 to 5 */
-    gap: 6px;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 18px; /* Scaled from 6px */
     overflow-y: auto;
-    padding: 5px;
-    max-height: 200px;
+    padding: 15px;
+    max-height: 600px; /* Scaled from 200px */
+    scrollbar-width: none;
+}
+
+#relics-grid::-webkit-scrollbar {
+    display: none;
 }
 
 .relic-slot {
     aspect-ratio: 1;
     background: #0a0a0a;
-    border: 1px solid #333;
-    border-radius: 6px;
+    border: 3px solid #333; /* Scaled from 1px */
+    border-radius: 18px; /* Scaled from 6px */
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px; /* Reduced from 20px */
+    font-size: 60px; /* Scaled from 20px approx */
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -2338,6 +2349,7 @@ input:checked + .slider:before {
 .relic-slot:hover {
     border-color: #ff4500;
     background: #111;
+    transform: scale(1.05);
 }
 
 .relic-slot.empty {
@@ -2347,65 +2359,69 @@ input:checked + .slider:before {
 
 .relic-slot.selected {
     border-color: #ff4500;
-    box-shadow: inset 0 0 10px rgba(255, 69, 0, 0.5);
+    box-shadow: inset 0 0 30px rgba(255, 69, 0, 0.5), 0 0 30px rgba(255, 69, 0, 0.3);
     background: #221100;
 }
 
 #relic-details {
-    margin-top: 15px;
-    padding: 10px;
+    margin-top: 45px; /* Scaled from 15px */
+    padding: 30px; /* Scaled from 10px */
     background: #0a0a0a;
-    border: 1px solid #333;
-    border-radius: 8px;
-    min-height: 80px;
-    font-size: 10px;
+    border: 3px solid #333; /* Scaled from 1px */
+    border-radius: 24px; /* Scaled from 8px */
+    min-height: 240px; /* Scaled from 80px */
+    font-size: 30px; /* Scaled from 10px */
     color: #bbb;
+    line-height: 1.4;
 }
 
 .relic-detail-title {
     color: #ff4500;
     font-weight: bold;
-    font-size: 12px;
-    margin-bottom: 4px;
+    font-size: 36px; /* Scaled from 12px */
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .relic-detail-effect {
     color: #00ff00;
-    font-size: 10px;
-    margin-bottom: 6px;
+    font-size: 30px; /* Scaled from 10px */
+    margin-bottom: 18px;
     font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
 }
 
 .relic-detail-lore {
     font-style: italic;
-    color: #888;
+    color: #666;
     line-height: 1.3;
 }
 
 .relic-toast {
     position: absolute;
-    bottom: 100px;
+    bottom: 300px; /* Scaled from 100px */
     left: 50%;
     transform: translateX(-50%);
     background: rgba(255, 69, 0, 0.9);
     color: #fff;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 10px;
+    padding: 15px 45px; /* Scaled from 5px 15px */
+    border-radius: 60px; /* Scaled from 20px */
+    font-size: 30px; /* Scaled from 10px */
     font-weight: bold;
     z-index: 3000;
     animation: relicFadeUp 1.5s forwards;
     pointer-events: none;
     white-space: nowrap;
-    border: 1px solid #fff;
-    box-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
+    border: 3px solid #fff;
+    box-shadow: 0 0 45px rgba(255, 69, 0, 0.5);
 }
 
 @keyframes relicFadeUp {
     0% { opacity: 0; transform: translate(-50%, 0); }
-    20% { opacity: 1; transform: translate(-50%, -10px); }
-    80% { opacity: 1; transform: translate(-50%, -10px); }
-    100% { opacity: 0; transform: translate(-50%, -20px); }
+    20% { opacity: 1; transform: translate(-50%, -30px); }
+    80% { opacity: 1; transform: translate(-50%, -30px); }
+    100% { opacity: 0; transform: translate(-50%, -60px); }
 }
 
 /* Boss Victory Overlay */
