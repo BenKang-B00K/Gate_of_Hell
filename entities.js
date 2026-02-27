@@ -21,7 +21,7 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         // Scale for 360x640 logical resolution (1.5x based on 30x34 base)
         this.setScale(1.5);
         
-        // Start idle animation
+        // Start idle animation based on unit type
         if (this.anims.exists(`${textureKey}_idle`)) {
             this.play(`${textureKey}_idle`);
         }
@@ -33,20 +33,54 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         this.range = unitData.range;
         this.cooldown = unitData.cooldown;
         
-        this.lastShot = 0;
         this.isStunned = false;
         this.stunEndTime = 0;
         this.isFrozenTomb = false;
         
         this.setDepth(10);
+
+        // Phaser Time Event for Auto Attack
+        this.attackTimer = this.scene.time.addEvent({
+            delay: this.cooldown,
+            callback: this.autoAttack,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    autoAttack() {
+        if (this.isFrozenTomb) return;
+        
+        // Stun check
+        if (this.isStunned) {
+            if (this.scene.time.now < this.stunEndTime) return;
+            this.isStunned = false;
+        }
+
+        const target = this.scene.getNearestEnemy(this);
+        if (target) {
+            const dist = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y);
+            if (dist <= this.range) {
+                this.shoot(target);
+            }
+        }
+    }
+
+    shoot(target) {
+        // Create and add projectile to scene's projectile group
+        const projectile = new Projectile(this.scene, this.x, this.y, target, this);
+        if (this.scene.projectiles) {
+            this.scene.projectiles.add(projectile);
+        }
+        
+        // Play attack animation
+        if (this.anims.exists(`${this.textureKey}_attack`)) {
+            this.play(`${this.textureKey}_attack`).chain(`${this.textureKey}_idle`);
+        }
     }
 
     update(time, delta) {
-        if (this.isFrozenTomb) return;
-        if (this.isStunned && time < this.stunEndTime) return;
-        this.isStunned = false;
-        
-        // Face the road (usually right-slots face left, left-slots face right)
+        // Face the road
         if (this.x < 180) {
             this.setFlipX(false); // Face right
         } else {
@@ -54,8 +88,11 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         }
     }
 
-    destroy() {
-        super.destroy();
+    destroy(fromScene) {
+        if (this.attackTimer) {
+            this.attackTimer.remove();
+        }
+        super.destroy(fromScene);
     }
 }
 
@@ -134,10 +171,7 @@ export class Specter extends Phaser.GameObjects.Sprite {
 
         this.setDepth(5);
         this.hpBar.setDepth(7);
-        
-        // Scale for enemies (1.5x)
         this.setScale(1.5);
-        
         this.body.setSize(20, 20);
 
         if (this.anims.exists(`${textureKey}_walk`)) {
@@ -216,8 +250,8 @@ export class Specter extends Phaser.GameObjects.Sprite {
         this.destroy();
     }
 
-    destroy() {
+    destroy(fromScene) {
         this.hpBar.destroy();
-        super.destroy();
+        super.destroy(fromScene);
     }
 }

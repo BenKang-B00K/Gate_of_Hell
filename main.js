@@ -219,24 +219,7 @@ class MainScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        this.allies.getChildren().forEach(guardian => {
-            if (time - guardian.lastShot >= guardian.cooldown) {
-                const target = this.getNearestEnemy(guardian);
-                if (target) {
-                    const dist = Phaser.Math.Distance.Between(guardian.x, guardian.y, target.x, target.y);
-                    if (dist <= guardian.range) {
-                        const projectile = new Projectile(this, guardian.x, guardian.y, target, guardian);
-                        this.projectiles.add(projectile);
-                        guardian.lastShot = time;
-                        
-                        // Play attack animation
-                        if (guardian.anims.exists(`${guardian.textureKey}_attack`)) {
-                            guardian.play(`${guardian.textureKey}_attack`).chain(`${guardian.textureKey}_idle`);
-                        }
-                    }
-                }
-            }
-        });
+        // Individual logic for allies and enemies is handled in their respective update() methods
     }
 }
 
