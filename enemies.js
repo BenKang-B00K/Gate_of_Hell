@@ -40,7 +40,7 @@ window.bossData = {
 
 // TTK Optimized Multipliers (Log-Linear Hybrid)
 window.getStageMultipliers = function() {
-    const stage = (Phaser.Gdx && Phaser.Gdx.registry) ? Phaser.Gdx.registry.get('stage') : 1;
+    const stage = (window.gameInstance && window.gameInstance.registry) ? window.gameInstance.registry.get('stage') : 1;
     let hpMult = (stage <= 50) ? (1 + (stage * 0.25) + Math.log2(stage)) : (13.5 * (1 + (stage - 50) * 0.08));
     return { hpStageMult: hpMult, speedStageMult: 1 + (Math.atan(stage / 20) * 0.5) };
 };

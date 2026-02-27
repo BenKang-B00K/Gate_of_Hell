@@ -62,7 +62,7 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. 매니저 초기화 (Registry 데이터 로드 포함)
+        // 1. 시스템 매니저 초기화
         this.dataManager = new DataManager(this);
         this.vfx = new VFXManager(this);
 
@@ -71,11 +71,11 @@ class MainScene extends Phaser.Scene {
         this.enemies = this.physics.add.group({ classType: Specter, runChildUpdate: true });
         this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
         
-        // 3. 레이아웃 (슬롯)
+        // 3. 레이아웃
         this.slots = this.add.group();
         this.createSlots();
 
-        // 4. 시스템 설정
+        // 4. 전투 설정
         this.setupCombat();
         this.setupInteractions();
         this.initWaveState();
@@ -91,7 +91,7 @@ class MainScene extends Phaser.Scene {
 
     initWaveState() {
         this.waveSpawnedCount = 0;
-        this.totalWaveEnemies = 10 + (this.registry.get('stage') * 2);
+        this.totalWaveEnemies = 8 + (this.registry.get('stage') * 2);
         this.registry.set('enemiesLeft', 0);
     }
 
@@ -120,7 +120,7 @@ class MainScene extends Phaser.Scene {
             const x = Phaser.Math.Between(130, 230);
             enemy.spawn(x, -50, data, 'ghost_basic');
             this.waveSpawnedCount++;
-            this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
+            this.registry.set('enemiesLeft', this.enemies.countActive(true));
             this.dataManager.recordEncounter(data.type);
         }
     }
@@ -129,7 +129,7 @@ class MainScene extends Phaser.Scene {
         const summonBtn = document.getElementById('tower-card');
         if (summonBtn) {
             summonBtn.onclick = () => {
-                const cost = 30; // 기본 소환 비용
+                const cost = 30;
                 if (this.registry.get('money') >= cost) {
                     const slot = this.slots.getChildren().find(s => !s.isOccupied);
                     if (slot) {
@@ -145,13 +145,16 @@ class MainScene extends Phaser.Scene {
             if (zone.isOccupied) {
                 const other = this.allies.getChildren().find(a => a.currentSlot === zone);
                 if (other) {
-                    other.x = obj.currentSlot.x; other.y = obj.currentSlot.y;
-                    other.currentSlot = obj.currentSlot;
+                    const oldSlot = obj.currentSlot;
+                    other.x = oldSlot.x; other.y = oldSlot.y;
+                    other.currentSlot = oldSlot;
+                    if (other.altarEffect) other.altarEffect.setPosition(oldSlot.x, oldSlot.y);
                 }
             } else { obj.currentSlot.isOccupied = false; }
             obj.x = zone.x; obj.y = zone.y;
             obj.currentSlot = zone;
             zone.isOccupied = true;
+            if (obj.altarEffect) obj.altarEffect.setPosition(zone.x, zone.y);
         });
     }
 
@@ -167,7 +170,7 @@ class MainScene extends Phaser.Scene {
     }
 
     createSlots() {
-        // 전장 영역 120-120-120 분할에 맞춘 슬롯 배치 (상단 UI 피함)
+        // Corrected loop with defined column variable
         for (let row = 0; row < 6; row++) {
             for (let col = 0; col < 2; col++) {
                 this.addSlot(30 + col * 40, 100 + row * 55, 'left');
@@ -179,6 +182,7 @@ class MainScene extends Phaser.Scene {
     addSlot(x, y, side) {
         const slot = this.add.zone(x, y, 35, 35).setRectangleDropZone(35, 35);
         slot.isOccupied = false;
+        slot.side = side;
         this.add.rectangle(x, y, 30, 30, 0x555555, 0.2).setStrokeStyle(1, 0xffd700, 0.2);
         this.slots.add(slot);
     }
@@ -202,17 +206,35 @@ class MainScene extends Phaser.Scene {
         return nearest;
     }
 
+    showDamageText(x, y, amount, isCrit) {
+        const txt = this.add.text(x, y, amount === "MISS" ? "MISS" : Math.floor(amount), {
+            fontSize: isCrit ? '24px' : '16px',
+            color: isCrit ? '#ff4444' : '#ffffff',
+            fontStyle: 'bold', stroke: '#000', strokeThickness: 2
+        }).setOrigin(0.5).setDepth(100);
+        this.tweens.add({ targets: txt, y: y - 50, alpha: 0, duration: 800, onComplete: () => txt.destroy() });
+    }
+
+    onPortalHit() {
+        this.vfx.shake('heavy');
+        this.cameras.main.flash(200, 150, 0, 0);
+    }
+
+    leaveDecayTrail(x, y) {
+        const stain = this.add.circle(x, y, 3, 0x2e0854, 0.2).setDepth(1);
+        this.tweens.add({ targets: stain, scale: 2, alpha: 0, duration: 1500, onComplete: () => stain.destroy() });
+    }
+
     update(time, delta) {
-        // 1. 게임 오버 체크
+        // Game Over Check
         const pe = this.registry.get('portalEnergy');
-        const maxPe = this.registry.get('maxPortalEnergy');
-        if (pe >= maxPe) {
+        if (pe >= this.registry.get('maxPortalEnergy')) {
             this.scene.pause();
             document.getElementById('game-over-overlay').style.display = 'flex';
             return;
         }
 
-        // 2. 스테이지 진행 체크 (그룹 내 활성화된 적이 없고 스폰이 끝났을 때)
+        // Stage Progression
         const activeEnemies = this.enemies.countActive(true);
         if (this.waveSpawnedCount >= this.totalWaveEnemies && activeEnemies === 0) {
             this.startNextStage();
@@ -222,15 +244,16 @@ class MainScene extends Phaser.Scene {
     startNextStage() {
         const nextStage = this.registry.get('stage') + 1;
         this.registry.set('stage', nextStage);
-        
-        // 시각적 알림 (Floating Text)
-        this.showFloatingText(180, 200, `DEPTH ${nextStage} REACHED`, '#ffd700');
-        
-        // 보너스 SE 지급
-        const bonus = 50 + (nextStage * 10);
-        this.registry.set('money', this.registry.get('money') + bonus);
-
+        this.showFloatingText(180, 200, `DEPTH ${nextStage}`, '#ffd700');
+        this.registry.set('money', this.registry.get('money') + 50 + (nextStage * 5));
         this.initWaveState();
+    }
+
+    showFloatingText(x, y, message, color) {
+        const txt = this.add.text(x, y, message, {
+            fontSize: '20px', color: color, fontStyle: 'bold', stroke: '#000', strokeThickness: 4
+        }).setOrigin(0.5).setDepth(100);
+        this.tweens.add({ targets: txt, y: y - 100, alpha: 0, duration: 2000, ease: 'Cubic.easeOut', onComplete: () => txt.destroy() });
     }
 }
 
@@ -259,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('start-screen').classList.add('shrink-to-info');
             setTimeout(() => {
                 document.getElementById('start-screen').style.display = 'none';
-                new Phaser.Game(config);
+                window.gameInstance = new Phaser.Game(config);
             }, 800);
         };
     }
