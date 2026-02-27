@@ -488,12 +488,12 @@ function drawMonk(cx, cy) {
 
 function drawApprentice(cx, cy) {
     const time = lavaPhase;
-    const floatingY = Math.sin(time * 2) * 3; 
-    // Shift slightly up to center the sprite in the slot
-    const y = cy + floatingY - 5; 
+    const floatingY = Math.sin(time * 2) * 2.5; 
+    // Shift slightly to center the 1.5x scaled sprite
+    const y = cy + floatingY - 2; 
 
-    // Reduced scale from 2.5 to 1.8 to fit slot perfectly
-    const S = 1.8;
+    // Final optimized scale: 1.5x fits perfectly within ~40x45 logical slot
+    const S = 1.5;
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         ctx.fillRect(cx + (ox * S), y + (oy * S), w * S, h * S);
