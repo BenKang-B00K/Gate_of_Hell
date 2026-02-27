@@ -9,7 +9,7 @@
     z-index: 5;
     background: rgba(0, 0, 0, 0.2);
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-    margin-top: 148px;
+    /* margin-top removed to fix layout issues */
 }
 
 .card-slot {
