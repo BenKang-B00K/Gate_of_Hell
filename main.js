@@ -93,41 +93,94 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. Initialize Physics Groups for Enemies and Allies
+        // 1. Initialize Registry with Game State from enemies.js logic
+        this.registry.set('money', 150);
+        this.registry.set('stage', 1);
+        this.registry.set('portalEnergy', 0);
+        this.registry.set('maxPortalEnergy', 1500);
+        this.registry.set('enemiesLeft', 0);
+        this.registry.set('damageMultiplier', 1.0);
+        this.registry.set('critChance', 0);
+        this.registry.set('critMultiplier', 1.5);
+
+        // 2. Setup Registry Listeners for UI Sync
+        this.setupRegistryListeners();
+
+        // 3. Initialize Physics Groups
         this.allies = this.physics.add.group({ runChildUpdate: true });
         this.enemies = this.physics.add.group({ runChildUpdate: true });
         this.projectiles = this.physics.add.group({ runChildUpdate: true });
         
-        // 2. Setup Card Slots (Zones)
         this.slots = this.add.group();
         this.createSlots();
-
-        // 3. Setup Drag and Drop
         this.setupDragAndDrop();
 
-        // 4. Setup Collision/Overlap Handling
         this.physics.add.overlap(this.projectiles, this.enemies, (projectile, enemy) => {
             enemy.takeDamage(projectile.source.damage);
             projectile.destroy();
         });
 
-        // 5. Connect UI Controls
+        // Connect UI Controls
         const summonBtn = document.getElementById('tower-card');
         if (summonBtn) {
             summonBtn.onclick = () => {
-                const emptySlot = this.slots.getChildren().find(s => !s.isOccupied);
-                if (emptySlot) {
-                    this.summonGuardian(emptySlot, window.unitTypes[0]);
+                const money = this.registry.get('money');
+                const cost = 40; // Hardcoded for now, can be dynamic
+                if (money >= cost) {
+                    const emptySlot = this.slots.getChildren().find(s => !s.isOccupied);
+                    if (emptySlot) {
+                        this.registry.set('money', money - cost);
+                        this.summonGuardian(emptySlot, window.unitTypes[0]);
+                    }
                 }
             };
         }
 
-        // 6. Start Spawning Loop based on enemies.js categories
         this.time.addEvent({
             delay: 2000,
             callback: this.spawnWave,
             callbackScope: this,
             loop: true
+        });
+
+        // Initial UI Update
+        this.events.emit('updateUI');
+    }
+
+    setupRegistryListeners() {
+        // Soul Energy (Money)
+        this.registry.events.on('changedata-money', (parent, value) => {
+            const el = document.getElementById('se-display-text');
+            if (el) el.innerText = Math.floor(value);
+            const fill = document.getElementById('se-gauge-fill');
+            if (fill) fill.style.width = `${Math.min((value / 1000) * 100, 100)}%`;
+        });
+
+        // Portal Energy
+        this.registry.events.on('changedata-portalEnergy', (parent, value) => {
+            const max = this.registry.get('maxPortalEnergy');
+            const el = document.getElementById('portal-energy-label');
+            if (el) el.innerText = `${Math.floor(value)} / ${max}`;
+            const fill = document.getElementById('portal-gauge-fill');
+            if (fill) fill.style.width = `${(value / max) * 100}%`;
+            
+            // Handle Game Over
+            if (value >= max) {
+                document.getElementById('game-over-overlay').style.display = 'flex';
+                this.scene.pause();
+            }
+        });
+
+        // Stage
+        this.registry.events.on('changedata-stage', (parent, value) => {
+            const el = document.getElementById('stage-display');
+            if (el) el.innerText = value;
+        });
+
+        // Enemies Left
+        this.registry.events.on('changedata-enemiesLeft', (parent, value) => {
+            const el = document.getElementById('enemies-left');
+            if (el) el.innerText = value;
         });
     }
 
@@ -224,6 +277,10 @@ class MainScene extends Phaser.Scene {
         // All specters start with their 'walk' animation
         const enemy = new Specter(this, x, y, data, 'ghost_basic');
         this.enemies.add(enemy);
+
+        // Update Registry
+        const current = this.registry.get('enemiesLeft');
+        this.registry.set('enemiesLeft', current + 1);
     }
 
     update(time, delta) {}

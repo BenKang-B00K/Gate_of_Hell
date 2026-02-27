@@ -228,6 +228,14 @@ export class Specter extends Phaser.GameObjects.Sprite {
         if (this.type === 'deceiver' && !this.hasBackstepped) { this.y_px = Math.max(0, this.y_px - 50); this.hasBackstepped = true; }
         
         if (this.hp <= 0) {
+            // Reward Soul Energy via Registry
+            const currentMoney = this.scene.registry.get('money');
+            this.scene.registry.set('money', currentMoney + 10); // Base reward 10
+            
+            // Decrement enemies left
+            const enemiesLeft = this.scene.registry.get('enemiesLeft');
+            this.scene.registry.set('enemiesLeft', Math.max(0, enemiesLeft - 1));
+
             this.scene.events.emit('enemyKilled', this);
             
             // Play death animation
@@ -258,6 +266,14 @@ export class Specter extends Phaser.GameObjects.Sprite {
     }
 
     onReachPortal() {
+        // Update Portal Energy via Registry
+        const currentEnergy = this.scene.registry.get('portalEnergy');
+        this.scene.registry.set('portalEnergy', currentEnergy + this.maxHp * 0.1);
+        
+        // Decrement enemies left
+        const enemiesLeft = this.scene.registry.get('enemiesLeft');
+        this.scene.registry.set('enemiesLeft', Math.max(0, enemiesLeft - 1));
+
         this.scene.events.emit('enemyReachedPortal', this);
         this.destroy();
     }
