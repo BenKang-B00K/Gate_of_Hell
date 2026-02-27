@@ -478,9 +478,109 @@ function drawFire(cx, cy, tower) {
     ctx.fill();
 }
 function drawTracker(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#228B22', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 400; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
+
+    // --- 1. BODY & SCOUTING ROBES (Forest Green / Leather) ---
+    const robeColor = '#33691E'; // Forest green
+    const leatherColor = '#5D4037'; // Dark leather
+    const trimColor = '#9E9D24'; // Lime/Olive detail
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-1, 1, trimColor, 2, 11); // Center vertical strap
+    p(-5, 11, '#1B5E20', 11, 3); // Bottom shadow
+    
+    // Utility Belt
+    p(-5, 7, '#000', 11, 2);
+    p(-4, 7, leatherColor, 3, 1); // Pouch L
+    p(2, 7, leatherColor, 3, 1); // Pouch R
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Scouting Gear (Monocle/Headlamp hint)
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Hood/Turban
+    p(-4, -10, '#000', 9, 4);
+    p(-4, -10, robeColor, 9, 3);
+    
+    // The Tracker's Monocle (Glowing)
+    const eyeGlow = isAttacking ? '#FFF' : '#CDDC39';
+    p(1, -6, '#000', 3, 3);
+    p(2, -5, eyeGlow, 1, 1);
+
+    // --- 2. THE SPIRIT LANTERN (Beacon of Guidance) ---
+    // Lantern hangs or floats
+    let lanternFloat = Math.sin(time * 2.5) * 4;
+    let lanOX = isAttacking ? 10 : 8;
+    let lanOY = -6 + lanternFloat;
+    
+    const goldColor = '#FBC02D';
+    
+    // Lantern Frame
+    p(lanOX - 2, lanOY - 4, '#000', 5, 10); // Outer frame
+    p(lanOX - 1, lanOY - 3, goldColor, 3, 8);
+    
+    // Glass/Core
+    const coreColor = isAttacking ? '#FFF' : '#FFF59D';
+    p(lanOX, lanOY - 1, coreColor, 1, 4); 
+    
+    // Support Arm/Chain
+    p(lanOX - 4, lanOY - 2, '#333', 3, 1);
+
+    // --- 3. GUIDANCE BEAM (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 40 * flashIntensity;
+        ctx.shadowColor = '#FBC02D';
+        
+        // Searching Cone
+        const coneX = isLeft ? cx + (lanOX * S) : cx - (lanOX * S);
+        const coneY = cy + (lanOY * S);
+        
+        ctx.fillStyle = `rgba(255, 235, 59, ${0.2 * flashIntensity})`;
+        ctx.beginPath();
+        ctx.moveTo(coneX, coneY);
+        ctx.lineTo(coneX + 150 * (isLeft?1:-1), coneY - 80);
+        ctx.lineTo(coneX + 150 * (isLeft?1:-1), coneY + 80);
+        ctx.fill();
+        
+        // Light Particles
+        for(let i=0; i<6; i++) {
+            const px = lanOX + (Math.random() * 20);
+            const py = lanOY + (Math.random() - 0.5) * 20;
+            p(Math.round(px), Math.round(py), '#FFFDE7', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. AMBIENT SCANNING PULSE ---
+    const scanPulse = (Math.sin(time * 1.5) + 1) / 2;
+    ctx.strokeStyle = `rgba(205, 220, 57, ${0.1 * scanPulse})`;
+    ctx.lineWidth = 2 * S;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30 * S + (scanPulse * 10 * S), 0, Math.PI * 2);
+    ctx.stroke();
 }
 function drawNecromancer(cx, cy, tower) {
     const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
