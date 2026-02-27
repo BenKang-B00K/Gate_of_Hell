@@ -53,7 +53,8 @@ export class DataManager {
             'money': { text: 'se-display-text', fill: 'se-gauge-fill', max: 1000 },
             'portalEnergy': { text: 'portal-energy-label', fill: 'portal-gauge-fill', max: this.registry.get('maxPortalEnergy') },
             'stage': { text: 'stage-display' },
-            'enemiesLeft': { text: 'enemies-left', fill: 'rs-gauge-fill', max: this.registry.get('totalEnemiesInStage') || 20 }
+            'enemiesLeft': { text: 'enemies-left', fill: 'rs-gauge-fill', max: this.registry.get('totalEnemiesInStage') || 20 },
+            'towerCost': { text: 'summon-cost-display' }
         };
 
         const config = uiMap[key];
@@ -61,8 +62,12 @@ export class DataManager {
 
         if (config.text) {
             const el = document.getElementById(config.text);
-            if (el) el.innerText = (key === 'portalEnergy' || key === 'money') ? Math.floor(value) : value;
-            if (key === 'portalEnergy') el.innerText += ` / ${config.max}`;
+            if (el) {
+                if (key === 'towerCost') el.innerText = `${value} SE`;
+                else el.innerText = (key === 'portalEnergy' || key === 'money') ? Math.floor(value) : value;
+                
+                if (key === 'portalEnergy') el.innerText += ` / ${config.max}`;
+            }
         }
 
         if (config.fill) {

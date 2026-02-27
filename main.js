@@ -80,6 +80,9 @@ class MainScene extends Phaser.Scene {
         this.dataManager = new DataManager(this);
         this.vfx = new VFXManager(this);
 
+        this.registry.set('towerCost', 30);
+        this.registry.set('maxTowers', 16);
+
         if (window.syncUIWithRegistry) window.syncUIWithRegistry();
 
         this.allies = this.add.group({ runChildUpdate: true });
@@ -148,16 +151,7 @@ class MainScene extends Phaser.Scene {
     setupInteractions() {
         const summonBtn = document.getElementById('tower-card');
         if (summonBtn) {
-            summonBtn.onclick = () => {
-                const cost = 30;
-                if (this.registry.get('money') >= cost) {
-                    const slot = this.slots.getChildren().find(s => !s.isOccupied);
-                    if (slot) {
-                        this.registry.set('money', this.registry.get('money') - cost);
-                        this.spawnGuardian(slot);
-                    }
-                }
-            };
+            summonBtn.onclick = () => this.trySummon();
         }
 
         this.input.on('drag', (ptr, obj, dragX, dragY) => { obj.x = dragX; obj.y = dragY; });
@@ -272,6 +266,41 @@ class MainScene extends Phaser.Scene {
             fontSize: '20px', color: color, fontStyle: 'bold', stroke: '#000', strokeThickness: 4
         }).setOrigin(0.5).setDepth(100);
         this.tweens.add({ targets: txt, y: y - 100, alpha: 0, duration: 2000, ease: 'Cubic.easeOut', onComplete: () => txt.destroy() });
+    }
+
+    trySummon() {
+        const cost = this.registry.get('towerCost');
+        const money = this.registry.get('money');
+        const activeUnits = this.allies.countActive(true);
+        const maxUnits = this.registry.get('maxTowers');
+
+        if (activeUnits >= maxUnits) {
+            this.showMaxLimitWarning();
+            return;
+        }
+
+        if (money >= cost) {
+            const slot = this.slots.getChildren().find(s => !s.isOccupied);
+            if (slot) {
+                this.registry.set('money', money - cost);
+                this.spawnGuardian(slot);
+                const nextCost = Math.min(200, cost + 5);
+                this.registry.set('towerCost', nextCost);
+            }
+        }
+    }
+
+    showMaxLimitWarning() {
+        const warn = document.getElementById('max-units-warning');
+        if (warn) {
+            warn.innerText = "???: 지옥의 문이 거부한다... 더이상의 퇴마사는 안돼!";
+            warn.style.display = 'block';
+            warn.style.animation = 'cursePulse 0.5s infinite';
+            this.vfx.shake('light');
+            this.time.delayedCall(1500, () => {
+                warn.style.display = 'none';
+            });
+        }
     }
 
     tryCorrupt(guardian) {

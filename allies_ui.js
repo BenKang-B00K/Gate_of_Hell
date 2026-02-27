@@ -34,11 +34,14 @@ window.syncUIWithRegistry = function() {
 };
 
 window.updateSummonButtonState = function() {
-    if (!window.gameInstance) return;
-    const money = window.gameInstance.registry.get('money');
+    if (!window.gameInstance || !window.gameInstance.registry) return;
+    const registry = window.gameInstance.registry;
+    const money = registry.get('money');
+    const cost = registry.get('towerCost') || 30;
+    
     const summonCard = document.getElementById('tower-card');
     if (summonCard) {
-        if (money < 30) {
+        if (money < cost) {
             summonCard.style.opacity = '0.5';
             summonCard.style.filter = 'grayscale(1)';
         } else {
