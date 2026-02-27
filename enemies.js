@@ -941,7 +941,6 @@ function handleEnemyDeath(target, killer = null) {
         if (target.type) recordKill(target.type);
         target.element.remove();
         enemies.splice(idx, 1);
-        playSound('kill');
         if (typeof checkRelicDrop === 'function') checkRelicDrop(target);
         updateStageInfo(); 
         
@@ -1041,10 +1040,6 @@ function showBossVictory(bossName, rewardMsg, bonusDetail) {
     container.appendChild(overlay);
     isPaused = true;
     
-    if (typeof playSound === 'function') {
-        playSound('start'); // Impactful sound
-    }
-
     overlay.addEventListener('click', () => {
         overlay.classList.add('fade-out');
         setTimeout(() => {

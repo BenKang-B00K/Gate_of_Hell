@@ -322,7 +322,6 @@ function collectRelic(id) {
         collectedRelics[id] = currentCount + 1;
         updateRelicBonuses();
         showRelicInfoInPanel(data);
-        if (typeof playSound === 'function') playSound('start'); 
         return true;
     }
     return false;

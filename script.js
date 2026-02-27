@@ -266,7 +266,6 @@ function gameLoop() {
             updateGauges(); 
             enemy.element.remove(); 
             enemies.splice(i, 1); 
-            playSound('kill');
             updateStageInfo(); 
             continue;
         }
@@ -370,16 +369,6 @@ function shoot(tower, target) {
         proj.remove();
         if (typeof createAttackEffect === 'function') createAttackEffect(tower.data.type, target, gameContainer);
         
-        // Play attack sound based on unit type
-        const swordUnits = ['assassin', 'abyssal', 'spatial', 'knight', 'paladin', 'crusader', 'reaper', 'asura'];
-        const holyUnits = ['apprentice', 'monk', 'saint', 'chainer', 'executor', 'binder', 'grandsealer', 'guardian', 'judgment', 'talisman', 'cursed_talisman'];
-        
-        if (swordUnits.includes(tower.data.type)) {
-            playSound('sword');
-        } else if (holyUnits.includes(tower.data.type)) {
-            playSound('holy');
-        }
-
         if (target.type === 'cursed_vajra' && Math.random() < 0.15) {
             tower.isStunned = true; tower.stunEndTime = Date.now() + 1000;
             if (tower.element) tower.element.classList.add('feared');
@@ -441,21 +430,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Start thunder sound loop (will be blocked by browser until first click anywhere)
     thunderInterval = setInterval(() => {
-        if (!gameStarted) playThunder();
-        else clearInterval(thunderInterval);
+        if (gameStarted) clearInterval(thunderInterval);
     }, 2000);
 
     if (startBtn && startScreen) {
         startBtn.addEventListener('mouseenter', () => {
-            if (!gameStarted) {
-                playSound('hover');
-            }
+            // hover sound removed
         });
 
         startBtn.addEventListener('click', () => {
             clearInterval(thunderInterval);
-            playSound('start');
-            if (typeof startBGM === 'function') startBGM();
             startScreen.classList.add('shrink-to-info');
             
             setTimeout(() => {
