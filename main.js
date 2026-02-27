@@ -223,6 +223,9 @@ class MainScene extends Phaser.Scene {
         this.input.setDraggable(unit);
         this.allies.add(unit);
 
+        // 바닥 성소 마법진 생성
+        unit.altarEffect = this.drawSacredPattern(slot);
+
         // 전역 잠금 해제 데이터 기록
         this.dataManager.unlockUnit(unitData.type);
     }

@@ -136,6 +136,7 @@ export class Guardian extends Phaser.GameObjects.Sprite {
 
     destroy(fromScene) {
         if (this.attackTimer) this.attackTimer.remove();
+        if (this.altarEffect) this.altarEffect.destroy();
         super.destroy(fromScene);
     }
 }
@@ -181,6 +182,11 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         const frameAdjust = delta / 16.66;
         const globalSpeed = this.scene.registry.get('globalSpeedMult') || 1.0;
         const currentSpeed = this.speed * globalSpeed * frameAdjust;
+
+        // 명계의 부패 흔적 남기기
+        if (this.scene.time.now % 500 < 20) {
+            this.scene.leaveDecayTrail(this.x, this.y);
+        }
 
         if (this.type === 'boar') {
             if (this.y_px < 640 * 0.85) {
