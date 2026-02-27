@@ -165,6 +165,8 @@ function drawUnits() {
             case 'philosopher': drawPhilosopher(cx, cy, tower); break;
             case 'reflection': drawReflection(cx, cy, tower); break;
             case 'flamemaster': drawFlameMaster(cx, cy, tower); break;
+            case 'voidsniper': drawVoidSniper(cx, cy, tower); break;
+            case 'vajra': drawVajrapani(cx, cy, tower); break;
         }
     });
 }
@@ -2288,6 +2290,209 @@ function drawFlameMaster(cx, cy, tower) {
     ctx.fillStyle = `rgba(255, 69, 0, ${0.08 * heatGlow})`;
     ctx.beginPath();
     ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawVoidSniper(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 400; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
+
+    // --- 1. BODY & VOID STALKER GEAR (Deep Purple / Obsidian Palette) ---
+    const armorColor = '#1A237E'; // Deep obsidian blue
+    const voidColor = '#4A148C'; // Deep purple
+    const glowColor = '#00E5FF'; // Ethereal cyan glow
+    
+    // Body / Stealth Suit
+    p(-5, 0, '#000', 11, 15); // Outline
+    p(-4, 1, armorColor, 9, 13);
+    p(-1, 1, voidColor, 3, 11); // Center void core
+    
+    // Tactical Scarf (Flowing)
+    const scarfWarp = Math.sin(time * 3) * 4;
+    p(-8 + scarfWarp, -2, '#000', 5, 5);
+    p(-7 + scarfWarp, -1, voidColor, 3, 3);
+
+    // Boots
+    p(-3, 14, '#000', 3, 3);
+    p(1, 14, '#000', 3, 3);
+
+    // Head (Sniping Goggles / Hood)
+    p(-4, -10, '#000', 9, 10); 
+    p(-3, -9, armorColor, 7, 8);
+    
+    // Sniping Goggles
+    p(-2, -6, '#212121', 5, 3);
+    p(-1, -5, glowColor, 1, 1); // Lens L
+    p(1, -5, glowColor, 1, 1);  // Lens R
+
+    // --- 2. THE VOID LONGBOW (Calamity) ---
+    // Massive bow that gathers energy
+    let bowOX = 10;
+    let bowOY = -15;
+    let drawBack = isAttacking ? (1.0 - flashIntensity) * 8 : 0;
+    
+    const stringColor = '#00E5FF';
+    
+    // Bow Frame (Ebony wood/Metal)
+    p(bowOX, bowOY, '#000', 3, 30);
+    p(bowOX - 1, bowOY - 1, '#000', 3, 3); // Upper curve
+    p(bowOX - 1, bowOY + 28, '#000', 3, 3); // Lower curve
+    
+    p(bowOX, bowOY + 1, '#212121', 2, 28);
+    p(bowOX + 1, bowOY + 5, voidColor, 1, 20); // Void energy inlay
+
+    // Bow String (Ethereal)
+    const stringX = bowOX - drawBack;
+    ctx.strokeStyle = stringColor;
+    ctx.lineWidth = S * 0.5;
+    const sTopX = isLeft ? cx + (bowOX * S) : cx - (bowOX * S);
+    const sBotX = isLeft ? cx + (bowOX * S) : cx - (bowOX * S);
+    const sMidX = isLeft ? cx + (stringX * S) : cx - (stringX * S);
+    
+    ctx.beginPath();
+    ctx.moveTo(sTopX, cy + (bowOY * S));
+    ctx.lineTo(sMidX, cy + (bowOY + 15) * S);
+    ctx.lineTo(sBotX, cy + (bowOY + 30) * S);
+    ctx.stroke();
+
+    // Void Arrow (During Attack)
+    if (isAttacking) {
+        const arrowX = bowOX - drawBack;
+        p(arrowX - 6, bowOY + 14, '#000', 10, 2); // Shadow shaft
+        p(arrowX - 5, bowOY + 14, glowColor, 10, 1); // Glowing core
+        
+        // Charging Sparkle
+        ctx.save();
+        ctx.shadowBlur = 40 * flashIntensity;
+        ctx.shadowColor = glowColor;
+        p(arrowX + 4, bowOY + 13, '#fff', 3, 3);
+        ctx.restore();
+    }
+
+    // --- 3. AMBIENT VOID PARTICLES ---
+    const partPulse = (Math.sin(time * 2) + 1) / 2;
+    for(let i=0; i<3; i++) {
+        const py = -10 + (i * 10) - (time * 15 % 30);
+        const px = -15 + (i * 10);
+        p(Math.round(px), Math.round(py), `rgba(103, 58, 183, ${0.2 * partPulse})`, 1, 1);
+    }
+}
+
+function drawVajrapani(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & DIVINE ARMOR (Azure / Gold / Crimson Palette) ---
+    const armorColor = '#0D47A1'; // Divine azure
+    const skinColor = '#D7B19D'; // Muscular skin
+    const goldTrim = '#FFD700';
+    
+    // Large Muscular Torso
+    p(-7, 0, '#000', 15, 15); // Outline
+    p(-6, 1, skinColor, 13, 13);
+    p(-6, 1, armorColor, 3, 13); // Arm guard L
+    p(4, 1, armorColor, 3, 13);  // Arm guard R
+    
+    // Crimson Scarf/Cape
+    const capeWarp = Math.cos(time * 2) * 5;
+    p(-9 + capeWarp, -2, '#B71C1C', 4, 18);
+    
+    // Golden Belt
+    p(-6, 10, goldTrim, 13, 3);
+
+    // Boots (Heavy sandals)
+    p(-5, 14, '#3E2723', 5, 3);
+    p(1, 14, '#3E2723', 5, 3);
+
+    // Head (Wrathful Deity)
+    p(-4, -10, '#000', 9, 10); 
+    p(-3, -9, skinColor, 7, 8);
+    
+    // Flaming Hair (Heavenly fire)
+    const firePhase = (time * 10) % 5;
+    p(-4, -13 - firePhase, '#FF4500', 9, 4);
+    
+    // Eyes (Bright white glow)
+    p(-2, -6, '#FFF', 1, 1);
+    p(1, -6, '#FFF', 1, 1);
+
+    // --- 2. THE DIVINE TRIDENT (Vajra) ---
+    // Trident shifts during attack
+    let triOX = isAttacking ? 10 : 8;
+    let triOY = isAttacking ? -22 : -18;
+    
+    const ironColor = '#757575';
+    const lightningColor = '#FFEB3B';
+
+    // Staff
+    p(triOX, triOY + 8, '#3E2723', 2, 25);
+    
+    // Trident Head
+    p(triOX - 4, triOY, '#000', 10, 9); // Outline
+    p(triOX - 3, triOY + 1, ironColor, 8, 7);
+    p(triOX - 3, triOY - 2, ironColor, 2, 4); // Left prong
+    p(triOX, triOY - 4, ironColor, 2, 6);    // Center prong
+    p(triOX + 3, triOY - 2, ironColor, 2, 4); // Right prong
+    
+    // Lightning around Trident
+    if (isAttacking) {
+        for(let i=0; i<4; i++) {
+            const lX = triOX + (Math.random() - 0.5) * 15;
+            const lY = triOY + (Math.random() - 0.5) * 15;
+            p(Math.round(lX), Math.round(lY), lightningColor, 1, 1);
+        }
+    }
+
+    // --- 3. KNOCKBACK SHOCKWAVE (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 50 * flashIntensity;
+        ctx.shadowColor = '#FFD700';
+        
+        // Massive Golden Wave
+        const waveSize = 40 * flashIntensity * S;
+        ctx.strokeStyle = `rgba(255, 215, 0, ${flashIntensity})`;
+        ctx.lineWidth = 8 * S;
+        ctx.beginPath();
+        ctx.arc(cx, cy, waveSize, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        ctx.restore();
+    }
+
+    // --- 4. DIVINE POWER AURA ---
+    const auraPulse = (Math.sin(time * 3) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 215, 0, ${0.1 * auraPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 38 * S, 0, Math.PI * 2);
     ctx.fill();
 }
 
