@@ -7,6 +7,7 @@
  */
 export class Guardian extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, unitData, textureKey) {
+        // [수정] 텍스처 유효성 검사 및 플레이스홀더 적용
         const finalKey = scene.textures.exists(textureKey) ? textureKey : 'unit_placeholder';
         super(scene, x, y, finalKey);
         
@@ -17,8 +18,10 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this, true); 
 
+        // [수정] 중심점, 스케일, 깊이 보정
+        this.setOrigin(0.5, 0.5);
         this.setScale(1.5);
-        this.setDepth(20); 
+        this.setDepth(20); // 캐릭터를 도로 UI보다 높게 설정
         this.setInteractive();
 
         this.setupUnit();
@@ -30,9 +33,8 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         this.range = this.unitData.range;
         this.cooldown = this.unitData.cooldown;
         
-        if (this.anims.exists(`${this.textureKey}_idle`)) {
-            this.play(`${this.textureKey}_idle`);
-        }
+        // 애니메이션 안전 재생
+        this.playSafe(`${this.textureKey}_idle`);
 
         if (this.attackTimer) this.attackTimer.remove();
         this.attackTimer = this.scene.time.addEvent({
@@ -41,6 +43,14 @@ export class Guardian extends Phaser.GameObjects.Sprite {
             callbackScope: this,
             loop: true
         });
+    }
+
+    playSafe(animKey) {
+        if (this.scene.anims.exists(animKey)) {
+            this.play(animKey);
+        } else {
+            this.setFrame(0); // 애니메이션 없으면 정지 프레임
+        }
     }
 
     autoAttack() {
@@ -65,7 +75,7 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         else if (this.type === 'reaper') this.skillReaper();
         else if (this.type === 'eternal_wall') this.skillEternalWall();
 
-        if (this.anims.exists(`${this.textureKey}_attack`)) {
+        if (this.scene.anims.exists(`${this.textureKey}_attack`)) {
             this.play(`${this.textureKey}_attack`).chain(`${this.textureKey}_idle`);
         }
     }
@@ -114,9 +124,8 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         const projectile = this.scene.projectiles.get(this.x, this.y);
         if (projectile) {
             projectile.fire(target, this);
-            if (this.anims.exists(`${this.textureKey}_attack`)) {
-                this.play(`${this.textureKey}_attack`).chain(`${this.textureKey}_idle`);
-            }
+            this.playSafe(`${this.textureKey}_attack`);
+            this.once('animationcomplete', () => this.playSafe(`${this.textureKey}_idle`));
         }
     }
 
@@ -147,6 +156,7 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.setTint(0xffffff); 
         this.setAlpha(1.0);
         
+        // 텍스처 검수
         const finalKey = this.scene.textures.exists(textureKey) ? textureKey : 'enemy_placeholder';
         this.setTexture(finalKey);
 
@@ -158,18 +168,18 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.type = enemyData.type;
         this.y_px = y;
         
-        // 도로 중앙 기준 초기 위치 설정
         this.baseX_pct = (x / 360) * 100;
         this.initialX_pct = this.baseX_pct;
-        
         this.vxSign = Math.random() < 0.5 ? -1 : 1;
         this.hasBackstepped = false;
 
-        this.setScale(1.1); // [수정] 크기 축소
-        this.setDepth(10); 
+        // [수정] 스케일 및 깊이 설정
+        this.setScale(1.1);
+        this.setDepth(15); 
+        this.setOrigin(0.5, 0.5);
         
         this.body.setSize(20, 20);
-        if (this.anims.exists(`${textureKey}_walk`)) this.play(`${textureKey}_walk`);
+        if (this.scene.anims.exists(`${textureKey}_walk`)) this.play(`${textureKey}_walk`);
     }
 
     spawnFallenAtStart(x, y, originalUnitData, fallenData, difficultyMult) {
@@ -187,7 +197,8 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         
         this.setTint(0xff0000); 
         this.setAlpha(0.85);
-        this.setDepth(10);
+        this.setDepth(15);
+        this.setOrigin(0.5, 0.5);
 
         this.maxHp = fallenData.hp * difficultyMult;
         this.hp = this.maxHp;
@@ -196,13 +207,12 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.y_px = y;
         this.baseX_pct = (x / 360) * 100;
         this.initialX_pct = this.baseX_pct;
-        
         this.vxSign = Math.random() < 0.5 ? -1 : 1;
         this.hasBackstepped = false;
 
-        this.setScale(1.1); // [수정] 크기 축소
+        this.setScale(1.1);
         this.body.setSize(30, 30);
-        if (this.anims.exists(`${this.textureKey}_walk`)) this.play(`${this.textureKey}_walk`);
+        if (this.scene.anims.exists(`${this.textureKey}_walk`)) this.play(`${this.textureKey}_walk`);
 
         this.scene.tweens.add({
             targets: this, scale: 1.5, duration: 300, yoyo: true, ease: 'Quad.easeIn'
@@ -241,7 +251,6 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         if (this.type === 'boar') {
             if (this.y_px < 640 * 0.85) {
                 this.baseX_pct += this.vxSign * currentSpeed * 0.6;
-                // [수정] 도로 폭(35% ~ 65%) 준수
                 if (this.baseX_pct <= 35) { this.baseX_pct = 35; this.vxSign = 1; }
                 else if (this.baseX_pct >= 65) { this.baseX_pct = 65; this.vxSign = -1; }
                 currentX_pct = this.baseX_pct;
@@ -250,7 +259,6 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
                 currentX_pct = this.baseX_pct;
             }
         } else if (this.type === 'runner' || this.type === 'dimension') {
-            // [수정] 지그재그 이동 방식 (오프셋)
             currentX_pct = this.baseX_pct + Math.sin(this.y_px * 0.05) * 5;
         }
 
@@ -289,10 +297,10 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
     die() {
         const reward = (this.enemyData.reward || 10);
         this.scene.registry.set('money', this.scene.registry.get('money') + reward);
-        if (this.anims.exists(`${this.textureKey}_dead`)) {
+        if (this.scene.anims.exists(`${this.textureKey}_dead`)) {
             this.play(`${this.textureKey}_dead`);
             this.body.stop();
-            this.hpBar.destroy();
+            if (this.hpBar) this.hpBar.destroy();
             this.once('animationcomplete', () => this.kill());
         } else { this.kill(); }
     }
@@ -327,6 +335,7 @@ export class Projectile extends Phaser.Physics.Arcade.Sprite {
         this.source = source;
         this.speed = 400;
         this.setScale(0.5);
+        this.setOrigin(0.5, 0.5);
         this.setTint(this.getProjectileColor(source.type));
     }
     update() {

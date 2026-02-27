@@ -6,32 +6,20 @@ class PreloadScene extends Phaser.Scene {
     constructor() { super('PreloadScene'); }
 
     preload() {
-        // [수정] Graphics로 실시간 텍스처 생성 (base64 에러 및 회색박스 방지)
-        const graphics = this.make.graphics({ x: 0, y: 0, add: false });
-        
-        // Guardian용 푸른색 플레이스홀더
-        graphics.fillStyle(0x00aaff, 1);
-        graphics.fillRect(0, 0, 32, 32);
-        graphics.lineStyle(2, 0xffffff, 1);
-        graphics.strokeRect(0, 0, 32, 32);
-        graphics.generateTexture('unit_placeholder', 32, 32);
-        graphics.clear();
-
-        // Specter용 붉은색 플레이스홀더
-        graphics.fillStyle(0xff4444, 1);
-        graphics.fillRect(0, 0, 32, 32);
-        graphics.lineStyle(2, 0xffff00, 1);
-        graphics.strokeRect(0, 0, 32, 32);
-        graphics.generateTexture('enemy_placeholder', 32, 32);
+        // [수정] 로딩 에러 핸들러 및 데이터 URI 제거
+        this.load.on('loaderror', (file) => {
+            console.warn(`⚠️ Failed to load asset: ${file.src}`);
+        });
 
         this.load.on('filecomplete', (key, type) => {
-            if (type === 'spritesheet') {
+            if (type === 'spritesheet' && this.textures.exists(key)) {
                 const tex = this.textures.get(key);
                 if (tex) tex.setFilter(Phaser.Textures.FilterMode.NEAREST);
             }
         });
 
-        const tierPaths = {
+        // 실제 스프라이트시트 로드 (프레임 30x34 규격 검수 필수)
+        const unitConfigs = {
             'apprentice': 'ImageSample/Tier1/견습퇴마사.png',
             'knight': 'ImageSample/Tier2/퇴마 기사.png',
             'archer': 'ImageSample/Tier2/신성한 궁수.png',
@@ -48,7 +36,7 @@ class PreloadScene extends Phaser.Scene {
             'alchemist': 'ImageSample/Tier2/퇴마 연금술사.png'
         };
 
-        Object.entries(tierPaths).forEach(([key, path]) => {
+        Object.entries(unitConfigs).forEach(([key, path]) => {
             this.load.spritesheet(key, path, { frameWidth: 30, frameHeight: 34 });
         });
 
@@ -56,15 +44,29 @@ class PreloadScene extends Phaser.Scene {
     }
 
     create() {
+        // [핵심] 동적 텍스처 생성 (이미지 로드 실패 시 Fallback)
+        const graphics = this.make.graphics({ x: 0, y: 0, add: false });
+        
+        graphics.fillStyle(0x00aaff, 1).fillRect(0, 0, 32, 32);
+        graphics.lineStyle(2, 0xffffff, 1).strokeRect(0, 0, 32, 32);
+        graphics.generateTexture('unit_placeholder', 32, 32);
+        graphics.clear();
+
+        graphics.fillStyle(0xff4444, 1).fillRect(0, 0, 32, 32);
+        graphics.lineStyle(2, 0xffff00, 1).strokeRect(0, 0, 32, 32);
+        graphics.generateTexture('enemy_placeholder', 32, 32);
+
+        // 애니메이션 생성 (텍스처 유효성 확인 필수)
         const keys = ['apprentice', 'knight', 'archer', 'fire', 'ice', 'necromancer', 'mirror', 'assassin', 'talisman', 'guardian_unit', 'tracker', 'chainer', 'monk', 'alchemist', 'ghost_basic'];
         keys.forEach(k => {
-            if (this.textures.exists(k)) {
+            if (this.textures.exists(k) && this.textures.get(k).frameTotal >= 6) {
                 this.anims.create({ key: `${k}_idle`, frames: this.anims.generateFrameNumbers(k, { start: 0, end: 1 }), frameRate: 4, repeat: -1 });
                 this.anims.create({ key: `${k}_walk`, frames: this.anims.generateFrameNumbers(k, { start: 0, end: 1 }), frameRate: 6, repeat: -1 });
                 this.anims.create({ key: `${k}_attack`, frames: this.anims.generateFrameNumbers(k, { start: 2, end: 3 }), frameRate: 10 });
                 this.anims.create({ key: `${k}_dead`, frames: this.anims.generateFrameNumbers(k, { start: 4, end: 5 }), frameRate: 8 });
             }
         });
+
         this.scene.start('MainScene');
     }
 }
@@ -83,6 +85,7 @@ class MainScene extends Phaser.Scene {
         this.registry.set('towerCost', 30);
         this.registry.set('maxTowers', 16);
 
+        // [강제] Registry 초기화 후 즉시 UI 동기화
         if (window.syncUIWithRegistry) window.syncUIWithRegistry();
 
         this.allies = this.add.group({ runChildUpdate: true });
@@ -108,8 +111,6 @@ class MainScene extends Phaser.Scene {
         this.waveSpawnedCount = 0;
         const total = 10 + (this.registry.get('stage') * 2);
         this.totalWaveEnemies = total;
-        
-        // Registry에 스테이지 총 적 수와 현재 남은 스폰 수 저장
         this.registry.set('totalEnemiesInStage', total);
         this.registry.set('enemiesLeft', total);
     }
@@ -136,15 +137,11 @@ class MainScene extends Phaser.Scene {
 
         const enemy = this.enemies.get();
         if (enemy) {
-            // [수정] 도로 정중앙 부근(140~220)에서 스폰 강제
             const x = Phaser.Math.Between(140, 220);
             enemy.spawn(x, -50, data, 'ghost_basic');
             this.waveSpawnedCount++;
-            
-            // [수정] 스폰될 때마다 남은 대기 수 감소
             const currentLeft = this.registry.get('enemiesLeft');
             this.registry.set('enemiesLeft', Math.max(0, currentLeft - 1));
-            
             this.dataManager.recordEncounter(data.type);
         }
     }
@@ -155,7 +152,12 @@ class MainScene extends Phaser.Scene {
             summonBtn.onclick = () => this.trySummon();
         }
 
-        this.input.on('drag', (ptr, obj, dragX, dragY) => { obj.x = dragX; obj.y = dragY; });
+        this.input.on('drag', (ptr, obj, dragX, dragY) => { 
+            obj.x = dragX; 
+            obj.y = dy; 
+            if (obj.altarEffect) obj.altarEffect.setPosition(dx, dy);
+        });
+        
         this.input.on('drop', (ptr, obj, zone) => {
             if (zone.isOccupied) {
                 const other = this.allies.getChildren().find(a => a.currentSlot === zone);
@@ -171,6 +173,39 @@ class MainScene extends Phaser.Scene {
             zone.isOccupied = true;
             if (obj.altarEffect) obj.altarEffect.setPosition(zone.x, zone.y);
         });
+    }
+
+    trySummon() {
+        const cost = this.registry.get('towerCost');
+        const money = this.registry.get('money');
+        const activeUnits = this.allies.countActive(true);
+        const maxUnits = this.registry.get('maxTowers');
+
+        if (activeUnits >= maxUnits) {
+            this.showMaxLimitWarning();
+            return;
+        }
+
+        if (money >= cost) {
+            const slot = this.slots.getChildren().find(s => !s.isOccupied);
+            if (slot) {
+                this.registry.set('money', money - cost);
+                this.spawnGuardian(slot);
+                const nextCost = Math.min(200, cost + 5);
+                this.registry.set('towerCost', nextCost);
+            }
+        }
+    }
+
+    showMaxLimitWarning() {
+        const warn = document.getElementById('max-units-warning');
+        if (warn) {
+            warn.innerText = "???: 지옥의 문이 거부한다... 더이상의 퇴마사는 안돼!";
+            warn.style.display = 'block';
+            warn.style.animation = 'cursePulse 0.5s infinite';
+            this.vfx.shake('light');
+            this.time.delayedCall(1500, () => { warn.style.display = 'none'; });
+        }
     }
 
     spawnGuardian(slot) {
@@ -269,41 +304,6 @@ class MainScene extends Phaser.Scene {
         this.tweens.add({ targets: txt, y: y - 100, alpha: 0, duration: 2000, ease: 'Cubic.easeOut', onComplete: () => txt.destroy() });
     }
 
-    trySummon() {
-        const cost = this.registry.get('towerCost');
-        const money = this.registry.get('money');
-        const activeUnits = this.allies.countActive(true);
-        const maxUnits = this.registry.get('maxTowers');
-
-        if (activeUnits >= maxUnits) {
-            this.showMaxLimitWarning();
-            return;
-        }
-
-        if (money >= cost) {
-            const slot = this.slots.getChildren().find(s => !s.isOccupied);
-            if (slot) {
-                this.registry.set('money', money - cost);
-                this.spawnGuardian(slot);
-                const nextCost = Math.min(200, cost + 5);
-                this.registry.set('towerCost', nextCost);
-            }
-        }
-    }
-
-    showMaxLimitWarning() {
-        const warn = document.getElementById('max-units-warning');
-        if (warn) {
-            warn.innerText = "???: 지옥의 문이 거부한다... 더이상의 퇴마사는 안돼!";
-            warn.style.display = 'block';
-            warn.style.animation = 'cursePulse 0.5s infinite';
-            this.vfx.shake('light');
-            this.time.delayedCall(1500, () => {
-                warn.style.display = 'none';
-            });
-        }
-    }
-
     tryCorrupt(guardian) {
         if (!guardian) return;
         const slot = guardian.currentSlot;
@@ -315,11 +315,11 @@ class MainScene extends Phaser.Scene {
         this.vfx.triggerCorruption(guardian.x, guardian.y);
         this.showFloatingText(guardian.x, guardian.y, '성스러운 서약이 깨졌습니다', '#ff4444');
         const fallenMap = { 1: ['traitorous_neophyte', 'broken_zealot'], 2: ['abyssal_eulogist', 'shadow_apostate'], 3: ['soul_starved_priest', 'fallen_paladin'], 4: ['avatar_void', 'harbinger_doom'] };
-        const selectedType = fallenMap[tier][Math.random() < 0.5 ? 0 : 1];
-        const enemyData = window.enemyCategories.fallen.find(e => e.type === selectedType);
+        const selectedType = fallenMap[tier] || fallenMap[1];
+        const enemyData = window.enemyCategories.fallen.find(e => e.type === selectedType[Math.random() < 0.5 ? 0 : 1]);
         const fallen = this.enemies.get();
         if (fallen) {
-            const spawnX = Phaser.Math.Between(130, 230);
+            const spawnX = Phaser.Math.Between(140, 220);
             const stageMult = window.getStageMultipliers ? window.getStageMultipliers().hpStageMult : 1;
             fallen.spawnFallenAtStart(spawnX, -50, guardian.unitData, enemyData, stageMult);
         }
@@ -341,7 +341,7 @@ const config = {
     type: Phaser.AUTO,
     width: 360, height: 640,
     parent: 'game-container',
-    transparent: true, // [수정] 배경 투명화
+    transparent: true,
     pixelArt: true,
     physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
     scene: [PreloadScene, MainScene]
