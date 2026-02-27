@@ -1,43 +1,43 @@
-/* css/game.css - Battlefield Theme Upgrades */
+/* css/game.css - Battlefield Theme and Layout */
 
 #game-layout {
+    width: 360px;
+    height: 400px;
+    display: flex;
     background: #050505;
     position: relative;
     overflow: hidden;
-    display: flex;
-    justify-content: space-between;
 }
 
 /* Sacred Sanctum Areas */
 .slot-area {
     width: 80px;
     height: 100%;
-    background: linear-gradient(to right, rgba(10, 20, 40, 0.9), rgba(20, 40, 80, 0.7));
-    border-left: 2px solid rgba(255, 215, 0, 0.2);
-    border-right: 2px solid rgba(255, 215, 0, 0.2);
-    box-shadow: inset 0 0 30px rgba(0, 150, 255, 0.1);
-    z-index: 5;
+    background: linear-gradient(to bottom, rgba(10, 20, 40, 0.9), rgba(20, 40, 80, 0.7));
+    z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 20px;
+    padding-top: 10px;
+    gap: 15px;
+    box-sizing: border-box;
 }
 
-#left-slots { border-right: 3px solid rgba(255, 215, 0, 0.4); }
-#right-slots { border-left: 3px solid rgba(255, 215, 0, 0.4); }
+#left-slots { border-right: 2px solid rgba(255, 215, 0, 0.3); }
+#right-slots { border-left: 2px solid rgba(255, 215, 0, 0.3); }
 
 /* Abyssal Path */
 #road {
-    flex: 1;
+    width: 200px;
+    height: 100%;
     background: radial-gradient(circle at center, #1a0505 0%, #050000 100%);
     position: relative;
-    box-shadow: 0 0 100px rgba(0, 0, 0, 1) inset;
 }
 
-/* Corruption Overlays (Targeted by JS) */
+/* Corruption Overlays */
 #corruption-layer {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0; left: 0; width: 360px; height: 640px;
     background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 0.9) 100%);
     pointer-events: none;
     z-index: 100;
@@ -48,8 +48,8 @@
 
 #corruption-vignette {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    box-shadow: inset 0 0 150px rgba(75, 0, 130, 0);
+    top: 0; left: 0; width: 360px; height: 640px;
+    box-shadow: inset 0 0 100px rgba(75, 0, 130, 0);
     pointer-events: none;
     z-index: 101;
     transition: box-shadow 1s ease;

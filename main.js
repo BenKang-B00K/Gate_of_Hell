@@ -294,8 +294,8 @@ class MainScene extends Phaser.Scene {
 
     createSlots() {
         for (let i = 0; i < 8; i++) {
-            this.addSlot(50, 100 + i * 60, 'left');
-            this.addSlot(310, 100 + i * 60, 'right');
+            this.addSlot(40, 100 + i * 35, 'left');
+            this.addSlot(320, 100 + i * 35, 'right');
         }
     }
 
@@ -351,8 +351,26 @@ const config = {
     scene: [PreloadScene, MainScene]
 };
 
+function handleResize() {
+    const container = document.getElementById('game-container');
+    if (!container) return;
+    
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const scale = Math.min(w / 360, h / 640);
+    
+    container.style.transform = `scale(${scale})`;
+    container.style.left = `${(w - 360 * scale) / 2}px`;
+    container.style.top = `${(h - 640 * scale) / 2}px`;
+    container.style.position = 'absolute';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-game-btn');
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
     if (startBtn) {
         startBtn.onclick = () => {
             document.getElementById('start-screen').style.display = 'none';
