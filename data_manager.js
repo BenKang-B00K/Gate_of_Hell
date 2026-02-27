@@ -1,5 +1,5 @@
 /**
- * data_manager.js - 전역 상태 및 UI 동기화 매니저
+ * data_manager.js - Centralized State and UI Synchronization
  */
 export class DataManager {
     constructor(scene) {
@@ -10,15 +10,10 @@ export class DataManager {
     }
 
     init() {
-        // 1. 초기값 설정 (저장된 데이터가 없으면 기본값)
         const savedRaw = localStorage.getItem(this.SAVE_KEY);
         let saved = {};
         if (savedRaw) {
-            try {
-                saved = JSON.parse(savedRaw);
-            } catch (e) {
-                console.error("Failed to parse save data", e);
-            }
+            try { saved = JSON.parse(savedRaw); } catch (e) { console.error("Save Load Error", e); }
         }
 
         const defaults = {
@@ -39,75 +34,72 @@ export class DataManager {
             this.registry.set(key, finalVal);
         });
 
-        // 2. 통합 리스너: Registry 값이 변하면 UI와 LocalStorage를 동시 업데이트
         this.setupListeners();
-        
-        // 3. 초기 UI 반영을 위해 강제 이벤트 발생
         this.updateAllUI();
     }
 
     setupListeners() {
         this.registry.events.on('changedata', (parent, key, value) => {
-            this.updateUI(key, value);
-
-            // 자동 저장 (일부 세션 변수 제외)
-            const preventSave = ['enemiesLeft', 'isTimeFrozen', 'portalEnergy', 'globalSpeedMult'];
-            if (!preventSave.includes(key)) {
-                this.save();
-            }
+            this.updateUIElement(key, value);
+            
+            // Auto-save logic
+            const persistentKeys = ['money', 'stage', 'unlockedUnits', 'encounteredEnemies'];
+            if (persistentKeys.includes(key)) this.save();
         });
     }
 
-    updateUI(key, value) {
-        if (key === 'money') {
-            const el = document.getElementById('se-display-text');
-            const fill = document.getElementById('se-gauge-fill');
-            if (el) el.innerText = Math.floor(value);
-            if (fill) fill.style.width = `${Math.min(value / 10, 100)}%`;
-        } else if (key === 'portalEnergy') {
-            const max = this.registry.get('maxPortalEnergy');
-            const el = document.getElementById('portal-energy-label');
-            const fill = document.getElementById('portal-gauge-fill');
-            if (el) el.innerText = `${Math.floor(value)} / ${max}`;
-            if (fill) fill.style.width = `${(value / max) * 100}%`;
-        } else if (key === 'stage') {
-            const el = document.getElementById('stage-display');
-            if (el) el.innerText = value;
-        } else if (key === 'enemiesLeft') {
-            const el = document.getElementById('enemies-left');
-            if (el) el.innerText = value;
+    updateUIElement(key, value) {
+        const uiMap = {
+            'money': { text: 'se-display-text', fill: 'se-gauge-fill', max: 1000 },
+            'portalEnergy': { text: 'portal-energy-label', fill: 'portal-gauge-fill', max: this.registry.get('maxPortalEnergy') },
+            'stage': { text: 'stage-display' },
+            'enemiesLeft': { text: 'enemies-left', fill: 'rs-gauge-fill', max: 20 } // Max 20 for visual bar
+        };
+
+        const config = uiMap[key];
+        if (!config) return;
+
+        if (config.text) {
+            const el = document.getElementById(config.text);
+            if (el) el.innerText = (key === 'portalEnergy' || key === 'money') ? Math.floor(value) : value;
+            if (key === 'portalEnergy') el.innerText += ` / ${config.max}`;
+        }
+
+        if (config.fill) {
+            const fillEl = document.getElementById(config.fill);
+            if (fillEl) fillEl.style.width = `${Math.min((value / config.max) * 100, 100)}%`;
         }
     }
 
     updateAllUI() {
         ['money', 'portalEnergy', 'stage', 'enemiesLeft'].forEach(key => {
-            this.updateUI(key, this.registry.get(key));
+            this.updateUIElement(key, this.registry.get(key));
         });
     }
 
     save() {
-        const dataToSave = {
+        const data = {
             money: this.registry.get('money'),
             stage: this.registry.get('stage'),
             unlockedUnits: this.registry.get('unlockedUnits'),
             encounteredEnemies: this.registry.get('encounteredEnemies')
         };
-        localStorage.setItem(this.SAVE_KEY, JSON.stringify(dataToSave));
+        localStorage.setItem(this.SAVE_KEY, JSON.stringify(data));
     }
 
-    unlockUnit(unitType) {
-        const unlocked = this.registry.get('unlockedUnits') || [];
-        if (!unlocked.includes(unitType)) {
-            const newList = [...unlocked, unitType];
-            this.registry.set('unlockedUnits', newList);
+    unlockUnit(type) {
+        let list = this.registry.get('unlockedUnits');
+        if (!list.includes(type)) {
+            list.push(type);
+            this.registry.set('unlockedUnits', [...list]);
         }
     }
 
-    recordEncounter(enemyType) {
-        const encountered = this.registry.get('encounteredEnemies') || [];
-        if (!encountered.includes(enemyType)) {
-            const newList = [...encountered, enemyType];
-            this.registry.set('encounteredEnemies', newList);
+    recordEncounter(type) {
+        let list = this.registry.get('encounteredEnemies');
+        if (!list.includes(type)) {
+            list.push(type);
+            this.registry.set('encounteredEnemies', [...list]);
         }
     }
 }

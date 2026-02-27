@@ -16,7 +16,6 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('unit_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
         this.load.image('enemy_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
 
-        const unitKeys = ['apprentice', 'necromancer', 'mirror', 'assassin', 'talisman', 'ice', 'guardian_unit', 'archer', 'tracker', 'chainer', 'monk', 'knight', 'alchemist', 'fire'];
         const tierPaths = {
             'apprentice': 'ImageSample/Tier1/견습퇴마사.png',
             'necromancer': 'ImageSample/Tier2/강령술사.png',
@@ -63,25 +62,26 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. 시스템 매니저 초기화
+        // 1. 매니저 초기화 (Registry 데이터 로드 포함)
         this.dataManager = new DataManager(this);
         this.vfx = new VFXManager(this);
 
-        // 2. 물리 그룹 및 오브젝트 풀링
+        // 2. 물리 그룹 및 풀링
         this.allies = this.add.group({ runChildUpdate: true });
         this.enemies = this.physics.add.group({ classType: Specter, runChildUpdate: true });
         this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
         
-        // 3. 레이아웃
+        // 3. 레이아웃 (슬롯)
         this.slots = this.add.group();
         this.createSlots();
 
-        // 4. 전투 및 상호작용
+        // 4. 시스템 설정
         this.setupCombat();
         this.setupInteractions();
+        this.initWaveState();
 
-        // 5. 스폰 타이머
-        this.time.addEvent({
+        // 5. 스폰 루프
+        this.spawnEvent = this.time.addEvent({
             delay: 2000,
             callback: this.spawnWave,
             callbackScope: this,
@@ -89,13 +89,17 @@ class MainScene extends Phaser.Scene {
         });
     }
 
+    initWaveState() {
+        this.waveSpawnedCount = 0;
+        this.totalWaveEnemies = 10 + (this.registry.get('stage') * 2);
+        this.registry.set('enemiesLeft', 0);
+    }
+
     setupCombat() {
         this.physics.add.overlap(this.projectiles, this.enemies, (projectile, enemy) => {
             if (this.registry.get('isTimeFrozen') || !enemy.active) return;
-            
             const isCrit = Math.random() < this.registry.get('critChance');
             const damage = projectile.source.damage * (isCrit ? 2 : 1);
-            
             enemy.takeDamage(damage, isCrit);
             this.vfx.triggerHitEffect(enemy.x, enemy.y, projectile.source.type);
             projectile.disableBody(true, true);
@@ -103,17 +107,19 @@ class MainScene extends Phaser.Scene {
     }
 
     spawnWave() {
+        if (this.waveSpawnedCount >= this.totalWaveEnemies) return;
+
+        const stage = this.registry.get('stage');
         const categories = ['basic', 'pattern', 'enhanced'];
-        const currentStage = this.registry.get('stage');
-        const cat = currentStage < 3 ? 'basic' : categories[Phaser.Math.Between(0, categories.length - 1)];
-        
+        const cat = stage < 3 ? 'basic' : categories[Phaser.Math.Between(0, categories.length - 1)];
         const types = window.enemyCategories[cat] || window.enemyCategories.basic;
         const data = types[Phaser.Math.Between(0, types.length - 1)];
 
         const enemy = this.enemies.get();
         if (enemy) {
-            const x = Phaser.Math.Between(120, 240);
+            const x = Phaser.Math.Between(130, 230);
             enemy.spawn(x, -50, data, 'ghost_basic');
+            this.waveSpawnedCount++;
             this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
             this.dataManager.recordEncounter(data.type);
         }
@@ -123,7 +129,7 @@ class MainScene extends Phaser.Scene {
         const summonBtn = document.getElementById('tower-card');
         if (summonBtn) {
             summonBtn.onclick = () => {
-                const cost = 30;
+                const cost = 30; // 기본 소환 비용
                 if (this.registry.get('money') >= cost) {
                     const slot = this.slots.getChildren().find(s => !s.isOccupied);
                     if (slot) {
@@ -161,16 +167,11 @@ class MainScene extends Phaser.Scene {
     }
 
     createSlots() {
-        // Left Sanctuary (0-120px) - 3 columns
-        for (let i = 0; i < 6; i++) {
-            for (let col = 0; col < 3; col++) {
-                this.addSlot(20 + col * 40, 80 + i * 50, 'left');
-            }
-        }
-        // Right Sanctuary (240-360px) - 3 columns
-        for (let i = 0; i < 6; i++) {
-            for (let col = 0; col < 3; col++) {
-                this.addSlot(260 + col * 40, 80 + i * 50, 'right');
+        // 전장 영역 120-120-120 분할에 맞춘 슬롯 배치 (상단 UI 피함)
+        for (let row = 0; row < 6; row++) {
+            for (let col = 0; col < 2; col++) {
+                this.addSlot(30 + col * 40, 100 + row * 55, 'left');
+                this.addSlot(290 + col * 40, 100 + row * 55, 'right');
             }
         }
     }
@@ -178,14 +179,13 @@ class MainScene extends Phaser.Scene {
     addSlot(x, y, side) {
         const slot = this.add.zone(x, y, 35, 35).setRectangleDropZone(35, 35);
         slot.isOccupied = false;
-        slot.side = side;
-        this.add.rectangle(x, y, 30, 30, 0x555555, 0.2).setStrokeStyle(1, 0xffd700, 0.3);
+        this.add.rectangle(x, y, 30, 30, 0x555555, 0.2).setStrokeStyle(1, 0xffd700, 0.2);
         this.slots.add(slot);
     }
 
     drawSacredPattern(slot) {
         const pattern = this.add.graphics({ x: slot.x, y: slot.y }).setDepth(1);
-        pattern.lineStyle(1, 0xffd700, 0.4);
+        pattern.lineStyle(1, 0xffd700, 0.3);
         pattern.strokeCircle(0, 0, 15);
         this.tweens.add({ targets: pattern, angle: 360, duration: 10000, repeat: -1 });
         return pattern;
@@ -202,29 +202,18 @@ class MainScene extends Phaser.Scene {
         return nearest;
     }
 
-    showDamageText(x, y, amount, isCrit) {
-        const txt = this.add.text(x, y, amount === "MISS" ? "MISS" : Math.floor(amount), {
-            fontSize: isCrit ? '24px' : '16px',
-            color: isCrit ? '#ff4444' : '#ffffff',
-            fontStyle: 'bold', stroke: '#000', strokeThickness: 2
-        }).setOrigin(0.5).setDepth(100);
-        this.tweens.add({ targets: txt, y: y - 50, alpha: 0, duration: 800, onComplete: () => txt.destroy() });
-    }
-
-    onPortalHit() {
-        this.vfx.shake('heavy');
-        this.cameras.main.flash(200, 150, 0, 0);
-    }
-
-    leaveDecayTrail(x, y) {
-        const stain = this.add.circle(x, y, 3, 0x2e0854, 0.2).setDepth(1);
-        this.tweens.add({ targets: stain, scale: 2, alpha: 0, duration: 1500, onComplete: () => stain.destroy() });
-    }
-
     update(time, delta) {
+        // 1. 포탈 에너지 체크 (게임 오버)
         if (this.registry.get('portalEnergy') >= this.registry.get('maxPortalEnergy')) {
             this.scene.pause();
             document.getElementById('game-over-overlay').style.display = 'flex';
+        }
+
+        // 2. 스테이지 진행 체크
+        if (this.waveSpawnedCount >= this.totalWaveEnemies && this.registry.get('enemiesLeft') === 0) {
+            const nextStage = this.registry.get('stage') + 1;
+            this.registry.set('stage', nextStage);
+            this.initWaveState(); // 다음 웨이브 준비
         }
     }
 }
@@ -232,43 +221,28 @@ class MainScene extends Phaser.Scene {
 function handleResize() {
     const container = document.getElementById('game-container');
     if (!container) return;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const scale = Math.min(w / 360, h / 640);
+    const scale = Math.min(window.innerWidth / 360, window.innerHeight / 640);
     container.style.transform = `scale(${scale})`;
-    container.style.left = `${(w - 360 * scale) / 2}px`;
-    container.style.top = `${(h - 640 * scale) / 2}px`;
+    container.style.left = `${(window.innerWidth - 360 * scale) / 2}px`;
+    container.style.top = `${(window.innerHeight - 640 * scale) / 2}px`;
     container.style.position = 'absolute';
 }
 
 const config = {
-    type: Phaser.AUTO,
-    width: 360,
-    height: 640,
-    parent: 'game-container',
-    pixelArt: true,
+    type: Phaser.AUTO, width: 360, height: 640, parent: 'game-container', pixelArt: true,
     physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
     scene: [PreloadScene, MainScene]
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    const startBtn = document.getElementById('start-game-btn');
-    const startScreen = document.getElementById('start-screen');
-    
-    // 즉시 레이아웃 크기 조정 실행
     handleResize();
     window.addEventListener('resize', handleResize);
-
+    const startBtn = document.getElementById('start-game-btn');
     if (startBtn) {
         startBtn.onclick = () => {
-            // 버튼 클릭 시 전환 애니메이션 시작
-            startScreen.classList.add('shrink-to-info');
-            
-            // 애니메이션 완료 후 게임 인스턴스 생성
+            document.getElementById('start-screen').classList.add('shrink-to-info');
             setTimeout(() => {
-                startScreen.style.display = 'none';
-                
-                // Phaser 게임 시작
+                document.getElementById('start-screen').style.display = 'none';
                 new Phaser.Game(config);
             }, 800);
         };
