@@ -80,18 +80,28 @@
             </div>
         </div>
 
-        <!-- Legacy Start Screen Integration -->
-        <div id="start-screen" class="overlay">
+        <!-- Start Screen -->
+        <div id="start-screen">
             <div id="start-content">
                 <h1 class="start-title">Gate of Hell</h1>
                 <button id="start-game-btn">CAST OUT SPECTERS</button>
             </div>
         </div>
+
+        <!-- Game Over Overlay -->
+        <div id="game-over-overlay" style="display: none;">
+            <div id="game-over-content">
+                <h1>YOU HAVE BEEN CONSUMED</h1>
+                <button onclick="location.reload()">TRY AGAIN</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Data & System Scripts -->
+    <!-- Data Configuration -->
     <script src="allies_data.js"></script>
     <script src="enemies.js"></script>
+    
+    <!-- Phaser Main System -->
     <script type="module" src="main.js"></script>
 </body>
 </html>

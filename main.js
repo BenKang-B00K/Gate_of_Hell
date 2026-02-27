@@ -3,8 +3,6 @@ import { DataManager } from './data_manager.js';
 import { VFXManager } from './VFXManager.js';
 
 class PreloadScene extends Phaser.Scene {
-// ... (PreloadScene content remains same)
-// ... (PreloadScene content remains same)
     constructor() { super('PreloadScene'); }
 
     preload() {
@@ -18,20 +16,27 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('unit_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
         this.load.image('enemy_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
 
-        this.load.spritesheet('apprentice', 'ImageSample/Tier1/견습퇴마사.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('necromancer', 'ImageSample/Tier2/강령술사.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('mirror', 'ImageSample/Tier2/거울 예언자.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('assassin', 'ImageSample/Tier2/그림자 암살자.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('talisman', 'ImageSample/Tier2/부적술사.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('ice', 'ImageSample/Tier2/빙결 도사.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('guardian_unit', 'ImageSample/Tier2/성소 수호자.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('archer', 'ImageSample/Tier2/신성한 궁수.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('tracker', 'ImageSample/Tier2/영혼 추적자.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('chainer', 'ImageSample/Tier2/영혼의 결박자.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('monk', 'ImageSample/Tier2/철퇴 승려.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('knight', 'ImageSample/Tier2/퇴마 기사.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('alchemist', 'ImageSample/Tier2/퇴마 연금술사.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('fire', 'ImageSample/Tier2/화염 마법사.png', { frameWidth: 30, frameHeight: 34 });
+        const unitKeys = ['apprentice', 'necromancer', 'mirror', 'assassin', 'talisman', 'ice', 'guardian_unit', 'archer', 'tracker', 'chainer', 'monk', 'knight', 'alchemist', 'fire'];
+        const tierPaths = {
+            'apprentice': 'ImageSample/Tier1/견습퇴마사.png',
+            'necromancer': 'ImageSample/Tier2/강령술사.png',
+            'mirror': 'ImageSample/Tier2/거울 예언자.png',
+            'assassin': 'ImageSample/Tier2/그림자 암살자.png',
+            'talisman': 'ImageSample/Tier2/부적술사.png',
+            'ice': 'ImageSample/Tier2/빙결 도사.png',
+            'guardian_unit': 'ImageSample/Tier2/성소 수호자.png',
+            'archer': 'ImageSample/Tier2/신성한 궁수.png',
+            'tracker': 'ImageSample/Tier2/영혼 추적자.png',
+            'chainer': 'ImageSample/Tier2/영혼의 결박자.png',
+            'monk': 'ImageSample/Tier2/철퇴 승려.png',
+            'knight': 'ImageSample/Tier2/퇴마 기사.png',
+            'alchemist': 'ImageSample/Tier2/퇴마 연금술사.png',
+            'fire': 'ImageSample/Tier2/화염 마법사.png'
+        };
+
+        Object.entries(tierPaths).forEach(([key, path]) => {
+            this.load.spritesheet(key, path, { frameWidth: 30, frameHeight: 34 });
+        });
 
         this.load.spritesheet('ghost_basic', 'ImageSample/Tier1/견습퇴마사.png', { frameWidth: 30, frameHeight: 34 });
     }
@@ -58,223 +63,90 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. 데이터 매니저 및 VFX 매니저 초기화
+        // 1. 시스템 매니저 초기화
         this.dataManager = new DataManager(this);
         this.vfx = new VFXManager(this);
 
-        // 2. 경제 및 상태 시스템 초기화
-        this.initEconomy();
-
-        // 3. 물리 그룹 및 풀링 초기화
+        // 2. 물리 그룹 및 오브젝트 풀링
         this.allies = this.add.group({ runChildUpdate: true });
         this.enemies = this.physics.add.group({ classType: Specter, runChildUpdate: true });
         this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
         
-        // 4. 필드 레이아웃 (슬롯)
+        // 3. 레이아웃
         this.slots = this.add.group();
         this.createSlots();
 
-        // 5. 상호작용 및 물리 설정
+        // 4. 전투 및 상호작용
+        this.setupCombat();
         this.setupInteractions();
-        this.physics.add.overlap(this.projectiles, this.enemies, this.handleCombat, null, this);
 
-        // 6. 스폰 루프
-        this.time.addEvent({ delay: 2000, callback: this.spawnWave, callbackScope: this, loop: true });
-    }
-
-    initEconomy() {
-        // DataManager가 로드하지 않는 세션 전용 변수 설정
-        if (!this.registry.has('portalEnergy')) this.registry.set('portalEnergy', 0);
-        this.registry.set('maxPortalEnergy', 1500);
-        this.registry.set('enemiesLeft', 0);
-        this.registry.set('critChance', 0.1);
-        this.registry.set('isTimeFrozen', false);
-        this.registry.set('globalSpeedMult', 1.0);
-
-        // Registry -> DOM UI 싱크 리스너 설정
-        this.setupUIListeners();
-        
-        // 초기 UI 강제 업데이트
-        this.updateAllUI();
-    }
-
-    setupUIListeners() {
-        this.registry.events.on('changedata-money', (p, v) => {
-            document.getElementById('se-display-text').innerText = Math.floor(v);
-            document.getElementById('se-gauge-fill').style.width = `${Math.min(v/10, 100)}%`;
+        // 5. 스폰 타이머
+        this.time.addEvent({
+            delay: 2000,
+            callback: this.spawnWave,
+            callbackScope: this,
+            loop: true
         });
-        this.registry.events.on('changedata-portalEnergy', (p, v) => {
-            const max = this.registry.get('maxPortalEnergy');
-            document.getElementById('portal-energy-label').innerText = `${Math.floor(v)} / ${max}`;
-            document.getElementById('portal-gauge-fill').style.width = `${(v/max)*100}%`;
-            if (v >= max) this.gameOver();
-        });
-        this.registry.events.on('changedata-stage', (p, v) => document.getElementById('stage-display').innerText = v);
-        this.registry.events.on('changedata-enemiesLeft', (p, v) => document.getElementById('enemies-left').innerText = v);
     }
 
-    updateAllUI() {
-        const money = this.registry.get('money');
-        const pe = this.registry.get('portalEnergy');
-        const stage = this.registry.get('stage');
-        const el = this.registry.get('enemiesLeft');
-
-        document.getElementById('se-display-text').innerText = Math.floor(money);
-        document.getElementById('stage-display').innerText = stage;
-        document.getElementById('enemies-left').innerText = el;
-        
-        const max = this.registry.get('maxPortalEnergy');
-        document.getElementById('portal-energy-label').innerText = `${Math.floor(pe)} / ${max}`;
-    }
-
-    handleCombat(projectile, enemy) {
-        if (this.registry.get('isTimeFrozen')) return;
-        const isCrit = Math.random() < this.registry.get('critChance');
-        const damage = projectile.source.damage * (isCrit ? 2 : 1);
-        
-        enemy.takeDamage(damage, isCrit);
-        
-        // VFX 트리거
-        this.vfx.triggerHitEffect(enemy.x, enemy.y, projectile.source.type);
-        if (isCrit) this.vfx.shake('medium');
-        else this.vfx.shake('light');
-
-        projectile.disableBody(true, true);
-    }
-
-    onPortalHit() {
-        this.vfx.shake('heavy');
-        this.cameras.main.flash(200, 150, 0, 0); // 화면 붉은색 점멸
-    }
-
-    tryCorrupt(guardian) {
-        if (!guardian) return;
-        
-        const slot = guardian.currentSlot;
-        const tier = guardian.unitData.tier || 1;
-        const refund = Math.floor((guardian.spentSE || 30) * 0.5);
-
-        // 1. 자원 환급 및 슬롯 해제
-        const currentMoney = this.registry.get('money');
-        this.registry.set('money', currentMoney + refund);
-        if (guardian.altarEffect) guardian.altarEffect.destroy();
-        slot.isOccupied = false;
-
-        // 2. 타락 연출: 어둠의 파티클 및 부유 텍스트
-        this.vfx.triggerCorruption(guardian.x, guardian.y);
-        this.showFloatingText(guardian.x, guardian.y, '성스러운 서약이 깨졌습니다', '#ff4444');
-
-        // 3. 티어별 타락 유령 매핑
-        const fallenMap = {
-            1: ['traitorous_neophyte', 'broken_zealot'],
-            2: ['abyssal_eulogist', 'shadow_apostate'],
-            3: ['soul_starved_priest', 'fallen_paladin'],
-            4: ['avatar_void', 'harbinger_doom']
-        };
-
-        const tierList = fallenMap[tier] || fallenMap[1];
-        const selectedType = tierList[Math.random() < 0.5 ? 0 : 1];
-        const enemyData = window.enemyCategories.fallen.find(e => e.type === selectedType);
-
-        // 4. 적 유령으로 변이 (도로 입구에서 소환)
-        const fallen = this.enemies.get();
-        if (fallen) {
-            const spawnX = Phaser.Math.Between(120, 240);
-            const stageMult = (typeof window.getStageMultipliers === 'function') ? window.getStageMultipliers().hpStageMult : 1;
+    setupCombat() {
+        this.physics.add.overlap(this.projectiles, this.enemies, (projectile, enemy) => {
+            if (this.registry.get('isTimeFrozen') || !enemy.active) return;
             
-            fallen.spawnFallenAtStart(spawnX, -50, guardian.unitData, enemyData, stageMult);
+            const isCrit = Math.random() < this.registry.get('critChance');
+            const damage = projectile.source.damage * (isCrit ? 2 : 1);
+            
+            enemy.takeDamage(damage, isCrit);
+            this.vfx.triggerHitEffect(enemy.x, enemy.y, projectile.source.type);
+            projectile.disableBody(true, true);
+        }, null, this);
+    }
+
+    spawnWave() {
+        const categories = ['basic', 'pattern', 'enhanced'];
+        const currentStage = this.registry.get('stage');
+        const cat = currentStage < 3 ? 'basic' : categories[Phaser.Math.Between(0, categories.length - 1)];
+        
+        const types = window.enemyCategories[cat] || window.enemyCategories.basic;
+        const data = types[Phaser.Math.Between(0, types.length - 1)];
+
+        const enemy = this.enemies.get();
+        if (enemy) {
+            const x = Phaser.Math.Between(120, 240);
+            enemy.spawn(x, -50, data, 'ghost_basic');
             this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
+            this.dataManager.recordEncounter(data.type);
         }
-
-        // 5. 제거
-        guardian.destroy();
-    }
-
-    showFloatingText(x, y, message, color) {
-        const txt = this.add.text(x, y, message, {
-            fontSize: '20px',
-            color: color,
-            fontStyle: 'bold',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setOrigin(0.5).setDepth(100);
-
-        this.tweens.add({
-            targets: txt,
-            y: y - 100,
-            alpha: 0,
-            duration: 2000,
-            ease: 'Cubic.easeOut',
-            onComplete: () => txt.destroy()
-        });
-    }
-
-    createBlackHoleEffect(x, y) {
-        const hole = this.add.circle(x, y, 10, 0x000000).setDepth(20);
-        const aura = this.add.circle(x, y, 100, 0x9400d3, 0.2).setDepth(19);
-        this.tweens.add({
-            targets: hole, scale: 5, alpha: 0.8, duration: 500, yoyo: true, hold: 1000,
-            onComplete: () => { hole.destroy(); aura.destroy(); }
-        });
-        this.tweens.add({ targets: aura, scale: 1.5, alpha: 0, duration: 1500 });
-    }
-
-    applyTimeFreezeVisuals(isFrozen) {
-        if (isFrozen) {
-            this.freezeOverlay = this.add.rectangle(180, 320, 360, 640, 0x00aaff, 0.2)
-                .setDepth(100).setOrigin(0.5);
-        } else {
-            if (this.freezeOverlay) this.freezeOverlay.destroy();
-        }
-    }
-
-    createReapEffect(x, y) {
-        const scythe = this.add.text(x, y, '☠️', { fontSize: '64px' }).setOrigin(0.5).setDepth(30);
-        this.tweens.add({
-            targets: scythe, angle: 360, scale: 2, alpha: 0, duration: 500,
-            onComplete: () => scythe.destroy()
-        });
-    }
-
-    showDamageText(x, y, amount, isCrit) {
-        const txt = this.add.text(x, y, Math.floor(amount), {
-            fontSize: isCrit ? '24px' : '18px',
-            color: isCrit ? '#ff4444' : '#ffffff',
-            fontStyle: 'bold'
-        }).setOrigin(0.5);
-        this.tweens.add({ targets: txt, y: y - 40, alpha: 0, duration: 800, onComplete: () => txt.destroy() });
     }
 
     setupInteractions() {
         const summonBtn = document.getElementById('tower-card');
-        if (summonBtn) summonBtn.onclick = () => this.trySummon();
+        if (summonBtn) {
+            summonBtn.onclick = () => {
+                const cost = 30;
+                if (this.registry.get('money') >= cost) {
+                    const slot = this.slots.getChildren().find(s => !s.isOccupied);
+                    if (slot) {
+                        this.registry.set('money', this.registry.get('money') - cost);
+                        this.spawnGuardian(slot);
+                    }
+                }
+            };
+        }
 
-        this.input.on('drag', (pointer, obj, dragX, dragY) => { obj.x = dragX; obj.y = dragY; });
-        this.input.on('drop', (pointer, obj, zone) => {
+        this.input.on('drag', (ptr, obj, dragX, dragY) => { obj.x = dragX; obj.y = dragY; });
+        this.input.on('drop', (ptr, obj, zone) => {
             if (zone.isOccupied) {
                 const other = this.allies.getChildren().find(a => a.currentSlot === zone);
                 if (other) {
                     other.x = obj.currentSlot.x; other.y = obj.currentSlot.y;
                     other.currentSlot = obj.currentSlot;
                 }
-            } else {
-                obj.currentSlot.isOccupied = false;
-            }
+            } else { obj.currentSlot.isOccupied = false; }
             obj.x = zone.x; obj.y = zone.y;
             obj.currentSlot = zone;
             zone.isOccupied = true;
         });
-    }
-
-    trySummon() {
-        const cost = 30;
-        if (this.registry.get('money') >= cost) {
-            const slot = this.slots.getChildren().find(s => !s.isOccupied);
-            if (slot) {
-                this.registry.set('money', this.registry.get('money') - cost);
-                this.spawnGuardian(slot);
-            }
-        }
     }
 
     spawnGuardian(slot) {
@@ -284,50 +156,39 @@ class MainScene extends Phaser.Scene {
         slot.isOccupied = true;
         this.input.setDraggable(unit);
         this.allies.add(unit);
-
-        // 바닥 성소 마법진 생성
         unit.altarEffect = this.drawSacredPattern(slot);
-
-        // 전역 잠금 해제 데이터 기록
         this.dataManager.unlockUnit(unitData.type);
     }
 
     createSlots() {
-        // New Layout: Left(120px) | Road(120px) | Right(120px)
-        // Slots are 3 columns per side area
-        for (let row = 0; i < 6; i++) {
+        // Left Sanctuary (0-120px) - 3 columns
+        for (let i = 0; i < 6; i++) {
             for (let col = 0; col < 3; col++) {
-                // Left side: 0 to 120
                 this.addSlot(20 + col * 40, 80 + i * 50, 'left');
-                // Right side: 240 to 360
+            }
+        }
+        // Right Sanctuary (240-360px) - 3 columns
+        for (let i = 0; i < 6; i++) {
+            for (let col = 0; col < 3; col++) {
                 this.addSlot(260 + col * 40, 80 + i * 50, 'right');
             }
         }
     }
 
     addSlot(x, y, side) {
-        const slot = this.add.zone(x, y, 50, 50).setRectangleDropZone(50, 50);
+        const slot = this.add.zone(x, y, 35, 35).setRectangleDropZone(35, 35);
         slot.isOccupied = false;
-        this.add.rectangle(x, y, 40, 40, 0x555555, 0.3).setStrokeStyle(2, 0x888888);
+        slot.side = side;
+        this.add.rectangle(x, y, 30, 30, 0x555555, 0.2).setStrokeStyle(1, 0xffd700, 0.3);
         this.slots.add(slot);
     }
 
-    spawnWave() {
-        const types = window.enemyCategories.basic;
-        const data = types[Phaser.Math.Between(0, types.length - 1)];
-        this.spawnEnemy(data);
-    }
-
-    spawnEnemy(data) {
-        const x = Phaser.Math.Between(100, 260);
-        const enemy = this.enemies.get();
-        if (enemy) {
-            enemy.spawn(x, -50, data, 'ghost_basic');
-            this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
-            
-            // 조우한 적 기록
-            this.dataManager.recordEncounter(data.type);
-        }
+    drawSacredPattern(slot) {
+        const pattern = this.add.graphics({ x: slot.x, y: slot.y }).setDepth(1);
+        pattern.lineStyle(1, 0xffd700, 0.4);
+        pattern.strokeCircle(0, 0, 15);
+        this.tweens.add({ targets: pattern, angle: 360, duration: 10000, repeat: -1 });
+        return pattern;
     }
 
     getNearestEnemy(source) {
@@ -341,10 +202,43 @@ class MainScene extends Phaser.Scene {
         return nearest;
     }
 
-    gameOver() {
-        document.getElementById('game-over-overlay').style.display = 'flex';
-        this.scene.pause();
+    showDamageText(x, y, amount, isCrit) {
+        const txt = this.add.text(x, y, amount === "MISS" ? "MISS" : Math.floor(amount), {
+            fontSize: isCrit ? '24px' : '16px',
+            color: isCrit ? '#ff4444' : '#ffffff',
+            fontStyle: 'bold', stroke: '#000', strokeThickness: 2
+        }).setOrigin(0.5).setDepth(100);
+        this.tweens.add({ targets: txt, y: y - 50, alpha: 0, duration: 800, onComplete: () => txt.destroy() });
     }
+
+    onPortalHit() {
+        this.vfx.shake('heavy');
+        this.cameras.main.flash(200, 150, 0, 0);
+    }
+
+    leaveDecayTrail(x, y) {
+        const stain = this.add.circle(x, y, 3, 0x2e0854, 0.2).setDepth(1);
+        this.tweens.add({ targets: stain, scale: 2, alpha: 0, duration: 1500, onComplete: () => stain.destroy() });
+    }
+
+    update(time, delta) {
+        if (this.registry.get('portalEnergy') >= this.registry.get('maxPortalEnergy')) {
+            this.scene.pause();
+            document.getElementById('game-over-overlay').style.display = 'flex';
+        }
+    }
+}
+
+function handleResize() {
+    const container = document.getElementById('game-container');
+    if (!container) return;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const scale = Math.min(w / 360, h / 640);
+    container.style.transform = `scale(${scale})`;
+    container.style.left = `${(w - 360 * scale) / 2}px`;
+    container.style.top = `${(h - 640 * scale) / 2}px`;
+    container.style.position = 'absolute';
 }
 
 const config = {
@@ -357,26 +251,10 @@ const config = {
     scene: [PreloadScene, MainScene]
 };
 
-function handleResize() {
-    const container = document.getElementById('game-container');
-    if (!container) return;
-    
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const scale = Math.min(w / 360, h / 640);
-    
-    container.style.transform = `scale(${scale})`;
-    container.style.left = `${(w - 360 * scale) / 2}px`;
-    container.style.top = `${(h - 640 * scale) / 2}px`;
-    container.style.position = 'absolute';
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-game-btn');
-    
     handleResize();
     window.addEventListener('resize', handleResize);
-
     if (startBtn) {
         startBtn.onclick = () => {
             document.getElementById('start-screen').style.display = 'none';

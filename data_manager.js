@@ -1,80 +1,100 @@
 /**
- * data_manager.js - Phaser Registry 기반 자동 저장 시스템
+ * data_manager.js - 전역 상태 및 UI 동기화 매니저
  */
 export class DataManager {
     constructor(scene) {
         this.scene = scene;
         this.registry = scene.registry;
         this.SAVE_KEY = 'gateOfHell_saveData';
-
-        // 저장할 데이터 키 목록
-        this.trackedKeys = ['money', 'stage', 'unlockedUnits', 'encounteredEnemies'];
-        
         this.init();
     }
 
     init() {
-        // 1. 초기 데이터 로드 및 Registry 세팅
-        this.load();
-
-        // 2. Registry 변경 감지 리스너 등록 (자동 저장)
-        this.setupAutoSave();
-    }
-
-    /**
-     * LocalStorage에서 데이터를 불러와 Registry에 주입
-     */
-    load() {
-        const savedData = localStorage.getItem(this.SAVE_KEY);
-        let data = {
-            money: 150,
-            stage: 1,
-            unlockedUnits: ['apprentice'],
-            encounteredEnemies: []
-        };
-
-        if (savedData) {
+        // 1. 초기값 설정 (저장된 데이터가 없으면 기본값)
+        const savedRaw = localStorage.getItem(this.SAVE_KEY);
+        let saved = {};
+        if (savedRaw) {
             try {
-                const parsed = JSON.parse(savedData);
-                data = { ...data, ...parsed };
-                console.log('💾 Game Data Loaded:', data);
+                saved = JSON.parse(savedRaw);
             } catch (e) {
-                console.error('Failed to parse save data', e);
+                console.error("Failed to parse save data", e);
             }
         }
 
-        // Registry에 값 세팅 (MainScene에서 이 값을 참조함)
-        Object.entries(data).forEach(([key, value]) => {
-            this.registry.set(key, value);
+        const defaults = {
+            money: 150,
+            stage: 1,
+            portalEnergy: 0,
+            maxPortalEnergy: 1500,
+            enemiesLeft: 0,
+            unlockedUnits: ['apprentice'],
+            encounteredEnemies: [],
+            globalSpeedMult: 1.0,
+            isTimeFrozen: false,
+            critChance: 0.1
+        };
+
+        Object.entries(defaults).forEach(([key, val]) => {
+            const finalVal = saved[key] !== undefined ? saved[key] : val;
+            this.registry.set(key, finalVal);
         });
+
+        // 2. 통합 리스너: Registry 값이 변하면 UI와 LocalStorage를 동시 업데이트
+        this.setupListeners();
+        
+        // 3. 초기 UI 반영을 위해 강제 이벤트 발생
+        this.updateAllUI();
     }
 
-    /**
-     * Registry의 값이 변경될 때마다 save() 호출
-     */
-    setupAutoSave() {
-        this.trackedKeys.forEach(key => {
-            this.registry.events.on(`changedata-${key}`, () => {
+    setupListeners() {
+        this.registry.events.on('changedata', (parent, key, value) => {
+            this.updateUI(key, value);
+
+            // 자동 저장 (일부 세션 변수 제외)
+            const preventSave = ['enemiesLeft', 'isTimeFrozen', 'portalEnergy', 'globalSpeedMult'];
+            if (!preventSave.includes(key)) {
                 this.save();
-            });
+            }
         });
     }
 
-    /**
-     * 현재 Registry 상태를 LocalStorage에 영구 저장
-     */
+    updateUI(key, value) {
+        if (key === 'money') {
+            const el = document.getElementById('se-display-text');
+            const fill = document.getElementById('se-gauge-fill');
+            if (el) el.innerText = Math.floor(value);
+            if (fill) fill.style.width = `${Math.min(value / 10, 100)}%`;
+        } else if (key === 'portalEnergy') {
+            const max = this.registry.get('maxPortalEnergy');
+            const el = document.getElementById('portal-energy-label');
+            const fill = document.getElementById('portal-gauge-fill');
+            if (el) el.innerText = `${Math.floor(value)} / ${max}`;
+            if (fill) fill.style.width = `${(value / max) * 100}%`;
+        } else if (key === 'stage') {
+            const el = document.getElementById('stage-display');
+            if (el) el.innerText = value;
+        } else if (key === 'enemiesLeft') {
+            const el = document.getElementById('enemies-left');
+            if (el) el.innerText = value;
+        }
+    }
+
+    updateAllUI() {
+        ['money', 'portalEnergy', 'stage', 'enemiesLeft'].forEach(key => {
+            this.updateUI(key, this.registry.get(key));
+        });
+    }
+
     save() {
-        const saveData = {};
-        this.trackedKeys.forEach(key => {
-            saveData[key] = this.registry.get(key);
-        });
-
-        localStorage.setItem(this.SAVE_KEY, JSON.stringify(saveData));
+        const dataToSave = {
+            money: this.registry.get('money'),
+            stage: this.registry.get('stage'),
+            unlockedUnits: this.registry.get('unlockedUnits'),
+            encounteredEnemies: this.registry.get('encounteredEnemies')
+        };
+        localStorage.setItem(this.SAVE_KEY, JSON.stringify(dataToSave));
     }
 
-    /**
-     * 새로운 유닛 잠금 해제 시 호출 (Helper Method)
-     */
     unlockUnit(unitType) {
         const unlocked = this.registry.get('unlockedUnits') || [];
         if (!unlocked.includes(unitType)) {
@@ -83,9 +103,6 @@ export class DataManager {
         }
     }
 
-    /**
-     * 조우한 적 기록
-     */
     recordEncounter(enemyType) {
         const encountered = this.registry.get('encounteredEnemies') || [];
         if (!encountered.includes(enemyType)) {

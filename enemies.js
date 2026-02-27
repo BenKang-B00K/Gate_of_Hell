@@ -2,100 +2,11 @@
 let gameContainer;
 let road;
 
-// Global state and variables
-const enemies = []; // Enemy list
-const towers = []; // Tower list
-const slots = []; // Slot elements storage
-const walls = []; // Necromancer wall list
-const groundEffects = []; // Ground effect list (AOE)
-const friendlySkeletons = []; // Ally skeleton soldier list
-const friendlyGhosts = []; // Forsaken King ally ghosts
+// Global state and variables managed by Phaser Registry
+// Legacy variables removed
 
-let stage = 1;
-let money = 150;
-let damageMultiplier = 1.0;
-let critChance = 0;
-let critMultiplier = 1.5;
-let totalStageEnemies = 0;
-let currentStageSpawned = 0;
-let lastSpawnTime = 0;
-let isStageStarting = false;
-let isBossStage = false;
-let bossSpawned = false;
-let bossInstance = null;
-let globalSpeedFactor = 1.0;
-let treasureChance = 0.0033;
-
-let isTimeFrozen = false;
-let timeFreezeEndTime = 0;
-let sealedGhostCount = 0;
-let portalEnergy = 0;
-const maxPortalEnergy = 1500;
-let draggedUnit = null; // Currently dragged unit
-window.encounteredEnemies = new Set();
-
-// --- Exorcism Records Data ---
-window.killCounts = window.killCounts || {}; // Track kills by type
-
-function recordKill(type) {
-    window.killCounts[type] = (window.killCounts[type] || 0) + 1;
-    if (typeof saveGameData === 'function') saveGameData();
-}
-
-function getBestiaryBonus(type) {
-    const kills = window.killCounts[type] || 0;
-    const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'];
-    const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning'];
-    
-    if (basicSpecters.includes(type)) {
-        return 1 + (Math.floor(kills / 20) * 0.05); // +5% per 20 kills
-    } else if (specializedWraiths.includes(type)) {
-        return 1 + (Math.floor(kills / 10) * 0.08); // +8% per 10 kills
-    }
-
-    return 1;
-}
-
-// Calculate gradual stage-based multipliers using a Log-Linear Hybrid Model
-function getStageMultipliers(isBoss = false) {
-    const stage = window.stage || 1;
-    
-    let hpMult = 1.0;
-    let speedMult = 1.0;
-
-    // 1. HP Growth Curve Logic (Optimized for TTK 3-5s)
-    if (stage <= 50) {
-        // [Stable Phase] Linear + Logarithmic growth
-        hpMult = 1 + (stage * 0.25) + Math.log2(stage);
-    } else {
-        // [Nightmare Phase] Exponential growth for veteran challenge
-        const nightmareBase = 1 + (50 * 0.25) + Math.log2(50); 
-        const nFactor = stage - 50;
-        hpMult = nightmareBase * (1 + (nFactor * 0.08)); 
-    }
-
-    // 2. Speed Curve Logic (Using atan to cap maximum speed)
-    speedMult = 1 + (Math.atan(stage / 20) * 0.5);
-
-    // 3. Boss Modifiers (10x HP, 30% slower speed)
-    if (isBoss) {
-        hpMult *= 10.0;
-        speedMult *= 0.7;
-    }
-
-    // 4. Relic Bonus Integration
-    const relicHPMod = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_hp') : 0;
-    const relicSpdMod = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_speed') : 0;
-
-    return { 
-        hpStageMult: hpMult * (1 + relicHPMod), 
-        speedStageMult: speedMult * (1 + relicSpdMod),
-        bossAbilityCooldown: Math.max(2000, 5000 - (stage * 100))
-    };
-}
-
-// Enemy data (Categorized)
-const enemyCategories = {
+// Enemy data (Categorized) - Exposed to window for Phaser access
+window.enemyCategories = {
     basic: [
         { type: 'normal', icon: '👻', speed: 4.5, hp: 110, defense: 0, probability: 0.35, reward: 4, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
         { type: 'mist', icon: '🌫️', speed: 3.9, hp: 140, defense: 0, probability: 0.15, reward: 4, desc: "A spectral fog that drifts slowly. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Condensation of thousands of tiny, forgotten sorrows." },
