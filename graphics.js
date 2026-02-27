@@ -5,8 +5,9 @@ canvas.id = 'game-canvas';
 const ctx = canvas.getContext('2d');
 
 // Increased Logical Resolution for much sharper detail
-const LOGICAL_WIDTH = 1080;
-const LOGICAL_HEIGHT = 1920;
+// Design is based on 360x640 logical pixels as per mandate.
+const LOGICAL_WIDTH = 360; 
+const LOGICAL_HEIGHT = 640; 
 
 let lavaPhase = 0;
 
@@ -23,11 +24,11 @@ function resizeCanvas() {
     if (!container) return;
     const rect = container.getBoundingClientRect();
     
-    // Physical pixels match internal logical pixels for 1:1 crispness
+    // Internal coordinate system is 360x640
     canvas.width = LOGICAL_WIDTH;
     canvas.height = LOGICAL_HEIGHT;
     
-    // Scale CSS display size to fit container while maintaining 1080x1920 ratio
+    // Scale CSS display size to fit container (e.g. 1080x1920 physical)
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     
@@ -43,10 +44,6 @@ function disableSmoothing() {
 function renderGraphics() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // No more scale() needed if logical == physical, 
-    // or we can keep it for flexibility if container size varies.
-    // Since we set canvas.width = 1080, we are now drawing in 1080x1920 space.
-    
     lavaPhase += 0.02;
     
     drawLavaRoad();
@@ -57,8 +54,8 @@ function renderGraphics() {
 
 function drawLavaRoad() {
     const time = lavaPhase;
-    // Road 340px centered in 1080px -> X: 370 to 710
-    const roadWidth = 340;
+    // Road width proportional to 360 (approx 1/3 of screen)
+    const roadWidth = 114; 
     const roadX = (LOGICAL_WIDTH - roadWidth) / 2;
     
     const haze = (Math.sin(time) + 1) / 2;
@@ -95,7 +92,7 @@ function drawSlots() {
     const container = document.getElementById('game-container');
     const containerRect = container.getBoundingClientRect();
     
-    // Map browser DOM coords to 1080x1920 space
+    // Map browser DOM coords to logical space
     const scaleX = LOGICAL_WIDTH / containerRect.width;
     const scaleY = LOGICAL_HEIGHT / containerRect.height;
     
@@ -108,16 +105,16 @@ function drawSlots() {
         const sw = rect.width * scaleX;
         const sh = rect.height * scaleY;
         
-        const inset = 6; // Thicker lines for higher res
+        const inset = 2; 
         ctx.fillStyle = '#0a0a0a';
         ctx.fillRect(sx + inset, sy + inset, sw - inset * 2, sh - inset * 2);
         
         ctx.strokeStyle = `rgb(${Math.floor(180 + 75 * pulse)}, ${Math.floor(140 + 60 * pulse)}, 0)`;
-        ctx.lineWidth = 3; 
-        ctx.strokeRect(sx + inset + 3, sy + inset + 3, sw - inset * 2 - 6, sh - inset * 2 - 6);
+        ctx.lineWidth = 1; 
+        ctx.strokeRect(sx + inset + 1, sy + inset + 1, sw - inset * 2 - 2, sh - inset * 2 - 2);
         
         ctx.fillStyle = '#ffd700';
-        const cs = 6; 
+        const cs = 2; 
         ctx.fillRect(sx + inset, sy + inset, cs, cs);
         ctx.fillRect(sx + sw - inset - cs, sy + inset, cs, cs);
         ctx.fillRect(sx + inset, sy + sh - inset - cs, cs, cs);
@@ -125,7 +122,7 @@ function drawSlots() {
 
         if (slot.classList.contains('occupied')) {
             ctx.fillStyle = `rgba(255, 215, 0, ${0.1 + 0.1 * pulse})`;
-            ctx.fillRect(sx + inset + 6, sy + inset + 6, sw - inset * 2 - 12, sh - inset * 2 - 12);
+            ctx.fillRect(sx + inset + 2, sy + inset + 2, sw - inset * 2 - 4, sh - inset * 2 - 4);
         }
     });
 }
@@ -215,7 +212,7 @@ function drawApprentice(cx, cy, tower) {
     
     // Base Resolution: 30x34, Scale: 3x (90x102)
     // Fits into 119x135 slot area with breathing room
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -321,7 +318,7 @@ function drawIce(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -423,7 +420,7 @@ function drawFire(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -527,7 +524,7 @@ function drawTracker(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -632,7 +629,7 @@ function drawNecromancer(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -731,7 +728,7 @@ function drawChainer(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -834,7 +831,7 @@ function drawMonk(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -951,7 +948,7 @@ function drawTalisman(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1049,7 +1046,7 @@ function drawArcher(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 350; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1160,7 +1157,7 @@ function drawAssassin(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 150; // Very fast attack
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1261,7 +1258,7 @@ function drawKnight(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 250; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1365,7 +1362,7 @@ function drawGuardian(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1460,7 +1457,7 @@ function drawAlchemist(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 350; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1549,7 +1546,7 @@ function drawMirror(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1668,7 +1665,7 @@ function drawPaladin(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1761,7 +1758,7 @@ function drawCrusader(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 250; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1852,7 +1849,7 @@ function drawMidas(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -1946,7 +1943,7 @@ function drawIllusion(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 350; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2042,7 +2039,7 @@ function drawPhilosopher(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 350; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2142,7 +2139,7 @@ function drawReflection(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2236,7 +2233,7 @@ function drawFlameMaster(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2331,7 +2328,7 @@ function drawVoidSniper(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2430,7 +2427,7 @@ function drawVajrapani(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2534,7 +2531,7 @@ function drawAbsoluteZero(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2632,7 +2629,7 @@ function drawHellfireAlchemist(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 350; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2725,7 +2722,7 @@ function drawPhoenixSummoner(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 500; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2827,7 +2824,7 @@ function drawExecutor(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -2933,7 +2930,7 @@ function drawBinder(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 350; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3031,7 +3028,7 @@ function drawGrandSealer(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3132,7 +3129,7 @@ function drawSaint(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 500; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3220,7 +3217,7 @@ function drawThousandHand(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3315,7 +3312,7 @@ function drawPermafrost(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3406,7 +3403,7 @@ function drawAbyssalKiller(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3494,7 +3491,7 @@ function drawSpatialSlasher(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 200; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3567,7 +3564,7 @@ function drawSeer(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3650,7 +3647,7 @@ function drawCommander(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3732,7 +3729,7 @@ function drawWraithLord(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3818,7 +3815,7 @@ function drawCursedShaman(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3905,7 +3902,7 @@ function drawRampart(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -3981,7 +3978,7 @@ function drawJudgment(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4060,7 +4057,7 @@ function drawTransmuter(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 300; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4156,7 +4153,7 @@ function drawOracle(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4249,7 +4246,7 @@ function drawWarden(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 800; // Long cooldown, long animation
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4347,7 +4344,7 @@ function drawCursedTalisman(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 350; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4435,7 +4432,7 @@ function drawAsura(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 200; // Extremely fast
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4527,7 +4524,7 @@ function drawPiercingShadow(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 600; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4611,7 +4608,7 @@ function drawCocytus(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 1000; // Massive cooldown
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4701,7 +4698,7 @@ function drawPurgatory(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 500; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4789,7 +4786,7 @@ function drawReaper(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4864,7 +4861,7 @@ function drawDoomGuide(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -4950,7 +4947,7 @@ function drawForsakenKing(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 400; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -5032,7 +5029,7 @@ function drawVoidGatekeeper(cx, cy, tower) {
     const area = tower.slotElement.dataset.area; 
     const isLeft = area === 'left-slots'; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -5086,7 +5083,7 @@ function drawEternalWall(cx, cy, tower) {
     const area = tower.slotElement.dataset.area; 
     const isLeft = area === 'left-slots'; 
     
-    const S = 3.0; 
+    const S = 1.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
@@ -5159,77 +5156,87 @@ function drawUnitPreview(type, targetCtx, width, height) {
     // Switch to target canvas
     window.ctx = targetCtx;
     const cx = width / 2;
-    const cy = height / 2 + 10; // Slightly lower for better framing
+    const cy = height / 2 + 30; // Centered for 3x scale
     
     // Mock tower object for drawing
     const mockTower = {
         data: unitTypes.find(u => u.type === type),
         slotElement: { dataset: { area: 'left-slots' } },
-        lastShot: 0 // Not attacking in preview
+        lastShot: 0
     };
 
     targetCtx.clearRect(0, 0, width, height);
     
-    // Temporary global overrides for the drawing functions
     const tempLavaPhase = 0; 
     const realLavaPhase = window.lavaPhase;
     window.lavaPhase = tempLavaPhase;
 
+    // IMPORTANT: Temporarily set S to 3.0 for preview scaling
+    // Actually, the drawing functions use 'const S = 1.0'. 
+    // Since we want to fill a 120x120 canvas with a 30x34 unit, 
+    // we should use context scaling instead of modifying S.
+    targetCtx.save();
+    targetCtx.scale(3, 3);
+    // Adjust cx/cy for the scale
+    const scx = (width / 2) / 3;
+    const scy = (height / 2 + 30) / 3;
+
     switch(type) {
-        case 'apprentice': drawApprentice(cx, cy, mockTower); break;
-        case 'chainer': drawChainer(cx, cy, mockTower); break;
-        case 'monk': drawMonk(cx, cy, mockTower); break;
-        case 'talisman': drawTalisman(cx, cy, mockTower); break;
-        case 'archer': drawArcher(cx, cy, mockTower); break;
-        case 'assassin': drawAssassin(cx, cy, mockTower); break;
-        case 'ice': drawIce(cx, cy, mockTower); break;
-        case 'fire': drawFire(cx, cy, mockTower); break;
-        case 'tracker': drawTracker(cx, cy, mockTower); break;
-        case 'necromancer': drawNecromancer(cx, cy, mockTower); break;
-        case 'guardian': drawGuardian(cx, cy, mockTower); break;
-        case 'knight': drawKnight(cx, cy, tower = mockTower); break;
-        case 'alchemist': drawAlchemist(cx, cy, tower = mockTower); break;
-        case 'mirror': drawMirror(cx, cy, tower = mockTower); break;
-        case 'paladin': drawPaladin(cx, cy, tower = mockTower); break;
-        case 'crusader': drawCrusader(cx, cy, tower = mockTower); break;
-        case 'midas': drawMidas(cx, cy, tower = mockTower); break;
-        case 'illusion': drawIllusion(cx, cy, tower = mockTower); break;
-        case 'philosopher': drawPhilosopher(cx, cy, tower = mockTower); break;
-        case 'reflection': drawReflection(cx, cy, tower = mockTower); break;
-        case 'flamemaster': drawFlameMaster(cx, cy, tower = mockTower); break;
-        case 'voidsniper': drawVoidSniper(cx, cy, tower = mockTower); break;
-        case 'vajra': drawVajrapani(cx, cy, tower = mockTower); break;
-        case 'absolutezero': drawAbsoluteZero(cx, cy, tower = mockTower); break;
-        case 'hellfire': drawHellfireAlchemist(cx, cy, tower = mockTower); break;
-        case 'phoenix': drawPhoenixSummoner(cx, cy, tower = mockTower); break;
-        case 'executor': drawExecutor(cx, cy, tower = mockTower); break;
-        case 'binder': drawBinder(cx, cy, tower = mockTower); break;
-        case 'grandsealer': drawGrandSealer(cx, cy, tower = mockTower); break;
-        case 'saint': drawSaint(cx, cy, tower = mockTower); break;
-        case 'thousandhand': drawThousandHand(cx, cy, tower = mockTower); break;
-        case 'permafrost': drawPermafrost(cx, cy, tower = mockTower); break;
-        case 'abyssal': drawAbyssalKiller(cx, cy, tower = mockTower); break;
-        case 'spatial': drawSpatialSlasher(cx, cy, tower = mockTower); break;
-        case 'seer': drawSeer(cx, cy, tower = mockTower); break;
-        case 'commander': drawCommander(cx, cy, tower = mockTower); break;
-        case 'wraithlord': drawWraithLord(cx, cy, tower = mockTower); break;
-        case 'cursedshaman': drawCursedShaman(cx, cy, tower = mockTower); break;
-        case 'rampart': drawRampart(cx, cy, tower = mockTower); break;
-        case 'judgment': drawJudgment(cx, cy, tower = mockTower); break;
-        case 'transmuter': drawTransmuter(cx, cy, tower = mockTower); break;
-        case 'oracle': drawOracle(cx, cy, tower = mockTower); break;
-        case 'warden': drawWarden(cx, cy, tower = mockTower); break;
-        case 'cursed_talisman': drawCursedTalisman(cx, cy, tower = mockTower); break;
-        case 'asura': drawAsura(cx, cy, tower = mockTower); break;
-        case 'piercing_shadow': drawPiercingShadow(cx, cy, tower = mockTower); break;
-        case 'cocytus': drawCocytus(cx, cy, tower = mockTower); break;
-        case 'purgatory': drawPurgatory(cx, cy, tower = mockTower); break;
-        case 'reaper': drawReaper(cx, cy, tower = mockTower); break;
-        case 'doom_guide': drawDoomGuide(cx, cy, tower = mockTower); break;
-        case 'forsaken_king': drawForsakenKing(cx, cy, tower = mockTower); break;
-        case 'void_gatekeeper': drawVoidGatekeeper(cx, cy, tower = mockTower); break;
-        case 'eternal_wall': drawEternalWall(cx, cy, tower = mockTower); break;
+        case 'apprentice': drawApprentice(scx, scy, mockTower); break;
+        case 'chainer': drawChainer(scx, scy, mockTower); break;
+        case 'monk': drawMonk(scx, scy, mockTower); break;
+        case 'talisman': drawTalisman(scx, scy, mockTower); break;
+        case 'archer': drawArcher(scx, scy, mockTower); break;
+        case 'assassin': drawAssassin(scx, scy, mockTower); break;
+        case 'ice': drawIce(scx, scy, mockTower); break;
+        case 'fire': drawFire(scx, scy, mockTower); break;
+        case 'tracker': drawTracker(scx, scy, mockTower); break;
+        case 'necromancer': drawNecromancer(scx, scy, mockTower); break;
+        case 'guardian': drawGuardian(scx, scy, mockTower); break;
+        case 'knight': drawKnight(scx, scy, mockTower); break;
+        case 'alchemist': drawAlchemist(scx, scy, mockTower); break;
+        case 'mirror': drawMirror(scx, scy, mockTower); break;
+        case 'paladin': drawPaladin(scx, scy, mockTower); break;
+        case 'crusader': drawCrusader(scx, scy, mockTower); break;
+        case 'midas': drawMidas(scx, scy, mockTower); break;
+        case 'illusion': drawIllusion(scx, scy, mockTower); break;
+        case 'philosopher': drawPhilosopher(scx, scy, mockTower); break;
+        case 'reflection': drawReflection(scx, scy, mockTower); break;
+        case 'flamemaster': drawFlameMaster(scx, scy, mockTower); break;
+        case 'voidsniper': drawVoidSniper(scx, scy, mockTower); break;
+        case 'vajra': drawVajrapani(scx, scy, mockTower); break;
+        case 'absolutezero': drawAbsoluteZero(scx, scy, mockTower); break;
+        case 'hellfire': drawHellfireAlchemist(scx, scy, mockTower); break;
+        case 'phoenix': drawPhoenixSummoner(scx, scy, mockTower); break;
+        case 'executor': drawExecutor(scx, scy, mockTower); break;
+        case 'binder': drawBinder(scx, scy, mockTower); break;
+        case 'grandsealer': drawGrandSealer(scx, scy, mockTower); break;
+        case 'saint': drawSaint(scx, scy, mockTower); break;
+        case 'thousandhand': drawThousandHand(scx, scy, mockTower); break;
+        case 'permafrost': drawPermafrost(scx, scy, mockTower); break;
+        case 'abyssal': drawAbyssalKiller(scx, scy, mockTower); break;
+        case 'spatial': drawSpatialSlasher(scx, scy, mockTower); break;
+        case 'seer': drawSeer(scx, scy, mockTower); break;
+        case 'commander': drawCommander(scx, scy, mockTower); break;
+        case 'wraithlord': drawWraithLord(scx, scy, mockTower); break;
+        case 'cursedshaman': drawCursedShaman(scx, scy, mockTower); break;
+        case 'rampart': drawRampart(scx, scy, mockTower); break;
+        case 'judgment': drawJudgment(scx, scy, mockTower); break;
+        case 'transmuter': drawTransmuter(scx, scy, mockTower); break;
+        case 'oracle': drawOracle(scx, scy, mockTower); break;
+        case 'warden': drawWarden(scx, scy, mockTower); break;
+        case 'cursed_talisman': drawCursedTalisman(scx, scy, mockTower); break;
+        case 'asura': drawAsura(scx, scy, mockTower); break;
+        case 'piercing_shadow': drawPiercingShadow(scx, scy, mockTower); break;
+        case 'cocytus': drawCocytus(scx, scy, mockTower); break;
+        case 'purgatory': drawPurgatory(scx, scy, mockTower); break;
+        case 'reaper': drawReaper(scx, scy, mockTower); break;
+        case 'doom_guide': drawDoomGuide(scx, scy, mockTower); break;
+        case 'forsaken_king': drawForsakenKing(scx, scy, mockTower); break;
+        case 'void_gatekeeper': drawVoidGatekeeper(scx, scy, mockTower); break;
+        case 'eternal_wall': drawEternalWall(scx, scy, mockTower); break;
     }
+    targetCtx.restore();
 
     // Restore original state
     window.ctx = originalCtx;
@@ -5250,7 +5257,7 @@ function drawSelectionHalo() {
     const cy = ((rect.top + rect.height / 2) - containerRect.top) * scaleY;
     
     const pulse = (Math.sin(lavaPhase * 4) + 1) / 2; 
-    const size = (rect.width * scaleX) * 0.6; // Halo size relative to unit
+    const size = (rect.width * scaleX) * 0.6; // Adjusted for 360 logical width
     
     ctx.save();
     ctx.imageSmoothingEnabled = true; 
@@ -5266,9 +5273,9 @@ function drawSelectionHalo() {
 
     // 2. Corner Brackets (Crosshair style)
     ctx.strokeStyle = '#ffd700';
-    ctx.lineWidth = 4;
-    const bSize = 20 + pulse * 5;
-    const offset = size + 5;
+    ctx.lineWidth = 2; // Thinner for 360 width
+    const bSize = 8 + pulse * 2; // Smaller for 360 width
+    const offset = size + 2;
 
     // Top-Left
     ctx.beginPath();
@@ -5300,7 +5307,7 @@ function drawSelectionHalo() {
 
     // 3. Central Target Ring
     ctx.strokeStyle = `rgba(255, 215, 0, ${0.5 + 0.5 * pulse})`;
-    ctx.setLineDash([5, 10]);
+    ctx.setLineDash([2, 4]);
     ctx.beginPath();
     ctx.arc(cx, cy, size, 0, Math.PI * 2);
     ctx.stroke();
