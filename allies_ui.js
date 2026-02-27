@@ -102,16 +102,19 @@ function showUnitInfo(tower) {
         ch = `
             <div style="font-size:24px; color:#ffd700; margin-bottom:12px; font-weight:bold;">Promotion Paths (200 SE):</div>
             <div style="font-size:30px; display:flex; gap:36px; justify-content:center; margin-bottom:18px;">
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Attack', true)" title="Ascend to Attack Path" style="background:#442222; border:3px solid #ff4500; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">⚔️</button>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;">
+                    <button class="info-promo-btn" onclick="if(money>=200) performJobChange(null, 'Attack', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Attack Path" style="background:#442222; border:3px solid #ff4500; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">⚔️</button>
+                    <div class="card-warning" style="font-size:12px; top:-40px; pointer-events:none;">NOT ENOUGH SE</div>
                     <div style="font-size:21px; color:#ff4500;">Attack</div>
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Support', true)" title="Ascend to Support Path" style="background:#224444; border:3px solid #00e5ff; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">🪄</button>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;">
+                    <button class="info-promo-btn" onclick="if(money>=200) performJobChange(null, 'Support', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Support Path" style="background:#224444; border:3px solid #00e5ff; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">🪄</button>
+                    <div class="card-warning" style="font-size:12px; top:-40px; pointer-events:none;">NOT ENOUGH SE</div>
                     <div style="font-size:21px; color:#00e5ff;">Support</div>
                 </div>
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Special', true)" title="Ascend to Special Path" style="background:#444422; border:3px solid #ffd700; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">💠</button>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;">
+                    <button class="info-promo-btn" onclick="if(money>=200) performJobChange(null, 'Special', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Special Path" style="background:#444422; border:3px solid #ffd700; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">💠</button>
+                    <div class="card-warning" style="font-size:12px; top:-40px; pointer-events:none;">NOT ENOUGH SE</div>
                     <div style="font-size:21px; color:#ffd700;">Special</div>
                 </div>
             </div>
@@ -124,10 +127,12 @@ function showUnitInfo(tower) {
            <div style="display:flex; gap:30px; justify-content:center; margin-bottom:18px;">`; 
         data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); 
+            const seCost = ud.tier === 4 ? 800 : 400;
             const costTip = ud.tier === 4 ? "800 SE" : "400 SE";
             ch+=`
-                <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                    <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)" title="Unleash ${ud.name} (${costTip})" style="background:#222; border:3px solid #aaa; color:#fff; border-radius:12px; cursor:pointer; padding:6px 24px; font-size:30px;">${i===0?'↖️':'↗️'}</button>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;">
+                    <button class="info-promo-btn" onclick="if(money>=${seCost}) performMasterJobChange(null, '${u}', true)" onmouseenter="if(money<${seCost}) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Unleash ${ud.name} (${costTip})" style="background:#222; border:3px solid #aaa; color:#fff; border-radius:12px; cursor:pointer; padding:6px 24px; font-size:30px;">${i===0?'↖️':'↗️'}</button>
+                    <div class="card-warning" style="font-size:12px; top:-40px; pointer-events:none;">NOT ENOUGH SE</div>
                     <div style="font-size:21px; color:#aaa; max-width:150px; text-align:center; line-height:1;">${ud.name}</div>
                 </div>
             `;
@@ -406,27 +411,69 @@ function renderPromotionTree() {
 
 function updateUnitOverlayButtons(t) {
     const el = t.element; el.querySelectorAll('.unit-overlay-btn').forEach(b=>b.remove());
-    const sell = document.createElement('div'); sell.className='unit-overlay-btn sell-btn'; sell.innerHTML='💀'; sell.title='Corrupt Unit (Sell)';
+    const sell = document.createElement('div'); sell.className='unit-overlay-btn sell-btn'; sell.innerHTML='💀'; sell.title='Dismiss Guardian (50% Refund)';
     sell.addEventListener('click', e=>{ e.stopPropagation(); sellTower(t); }); el.appendChild(sell);
+    
     if(t.data.type==='apprentice') {
-        const atk = document.createElement('div'); 
-        atk.className='unit-overlay-btn promote-10'; atk.innerHTML='⚔️'; atk.title='Ascend: Attack Path (200 SE)';
-        atk.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el, 'Attack'); }); 
-        el.appendChild(atk);
-        const sup = document.createElement('div'); 
-        sup.className='unit-overlay-btn promote-12'; sup.innerHTML='🪄'; sup.title='Ascend: Support Path (200 SE)';
-        sup.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el, 'Support'); }); 
-        el.appendChild(sup);
-        const spc = document.createElement('div'); 
-        spc.className='unit-overlay-btn promote-2'; spc.innerHTML='💠'; spc.title='Ascend: Special Path (200 SE)';
-        spc.addEventListener('click', e=>{ e.stopPropagation(); performJobChange(el, 'Special'); }); 
-        el.appendChild(spc);
+        const paths = [
+            { class: 'promote-10', icon: '⚔️', role: 'Attack', title: 'Ascend: Attack Path (200 SE)' },
+            { class: 'promote-12', icon: '🪄', role: 'Support', title: 'Ascend: Support Path (200 SE)' },
+            { class: 'promote-2', icon: '💠', role: 'Special', title: 'Ascend: Special Path (200 SE)' }
+        ];
+        
+        paths.forEach(p => {
+            const btn = document.createElement('div');
+            btn.className = `unit-overlay-btn ${p.class}`;
+            btn.innerHTML = p.icon;
+            
+            const warning = document.createElement('div');
+            warning.className = 'card-warning';
+            warning.innerText = 'NOT ENOUGH SE';
+            warning.style.fontSize = '12px';
+            warning.style.top = '-30px';
+            btn.appendChild(warning);
+
+            btn.addEventListener('mouseenter', () => {
+                if (money < 200) warning.style.display = 'block';
+            });
+            btn.addEventListener('mouseleave', () => {
+                warning.style.display = 'none';
+            });
+
+            btn.addEventListener('click', e => { 
+                e.stopPropagation(); 
+                if (money >= 200) performJobChange(el, p.role); 
+            });
+            el.appendChild(btn);
+        });
     } else if(t.data.upgrades) {
         t.data.upgrades.forEach((u,i)=>{
-            const ud=unitTypes.find(x=>x.type===u); const b=document.createElement('div');
-            const costText = ud.tier === 4 ? "800 SE" : "400 SE";
-            b.className=i===0?'unit-overlay-btn promote-btn':'unit-overlay-btn promote-btn-right'; b.innerHTML=i===0?'↖️':'↗️'; b.title=`Unleash ${ud.name} (${costText})`;
-            b.addEventListener('click', e=>{ e.stopPropagation(); performMasterJobChange(t,u); }); el.appendChild(b);
+            const ud=unitTypes.find(x=>x.type===u); 
+            const btn=document.createElement('div');
+            const seCost = ud.tier === 4 ? 800 : 400;
+            
+            btn.className=i===0?'unit-overlay-btn promote-btn':'unit-overlay-btn promote-btn-right'; 
+            btn.innerHTML=i===0?'↖️':'↗️'; 
+            
+            const warning = document.createElement('div');
+            warning.className = 'card-warning';
+            warning.innerText = 'NOT ENOUGH SE';
+            warning.style.fontSize = '12px';
+            warning.style.top = '-30px';
+            btn.appendChild(warning);
+
+            btn.addEventListener('mouseenter', () => {
+                if (money < seCost) warning.style.display = 'block';
+            });
+            btn.addEventListener('mouseleave', () => {
+                warning.style.display = 'none';
+            });
+
+            btn.addEventListener('click', e=>{ 
+                e.stopPropagation(); 
+                if (money >= seCost) performMasterJobChange(t, u); 
+            }); 
+            el.appendChild(btn);
         });
     }
 }

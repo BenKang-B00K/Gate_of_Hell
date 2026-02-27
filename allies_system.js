@@ -97,8 +97,6 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     });
 
     if (availablePaths.length === 0) {
-        const msg = targetRole ? `No available ${targetRole} classes!` : "No available classes!";
-        alert(msg);
         return;
     }
 
@@ -126,6 +124,7 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
 
     const existingCount = towers.filter(t => t.data.type === ntStr).length;
     if (existingCount >= 1) {
+        // keep alert for map limit as it's not resource related
         alert(`You can only have 1 ${nt.name} at a time!`);
         return;
     }
@@ -133,7 +132,6 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     // Cost logic based on target tier
     const seCost = (nt.tier === 4) ? 800 : 400;
     if(money < seCost) {
-        alert(`Not enough Soul Energy! Need ${seCost}.`);
         return;
     }
     money -= seCost;
