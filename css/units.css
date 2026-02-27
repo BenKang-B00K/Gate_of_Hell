@@ -125,8 +125,8 @@
 .cooldown-overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    border-radius: 50%;
-    background: conic-gradient(rgba(0, 0, 0, 0.6) 0deg, transparent 0deg);
+    border-radius: 4px;
+    background: conic-gradient(rgba(0, 0, 0, 0.3) 0deg, transparent 0deg);
     pointer-events: none;
     z-index: 5;
 }

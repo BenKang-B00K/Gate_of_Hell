@@ -320,7 +320,7 @@ function gameLoop() {
         if (overlay) {
             const elapsed = nowTime - (tower.lastShot || 0);
             const ratio = Math.min(1, elapsed / cd);
-            overlay.style.background = `conic-gradient(rgba(0, 0, 0, 0.6) ${(1 - ratio) * 360}deg, transparent 0deg)`;
+            overlay.style.background = `conic-gradient(rgba(0, 0, 0, 0.3) ${(1 - ratio) * 360}deg, transparent 0deg)`;
         }
         if (tower.data.type === 'void_gatekeeper' || tower.isFeared || tower.isFrozenTomb) return;
         if (nowTime - (tower.lastShot || 0) >= cd) {
