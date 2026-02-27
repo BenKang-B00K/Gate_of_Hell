@@ -242,4 +242,26 @@ const config = {
     scene: [PreloadScene, MainScene]
 };
 
-new Phaser.Game(config);
+// Start Game Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('start-game-btn');
+    const startScreen = document.getElementById('start-screen');
+
+    if (startBtn && startScreen) {
+        startBtn.addEventListener('click', () => {
+            // Start screen transition
+            startScreen.classList.add('shrink-to-info');
+            
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                
+                // Initialize Phaser Game
+                new Phaser.Game(config);
+
+                // Initialize UI Gauges (from enemies.js)
+                if (typeof window.updateGauges === 'function') window.updateGauges();
+                if (typeof window.updateStageInfo === 'function') window.updateStageInfo();
+            }, 800);
+        });
+    }
+});
