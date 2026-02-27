@@ -292,41 +292,63 @@ function startInfoResetTimer() {
         // Hide range indicator if active
         const ri = document.getElementById('range-indicator');
         if (ri) ri.remove();
+        const ai = document.getElementById('aura-indicator');
+        if (ai) ai.remove();
     }, 10000); // 10 seconds
 }
 
 function showRangeIndicator(tower) {
-    // Remove existing indicator if any
-    const existing = document.getElementById('range-indicator');
-    if (existing) existing.remove();
+    // Remove existing indicators if any
+    const existingRI = document.getElementById('range-indicator');
+    if (existingRI) existingRI.remove();
+    const existingAI = document.getElementById('aura-indicator');
+    if (existingAI) existingAI.remove();
 
-    const indicator = document.createElement('div');
-    indicator.id = 'range-indicator';
-    indicator.className = 'range-indicator';
-    
-    // Calculate total range including bonuses
-    const totalRange = tower.range + (tower.rangeBonus || 0);
-    const size = totalRange * 2;
-    
-    indicator.style.width = `${size}px`;
-    indicator.style.height = `${size}px`;
-    
-    // Position it centered on the unit's slot
     const slotRect = tower.slotElement.getBoundingClientRect();
     const gameRect = gameContainer.getBoundingClientRect();
-    
     const centerX = (slotRect.left + slotRect.width / 2) - gameRect.left;
     const centerY = (slotRect.top + slotRect.height / 2) - gameRect.top;
-    
-    indicator.style.left = `${centerX}px`;
-    indicator.style.top = `${centerY}px`;
-    
-    gameContainer.appendChild(indicator);
-    
-    // Auto-remove after some time
-    setTimeout(() => {
-        if (indicator.parentElement) indicator.remove();
-    }, 3000);
+
+    // 1. Blue Attack Range Indicator
+    if (tower.data.range > 0) {
+        const indicator = document.createElement('div');
+        indicator.id = 'range-indicator';
+        indicator.className = 'range-indicator';
+        
+        const totalRange = tower.range + (tower.rangeBonus || 0);
+        const size = totalRange * 2;
+        
+        indicator.style.width = `${size}px`;
+        indicator.style.height = `${size}px`;
+        indicator.style.left = `${centerX}px`;
+        indicator.style.top = `${centerY}px`;
+        
+        gameContainer.appendChild(indicator);
+        setTimeout(() => { if (indicator.parentElement) indicator.remove(); }, 3000);
+    }
+
+    // 2. Golden Aura Indicator (For units with aura/buff effects)
+    const auraUnits = ['tracker', 'seer', 'commander', 'eternal_wall'];
+    if (auraUnits.includes(tower.data.type)) {
+        const auraIndicator = document.createElement('div');
+        auraIndicator.id = 'aura-indicator';
+        auraIndicator.className = 'aura-indicator';
+        
+        // Define aura ranges (matches logic in soundeffect.js or intended design)
+        let auraRadius = 300; // Default
+        if (tower.data.type === 'eternal_wall') auraRadius = 450;
+        else if (tower.data.type === 'tracker') auraRadius = 300;
+        else if (tower.data.type === 'commander' || tower.data.type === 'seer') auraRadius = 360;
+
+        const size = auraRadius * 2;
+        auraIndicator.style.width = `${size}px`;
+        auraIndicator.style.height = `${size}px`;
+        auraIndicator.style.left = `${centerX}px`;
+        auraIndicator.style.top = `${centerY}px`;
+        
+        gameContainer.appendChild(auraIndicator);
+        setTimeout(() => { if (auraIndicator.parentElement) auraIndicator.remove(); }, 3000);
+    }
 }
 
 function showUnitInfo(tower) {
