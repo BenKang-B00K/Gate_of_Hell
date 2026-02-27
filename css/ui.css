@@ -35,75 +35,81 @@
     overflow: hidden;
 }
 
-/* Gauges */
-#gauges-container {
+/* Stage Title (Centralized) */
+#stage-title-central {
+    text-align: center;
+    width: 100%;
+    font-family: 'Cinzel', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: #ff4500;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 15px rgba(255, 69, 0, 0.6), 0 0 5px #000;
+}
+
+#stage-display { color: #fff; text-shadow: 0 0 10px #fff; }
+
+/* Unified Gauges Grid (5:30:30:30:5) */
+#gauges-grid {
+    display: grid;
+    grid-template-columns: 5% 30% 30% 30% 5%;
+    width: 100%;
+    margin-bottom: 20px;
+    align-items: end;
+}
+
+.gauge-wrapper {
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.gauge-info {
     display: flex;
     justify-content: space-between;
-    gap: 24px;
-    width: 100%;
-    margin-bottom: 12px;
-    padding: 0 15px;
-    box-sizing: border-box;
+    font-size: 21px;
+    font-weight: bold;
+    color: #aaa;
+    letter-spacing: 1px;
 }
 
-.gauge-half { flex: 1; display: flex; flex-direction: column; position: relative; }
-.gauge-header { display: flex; justify-content: space-between; font-size: 24px; margin-bottom: 3px; font-weight: bold; text-transform: uppercase; }
-.gauge-header span:first-child { color: #aaa; }
-.gauge-half:first-child .gauge-header span:first-child { color: #00e5ff; text-shadow: 0 0 15px rgba(0, 229, 255, 0.5); }
-.gauge-half:first-child .gauge-header span:last-child { color: #00e5ff; text-shadow: 0 0 24px rgba(0, 229, 255, 0.8); }
-
-.gauge-icon { font-size: 36px; margin-right: 6px; vertical-align: middle; }
-.gauge-bar-bg {
+.gauge-bar {
     width: 100%;
-    height: 15px;
-    background-color: #111;
-    border: 3px solid #333;
-    border-radius: 9px;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #333;
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: inset 0 0 9px #000;
+    position: relative;
+    box-shadow: inset 0 0 10px #000;
 }
 
-#se-gauge-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #008ba3, #00e5ff); box-shadow: 0 0 24px rgba(0, 229, 255, 0.6); transition: width 0.3s ease; }
+/* SE Specific */
+.gauge-bar.se { border-color: rgba(0, 229, 255, 0.3); }
+#se-gauge-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #008ba3, #00e5ff); box-shadow: 0 0 20px rgba(0, 229, 255, 0.6); transition: width 0.3s ease; }
+.gauge-wrapper#se-label .gauge-info span:last-child { color: #00e5ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
+
+/* PE Specific */
+.gauge-bar.pe { border-color: rgba(148, 0, 211, 0.3); }
 #portal-gauge-fill { 
     width: 0%; 
     height: 100%; 
     background: linear-gradient(90deg, #4b0082, #9400d3, #ff00ff, #9400d3); 
     background-size: 200% 100%;
-    box-shadow: 0 0 30px rgba(148, 0, 211, 0.8), inset 0 0 10px rgba(255, 255, 255, 0.3); 
+    box-shadow: 0 0 20px rgba(148, 0, 211, 0.8); 
     transition: width 0.3s ease; 
     animation: flowFill 2s infinite linear;
 }
+.gauge-wrapper#pe-label .gauge-info span:last-child { color: #ff00ff; text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
 
-/* Status Labels */
-#top-status-bar {
-    position: absolute;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    z-index: 100;
-    pointer-events: none;
-}
+/* TBD Specific */
+.gauge-wrapper.tbd { opacity: 0.4; }
+.gauge-bar.tbd-bar { border-color: #444; }
+.gauge-bar.tbd-bar .fill { width: 0%; height: 100%; background: #333; }
 
-#enemy-counter {
-    background: rgba(0, 0, 0, 0.7);
-    border: 2px solid #4a0000;
-    border-radius: 30px;
-    padding: 10px 30px;
-    color: #ffd700;
-    font-size: 24px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(255, 0, 0, 0.2);
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-#enemies-left { color: #ff0000; font-size: 30px; text-shadow: 0 0 10px #ff0000; }
-#stage-title-container { font-size: 11px; font-weight: bold; color: #ff4500; text-shadow: 0 0 10px rgba(255, 69, 0, 0.8), 0 0 2px #000; letter-spacing: 1px; animation: textBreathing 3s infinite alternate ease-in-out; }
 #stage-debuff-header { font-size: 21px; color: #ff0000; text-align: center; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
 
 /* Difficulty Message */

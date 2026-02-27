@@ -54,10 +54,7 @@
                 <div id="spawning-pool"></div>
                 <div id="stage-info" style="display:none;"></div> <!-- Legacy hidden -->
                 <div id="portal">
-                    <div id="portal-energy-label">0 / 1500</div>
-                    <div id="portal-gauge-container">
-                        <div id="portal-gauge-fill"></div>
-                    </div>
+                    <!-- Gauge moved to bottom-panel -->
                 </div>
                 <div id="start-timer"></div>
             </div>
@@ -65,24 +62,45 @@
         </div>
 
         <div id="bottom-panel">
-            <!-- Thematic Stage Header -->
-            <div id="thematic-header">
-                <div id="stage-title-container" style="color: #ff4500; font-size: 11px; font-weight: bold; letter-spacing: 1px;">
-                    <span id="stage-name">Whispering Gates</span> [Depth: <span id="stage-display">1</span>]
-                </div>
+            <!-- Thematic Stage Header (Centralized) -->
+            <div id="stage-title-central">
+                <span id="stage-name">Whispering Gates</span> [Depth: <span id="stage-display">1</span>]
             </div>
-            <!-- Soul Energy Gauge (Full Width) -->
-            <div id="gauges-container">
-                <div class="gauge-half" style="flex: 1;">
-                    <div class="gauge-header" id="se-label" style="cursor:help;">
-                        <span><span class="gauge-icon">✨</span> Soul Energy</span>
+
+            <!-- Unified Gauges Container (5:30:30:30:5) -->
+            <div id="gauges-grid">
+                <div class="spacer"></div>
+                
+                <!-- Soul Energy -->
+                <div class="gauge-wrapper" id="se-label" style="cursor:help;">
+                    <div class="gauge-info">
+                        <span>✨ SOUL ENERGY</span>
                         <span id="se-display-text">100</span>
                     </div>
-                    <div class="gauge-bar-bg se">
-                        <div id="se-gauge-fill"></div>
-                    </div>
+                    <div class="gauge-bar se"><div id="se-gauge-fill"></div></div>
                 </div>
+
+                <!-- Portal Energy -->
+                <div class="gauge-wrapper" id="pe-label">
+                    <div class="gauge-info">
+                        <span>👿 PORTAL ENERGY</span>
+                        <span id="portal-energy-label">0 / 1500</span>
+                    </div>
+                    <div class="gauge-bar pe"><div id="portal-gauge-fill"></div></div>
+                </div>
+
+                <!-- TBD Gauge -->
+                <div class="gauge-wrapper tbd">
+                    <div class="gauge-info">
+                        <span>🔒 TBD</span>
+                        <span>0%</span>
+                    </div>
+                    <div class="gauge-bar tbd-bar"><div class="fill"></div></div>
+                </div>
+
+                <div class="spacer"></div>
             </div>
+
             <div id="stage-debuff-header">Stage Debuff</div>
 
             <div id="bottom-main-ui">

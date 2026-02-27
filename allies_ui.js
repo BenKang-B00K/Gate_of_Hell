@@ -171,6 +171,13 @@ function showResourceInfo(type) {
             <div style="font-size:27px; color:#bbb; line-height:1.2;">Used to summon and promote exorcists. Obtained by defeating specters.</div>
             <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"The crystalline fragments of purified regrets, fueling the sacred arts of those who guard the living world."</div>
         `;
+    } else if (type === 'pe') {
+        d.innerHTML = `
+            <div style="color:#ff00ff; font-weight:bold; font-size:39px; margin-bottom:6px;">Portal Energy (PE)</div>
+            <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">CORRUPTION</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">Indicates the instability of the gate. Increases when specters pass through. Reach 100% to trigger Game Over.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"The bridge between worlds is fragile. Too much sorrow from the other side will shatter it entirely."</div>
+        `;
     } else if (type === 'purge') {
         d.innerHTML = `
             <div style="color:#9400d3; font-weight:bold; font-size:39px; margin-bottom:6px;">Purge Portal</div>
@@ -243,6 +250,8 @@ function initAllies() {
     }
     const sel = document.getElementById('se-label');
     if(sel) sel.addEventListener('mouseenter', () => showResourceInfo('se'));
+    const pel = document.getElementById('pe-label');
+    if(pel) pel.addEventListener('mouseenter', () => showResourceInfo('pe'));
     const sdh = document.getElementById('stage-debuff-header');
     if(sdh) {
         sdh.addEventListener('mouseenter', () => {
