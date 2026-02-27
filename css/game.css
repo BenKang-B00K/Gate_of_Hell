@@ -181,11 +181,11 @@
 
 #start-timer {
     position: absolute;
-    top: 45%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-family: 'Cinzel', serif;
-    font-size: 120px;
+    font-size: 100px;
     font-weight: 900;
     color: #ff0000;
     text-shadow: 0 0 30px #fff, 0 0 60px #ff0000, 0 0 100px #8b0000;
@@ -194,8 +194,10 @@
     pointer-events: none;
     white-space: nowrap;
     text-transform: uppercase;
-    letter-spacing: 15px;
+    letter-spacing: 10px;
     animation: timerPulse 1s infinite alternate;
+    width: 100%;
+    text-align: center;
 }
 
 @keyframes timerPulse {
