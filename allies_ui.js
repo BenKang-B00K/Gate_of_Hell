@@ -246,7 +246,17 @@ function initAllies() {
     const pc = document.getElementById('purge-card'); 
     if(pc) {
         pc.addEventListener('click', () => purgePortal());
-        pc.addEventListener('mouseenter', () => showResourceInfo('purge'));
+        pc.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d && Date.now() >= infoPanelLockedUntil) {
+                d.innerHTML = `
+                    <div style="color:#9400d3; font-weight:bold; font-size:39px; margin-bottom:6px;">🧹 Purge Portal</div>
+                    <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">SANCTIFICATION</div>
+                    <div style="font-size:27px; color:#bbb; line-height:1.2;">Instantly removes 50% of current Portal Energy accumulation. Required: 800 SE.</div>
+                    <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"A sacred ritual to cleanse the gate of encroaching spirits. It demands a heavy sacrifice of Soul Energy."</div>
+                `;
+            }
+        });
     }
     const sel = document.getElementById('se-label');
     if(sel) sel.addEventListener('mouseenter', () => showResourceInfo('se'));
