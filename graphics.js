@@ -297,9 +297,121 @@ function drawChainer(cx, cy, tower) {
     p(-4, -7, '#333', 24, 42);
 }
 function drawMonk(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#8B4513', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & MONK ROBES (Saffron/Brown Palette) ---
+    const robeColor = '#8D6E63'; // Brownish clay
+    const robeShadow = '#5D4037';
+    const sashColor = '#FFB300'; // Amber/Saffron sash
+    
+    // Lower Robe
+    p(-6, 2, '#000', 13, 14); // Outline
+    p(-5, 3, robeColor, 11, 12);
+    p(-5, 12, robeShadow, 11, 3);
+    
+    // Sash/Belt
+    p(-5, 5, '#000', 11, 3);
+    p(-5, 6, sashColor, 11, 1);
+    
+    // Prayer Beads (Mala)
+    const beadColor = '#3E2723';
+    p(-3, 1, '#000', 7, 5); // Neck loop outline
+    p(-2, 2, beadColor, 5, 3); 
+    p(0, 5, beadColor, 2, 2); // Hanging bead
+
+    // Muscular Arms (Skin Tone)
+    const skinColor = '#D7B19D';
+    p(-8, 3, '#000', 4, 7); // Left arm outline
+    p(-7, 4, skinColor, 2, 5);
+    p(5, 3, '#000', 4, 7); // Right arm outline
+    p(6, 4, skinColor, 2, 5);
+
+    // Boots
+    p(-5, 15, '#000', 4, 3);
+    p(2, 15, '#000', 4, 3);
+
+    // Head (Shaven/Bald)
+    p(-4, -8, '#000', 9, 9); 
+    p(-3, -7, skinColor, 7, 7);
+    p(-1, -7, '#F5DDC7', 3, 2); // Forehead highlight
+    
+    // Face Features
+    p(-1, -4, '#333', 3, 1); // Focused mouth
+    p(-2, -5, '#333', 1, 1); // Eye L
+    p(2, -5, '#333', 1, 1); // Eye R
+
+    // --- 2. THE HOLY MACE (Massive Iron Weapon) ---
+    // Mace position shifts during attack
+    let maceSwing = isAttacking ? Math.sin(flashIntensity * Math.PI) * 15 : 0;
+    let maceOX = isAttacking ? 8 + maceSwing : 7;
+    let maceOY = isAttacking ? -15 - maceSwing : -12;
+    
+    const ironColor = '#424242';
+    const ironHighlight = '#BDBDBD';
+    const goldTrim = '#FFD700';
+
+    // Handle
+    p(maceOX, maceOY + 5, '#3E2723', 2, 22); // Wooden grip
+    p(maceOX, maceOY + 25, '#000', 3, 3); // Pommel
+
+    // Mace Head (Hexagonal/Spiked)
+    p(maceOX - 4, maceOY - 6, '#000', 10, 12); // Outline
+    p(maceOX - 3, maceOY - 5, ironColor, 8, 10);
+    p(maceOX - 1, maceOY - 5, ironHighlight, 3, 10); // Edge shine
+    
+    // Spikes
+    const spikes = [[-5, -2], [-5, 4], [6, -2], [6, 4], [0, -7]];
+    spikes.forEach(sp => p(maceOX + sp[0], maceOY + sp[1], ironColor, 2, 2));
+
+    // Divine Seal on Mace
+    p(maceOX - 1, maceOY - 1, goldTrim, 3, 3);
+
+    // --- 3. IMPACT EFFECTS ---
+    if (isAttacking) {
+        // Holy Shockwave
+        const waveSize = flashIntensity * 40;
+        ctx.save();
+        ctx.beginPath();
+        const hitX = isLeft ? cx + (maceOX * S) : cx - (maceOX * S);
+        const hitY = cy + (maceOY * S);
+        ctx.arc(hitX, hitY, waveSize, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 215, 0, ${flashIntensity})`;
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        
+        // Impact Sparks
+        for(let i=0; i<6; i++) {
+            const ang = (i / 6) * Math.PI * 2 + time * 5;
+            const dist = 10 + flashIntensity * 30;
+            const px = Math.cos(ang) * dist;
+            const py = Math.sin(ang) * dist;
+            p(Math.round(maceOX + px/S), Math.round(maceOY + py/S), '#FFD700', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. SPIRITUAL AURA ---
+    const auraPulse = (Math.sin(time * 2) + 1) / 2;
+    for(let i=0; i<3; i++) {
+        const py = -10 - (i * 5) - (time * 10 % 10);
+        const px = Math.sin(time * 3 + i) * 4;
+        p(Math.round(px), Math.round(py), `rgba(255, 179, 0, ${0.2 * auraPulse})`, 2, 2);
+    }
 }
 function drawTalisman(cx, cy, tower) {
     const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
