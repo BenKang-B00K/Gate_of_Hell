@@ -178,6 +178,14 @@ function showResourceInfo(type) {
             <div style="font-size:27px; color:#bbb; line-height:1.2;">Indicates the instability of the gate. Increases when specters pass through. Reach 100% to trigger Game Over.</div>
             <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"The bridge between worlds is fragile. Too much sorrow from the other side will shatter it entirely."</div>
         `;
+    } else if (type === 'rs') {
+        d.innerHTML = `
+            <div style="color:#ff1744; font-weight:bold; font-size:39px; margin-bottom:6px;">Remaining Specters (RS)</div>
+            <div style="display:inline-block; background:#b71c1c; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">INCURSION PROGRESS</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">Shows how many specters are currently roaming or waiting to spawn in this Depth level.</div>
+            <div style="color:#00ff00; font-size:24px; margin-top:12px;">* Clear all specters to descend deeper into the abyss.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"They come in waves, like a tide of shadows. Stand firm until the last one falls."</div>
+        `;
     } else if (type === 'purge') {
         d.innerHTML = `
             <div style="color:#9400d3; font-weight:bold; font-size:39px; margin-bottom:6px;">Purge Portal</div>
@@ -262,6 +270,8 @@ function initAllies() {
     if(sel) sel.addEventListener('mouseenter', () => showResourceInfo('se'));
     const pel = document.getElementById('pe-label');
     if(pel) pel.addEventListener('mouseenter', () => showResourceInfo('pe'));
+    const rsl = document.getElementById('rs-label');
+    if(rsl) rsl.addEventListener('mouseenter', () => showResourceInfo('rs'));
     const sdh = document.getElementById('stage-debuff-header');
     if(sdh) {
         sdh.addEventListener('mouseenter', () => {
