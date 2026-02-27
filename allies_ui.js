@@ -186,6 +186,14 @@ function showResourceInfo(type) {
             <div style="color:#00ff00; font-size:24px; margin-top:12px;">* Clear all specters to descend deeper into the abyss.</div>
             <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"They come in waves, like a tide of shadows. Stand firm until the last one falls."</div>
         `;
+    } else if (type === 'cursed') {
+        d.innerHTML = `
+            <div style="color:#ff00ff; font-weight:bold; font-size:39px; margin-bottom:6px;">Abyssal Curse</div>
+            <div style="display:inline-block; background:#4a148c; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">GLOBAL PENALTY</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">As the portal becomes more unstable, a powerful curse begins to choke the world.</div>
+            <div style="color:#ff4081; font-size:24px; margin-top:12px;">* Penalties increase at 25%, 50%, and 75% Portal Energy.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"The more the gate opens, the less the laws of the living apply. Fear the creeping silence."</div>
+        `;
     } else if (type === 'purge') {
         d.innerHTML = `
             <div style="color:#9400d3; font-weight:bold; font-size:39px; margin-bottom:6px;">Purge Portal</div>
@@ -272,6 +280,8 @@ function initAllies() {
     if(pel) pel.addEventListener('mouseenter', () => showResourceInfo('pe'));
     const rsl = document.getElementById('rs-label');
     if(rsl) rsl.addEventListener('mouseenter', () => showResourceInfo('rs'));
+    const csl = document.getElementById('cursed-status');
+    if(csl) csl.addEventListener('mouseenter', () => showResourceInfo('cursed'));
     const sdh = document.getElementById('stage-debuff-header');
     if(sdh) {
         sdh.addEventListener('mouseenter', () => {
