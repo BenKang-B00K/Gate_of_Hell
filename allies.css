@@ -44,6 +44,15 @@
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.cooldown-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    border-radius: 4px; /* Match unit border-radius */
+    background: conic-gradient(rgba(0, 0, 0, 0.3) 0deg, transparent 0deg);
+    pointer-events: none;
+    z-index: 5;
+}
+
 /* Unit Classes */
 .unit.apprentice { box-shadow: 0 0 10px #00e5ff; font-size: 16px; }
 .unit.chainer { box-shadow: 0 0 10px #9370db; }
