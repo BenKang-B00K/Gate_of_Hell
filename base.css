@@ -16,11 +16,6 @@ body {
     touch-action: manipulation;
 }
 
-img, .enemy, .tower-card, .relic-slot {
-    -webkit-user-drag: none;
-    user-drag: none;
-}
-
 #game-container {
     position: relative;
     width: 1080px;
@@ -30,20 +25,38 @@ img, .enemy, .tower-card, .relic-slot {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
 }
 
+/* 상단 게임 레이아웃 (65%) */
 #game-layout {
-    height: 65%;
-    display: flex;
-    width: 100%;
     position: relative;
+    width: 100%;
+    height: 1248px; /* 1920 * 0.65 */
+    display: flex;
     border-bottom: 1px solid #4a0000;
-    padding-top: 148px; /* Reserved space for Restart & Tutorial buttons */
+    padding-top: 148px; /* 버튼 공간 확보 */
     box-sizing: border-box;
+    z-index: 10;
+}
+
+/* 하단 컨트롤 패널 (35%) */
+#bottom-panel {
+    position: relative;
+    width: 100%;
+    height: 672px; /* 1920 * 0.35 */
+    background: linear-gradient(to bottom, #1a0505, #000000);
+    padding: 15px 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    gap: 15px;
 }
 
 #road {
     width: 340px;
+    height: 100%;
     background-color: #0a0a0a;
     background-image: 
         radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0),
@@ -51,7 +64,7 @@ img, .enemy, .tower-card, .relic-slot {
         linear-gradient(45deg, #111 25%, #050505 25%, #050505 75%, #111 75%, #111);
     background-size: 8px 8px, 40px 40px, 40px 40px;
     background-position: 0 0, 0 0, 20px 20px;
-    box-shadow: inset 20px 0 40px rgba(0,0,0,0.9), inset -20px 0 40px rgba(0,0,0,0.9), 0 0 50px rgba(255, 69, 0, 0.1);
+    box-shadow: inset 20px 0 40px rgba(0,0,0,0.9), inset -20px 0 40px rgba(0,0,0,0.9);
     position: relative;
     display: flex;
     justify-content: center;
@@ -83,43 +96,29 @@ img, .enemy, .tower-card, .relic-slot {
     border-radius: 170px 170px 0 0;
     background: radial-gradient(ellipse at bottom, #000 20%, #1a0033 50%, transparent 80%),
                 conic-gradient(from 0deg at 50% 100%, transparent, #4b0082, #9400d3, #ff00ff, #9400d3, #4b0082, transparent);
-    box-shadow: 0 -15px 60px rgba(148, 0, 211, 0.7), inset 0 0 40px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 -15px 60px rgba(148, 0, 211, 0.7);
     z-index: 1;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
 }
 
-/* 시작 타이머 - 1080p 스케일업 */
 #start-timer {
     position: absolute;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     font-size: 120px;
     font-weight: 900;
     color: #ff0000;
-    text-shadow: 0 0 30px #fff, 0 0 60px #ff0000, 0 0 100px #000;
+    text-shadow: 0 0 30px #fff, 0 0 60px #ff0000;
     z-index: 100;
     display: none;
-    pointer-events: none;
-    white-space: nowrap;
-    text-transform: uppercase;
-    letter-spacing: 12px;
     font-family: 'Cinzel', serif;
 }
 
-/* 상단 상태 바 - 1080p 스케일업 */
 #top-status-bar {
     position: absolute;
-    top: 60px;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    top: 60px; left: 0; width: 100%;
+    display: flex; justify-content: center;
     z-index: 100;
     pointer-events: none;
 }
@@ -133,43 +132,11 @@ img, .enemy, .tower-card, .relic-slot {
     font-size: 36px;
     font-weight: bold;
     letter-spacing: 3px;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(255, 0, 0, 0.3);
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 20px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    display: flex; align-items: center; gap: 20px;
 }
 
-#enemies-left {
-    color: #ff0000;
-    font-size: 48px;
-    text-shadow: 0 0 15px #ff0000;
-}
+#enemies-left { color: #ff0000; font-size: 48px; text-shadow: 0 0 15px #ff0000; }
 
-/* Thematic Stage Header */
-#thematic-header {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 5px;
-    pointer-events: none;
-}
-
-#stage-title-container {
-    font-size: 30px; /* Scaled for 1080p */
-    font-weight: bold;
-    color: #ff4500;
-    text-shadow: 0 0 15px rgba(255, 69, 0, 0.8), 0 0 5px #000;
-    letter-spacing: 2px;
-}
-
-#bottom-panel {
-    position: relative; 
-    height: 35%;
-    background: linear-gradient(to bottom, #1a0505, #000000);
-    padding: 15px 30px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    z-index: 50;
-    gap: 15px;
-}
+#thematic-header { width: 100%; text-align: center; margin-bottom: 5px; }
+#stage-title-container { font-size: 30px; font-weight: bold; color: #ff4500; text-shadow: 0 0 15px rgba(255, 69, 0, 0.8); letter-spacing: 2px; }
