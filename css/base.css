@@ -1,17 +1,17 @@
-/* base.css - Universal Reset & Responsive Engine */
+/* base.css - Responsive Master Reset */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
 
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box; /* Ensures padding doesn't break fixed width calculations */
+    box-sizing: border-box;
 }
 
 body, html {
-    width: 100%;
-    height: 100%;
-    background-color: #050505;
-    overflow: hidden; /* Prevent scrolling on mobile/web */
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    overflow: hidden;
     font-family: 'Cinzel', serif;
     display: flex;
     justify-content: center;
@@ -21,19 +21,21 @@ body, html {
 #game-container {
     width: 360px;
     height: 640px;
-    background: #000;
-    position: relative; /* Critical anchor for all absolute UI elements */
+    position: relative;
+    background: #050505;
     overflow: hidden;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 10px rgba(139, 0, 0, 0.3);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
     
-    /* Responsive logic: always fits in viewport while maintaining 9:16 */
+    /* Auto-scale using CSS while maintaining aspect ratio */
     max-width: 100vw;
     max-height: 100vh;
     aspect-ratio: 9 / 16;
 }
 
-/* Ensure Phaser canvas covers the entire base layer */
 canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
     display: block;
     width: 100% !important;
     height: 100% !important;

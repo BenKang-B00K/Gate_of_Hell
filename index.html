@@ -2,224 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guardian of the Underworld</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gate of Hell: Rebuilt</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/game.css">
     <link rel="stylesheet" href="css/ui.css">
-    <link rel="stylesheet" href="css/menu.css">
-    <link rel="stylesheet" href="css/units.css">
-    <link rel="stylesheet" href="css/enemies.css">
-    <link rel="stylesheet" href="css/effects.css">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
 </head>
 <body>
-    <!-- Start Screen Overlay -->
-    <div id="start-screen">
-        <div id="start-content">
-            <h1 class="start-title">Gate of Hell</h1>
-            <h2 class="start-subtitle">Guardians of the Underworld</h2>
-            <button id="start-game-btn">CAST OUT SPECTERS</button>
-        </div>
-    </div>
-
     <div id="game-container">
-        <!-- Restart Button -->
+        <!-- Top Fixed Controls -->
         <button id="restart-btn-top">RESTART</button>
-
-        <!-- Difficulty Message Overlay -->
-        <div id="difficulty-msg-container">
-            <div id="difficulty-msg"></div>
-        </div>
-
-        <!-- Tutorial Toggle -->
         <div id="tutorial-toggle-container">
-            <span id="tutorial-label">TUTORIAL</span>
-            <label class="switch">
-                <input type="checkbox" id="tutorial-toggle" checked>
-                <span class="slider round"></span>
-            </label>
-            <span id="tutorial-status">ON</span>
+            <span>TUTORIAL</span>
+            <input type="checkbox" id="tutorial-toggle" checked>
         </div>
 
-        <div id="frozen-overlay"></div>
-        
+        <!-- Battlefield (65% Height) -->
         <div id="game-layout">
-            <div id="corruption-layer"></div>
-            <div id="corruption-vignette"></div>
             <div id="left-slots" class="slot-area"></div>
             <div id="road">
-                <div id="spawning-pool"></div>
-                <div id="stage-info" style="display:none;"></div> <!-- Legacy hidden -->
-                <div id="portal">
-                    <!-- Gauge moved to bottom-panel -->
-                </div>
+                <div id="corruption-layer"></div>
+                <div id="corruption-vignette"></div>
             </div>
             <div id="right-slots" class="slot-area"></div>
         </div>
 
-        <div id="start-timer"></div>
-
+        <!-- Bottom Panel (35% Height) -->
         <div id="bottom-panel">
-            <!-- Thematic Stage Header (Centralized) -->
-            <div id="stage-title-central">
-                <span id="stage-name">Whispering Gates</span> [Depth: <span id="stage-display">1</span>]
+            <div id="stage-header">
+                <span id="stage-name">WHISPERING GATES</span> [DEPTH: <span id="stage-display">1</span>]
             </div>
 
-            <!-- Unified Gauges Container (5:30:30:30:5) -->
             <div id="gauges-grid">
-                <div class="spacer"></div>
-                
-                <!-- Soul Energy -->
-                <div class="gauge-wrapper" id="se-label" style="cursor:help;">
-                    <div class="gauge-info">
-                        <span>✨ SOUL ENERGY</span>
-                    </div>
-                    <div class="gauge-bar se">
-                        <div id="se-gauge-fill"></div>
-                        <span id="se-display-text" class="gauge-count">100</span>
-                    </div>
+                <div class="gauge-item">
+                    <span class="label">✨ SOUL</span>
+                    <div class="bar"><div id="se-gauge-fill" class="fill se"></div></div>
+                    <span id="se-display-text" class="value">150</span>
                 </div>
-
-                <!-- Portal Energy -->
-                <div class="gauge-wrapper" id="pe-label">
-                    <div class="gauge-info">
-                        <span>👿 PORTAL ENERGY</span>
-                    </div>
-                    <div class="gauge-bar pe">
-                        <div id="portal-gauge-fill"></div>
-                        <span id="portal-energy-label" class="gauge-count">0 / 1500</span>
-                    </div>
-                    <div id="cursed-status">Cursed: None</div>
+                <div class="gauge-item">
+                    <span class="label">👿 PORTAL</span>
+                    <div class="bar"><div id="portal-gauge-fill" class="fill pe"></div></div>
+                    <span id="portal-energy-label" class="value">0 / 1500</span>
                 </div>
-
-                <!-- Remaining Specters Gauge -->
-                <div class="gauge-wrapper rs" id="rs-label">
-                    <div class="gauge-info">
-                        <span>💀 REMAINING SPECTERS</span>
-                    </div>
-                    <div class="gauge-bar rs">
-                        <div id="rs-gauge-fill"></div>
-                        <span id="enemies-left" class="gauge-count">0</span>
-                    </div>
+                <div class="gauge-item">
+                    <span class="label">💀 SPECTERS</span>
+                    <div class="bar"><div id="rs-gauge-fill" class="fill rs"></div></div>
+                    <span id="enemies-left" class="value">0</span>
                 </div>
-
-                <div class="spacer"></div>
             </div>
 
-            <div id="bottom-main-ui">
+            <div id="interaction-area">
                 <div id="control-panel">
-                    <!-- 1. Summon Card -->
-                    <div id="tower-card" class="tower-card">
-                        <div id="summon-warning" class="card-warning" style="display: none;">NOT ENOUGH SE</div>
-                        <div style="font-size: 42px;">🪄</div>
-                        <div style="font-size: 24px; font-weight: bold;">SUMMON</div>
-                        <div id="summon-cost-display" style="font-size: 24px; opacity: 0.8; margin-top: 6px;">40 SE</div>
+                    <div class="tower-card" id="tower-card">
+                        <div class="icon">🪄</div>
+                        <div class="name">SUMMON</div>
+                        <div id="summon-cost-display" class="cost">30 SE</div>
                     </div>
-                    <!-- 2. Records Button -->
-                    <div id="records-btn" class="tower-card" style="border-color: #ffd700; color: #ffd700;">
-                        <div style="font-size: 42px;">📜</div>
-                        <div style="font-size: 24px;">RECORDS</div>
+                    <div class="tower-card" id="records-btn">
+                        <div class="icon">📜</div>
+                        <div class="name">RECORDS</div>
                     </div>
-                    <!-- 3. Purge Card -->
-                    <div id="purge-card" class="tower-card" style="border-color: #9400d3; color: #9400d3;" title="Remove 50% of Portal Energy">
-                        <div id="purge-warning" class="card-warning" style="display: none;">NOT ENOUGH SE</div>
-                        <div style="font-size: 42px;">🧹</div>
-                        <div style="font-size: 24px; font-weight: bold;">PURGE</div>
-                        <div id="purge-cost-display" style="font-size: 24px; opacity: 0.8; margin-top: 6px;">800 SE</div>
+                    <div class="tower-card" id="purge-card">
+                        <div class="icon">🧹</div>
+                        <div class="name">PURGE</div>
                     </div>
-                    <!-- 4. Relics Card -->
-                    <div id="relics-btn" class="tower-card" style="border-color: #ff4500; color: #ff4500;">
-                        <div style="font-size: 42px;">🏺</div>
-                        <div style="font-size: 24px;">RELICS</div>
+                    <div class="tower-card" id="relics-btn">
+                        <div class="icon">🏺</div>
+                        <div class="name">RELICS</div>
                     </div>
-                    <!-- 5. TBD Card -->
-                    <div class="tower-card placeholder">
-                        <div style="font-size: 30px; color: #444;">TBD</div>
-                    </div>
-                    <!-- 6. TBD Card -->
-                    <div class="tower-card placeholder">
-                        <div style="font-size: 30px; color: #444;">TBD</div>
-                    </div>
+                    <div class="tower-card placeholder"><div class="icon">🔒</div></div>
+                    <div class="tower-card placeholder"><div class="icon">🔒</div></div>
                 </div>
-
                 <div id="unit-info">
-                    <div class="info-default-text">GUARDIANS<br><span style="font-size:30px; opacity:0.8;">of the</span><br>UNDERWORLD</div>
+                    <div class="info-default-text">SELECT GUARDIAN</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Corruption Confirmation Overlay -->
-    <!-- Spooky Game Over Overlay -->
-    <div id="game-over-overlay" style="display: none;">
-        <div id="game-over-content">
-            <h1 id="game-over-title">YOU HAVE BEEN CONSUMED</h1>
-            <p id="game-over-msg">The abyss claims another soul... The gate has fallen, and eternal darkness awaits.</p>
-            <div id="final-stats">Last Stage Reached: <span id="final-stage">1</span></div>
-            <div style="display: flex; gap: 10px; justify-content: center;">
-                <button id="retry-btn">SUCCUMB TO THE VOID (RETRY)</button>
-                <button id="cancel-restart-btn" style="display: none;">STAY AND FIGHT</button>
+        <!-- Legacy Start Screen Integration -->
+        <div id="start-screen" class="overlay">
+            <div id="start-content">
+                <h1 class="start-title">Gate of Hell</h1>
+                <button id="start-game-btn">CAST OUT SPECTERS</button>
             </div>
         </div>
     </div>
 
-    <!-- Exorcism Records Overlay -->
-    <div id="records-overlay" style="display: none;">
-        <div id="records-content">
-            <div id="records-header">
-                <h2>Exorcism Records</h2>
-                <button id="close-records">X</button>
-            </div>
-            <div id="records-tabs">
-                <button class="tab-btn active" data-tab="specters">Specters</button>
-                <button class="tab-btn" data-tab="exorcists">Exorcists</button>
-                <button class="tab-btn" data-tab="tree">Ascendency</button>
-                <button class="tab-btn" data-tab="achievements">TBD</button>
-                <button class="tab-btn" data-tab="settings">TBD</button>
-            </div>
-            <div id="tab-content">
-                <div id="specters-tab" class="tab-pane active"></div>
-                <div id="exorcists-tab" class="tab-pane"></div>
-                <div id="tree-tab" class="tab-pane"></div>
-                <div id="achievements-tab" class="tab-pane">TBD</div>
-                <div id="settings-tab" class="tab-pane">TBD</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Relics Collection Overlay -->
-    <div id="relics-overlay" style="display: none;">
-        <div id="relics-content">
-            <div id="relics-header">
-                <h2>Abyssal Relics</h2>
-                <button id="close-relics">X</button>
-            </div>
-            <div id="relics-grid">
-                <!-- Relics will be dynamically populated here -->
-            </div>
-            <div id="relic-details">
-                <div class="info-default-text">Select a relic to view its power.</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- New Class Unlock Modal -->
-    <div id="unlock-modal" style="display: none;">
-        <div id="unlock-content">
-            <div id="unlock-header">🆕 NEW CLASS UNLOCKED!</div>
-            <div id="unlock-icon"></div>
-            <div id="unlock-name"></div>
-            <div id="unlock-desc"></div>
-            <div id="unlock-resume-hint">(Click anywhere to Resume)</div>
-        </div>
-    </div>
-
-    <div id="max-units-warning" style="display: none;">
-        <div class="warning-main">???: No More Exorcists!</div>
-        <div class="warning-sub">(Maximum Exorcists: 16)</div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+    <!-- Data & System Scripts -->
     <script src="allies_data.js"></script>
     <script src="enemies.js"></script>
     <script type="module" src="main.js"></script>

@@ -1,12 +1,12 @@
-/* ui.css - Interface Alignment & Scaling */
+/* ui.css - Bottom Panel & Controls */
 
 #bottom-panel {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 360px;
-    height: 240px;
-    background: linear-gradient(to bottom, #0a0a0a, #000);
+    height: 224px; /* 35% of 640px */
+    background: #0a0a0a;
     border-top: 2px solid #222;
     padding: 10px;
     display: flex;
@@ -14,68 +14,78 @@
     z-index: 110;
 }
 
-#stage-title-central {
+#stage-header {
     text-align: center;
     color: #ffd700;
-    font-size: 13px;
-    margin-bottom: 10px;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    font-size: 11px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
 }
 
-/* Gauges Grid (Standardized to 360px) */
+/* Vertical Gauges List */
 #gauges-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr 1fr;
-    gap: 6px;
-    margin-bottom: 15px;
-}
-
-.gauge-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 3px;
+    gap: 5px;
+    margin-bottom: 12px;
 }
 
-.gauge-info span { font-size: 8px; color: #888; }
+.gauge-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-.gauge-bar {
-    width: 100%;
-    height: 10px;
+.gauge-item .label {
+    font-size: 8px;
+    color: #888;
+    width: 55px;
+}
+
+.gauge-item .bar {
+    flex: 1;
+    height: 8px;
     background: #111;
     border: 1px solid #333;
     position: relative;
     overflow: hidden;
 }
 
-.gauge-count {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    font-size: 8px;
-    line-height: 10px;
-    color: #fff;
-    z-index: 2;
+.gauge-item .fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
 }
 
-/* Main Interaction UI */
-#bottom-main-ui {
+.gauge-item .value {
+    font-size: 8px;
+    color: #fff;
+    width: 65px;
+    text-align: right;
+}
+
+.fill.se { background: #ffd700; box-shadow: 0 0 5px #ffd700; }
+.fill.pe { background: #8b0000; box-shadow: 0 0 5px #8b0000; }
+.fill.rs { background: #4b0082; box-shadow: 0 0 5px #4b0082; }
+
+/* Interaction Layout */
+#interaction-area {
     display: flex;
     justify-content: space-between;
     gap: 8px;
     flex: 1;
 }
 
-/* Control Panel (Cards) */
+/* 3x2 Grid for Cards */
 #control-panel {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
-    width: 195px;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4px;
+    width: 190px;
 }
 
 .tower-card {
-    height: 75px;
     background: #111;
     border: 1px solid #444;
     display: flex;
@@ -83,20 +93,22 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s;
 }
 
 .tower-card:hover { border-color: #ffd700; background: #1a1a1a; }
-.tower-card div:nth-child(2) { font-size: 22px; } /* Icon */
-.tower-card div:nth-child(3) { font-size: 9px; font-weight: bold; margin-top: 2px; }
-#summon-cost-display { font-size: 8px !important; opacity: 0.7; }
+.tower-card .icon { font-size: 18px; }
+.tower-card .name { font-size: 8px; font-weight: bold; color: #fff; margin-top: 2px; }
+.tower-card .cost { font-size: 7px; color: #ffd700; }
 
-/* Unit Information Display */
+.tower-card.placeholder { opacity: 0.3; cursor: default; }
+
+/* Unit Information Panel */
 #unit-info {
-    width: 135px;
-    background: rgba(15, 15, 15, 0.9);
+    flex: 1;
+    background: #0d0d0d;
     border: 1px solid #8b0000;
-    padding: 8px;
+    padding: 6px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -105,4 +117,4 @@
     box-shadow: inset 0 0 10px rgba(139, 0, 0, 0.2);
 }
 
-.info-default-text { font-size: 11px; color: #555; line-height: 1.2; }
+.info-default-text { font-size: 10px; color: #444; line-height: 1.2; }

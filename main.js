@@ -293,9 +293,15 @@ class MainScene extends Phaser.Scene {
     }
 
     createSlots() {
-        for (let i = 0; i < 8; i++) {
-            this.addSlot(40, 100 + i * 35, 'left');
-            this.addSlot(320, 100 + i * 35, 'right');
+        // New Layout: Left(120px) | Road(120px) | Right(120px)
+        // Slots are 3 columns per side area
+        for (let row = 0; i < 6; i++) {
+            for (let col = 0; col < 3; col++) {
+                // Left side: 0 to 120
+                this.addSlot(20 + col * 40, 80 + i * 50, 'left');
+                // Right side: 240 to 360
+                this.addSlot(260 + col * 40, 80 + i * 50, 'right');
+            }
         }
     }
 
