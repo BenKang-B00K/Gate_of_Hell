@@ -203,7 +203,20 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
 
     takeDamage(amount, isCrit) {
         this.hp -= amount;
+        
+        // 1. 적 피격 점멸 (Flash) 피드백
+        this.setTint(isCrit ? 0xff0000 : 0xffffff); 
+        this.scene.time.delayedCall(50, () => {
+            if (this.active) this.clearTint();
+        });
+
+        // 2. 피격 넉백 (Knockback)
+        const kbDist = isCrit ? 15 : 5;
+        this.y_px = Math.max(0, this.y_px - kbDist); 
+
+        // 3. 데미지 텍스트 호출 (MainScene 메서드)
         this.scene.showDamageText(this.x, this.y, amount, isCrit);
+
         if (this.type === 'mimic' && Math.random() < 0.2) { this.y_px += 40; }
         if (this.type === 'soul_eater') { this.speed *= 1.1; }
         if (this.hp <= 0) this.die();
@@ -222,6 +235,10 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
     reachPortal() {
         const pe = this.scene.registry.get('portalEnergy');
         this.scene.registry.set('portalEnergy', pe + this.maxHp * 0.1);
+        
+        // 포탈 피격 연출 호출
+        if (this.scene.onPortalHit) this.scene.onPortalHit();
+        
         this.kill();
     }
 

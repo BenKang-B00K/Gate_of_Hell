@@ -1,7 +1,9 @@
 import { Guardian, Specter, Projectile } from './entities.js';
 import { DataManager } from './data_manager.js';
+import { VFXManager } from './VFXManager.js';
 
 class PreloadScene extends Phaser.Scene {
+// ... (PreloadScene content remains same)
 // ... (PreloadScene content remains same)
     constructor() { super('PreloadScene'); }
 
@@ -56,8 +58,9 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. 데이터 매니저 초기화 (Registry 데이터 로드)
+        // 1. 데이터 매니저 및 VFX 매니저 초기화
         this.dataManager = new DataManager(this);
+        this.vfx = new VFXManager(this);
 
         // 2. 경제 및 상태 시스템 초기화
         this.initEconomy();
@@ -130,9 +133,18 @@ class MainScene extends Phaser.Scene {
         const damage = projectile.source.damage * (isCrit ? 2 : 1);
         
         enemy.takeDamage(damage, isCrit);
-        projectile.disableBody(true, true);
+        
+        // VFX 트리거
+        this.vfx.triggerHitEffect(enemy.x, enemy.y, projectile.source.type);
+        if (isCrit) this.vfx.shake('medium');
+        else this.vfx.shake('light');
 
-        this.createHitEffect(enemy.x, enemy.y, projectile.source.type);
+        projectile.disableBody(true, true);
+    }
+
+    onPortalHit() {
+        this.vfx.shake('heavy');
+        this.cameras.main.flash(200, 150, 0, 0); // 화면 붉은색 점멸
     }
 
     createBlackHoleEffect(x, y) {
@@ -160,12 +172,6 @@ class MainScene extends Phaser.Scene {
             targets: scythe, angle: 360, scale: 2, alpha: 0, duration: 500,
             onComplete: () => scythe.destroy()
         });
-    }
-
-    createHitEffect(x, y, type) {
-        const emojis = { 'fire': '🔥', 'ice': '❄️', 'apprentice': '✨' };
-        const txt = this.add.text(x, y, emojis[type] || '💥', { fontSize: '24px' }).setOrigin(0.5);
-        this.tweens.add({ targets: txt, y: y - 60, alpha: 0, duration: 600, onComplete: () => txt.destroy() });
     }
 
     showDamageText(x, y, amount, isCrit) {
