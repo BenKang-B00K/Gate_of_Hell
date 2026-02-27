@@ -158,6 +158,9 @@ function drawUnits() {
             case 'knight': drawKnight(cx, cy, tower); break;
             case 'alchemist': drawAlchemist(cx, cy, tower); break;
             case 'mirror': drawMirror(cx, cy, tower); break;
+            case 'paladin': drawPaladin(cx, cy, tower); break;
+            case 'crusader': drawCrusader(cx, cy, tower); break;
+            case 'midas': drawMidas(cx, cy, tower); break;
         }
     });
 }
@@ -1618,6 +1621,284 @@ function drawMirror(cx, cy, tower) {
     ctx.fillStyle = `rgba(149, 117, 205, ${0.05 * cosmicPulse})`;
     ctx.beginPath();
     ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawPaladin(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & HOLY ARMOR (Bright Gold / White Palette) ---
+    const armorColor = '#FFD700'; // Pure gold
+    const plateColor = '#FFFFFF'; // Holy white
+    const highlightColor = '#FFF9C4'; // Pale yellow shine
+    
+    // Plate Body
+    p(-7, -1, '#000', 15, 17); // Outline
+    p(-6, 0, armorColor, 13, 15);
+    p(-3, 0, plateColor, 7, 13); // White center
+    
+    // Large Pauldrons
+    p(-9, -1, '#000', 5, 6);
+    p(-8, 0, armorColor, 3, 4);
+    p(5, -1, '#000', 5, 6);
+    p(6, 0, armorColor, 3, 4);
+
+    // Boots
+    p(-5, 14, '#000', 5, 4);
+    p(1, 14, '#000', 5, 4);
+
+    // Head (Winged Helm)
+    p(-4, -10, '#000', 9, 10); 
+    p(-3, -9, armorColor, 7, 8);
+    p(-1, -7, '#00E5FF', 3, 1); // Cyan visor glow
+    // Wings on Helm
+    p(-6, -11, plateColor, 3, 5);
+    p(4, -11, plateColor, 3, 5);
+
+    // --- 2. BLESSED HAMMER (Sun-Breaker) ---
+    let hammerOX = isAttacking ? 12 : 9;
+    let hammerOY = isAttacking ? -15 : -10;
+    
+    // Handle
+    p(hammerOX, hammerOY + 5, '#5D4037', 2, 22);
+    
+    // Hammer Head
+    p(hammerOX - 4, hammerOY - 4, '#000', 10, 10); // Outline
+    p(hammerOX - 3, hammerOY - 3, armorColor, 8, 8);
+    p(hammerOX - 1, hammerOY - 3, highlightColor, 3, 8); // Face shine
+    p(hammerOX, hammerOY, '#FFF', 2, 2); // Core gem
+
+    // --- 3. HOLY SMITE (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 40 * flashIntensity;
+        ctx.shadowColor = '#FFD700';
+        
+        // Radiant Impact
+        const hitX = isLeft ? cx + (hammerOX * S) : cx - (hammerOX * S);
+        const hitY = cy + (hammerOY * S);
+        
+        ctx.fillStyle = `rgba(255, 215, 0, ${0.3 * flashIntensity})`;
+        ctx.beginPath();
+        ctx.arc(hitX, hitY, 35 * flashIntensity * S, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Cross Sparks
+        for(let i=0; i<4; i++) {
+            const sang = (i / 4) * Math.PI * 2;
+            const sdist = 25 * flashIntensity;
+            const sx = hammerOX + Math.cos(sang) * sdist/S;
+            const sy = hammerOY + Math.sin(sang) * sdist/S;
+            p(Math.round(sx), Math.round(sy), '#FFF', 2, 2);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. DIVINE AURA ---
+    const auraGlow = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 215, 0, ${0.1 * auraGlow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 35 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawCrusader(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 250; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 250) : 0;
+
+    // --- 1. BODY & CRIMSON ARMOR (Dark Steel / Blood Red Palette) ---
+    const armorColor = '#263238'; // Dark steel
+    const bloodColor = '#B71C1C'; // Deep red
+    const capeColor = '#7F0000';
+    
+    // Armor Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, armorColor, 11, 13);
+    p(-5, 1, bloodColor, 2, 13); // Side detail
+    p(4, 1, bloodColor, 2, 13);
+    
+    // Tattered Cape
+    const capeWarp = Math.sin(time * 3) * 3;
+    p(-8 + capeWarp, 2, '#000', 4, 15);
+    p(-7 + capeWarp, 3, capeColor, 2, 13);
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head (Executioner Helm)
+    p(-4, -10, '#000', 9, 10); 
+    p(-3, -9, armorColor, 7, 8);
+    p(-1, -7, '#FF1744', 3, 1); // Red eye slit
+
+    // --- 2. EXECUTIONER SWORD (Blood-Seeker) ---
+    let swordOX = isAttacking ? 11 : 8;
+    let swordOY = isAttacking ? -18 : -14;
+    
+    const metalColor = '#455A64';
+    const edgeColor = '#B71C1C';
+
+    // Guard
+    p(swordOX - 3, swordOY + 18, '#000', 7, 3);
+    p(swordOX - 1, swordOY + 21, '#212121', 3, 6); // Grip
+
+    // Heavy Blade
+    p(swordOX - 2, swordOY, '#000', 5, 18); // Outline
+    p(swordOX - 1, swordOY + 1, metalColor, 3, 16);
+    p(swordOX + 1, swordOY + 1, edgeColor, 1, 16); // Bloody edge
+
+    // --- 3. BLOOD SLASH (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 35 * flashIntensity;
+        ctx.shadowColor = '#FF0000';
+        
+        // Crimson Arc
+        ctx.strokeStyle = `rgba(183, 28, 28, ${flashIntensity})`;
+        ctx.lineWidth = 8 * S;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 28 * S, -0.4, 0.4);
+        ctx.stroke();
+        
+        // Blood Droplets
+        for(let i=0; i<8; i++) {
+            const sang = (i / 8) * Math.PI * 2 + time * 10;
+            const sdist = 20 + flashIntensity * 30;
+            const sx = Math.cos(sang) * sdist;
+            const sy = Math.sin(sang) * sdist;
+            p(Math.round(sx/S), Math.round(sy/S), '#D32F2F', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. DREAD AURA ---
+    const dreadStep = (Math.cos(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(183, 28, 28, ${0.05 * dreadStep})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawMidas(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 400; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
+
+    // --- 1. BODY & OPULENT ROBES (Gold / Purple Palette) ---
+    const goldColor = '#FFD700';
+    const purpleColor = '#4A148C';
+    const silkColor = '#9575CD';
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, purpleColor, 11, 13);
+    p(-5, 1, goldColor, 1, 13); // Gold side trim
+    p(5, 1, goldColor, 1, 13);
+    
+    // Golden Jewelry
+    p(-3, 4, goldColor, 7, 2); // Heavy necklace
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Royal Turban
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Turban (Purple/Gold)
+    p(-4, -11, '#000', 9, 4);
+    p(-3, -10, silkColor, 7, 3);
+    p(-1, -11, goldColor, 3, 2); // Center jewel holder
+    p(0, -11, '#FF5252', 1, 1);  // Red ruby
+
+    // --- 2. THE GOLDEN SCEPTER (Midas Touch) ---
+    let scepterOX = isAttacking ? 10 : 8;
+    let scepterOY = -12;
+    
+    // Staff
+    p(scepterOX, scepterOY, '#000', 3, 26);
+    p(scepterOX + 1, scepterOY, goldColor, 1, 26);
+    
+    // Scepter Head (Large Coin)
+    p(scepterOX - 3, scepterOY - 5, '#000', 9, 9); // Outline
+    p(scepterOX - 2, scepterOY - 4, goldColor, 7, 7);
+    p(scepterOX, scepterOY - 2, '#B8860B', 1, 3); // Engraving
+
+    // --- 3. COIN BURST (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 30 * flashIntensity;
+        ctx.shadowColor = '#FFD700';
+        
+        // Golden Explosion
+        const blastX = isLeft ? cx + (scepterOX * S) : cx - (scepterOX * S);
+        const blastY = cy + (scepterOY * S);
+        
+        ctx.fillStyle = `rgba(255, 215, 0, ${0.4 * flashIntensity})`;
+        ctx.beginPath();
+        ctx.arc(blastX, blastY, 20 * flashIntensity * S, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Flying Coins
+        for(let i=0; i<6; i++) {
+            const ang = (i / 6) * Math.PI * 2 + time * 10;
+            const dist = 10 + flashIntensity * 30;
+            const cxo = scepterOX + Math.cos(ang) * dist/S;
+            const cyo = scepterOY + Math.sin(ang) * dist/S;
+            p(Math.round(cxo), Math.round(cyo), goldColor, 2, 2);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. WEALTH AURA ---
+    const wealthPulse = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 215, 0, ${0.08 * wealthPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30 * S, 0, Math.PI * 2);
     ctx.fill();
 }
 
