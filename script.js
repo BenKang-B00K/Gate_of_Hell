@@ -436,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // but some browsers/bundlers might behave differently.
     window.gameContainer = gameContainer;
     window.road = road;
+    const startBtn = document.getElementById('start-game-btn');
     const startScreen = document.getElementById('start-screen');
     
     // Start thunder sound loop (will be blocked by browser until first click anywhere)
