@@ -350,21 +350,21 @@ function renderBestiary() {
                     <div class="custom-tooltip specter">
                         <strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}
                     </div>
-                    <div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div>
-                    <div class="bestiary-info">
-                        <div class="bestiary-name">${names[t]||t}</div>
-                        <div class="bestiary-stats">💀 ${kills}${rewardText}${btx}</div>
+                    <div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center; width: auto; height: auto; box-shadow: none;">${d.icon}</div>
+                    <div class="bestiary-name">${names[t]||t}</div>
+                    <div class="bestiary-stats">
+                        <div style="margin-bottom: 5px;">💀 Kills: ${kills}</div>
+                        <div style="color: #ffd700; font-weight: bold;">✨ Reward: ${rVal} SE</div>
+                        ${bonus > 1 ? `<div style="color: #00ff00; font-size: 14px; margin-top: 5px;">DMG +${((bonus-1)*100).toFixed(0)}%</div>` : ''}
                     </div>`;
             } else {
                 item.innerHTML = `
                     <div class="custom-tooltip specter">
                         <strong style="color:#ffd700;">[Information Unavailable]</strong><br>Defeat this specter to reveal details.
                     </div>
-                    <div class="bestiary-icon" style="position:static; transform:none; display:flex; justify-content:center; align-items:center; background:#222; color:#555; font-size:60px; border:2px dashed #444;">?</div>
-                    <div class="bestiary-info">
-                        <div class="bestiary-name" style="color:#555;">???</div>
-                        <div class="bestiary-stats" style="color:#333;">💀 Locked</div>
-                    </div>`;
+                    <div class="bestiary-icon" style="position:static; transform:none; display:flex; justify-content:center; align-items:center; background:none; color:#333; font-size:64px; border:none; box-shadow:none;">?</div>
+                    <div class="bestiary-name" style="color:#444;">???</div>
+                    <div class="bestiary-stats" style="color:#333; border: 1px dashed #333;">LOCKED</div>`;
             }
             bt.appendChild(item);
         });
