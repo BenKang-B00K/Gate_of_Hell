@@ -1,0 +1,219 @@
+/* Base Effects */
+.attack-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 30;
+    transform: translate(-50%, -50%);
+}
+
+.projectile {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    z-index: 100;
+    transition: left 0.2s linear, top 0.2s linear;
+    background: #fff;
+    pointer-events: none;
+}
+
+.range-indicator {
+    position: absolute;
+    border: 1px dashed rgba(0, 229, 255, 0.5);
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+    animation: rangePulse 2s infinite ease-in-out;
+}
+
+@keyframes rangePulse {
+    0% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.02); }
+    100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+}
+
+.aura-indicator {
+    position: absolute;
+    border: 2px solid rgba(255, 215, 0, 0.6);
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 75%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9;
+    transform: translate(-50%, -50%);
+    animation: auraPulse 3s infinite alternate ease-in-out;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2), inset 0 0 30px rgba(255, 215, 0, 0.1);
+}
+
+@keyframes auraPulse {
+    0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.98); filter: brightness(1); }
+    100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); filter: brightness(1.3); }
+}
+
+/* Floating Gains */
+.se-gain-effect, .cs-gain-effect {
+    position: absolute;
+    pointer-events: none;
+    z-index: 100;
+    font-weight: bold;
+    font-size: 14px;
+    animation: seFloatUp 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.se-gain-effect { color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 15px #ff8c00, 0 0 2px #000; font-family: 'Cinzel', serif; }
+.cs-gain-effect { color: #ff0000; text-shadow: 0 0 8px #ff0000, 0 0 15px #8b0000, 0 0 2px #000; }
+
+@keyframes seFloatUp {
+    0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+    30% { transform: translate(-50%, -20px) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -60px) scale(1); opacity: 0; }
+}
+
+/* Friendly Ghost */
+.friendly-ghost {
+    position: absolute;
+    width: 20px; height: 20px;
+    background: radial-gradient(circle, #8a2be2, #4b0082);
+    border-radius: 50%;
+    box-shadow: 0 0 10px #8a2be2;
+    z-index: 11;
+    opacity: 0.8;
+}
+
+/* Projectile Variants */
+.projectile.apprentice {
+    width: 36px; height: 36px; background: transparent; border-radius: 0;
+    background: linear-gradient(#00e5ff, #00e5ff) center/6px 100% no-repeat, linear-gradient(#00e5ff, #00e5ff) center/100% 6px no-repeat;
+    box-shadow: 0 0 30px #00e5ff, 0 0 60px rgba(0, 229, 255, 0.5);
+    animation: crossRotate 0.5s infinite linear;
+}
+
+@keyframes crossRotate {
+    from { transform: rotate(0deg) scale(1); }
+    to { transform: rotate(360deg) scale(1); }
+}
+
+/* Attack Effects - Tiers */
+.apprentice-effect {
+    width: 20px; height: 20px; display: flex; justify-content: center; align-items: center;
+    animation: apprenticeSpark 0.4s ease-out forwards;
+}
+.apprentice-effect .cross-v, .apprentice-effect .cross-h { position: absolute; background-color: #00e5ff; box-shadow: 0 0 8px #00e5ff; }
+.apprentice-effect .cross-v { width: 2px; height: 100%; }
+.apprentice-effect .cross-h { width: 100%; height: 2px; }
+
+@keyframes apprenticeSpark {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.5) rotate(180deg); opacity: 0; }
+}
+
+.chainer-effect { width: 30px; height: 30px; border: 2px solid #9370db; border-radius: 50%; animation: chainerBind 0.5s ease-out forwards; }
+@keyframes chainerBind { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; border-width: 5px; } }
+
+.monk-effect { width: 40px; height: 40px; background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%); border-radius: 50%; animation: monkImpact 0.3s ease-out forwards; }
+@keyframes monkImpact { 0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; } }
+
+.archer-effect { width: 4px; height: 20px; background: #228b22; box-shadow: 0 0 10px #32cd32; animation: archerPierce 0.4s ease-in forwards; }
+@keyframes archerPierce { 0% { transform: translate(-50%, -50%) scaleY(0); opacity: 1; } 100% { transform: translate(-50%, -50%) scaleY(2); opacity: 0; } }
+
+.ice-effect { font-size: 16px; animation: iceFreeze 0.5s ease-out forwards; }
+@keyframes iceFreeze { 0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.5) rotate(180deg); opacity: 0; } }
+
+.fire-effect { width: 25px; height: 25px; background: radial-gradient(circle, #ff4500, #8b0000, transparent); border-radius: 50%; animation: fireExplode 0.4s ease-out forwards; }
+@keyframes fireExplode { 0% { transform: translate(-50%, -50%) scale(0.5); filter: brightness(2); } 100% { transform: translate(-50%, -50%) scale(1.8); filter: brightness(1); opacity: 0; } }
+
+.assassin-effect { width: 30px; height: 2px; background: #fff; box-shadow: 0 0 8px #000; animation: assassinSlash 0.2s linear forwards; }
+@keyframes assassinSlash { 0% { width: 0; opacity: 1; } 100% { width: 40px; opacity: 0; } }
+
+.tracker-effect { font-size: 14px; animation: trackerEye 0.6s ease-in-out forwards; }
+@keyframes trackerEye { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
+
+.necromancer-effect { width: 30px; height: 30px; background: radial-gradient(circle, #8a2be2, transparent 70%); animation: spiritSmoke 0.5s ease-out forwards; }
+@keyframes spiritSmoke { 0% { transform: translate(-50%, -50%) translateY(0); opacity: 0.8; } 100% { transform: translate(-50%, -50%) translateY(-20px); opacity: 0; } }
+
+.guardian-effect { width: 35px; height: 35px; border: 2px solid #ffd700; box-shadow: 0 0 15px #ffd700; border-radius: 10% 50%; animation: guardianFlash 0.4s ease-out forwards; }
+@keyframes guardianFlash { 0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(90deg); opacity: 0; scale: 1.5; } }
+
+.knight-effect { width: 30px; height: 4px; background: linear-gradient(90deg, transparent, #fff, transparent); animation: knightSlash 0.3s ease-out forwards; }
+@keyframes knightSlash { 0% { transform: translate(-50%, -50%) scaleX(0); opacity: 1; } 100% { transform: translate(-50%, -50%) scaleX(1.5); opacity: 0; } }
+
+/* Master effects */
+.master-effect { font-size: 20px; z-index: 35; }
+.paladin-effect { animation: paladinHoly 0.5s ease-out forwards; color: #ffd700; text-shadow: 0 0 10px #ffd700; }
+@keyframes paladinHoly { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } }
+
+.crusader-effect .slash-v { width: 4px; height: 40px; background: #8b0000; box-shadow: 0 0 10px #ff0000; animation: crusaderSlash 0.3s ease-in forwards; }
+@keyframes crusaderSlash { 0% { transform: translate(-50%, -50%) scaleY(0); } 100% { transform: translate(-50%, -50%) scaleY(1.5); opacity: 0; } }
+
+.flamemaster-effect { width: 40px; height: 40px; background: radial-gradient(circle, #ff4500, transparent); border-radius: 50%; animation: flameBurst 0.5s ease-out forwards; }
+@keyframes flameBurst { 0% { transform: translate(-50%, -50%) scale(0.5); filter: contrast(2); } 100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } }
+
+.saint-effect { animation: saintBell 0.8s ease-in-out forwards; color: #cd853f; }
+@keyframes saintBell { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.5); border: 2px solid #cd853f; border-radius: 50%; } 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; } }
+
+.sniper-effect { width: 100vw; height: 2px; background: rgba(0, 255, 0, 0.5); box-shadow: 0 0 10px #00ff00; animation: sniperLine 0.2s linear forwards; }
+@keyframes sniperLine { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+.absolutezero-effect { animation: iceCrystallize 0.6s ease-out forwards; color: #00ffff; }
+@keyframes iceCrystallize { 0% { transform: translate(-50%, -50%) scale(0); filter: brightness(2); } 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; } }
+
+.permafrost-effect { width: 50px; height: 50px; border: 3px dotted #87ceeb; border-radius: 50%; animation: blizzardSwirl 0.8s linear forwards; }
+@keyframes blizzardSwirl { 0% { transform: translate(-50%, -50%) rotate(0deg) scale(0.5); } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1.5); opacity: 0; } }
+
+.hellfire-effect { width: 40px; height: 40px; background: radial-gradient(circle, #ff4500, #4b0082, transparent); animation: hellfireBoom 0.5s ease-out forwards; }
+@keyframes hellfireBoom { 0% { transform: translate(-50%, -50%) scale(0); border-radius: 50%; } 100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } }
+
+.spatial-effect { width: 40px; height: 40px; border: 1px solid #fff; animation: spatialGlitch 0.3s steps(3) forwards; }
+@keyframes spatialGlitch { 0% { transform: translate(-50%, -50%) skew(20deg); } 50% { transform: translate(-45%, -55%) skew(-20deg); } 100% { opacity: 0; } }
+
+.seer-effect { animation: seerBeam 0.8s ease-out forwards; color: #e6e6fa; }
+@keyframes seerBeam { 0% { transform: translate(-50%, -50%) scale(0); text-shadow: 0 0 0px #fff; } 50% { transform: translate(-50%, -50%) scale(1.5); text-shadow: 0 0 20px #9370db; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
+
+/* Abyss effects */
+.abyss-effect { font-size: 30px; z-index: 45; filter: drop-shadow(0 0 10px #9400d3); }
+.warden-effect { animation: wardenPull 1s ease-in-out forwards; }
+@keyframes wardenPull { 0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(2) rotate(180deg); opacity: 1; border: 2px solid #8a2be2; border-radius: 50%; } 100% { transform: translate(-50%, -50%) scale(0) rotate(360deg); opacity: 0; } }
+
+.cursed-talisman-effect { animation: cursedGate 0.8s ease-out forwards; }
+@keyframes cursedGate { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; } 30% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; text-shadow: 0 0 20px #ff4500; } 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; filter: grayscale(1); } }
+
+.asura-effect { animation: asuraStrike 0.4s steps(4) forwards; color: #b22222; }
+@keyframes asuraStrike { 0% { transform: translate(-50%, -50%) scale(1); filter: brightness(2); } 50% { transform: translate(-55%, -45%) scale(1.5); filter: hue-rotate(90deg); } 100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; } }
+
+.piercing-shadow-effect { animation: shadowMeteor 0.3s ease-in forwards; color: #32cd32; }
+@keyframes shadowMeteor { 0% { transform: translate(-50%, -200%) scale(0.5); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(2); opacity: 0; text-shadow: 0 0 30px #00ff00; } }
+
+.cocytus-effect { animation: cocytusTime 1.2s ease-in-out forwards; color: #00ffff; }
+@keyframes cocytusTime { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(2); opacity: 1; } 80% { transform: translate(-50%, -50%) scale(2.2); opacity: 1; filter: contrast(2); } 100% { transform: translate(-50%, -50%) scale(3); opacity: 0; filter: blur(10px); } }
+
+.reaper-effect { animation: reaperScythe 0.5s ease-out forwards; }
+@keyframes reaperScythe { 0% { transform: translate(50%, -100%) rotate(-45deg); opacity: 0; } 50% { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; text-shadow: 0 0 20px #ff0000; } 100% { transform: translate(-150%, 0%) rotate(45deg); opacity: 0; } }
+
+.eternal-wall-effect { animation: eternalStone 0.9s ease-in-out forwards; opacity: 0.8; }
+@keyframes eternalStone { 0% { transform: translate(-50%, -20%) scale(0.5); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; filter: sepia(1); } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; filter: brightness(0); } }
+
+/* Special effects */
+.midas-effect { animation: coinPop 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards; font-size: 20px; }
+@keyframes coinPop { 0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; } 50% { transform: translate(-50%, -30px) scale(1.5); opacity: 1; } 100% { transform: translate(-50%, -50px) scale(1); opacity: 0; } }
+
+.philosopher-effect { animation: crystalPulse 0.7s ease-out forwards; font-size: 18px; }
+@keyframes crystalPulse { 0% { transform: translate(-50%, -50%) scale(0); filter: brightness(2); } 100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; } }
+
+.illusion-effect { animation: maskSpin 0.8s ease-in-out forwards; font-size: 22px; }
+@keyframes maskSpin { 0% { transform: translate(-50%, -50%) rotate(0) scale(0); opacity: 0; } 50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.5); opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(2); opacity: 0; } }
+
+.reflection-effect { animation: bounceFlash 0.5s ease-out forwards; font-size: 16px; }
+@keyframes bounceFlash { 0% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); } 50% { transform: translate(-50%, -50%) scale(1.2); filter: brightness(3); box-shadow: 0 0 20px #fff; } 100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); opacity: 0; } }
+
+.transmuter-effect { animation: atomRotate 0.8s linear forwards; font-size: 24px; }
+@keyframes atomRotate { 0% { transform: translate(-50%, -50%) rotate(0) scale(0.5); opacity: 0; } 50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.5); opacity: 1; text-shadow: 0 0 15px #00e5ff; } 100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); opacity: 0; } }
+
+.oracle-effect { animation: eyeStare 1s ease-in-out forwards; font-size: 26px; }
+@keyframes eyeStare { 0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; filter: saturate(0); } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; filter: saturate(2); text-shadow: 0 0 20px #9400d3; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
+
+.alchemist-effect { animation: bubbleUp 0.4s ease-out forwards; font-size: 14px; }
+@keyframes bubbleUp { 0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; } 100% { transform: translate(-50%, -30px) scale(1.5); opacity: 0; } }
+
+.mirror-effect { animation: shimmer 0.5s linear forwards; font-size: 14px; opacity: 0.8; }
+@keyframes shimmer { 0% { filter: brightness(1) blur(0px); } 50% { filter: brightness(3) blur(2px); } 100% { filter: brightness(1) blur(0px); opacity: 0; } }

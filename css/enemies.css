@@ -1,0 +1,157 @@
+/* Enemy Base */
+.enemy {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    cursor: help;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: serif;
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
+    border-radius: 50%;
+    transition: top 0.1s linear, left 0.1s linear;
+}
+
+.enemy.spawning {
+    animation: enemySummon 0.5s ease-out forwards;
+}
+
+@keyframes enemySummon {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; filter: brightness(3) blur(5px); }
+    50% { transform: translate(-50%, -50%) scale(1.5); opacity: 0.8; filter: brightness(2) blur(2px); }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; filter: brightness(1) blur(0); }
+}
+
+/* HP Bar */
+.hp-bar-bg {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #000;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+.hp-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: #ff4500;
+    border-radius: 1px;
+    transition: width 0.2s ease;
+}
+
+/* Enemy Variants */
+.enemy.normal { font-size: 16px; box-shadow: 0 0 12px rgba(255, 85, 85, 0.8); }
+.enemy.tank { font-size: 22px; box-shadow: 0 0 15px rgba(138, 43, 226, 0.8); }
+.enemy.runner { font-size: 14px; box-shadow: 0 0 10px rgba(255, 170, 0, 0.8); }
+.enemy.greedy { font-size: 18px; box-shadow: 0 0 15px rgba(255, 215, 0, 0.8); }
+.enemy.dimension { font-size: 16px; box-shadow: 0 0 12px rgba(0, 255, 255, 0.8); }
+.enemy.deceiver { font-size: 16px; box-shadow: 0 0 12px rgba(255, 0, 255, 0.8); }
+.enemy.boar { font-size: 20px; box-shadow: 0 0 12px rgba(139, 69, 19, 0.8); }
+.enemy.frost { font-size: 22px; box-shadow: 0 0 15px rgba(173, 216, 230, 0.8); }
+.enemy.lightspeed { font-size: 14px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.9); }
+.enemy.heavy { font-size: 24px; box-shadow: 0 0 15px rgba(85, 85, 85, 0.8); }
+.enemy.lava { font-size: 18px; box-shadow: 0 0 15px rgba(255, 69, 0, 0.8); }
+.enemy.burning { font-size: 20px; box-shadow: 0 0 15px rgba(255, 0, 0, 0.8); }
+.enemy.gold { font-size: 18px; box-shadow: 0 0 20px rgba(255, 215, 0, 1); }
+
+.enemy.crit-hit {
+    animation: critHitPulse 0.3s ease-out;
+    color: #ff0000;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+    z-index: 1000;
+}
+
+@keyframes critHitPulse {
+    0% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+    50% { transform: translate(-50%, -50%) scale(1.5); filter: brightness(2); }
+    100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+}
+
+/* Bosses */
+.enemy.boss { z-index: 100; font-weight: bold; }
+.enemy.boss .hp-bar-bg { width: 40px; height: 5px; top: -15px; }
+
+.enemy.cerberus { font-size: 60px; box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
+.enemy.charon { font-size: 50px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.6); }
+.enemy.beelzebub { font-size: 55px; box-shadow: 0 0 30px rgba(0, 255, 0, 0.7); }
+.enemy.lucifer { font-size: 70px; box-shadow: 0 0 40px rgba(255, 215, 0, 0.8); }
+
+/* Boss Effects */
+.enemy.charon::before {
+    content: '';
+    position: absolute;
+    top: -15px; left: -15px; right: -15px; height: 30px;
+    background: radial-gradient(ellipse at center, rgba(0,255,255,0.3) 0%, transparent 70%);
+    animation: ripple 1s infinite;
+    z-index: -1;
+}
+
+@keyframes ripple {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
+
+.enemy.beelzebub::after {
+    content: '🪰';
+    font-size: 24px;
+    position: absolute;
+    top: -20px; left: 10px;
+    animation: flySwarm 1s infinite linear;
+}
+
+@keyframes flySwarm {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(5px, -5px) rotate(10deg); }
+    50% { transform: translate(0, -10px) rotate(0deg); }
+    75% { transform: translate(-5px, -5px) rotate(-10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+/* Corrupted Enemies */
+.enemy.corrupted.defiled_apprentice { font-size: 54px; box-shadow: 0 0 30px #4a0000; border: 3px dashed #f00; }
+.enemy.corrupted.abyssal_acolyte { font-size: 66px; box-shadow: 0 0 45px #4b0082; text-shadow: 0 0 15px #d000ff; }
+.enemy.corrupted.abyssal_acolyte::after {
+    content: '💪';
+    position: absolute;
+    font-size: 42px;
+    left: -30px; top: -15px;
+    filter: brightness(0) drop-shadow(0 0 6px #d000ff);
+    transform: rotate(45deg);
+    z-index: -1;
+}
+.enemy.corrupted.bringer_of_doom { font-size: 78px; box-shadow: 0 0 60px #ff0000; z-index: 12; }
+.enemy.corrupted.bringer_of_doom::before {
+    content: '';
+    position: absolute;
+    width: 120px; height: 30px;
+    background: radial-gradient(ellipse at center, rgba(139,0,0,0.8) 0%, transparent 70%);
+    bottom: -15px; left: 50%;
+    transform: translateX(-50%);
+    z-index: -1;
+    animation: bloodSpread 2s infinite alternate;
+}
+
+@keyframes bloodSpread {
+    from { transform: translateX(-50%) scale(0.8); opacity: 0.6; }
+    to { transform: translateX(-50%) scale(1.2); opacity: 1; }
+}
+
+/* Status Effects */
+.enemy.slowed { filter: hue-rotate(90deg); }
+.enemy.burning { filter: sepia(1) saturate(5) hue-rotate(-50deg); }
+.enemy.stunned { filter: grayscale(100%) brightness(1.5); animation: shake 0.2s infinite; }
+.enemy.cursed { filter: sepia(1) hue-rotate(250deg) saturate(3); border: 3px dashed #800080; }
+.unit.feared { filter: grayscale(100%) blur(1px); animation: shake 0.5s infinite; border: 2px solid #555 !important; }
+
+.enemy.boarded { opacity: 0.6; box-shadow: 0 0 5px #00ffff; z-index: 20; }
