@@ -488,9 +488,8 @@ function drawMonk(cx, cy) {
 
 function drawApprentice(cx, cy) {
     const time = lavaPhase;
-    const floatingY = Math.sin(time * 2) * 2.5; 
-    // Shift slightly to center the 1.5x scaled sprite
-    const y = cy + floatingY - 2; 
+    // Removed floating animation
+    const y = cy - 2; 
 
     // Final optimized scale: 1.5x fits perfectly within ~40x45 logical slot
     const S = 1.5;
