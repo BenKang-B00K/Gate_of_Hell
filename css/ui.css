@@ -88,30 +88,32 @@
     box-shadow: inset 0 0 10px #000;
 }
 
-.gauge-count {
+.gauge-count, #portal-energy-label {
     position: absolute;
-    right: 8px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     font-size: 18px;
     font-weight: 900;
     font-family: 'Courier New', Courier, monospace;
-    color: #fff;
+    color: #fff !important; /* Force white */
     text-shadow: 
-        0 0 5px rgba(255,255,255,0.5),
+        0 0 5px #fff,
+        0 0 10px rgba(255, 255, 255, 0.5),
         1px 1px 0px #000,
         -1px -1px 0px #000,
         1px -1px 0px #000,
         -1px 1px 0px #000;
     z-index: 10;
     pointer-events: none;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    width: auto;
+    text-align: right;
 }
 
 /* SE Specific */
 .gauge-bar.se { border-color: rgba(0, 229, 255, 0.3); }
 #se-gauge-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #008ba3, #00e5ff); box-shadow: 0 0 20px rgba(0, 229, 255, 0.6); transition: width 0.3s ease; }
-.gauge-wrapper#se-label .gauge-info span:last-child { color: #00e5ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
 
 /* PE Specific */
 .gauge-bar.pe { border-color: rgba(148, 0, 211, 0.3); }
@@ -124,12 +126,10 @@
     transition: width 0.3s ease; 
     animation: flowFill 2s infinite linear;
 }
-.gauge-wrapper#pe-label .gauge-info span:last-child { color: #ff00ff; text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); }
 
 /* RS Specific */
 .gauge-bar.rs { border-color: rgba(255, 0, 0, 0.3); }
 #rs-gauge-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #b71c1c, #ff1744); box-shadow: 0 0 20px rgba(255, 23, 68, 0.6); transition: width 0.3s ease; }
-.gauge-wrapper#rs-label .gauge-info span:last-child { color: #ff1744; text-shadow: 0 0 10px rgba(255, 23, 68, 0.5); }
 
 #cursed-status {
     position: absolute;
