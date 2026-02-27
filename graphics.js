@@ -374,9 +374,108 @@ function drawIce(cx, cy, tower) {
     ctx.fill();
 }
 function drawFire(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#FF4500', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & MAGICAL ROBES (Crimson / Gold Palette) ---
+    const robeColor = '#B71C1C'; // Deep crimson
+    const goldColor = '#FFD700'; // Gold trim
+    const robeShadow = '#7F0000';
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-2, 1, goldColor, 3, 11); // Center gold trim
+    p(-5, 11, robeShadow, 11, 3); // Bottom shadow
+    
+    // Belt/Sash
+    p(-5, 7, '#000', 11, 2);
+    p(-1, 7, '#FF5722', 2, 2); // Orange buckle
+
+    // Boots (Black/Brown)
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Wizard Hat
+    const skinColor = '#F5DDC7';
+    p(-4, -8, '#000', 9, 8); // Head outline
+    p(-3, -7, skinColor, 7, 6);
+    
+    // The Hat (Pointy Wizard Hat)
+    p(-6, -9, '#000', 13, 3); // Hat brim outline
+    p(-5, -8, robeColor, 11, 1); // Brim
+    p(-3, -15, '#000', 7, 7); // Hat top outline
+    p(-2, -14, robeColor, 5, 6); // Hat top
+    p(-1, -12, goldColor, 3, 1); // Gold band
+
+    // Eyes (Glowing Orange/Yellow)
+    p(-2, -5, isAttacking ? '#FFF' : '#FF9800', 1, 1);
+    p(2, -5, isAttacking ? '#FFF' : '#FF9800', 1, 1);
+
+    // --- 2. FIREBALLS (Levitating Orbs of Flame) ---
+    const fireSpeed = 4;
+    for(let i=0; i<2; i++) {
+        const side = i === 0 ? -1 : 1;
+        const floatY = Math.sin(time * fireSpeed + (i * Math.PI)) * 4;
+        let orbOX = (side * 10);
+        let orbOY = -2 + floatY;
+        
+        // Orb Core
+        p(orbOX - 2, orbOY - 2, '#000', 5, 5); 
+        p(orbOX - 1, orbOY - 1, '#FF5722', 3, 3); // Orange
+        p(orbOX, orbOY, '#FFEB3B', 1, 1); // Yellow core
+        
+        // Flame Wisps
+        for(let j=0; j<3; j++) {
+            const wPhase = (time * 8 + j) % 6;
+            p(orbOX - 1 + j, orbOY - 3 - wPhase, `rgba(255, 69, 0, ${0.6 - (wPhase/10)})`, 1, 1);
+        }
+    }
+
+    // --- 3. ATTACK EFFECTS (Inferno Blast) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 50 * flashIntensity;
+        ctx.shadowColor = '#FF4500';
+        
+        // Central Explosion
+        const blastSize = 20 * flashIntensity;
+        ctx.fillStyle = `rgba(255, 215, 0, ${flashIntensity})`;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 2 * S, blastSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Embers
+        for(let i=0; i<10; i++) {
+            const ang = (i / 10) * Math.PI * 2 + time * 10;
+            const dist = 15 + flashIntensity * 40;
+            const px = Math.cos(ang) * dist;
+            const py = Math.sin(ang) * dist;
+            p(Math.round(px/S), Math.round(-2 + py/S), '#FF8A65', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. AMBIENT HEAT AURA ---
+    const heatGlow = (Math.sin(time * 3) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 69, 0, ${0.05 * heatGlow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy + 5 * S, 30 * S, 0, Math.PI * 2);
+    ctx.fill();
 }
 function drawTracker(cx, cy, tower) {
     const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
