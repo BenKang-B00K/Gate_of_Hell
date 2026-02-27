@@ -301,7 +301,17 @@ function initTutorial() {
 
 function updateUnitOverlayButtons(t) {
     const el = t.element; el.querySelectorAll('.unit-overlay-btn').forEach(b=>b.remove());
-    const sell = document.createElement('div'); sell.className='unit-overlay-btn sell-btn'; sell.innerHTML='💀'; sell.title='Dismiss Guardian (50% Refund)';
+    const sell = document.createElement('div'); sell.className='unit-overlay-btn sell-btn'; sell.innerHTML='💀'; sell.title='Corrupt Guardian (50% Refund)';
+    
+    const label = document.createElement('div');
+    label.className = 'card-warning';
+    label.innerText = 'CORRUPT';
+    label.style.top = '-40px';
+    sell.appendChild(label);
+
+    sell.addEventListener('mouseenter', () => label.style.display = 'block');
+    sell.addEventListener('mouseleave', () => label.style.display = 'none');
+    
     sell.addEventListener('click', e=>{ e.stopPropagation(); sellTower(t); }); el.appendChild(sell);
     
     if(t.data.type==='apprentice') {
