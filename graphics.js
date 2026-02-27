@@ -726,9 +726,105 @@ function drawArcher(cx, cy, tower) {
     }
 }
 function drawAssassin(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#111', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 150; // Very fast attack
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 150) : 0;
+
+    // --- 1. BODY & STEALTH GEAR (Charcoal / Dark Purple Palette) ---
+    const armorColor = '#212121'; // Charcoal
+    const leatherColor = '#311B92'; // Dark purple accents
+    const highlightColor = '#424242';
+    
+    // Body / Suit
+    p(-5, 1, '#000', 11, 14); // Outline
+    p(-4, 2, armorColor, 9, 12);
+    p(-2, 2, highlightColor, 3, 10); // Center highlight
+    
+    // Scarf / Mask (Flowing)
+    const scarfColor = '#4A148C'; // Deep purple
+    p(-5, -2, '#000', 11, 4); // Neck area
+    p(-4, -1, scarfColor, 9, 2);
+    // Flowing part of scarf
+    const scarfWarp = Math.sin(time * 4) * 3;
+    p(-8 + scarfWarp, 0, '#000', 4, 6);
+    p(-7 + scarfWarp, 1, scarfColor, 2, 4);
+
+    // Boots (Quiet)
+    p(-4, 14, '#000', 3, 2);
+    p(1, 14, '#000', 3, 2);
+
+    // Head (Hooded)
+    p(-4, -10, '#000', 9, 9); // Hood outline
+    p(-3, -9, armorColor, 7, 7);
+    p(-1, -9, scarfColor, 3, 1); // Top hood detail
+    
+    // Eyes (Faint purple glow)
+    p(-2, -5, isAttacking ? '#E1BEE7' : '#7B1FA2', 1, 1);
+    p(1, -5, isAttacking ? '#E1BEE7' : '#7B1FA2', 1, 1);
+
+    // --- 2. DUAL BLADES (Tanto / Daggers) ---
+    // Fast slashing motion
+    let slashSwing = isAttacking ? flashIntensity * 12 : 0;
+    
+    // Left Blade (Reverse Grip)
+    const bladeColor = '#757575';
+    const bladeEdge = '#E0E0E0';
+    
+    p(-9 - slashSwing, 4, '#000', 4, 3); // Hilt
+    p(-12 - slashSwing, 5, bladeColor, 4, 1); // Blade
+    p(-12 - slashSwing, 6, bladeEdge, 4, 1); // Sharp edge
+
+    // Right Blade (Forward Grip)
+    p(6 + slashSwing, 4, '#000', 4, 3); // Hilt
+    p(9 + slashSwing, 3, bladeColor, 5, 1); // Blade
+    p(9 + slashSwing, 4, bladeEdge, 5, 1); // Sharp edge
+
+    // --- 3. ATTACK EFFECTS (Shadow Slash) ---
+    if (isAttacking) {
+        ctx.save();
+        // Blur trail
+        const trailX = isLeft ? cx + (12 * S) : cx - (12 * S);
+        const trailY = cy + (4 * S);
+        
+        ctx.shadowBlur = 20 * flashIntensity;
+        ctx.shadowColor = '#9C27B0';
+        
+        // Fast Slash Arc
+        ctx.strokeStyle = `rgba(156, 39, 176, ${flashIntensity})`;
+        ctx.lineWidth = 4 * S;
+        ctx.beginPath();
+        ctx.arc(cx, cy + 4*S, 15*S, -0.2, 0.2);
+        ctx.stroke();
+        
+        // Shadow Particles
+        for(let i=0; i<5; i++) {
+            const px = (Math.random() - 0.5) * 40;
+            const py = (Math.random() - 0.5) * 40;
+            p(Math.round(px/S), Math.round(py/S), '#4A148C', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. STEALTH SMOKE ---
+    const smokePhase = (time * 2) % (Math.PI * 2);
+    for(let i=0; i<3; i++) {
+        const py = 12 - (i * 4) - (time * 5 % 10);
+        const px = Math.sin(time * 4 + i) * 6;
+        p(Math.round(px), Math.round(py), `rgba(30, 30, 30, ${0.2 * (1 - (i/3))})`, 2, 2);
+    }
 }
 function drawGuardian(cx, cy, tower) {
     const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
