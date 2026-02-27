@@ -364,10 +364,10 @@ function shoot(tower, target) {
         const cx = ((tr.left + tr.width / 2) - gr.left) / scaleX;
         const cy = ((tr.top + tr.height / 2) - gr.top) / scaleY;
         
-        // Logical Jewel Pos: staffX+1 = 8, Y = -13
-        // Multiply by S=3.0 used in drawApprentice
-        sx = (cx + (8 * 3.0)) * scaleX;
-        sy = (cy + (-13 * 3.0)) * scaleY;
+        // Logical Jewel Pos: staffX+2 = 18, Y = -31
+        // Multiply by S=2.0 used in drawApprentice, and add y-offset +5
+        sx = (cx + (18 * 2.0)) * scaleX;
+        sy = (cy + (-31 * 2.0) + 5) * scaleY;
     }
 
     proj.style.left = `${sx}px`; proj.style.top = `${sy}px`;

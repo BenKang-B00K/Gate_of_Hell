@@ -165,12 +165,14 @@ function drawUnits() {
 
 function drawApprentice(cx, cy, tower) {
     const time = lavaPhase;
-    const y = cy;
+    // Base position (slightly shifted to account for staff height)
+    const y = cy + 5; 
 
-    // S = 3.0 relative to 360 -> 1080 (3x scaling for the sprite itself)
-    const S = 3.0; 
+    // S = 2.0 provides a high-detail 'dot' look (approx 60x67 grid in 119x135 slot)
+    const S = 2.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
+        // Draw using the scale S to maintain pixel art aesthetic
         ctx.fillRect(cx + (ox * S), y + (oy * S), w * S, h * S);
     };
 
@@ -179,70 +181,77 @@ function drawApprentice(cx, cy, tower) {
     const isFlashing = timeSinceShot < 150; 
     const flashIntensity = isFlashing ? 1.0 - (timeSinceShot / 150) : 0;
 
-    // --- 1. YOUNG EXORCIST ---
+    // --- 1. YOUNG EXORCIST (Gray Robe) ---
     
-    // Robe
-    p(-5, 0, '#000', 11, 14); 
-    p(-4, 1, '#777', 9, 12);  
-    p(-3, 1, '#999', 7, 11);  
-    p(-2, 1, '#BBB', 3, 10);  
-    p(-4, 11, '#555', 9, 2);
+    // Robe Body (Centered)
+    p(-12, -5, '#000', 24, 28); // Body Outline
+    p(-10, -3, '#666', 20, 25); // Base Dark Gray
+    p(-8, -3, '#888', 16, 23);  // Mid Gray
+    p(-4, -3, '#AAA', 8, 21);   // Light Gray (Inner folds)
+    p(-10, 18, '#444', 20, 4);  // Bottom Shadow
     
-    // Boots
-    p(-3, 13, '#222', 3, 2);
-    p(1, 13, '#222', 3, 2);
+    // Feet (Small boots)
+    p(-8, 23, '#000', 6, 4);
+    p(2, 23, '#000', 6, 4);
+    p(-7, 24, '#222', 4, 2);
+    p(3, 24, '#222', 4, 2);
 
-    // Head
-    p(-4, -9, '#000', 9, 9); 
-    p(-3, -8, '#FFDBAC', 7, 7); 
+    // Head / Face
+    p(-10, -22, '#000', 20, 18); // Head Outline
+    p(-8, -20, '#FFDBAC', 16, 15); // Skin
     
-    // Hair
-    p(-4, -10, '#3E2723', 9, 3); 
-    p(-4, -8, '#3E2723', 2, 4);  
-    p(3, -8, '#3E2723', 2, 4);   
-    p(-1, -8, '#5D4037', 3, 1);  
+    // Hair (Young, messy - Dark Brown)
+    p(-10, -24, '#3E2723', 20, 8); // Top hair
+    p(-10, -18, '#3E2723', 4, 10); // Left side
+    p(6, -18, '#3E2723', 4, 10);  // Right side
+    p(-2, -20, '#5D4037', 6, 2);  // Highlight
     
     // Eyes
     const eyeColor = isFlashing ? '#fff' : '#00FFFF';
-    p(-2, -5, eyeColor, 1, 1);
-    p(1, -5, eyeColor, 1, 1);
+    p(-5, -12, eyeColor, 3, 2); // Left eye
+    p(2, -12, eyeColor, 3, 2);  // Right eye
     
-    p(-3, -3, 'rgba(0,0,0,0.1)', 7, 2);
+    // Face shadow
+    p(-8, -8, 'rgba(0,0,0,0.1)', 16, 3);
 
-    // --- 2. ORNATE STAFF (CROSS) ---
-    const staffX = 7;
+    // --- 2. ORNATE STAFF (Right side) ---
+    const staffX = 16;
     const crossColor = isFlashing ? `rgba(255, 255, 255, ${0.8 + 0.2 * flashIntensity})` : '#ffd700';
     
-    p(staffX, -10, '#000', 3, 22); 
-    p(staffX+1, -9, '#3E2723', 1, 20); 
+    // Staff body
+    p(staffX, -25, '#000', 4, 50); // Outline
+    p(staffX + 1, -24, '#3E2723', 2, 48); // Wood
     
-    p(staffX - 2, -14, '#000', 7, 3); 
-    p(staffX, -16, '#000', 3, 7);     
+    // Cross Head (Precise Dots)
+    p(staffX - 6, -32, '#000', 16, 6); // Horizontal Outline
+    p(staffX - 1, -38, '#000', 6, 16); // Vertical Outline
     
-    p(staffX - 1, -13, crossColor, 5, 1); 
-    p(staffX+1, -15, crossColor, 1, 5);   
+    p(staffX - 5, -31, crossColor, 14, 4); // Horizontal bar
+    p(staffX, -37, crossColor, 4, 14);     // Vertical bar
     
+    // Center jewel
     const orbGlow = (Math.cos(time * 3) + 1) / 2;
     const jewelColor = isFlashing ? '#fff' : '#00FFFF';
-    p(staffX+1, -13, jewelColor, 1, 1); 
+    p(staffX, -31, jewelColor, 4, 4); 
     
+    // Attack Flash Sparkle
     if (isFlashing) {
         ctx.save();
-        ctx.shadowBlur = 30 * flashIntensity;
+        ctx.shadowBlur = 40 * flashIntensity;
         ctx.shadowColor = '#00e5ff';
-        const sparkleSize = 18 * flashIntensity;
+        const sparkleSize = 24 * flashIntensity;
         ctx.fillStyle = `rgba(255, 255, 255, ${flashIntensity})`;
-        ctx.fillRect(cx + ((staffX+1)*S) - (sparkleSize/2), y + (-13*S) - (sparkleSize/2), sparkleSize, sparkleSize);
+        ctx.fillRect(cx + ((staffX+2)*S) - (sparkleSize/2), y + (-31*S) - (sparkleSize/2), sparkleSize, sparkleSize);
         ctx.restore();
     }
 
-    // --- 3. HOLY AURA ---
-    for(let i=0; i<4; i++) {
-        const angle = time * 1.5 + (i * Math.PI * 0.5);
-        const dist = 12 + Math.sin(time * 2 + i) * 2;
+    // --- 3. HOLY AURA (Scaled to stay in bounds) ---
+    for(let i=0; i<6; i++) {
+        const angle = time * 1.2 + (i * Math.PI * 0.33);
+        const dist = 22 + Math.sin(time * 2 + i) * 4;
         const px = Math.cos(angle) * dist;
         const py = Math.sin(angle) * dist;
-        p(px, py, `rgba(255, 215, 0, ${0.4 * orbGlow})`, 1, 1);
+        p(Math.round(px), Math.round(py), `rgba(255, 215, 0, ${0.4 * orbGlow})`, 1, 1);
     }
 }
 
