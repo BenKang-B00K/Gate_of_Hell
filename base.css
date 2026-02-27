@@ -28,30 +28,30 @@ body {
     justify-content: flex-start;
 }
 
-/* 상단 게임 레이아웃 (65%) */
+/* 상단 게임 레이아웃 (70%) - 영역 확대 */
 #game-layout {
     position: relative;
     width: 100%;
-    height: 1248px; /* 1920 * 0.65 */
+    height: 1344px; /* 1920 * 0.70 */
     display: flex;
     border-bottom: 1px solid #4a0000;
-    padding-top: 148px; /* 버튼 공간 확보 */
+    padding-top: 148px; 
     box-sizing: border-box;
     z-index: 10;
 }
 
-/* 하단 컨트롤 패널 (35%) */
+/* 하단 컨트롤 패널 (30%) - 영역 축소 */
 #bottom-panel {
     position: relative;
     width: 100%;
-    height: 672px; /* 1920 * 0.35 */
+    height: 576px; /* 1920 * 0.30 */
     background: linear-gradient(to bottom, #1a0505, #000000);
-    padding: 15px 30px;
+    padding: 10px 30px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     z-index: 50;
-    gap: 15px;
+    gap: 8px; /* 간격 축소 */
 }
 
 #road {
@@ -127,16 +127,16 @@ body {
     background: rgba(0, 0, 0, 0.7);
     border: 3px solid #4a0000;
     border-radius: 40px;
-    padding: 15px 45px;
+    padding: 10px 40px;
     color: #ffd700;
-    font-size: 36px;
+    font-size: 32px;
     font-weight: bold;
     letter-spacing: 3px;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
     display: flex; align-items: center; gap: 20px;
 }
 
-#enemies-left { color: #ff0000; font-size: 48px; text-shadow: 0 0 15px #ff0000; }
+#enemies-left { color: #ff0000; font-size: 42px; text-shadow: 0 0 15px #ff0000; }
 
 #thematic-header { width: 100%; text-align: center; margin-bottom: 5px; }
-#stage-title-container { font-size: 30px; font-weight: bold; color: #ff4500; text-shadow: 0 0 15px rgba(255, 69, 0, 0.8); letter-spacing: 2px; }
+#stage-title-container { font-size: 27px; font-weight: bold; color: #ff4500; text-shadow: 0 0 15px rgba(255, 69, 0, 0.8); letter-spacing: 2px; }
