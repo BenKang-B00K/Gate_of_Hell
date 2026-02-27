@@ -49,6 +49,8 @@ function initRecords() {
                 case 'specters': renderSpecters(); break;
                 case 'exorcists': renderExorcists(); break;
                 case 'tree': renderPromotionTree(); break;
+                case 'achievements': renderAchievements(); break;
+                case 'settings': renderSettings(); break;
             }
         });
     });
@@ -284,6 +286,78 @@ function renderPromotionTree() {
         gdiv.appendChild(mcont);
         pane.appendChild(gdiv);
     });
+}
+
+function renderAchievements() {
+    const pane = document.getElementById('achievements-tab');
+    if(!pane) return;
+    pane.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:30px; padding:20px;">
+            <h2 style="color:#ffd700; font-size:48px; border-bottom:2px solid #333; padding-bottom:15px;">CHRONICLES OF VALOR</h2>
+            <div class="exorcist-card" style="border-color:#555; opacity:0.6;">
+                <div class="sprite-box" style="display:flex; align-items:center; justify-content:center; font-size:60px;">🏆</div>
+                <div class="info-box">
+                    <div class="name">First Purge</div>
+                    <div class="effect">Defeat 100 Specters.</div>
+                    <div class="lore">Progress: ${Object.values(window.killCounts || {}).reduce((a,b)=>a+b, 0)} / 100</div>
+                </div>
+            </div>
+            <div class="exorcist-card" style="border-color:#555; opacity:0.6;">
+                <div class="sprite-box" style="display:flex; align-items:center; justify-content:center; font-size:60px;">💀</div>
+                <div class="info-box">
+                    <div class="name">Master of Arts</div>
+                    <div class="effect">Unlock all Tier 3 Classes.</div>
+                    <div class="lore">Progress: ${window.unitTypes.filter(u=>u.tier===3 && window.unlockedUnits.has(u.type)).length} / ${window.unitTypes.filter(u=>u.tier===3).length}</div>
+                </div>
+            </div>
+            <div style="color:#666; font-style:italic; font-size:24px; text-align:center; margin-top:40px;">More achievements coming soon in future updates...</div>
+        </div>
+    `;
+}
+
+function renderSettings() {
+    const pane = document.getElementById('settings-tab');
+    if(!pane) return;
+    pane.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:40px; padding:20px; color:#eee;">
+            <h2 style="color:#ffd700; font-size:48px; border-bottom:2px solid #333; padding-bottom:15px;">GAME SETTINGS</h2>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:30px; border-radius:15px; border:1px solid #333;">
+                <div>
+                    <div style="font-size:30px; font-weight:bold;">Visual Tutorials</div>
+                    <div style="font-size:20px; color:#888;">Show pop-up info when encountering new entities.</div>
+                </div>
+                <label class="switch" style="transform:scale(1.5);">
+                    <input type="checkbox" id="settings-tutorial-toggle" ${document.getElementById('tutorial-toggle')?.checked ? 'checked' : ''}>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#1a1a1a; padding:30px; border-radius:15px; border:1px solid #333; opacity:0.5;">
+                <div>
+                    <div style="font-size:30px; font-weight:bold;">Audio Volume (TBD)</div>
+                    <div style="font-size:20px; color:#888;">Control master volume for sound effects.</div>
+                </div>
+                <input type="range" disabled style="width:200px;">
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <button onclick="location.reload()" style="background:#4a0000; color:#ff4500; border:2px solid #8b0000; padding:15px 40px; font-size:24px; cursor:pointer; border-radius:10px; font-weight:bold;">FORCIBLY RESTART GAME</button>
+            </div>
+        </div>
+    `;
+
+    // Link the tutorial toggle
+    const stt = document.getElementById('settings-tutorial-toggle');
+    if(stt) {
+        stt.addEventListener('change', () => {
+            const mainToggle = document.getElementById('tutorial-toggle');
+            if(mainToggle) {
+                mainToggle.checked = stt.checked;
+                mainToggle.dispatchEvent(new Event('change'));
+            }
+        });
+    }
 }
 
 // Global initialization override
