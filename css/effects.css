@@ -83,10 +83,15 @@
 
 /* Projectile Variants */
 .projectile.apprentice {
-    width: 36px; height: 36px; background: transparent; border-radius: 0;
-    background: linear-gradient(#00e5ff, #00e5ff) center/6px 100% no-repeat, linear-gradient(#00e5ff, #00e5ff) center/100% 6px no-repeat;
-    box-shadow: 0 0 30px #00e5ff, 0 0 60px rgba(0, 229, 255, 0.5);
-    animation: crossRotate 0.5s infinite linear;
+    width: 24px; height: 24px; background: transparent; border-radius: 0;
+    background: linear-gradient(#00e5ff, #00e5ff) center/4px 100% no-repeat, linear-gradient(#00e5ff, #00e5ff) center/100% 4px no-repeat;
+    box-shadow: 0 0 20px #00e5ff, 0 0 40px rgba(0, 229, 255, 0.5);
+    animation: crossRotate 0.4s infinite linear, projectilePulse 0.4s infinite alternate;
+}
+
+@keyframes projectilePulse {
+    from { transform: scale(1); filter: brightness(1); }
+    to { transform: scale(1.2); filter: brightness(1.5); }
 }
 
 @keyframes crossRotate {

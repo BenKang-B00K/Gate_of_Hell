@@ -347,12 +347,26 @@ function gameLoop() {
 }
 
 function shoot(tower, target) {
+    tower.lastShot = Date.now();
     const proj = document.createElement('div');
     proj.className = `projectile ${tower.data.type}`;
     const tr = tower.element.getBoundingClientRect();
     const gr = gameContainer.getBoundingClientRect();
-    const sx = (tr.left + tr.width / 2) - gr.left;
-    const sy = (tr.top + tr.height / 2) - gr.top;
+    
+    let sx = (tr.left + tr.width / 2) - gr.left;
+    let sy = (tr.top + tr.height / 2) - gr.top;
+
+    // Special case: Apprentice staff head origin
+    if (tower.data.type === 'apprentice') {
+        const LOGICAL_WIDTH = 360;
+        const scaleX = gr.width / LOGICAL_WIDTH;
+        const scaleY = gr.height / 640;
+        const cx = ((tr.left + tr.width / 2) - gr.left) / scaleX;
+        const cy = ((tr.top + tr.height / 2) - gr.top) / scaleY;
+        sx = (cx + (8 * 1.5)) * scaleX;
+        sy = (cy + (-15 * 1.5) - 2) * scaleY;
+    }
+
     proj.style.left = `${sx}px`; proj.style.top = `${sy}px`;
     gameContainer.appendChild(proj);
     setTimeout(() => {
