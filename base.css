@@ -27,11 +27,11 @@ body {
     flex-direction: column;
 }
 
-/* 상단 게임 레이아웃 (70%) - 높이 고정 */
+/* 상단 게임 레이아웃 (65%) - 높이 복구 */
 #game-layout {
     position: relative;
     width: 100%;
-    height: 1344px; /* 1920 * 0.70 */
+    height: 1248px; /* 1920 * 0.65 */
     flex-shrink: 0;
     display: flex;
     border-bottom: 1px solid #4a0000;
@@ -40,11 +40,11 @@ body {
     z-index: 10;
 }
 
-/* 하단 컨트롤 패널 (30%) - 높이 고정 */
+/* 하단 컨트롤 패널 (35%) - 높이 복구 */
 #bottom-panel {
     position: relative;
     width: 100%;
-    height: 576px; /* 1920 * 0.30 */
+    height: 672px; /* 1920 * 0.35 */
     flex-shrink: 0;
     background: linear-gradient(to bottom, #1a0505, #000000);
     padding: 15px 30px;
@@ -52,7 +52,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 50;
-    gap: 10px;
+    gap: 15px;
 }
 
 #road {

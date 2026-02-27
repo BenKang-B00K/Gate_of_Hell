@@ -48,7 +48,7 @@
     height: 100%;
 }
 
-#bottom-main-ui { display: flex; flex: 1; width: 100%; gap: 30px; overflow: hidden; height: 400px; }
+#bottom-main-ui { display: flex; flex: 1; width: 100%; gap: 30px; overflow: hidden; height: 100%; }
 
 .tower-card {
     background: linear-gradient(135deg, #003366, #001133);
