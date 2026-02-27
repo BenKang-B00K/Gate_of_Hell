@@ -311,6 +311,7 @@ function renderBestiary() {
     const bt = document.getElementById('bestiary-tab'); bt.innerHTML = '';
     const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade", 'cerberus': 'Cerberus', 'charon': 'Charon', 'beelzebub': 'Beelzebub', 'lucifer': 'Lucifer' };
     const groups = [
+        { h: 'Allied Exorcists', c: '#ffd700', types: ['apprentice', 'chainer', 'talisman', 'monk', 'archer', 'ice', 'fire', 'assassin', 'tracker', 'necromancer', 'guardian', 'knight', 'alchemist', 'mirror'] },
         { h: 'Basic Specters', c: '#00e5ff', types: ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'] },
         { h: 'Specialized Wraiths', c: '#ff00ff', types: ['defiled_apprentice', 'greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'] },
         { h: 'Treasure Specters', c: '#ffd700', types: ['gold'] },
@@ -325,17 +326,25 @@ function renderBestiary() {
         
         g.types.forEach(t => {
             let isKnown = false;
-            if (g.h === 'Basic Specters') {
-                isKnown = true; 
+            if (g.h === 'Basic Specters' || g.h === 'Allied Exorcists') {
+                // If it's basic specter, it's known.
+                // For allies, check unlockedUnits set.
+                isKnown = (g.h === 'Allied Exorcists') ? unlockedUnits.has(t) : true;
             } else {
                 isKnown = (window.encounteredEnemies && window.encounteredEnemies.has(t)) || (killCounts[t] > 0);
             }
+            
             let d; 
-            if (typeof bossData !== 'undefined' && bossData) {
-                for (let k in bossData) { if (bossData[k].type === t) { d = bossData[k]; break; } }
-            }
-            if (!d) {
-                for(let k in enemyCategories) { const f=enemyCategories[k].find(x=>x.type===t); if(f){d=f; break;} }
+            const isAllied = g.h === 'Allied Exorcists';
+            if (isAllied) {
+                d = unitTypes.find(x => x.type === t);
+            } else {
+                if (typeof bossData !== 'undefined' && bossData) {
+                    for (let k in bossData) { if (bossData[k].type === t) { d = bossData[k]; break; } }
+                }
+                if (!d) {
+                    for(let k in enemyCategories) { const f=enemyCategories[k].find(x=>x.type===t); if(f){d=f; break;} }
+                }
             }
             if(!d) return;
             const kills = killCounts[t] || 0; 
@@ -344,30 +353,44 @@ function renderBestiary() {
             let rVal = d.reward;
             if (rVal === undefined) {
                 if (g.h === 'Abyss Bosses') rVal = 500;
+                else if (isAllied) rVal = 0;
                 else rVal = 10;
             }
 
             const item = document.createElement('div'); 
             item.className = `bestiary-item ${isKnown ? '' : 'locked'}`;
             if (isKnown) {
+                const tooltipHeader = isAllied ? d.name : (names[t] || t);
+                const tooltipRole = isAllied ? `TIER ${d.tier} ${d.role}` : 'SPECTER';
+                const roleColor = isAllied ? '#ffd700' : '#ff4500';
+                
                 item.innerHTML = `
                     <div class="custom-tooltip">
-                        <strong style="color:#ffd700; font-size:28px;">${names[t]||t}</strong><br>
-                        <span style="color:#ff4500; font-size:20px; font-weight:bold;">SPECTER</span><hr style="border-color:#333;">
+                        <strong style="color:#ffd700; font-size:28px;">${tooltipHeader}</strong><br>
+                        <span style="color:${roleColor}; font-size:20px; font-weight:bold;">${tooltipRole}</span><hr style="border-color:#333;">
                         ${d.desc || d.lore || 'A powerful soul from the abyss.'}
                     </div>
-                    <div class="bestiary-icon">${d.icon}</div>
-                    <div class="bestiary-name">${names[t]||t}</div>
+                    ${isAllied ? '<canvas class="bestiary-sprite-canvas" width="120" height="120"></canvas>' : `<div class="bestiary-icon">${d.icon}</div>`}
+                    <div class="bestiary-name">${isAllied ? d.name : (names[t]||t)}</div>
                     <div class="bestiary-stats">
-                        <div style="margin-bottom: 8px; color:#fff;">💀 Kills: ${kills}</div>
+                        ${isAllied ? `<div style="color: #00e5ff; font-weight: bold;">Role: ${d.role}</div>` : 
+                        `<div style="margin-bottom: 8px; color:#fff;">💀 Kills: ${kills}</div>
                         <div style="color: #ffd700; font-weight: bold;">✨ Reward: ${rVal} SE</div>
-                        ${bonus > 1 ? `<div style="color: #00ff00; font-size: 16px; margin-top: 8px; font-weight:bold;">DMG +${((bonus-1)*100).toFixed(0)}%</div>` : ''}
+                        ${bonus > 1 ? `<div style="color: #00ff00; font-size: 16px; margin-top: 8px; font-weight:bold;">DMG +${((bonus-1)*100).toFixed(0)}%</div>` : ''}`}
                     </div>`;
+                
+                if (isAllied) {
+                    const cvs = item.querySelector('.bestiary-sprite-canvas');
+                    if (cvs) {
+                        const pCtx = cvs.getContext('2d');
+                        drawUnitPreview(t, pCtx, 120, 120);
+                    }
+                }
             } else {
                 item.innerHTML = `
                     <div class="custom-tooltip">
-                        <strong style="color:#ffd700; font-size:28px;">[Unknown Entity]</strong><hr style="border-color:#333;">
-                        Defeat this specter in the abyss to reveal its nature and weaknesses.
+                        <strong style="color:#ffd700; font-size:28px;">[Unknown ${isAllied ? 'Class' : 'Entity'}]</strong><hr style="border-color:#333;">
+                        ${isAllied ? 'Unlock this class during your journey to see its details.' : 'Defeat this specter in the abyss to reveal its nature.'}
                     </div>
                     <div class="bestiary-icon" style="color:#222;">?</div>
                     <div class="bestiary-name" style="color:#444;">???</div>
@@ -424,9 +447,14 @@ function renderPromotionTree() {
                     <span style="color:#aaa; font-size:20px; font-style:italic;">Tier ${tier} ${d.role}</span><hr style="border-color:#333;">
                     ${d.desc}
                 </div>
-                <div class="node-icon">${d.icon}</div>
+                <canvas class="node-sprite-canvas" width="120" height="120"></canvas>
                 <div class="node-name">${d.name}</div>
             `;
+            const cvs = node.querySelector('.node-sprite-canvas');
+            if (cvs) {
+                const pCtx = cvs.getContext('2d');
+                drawUnitPreview(type, pCtx, 120, 120);
+            }
         } else {
             node.innerHTML = `
                 <div class="custom-tooltip">

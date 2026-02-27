@@ -5152,6 +5152,91 @@ function drawEternalWall(cx, cy, tower) {
     ctx.restore();
 }
 
+// Helper for UI previews
+function drawUnitPreview(type, targetCtx, width, height) {
+    const originalCtx = ctx;
+    const originalLavaPhase = lavaPhase;
+    
+    // Switch to target canvas
+    window.ctx = targetCtx;
+    const cx = width / 2;
+    const cy = height / 2 + 10; // Slightly lower for better framing
+    
+    // Mock tower object for drawing
+    const mockTower = {
+        data: unitTypes.find(u => u.type === type),
+        slotElement: { dataset: { area: 'left-slots' } },
+        lastShot: 0 // Not attacking in preview
+    };
+
+    targetCtx.clearRect(0, 0, width, height);
+    
+    // Temporary global overrides for the drawing functions
+    const tempLavaPhase = 0; 
+    const realLavaPhase = window.lavaPhase;
+    window.lavaPhase = tempLavaPhase;
+
+    switch(type) {
+        case 'apprentice': drawApprentice(cx, cy, mockTower); break;
+        case 'chainer': drawChainer(cx, cy, mockTower); break;
+        case 'monk': drawMonk(cx, cy, mockTower); break;
+        case 'talisman': drawTalisman(cx, cy, mockTower); break;
+        case 'archer': drawArcher(cx, cy, mockTower); break;
+        case 'assassin': drawAssassin(cx, cy, mockTower); break;
+        case 'ice': drawIce(cx, cy, mockTower); break;
+        case 'fire': drawFire(cx, cy, mockTower); break;
+        case 'tracker': drawTracker(cx, cy, mockTower); break;
+        case 'necromancer': drawNecromancer(cx, cy, mockTower); break;
+        case 'guardian': drawGuardian(cx, cy, mockTower); break;
+        case 'knight': drawKnight(cx, cy, tower = mockTower); break;
+        case 'alchemist': drawAlchemist(cx, cy, tower = mockTower); break;
+        case 'mirror': drawMirror(cx, cy, tower = mockTower); break;
+        case 'paladin': drawPaladin(cx, cy, tower = mockTower); break;
+        case 'crusader': drawCrusader(cx, cy, tower = mockTower); break;
+        case 'midas': drawMidas(cx, cy, tower = mockTower); break;
+        case 'illusion': drawIllusion(cx, cy, tower = mockTower); break;
+        case 'philosopher': drawPhilosopher(cx, cy, tower = mockTower); break;
+        case 'reflection': drawReflection(cx, cy, tower = mockTower); break;
+        case 'flamemaster': drawFlameMaster(cx, cy, tower = mockTower); break;
+        case 'voidsniper': drawVoidSniper(cx, cy, tower = mockTower); break;
+        case 'vajra': drawVajrapani(cx, cy, tower = mockTower); break;
+        case 'absolutezero': drawAbsoluteZero(cx, cy, tower = mockTower); break;
+        case 'hellfire': drawHellfireAlchemist(cx, cy, tower = mockTower); break;
+        case 'phoenix': drawPhoenixSummoner(cx, cy, tower = mockTower); break;
+        case 'executor': drawExecutor(cx, cy, tower = mockTower); break;
+        case 'binder': drawBinder(cx, cy, tower = mockTower); break;
+        case 'grandsealer': drawGrandSealer(cx, cy, tower = mockTower); break;
+        case 'saint': drawSaint(cx, cy, tower = mockTower); break;
+        case 'thousandhand': drawThousandHand(cx, cy, tower = mockTower); break;
+        case 'permafrost': drawPermafrost(cx, cy, tower = mockTower); break;
+        case 'abyssal': drawAbyssalKiller(cx, cy, tower = mockTower); break;
+        case 'spatial': drawSpatialSlasher(cx, cy, tower = mockTower); break;
+        case 'seer': drawSeer(cx, cy, tower = mockTower); break;
+        case 'commander': drawCommander(cx, cy, tower = mockTower); break;
+        case 'wraithlord': drawWraithLord(cx, cy, tower = mockTower); break;
+        case 'cursedshaman': drawCursedShaman(cx, cy, tower = mockTower); break;
+        case 'rampart': drawRampart(cx, cy, tower = mockTower); break;
+        case 'judgment': drawJudgment(cx, cy, tower = mockTower); break;
+        case 'transmuter': drawTransmuter(cx, cy, tower = mockTower); break;
+        case 'oracle': drawOracle(cx, cy, tower = mockTower); break;
+        case 'warden': drawWarden(cx, cy, tower = mockTower); break;
+        case 'cursed_talisman': drawCursedTalisman(cx, cy, tower = mockTower); break;
+        case 'asura': drawAsura(cx, cy, tower = mockTower); break;
+        case 'piercing_shadow': drawPiercingShadow(cx, cy, tower = mockTower); break;
+        case 'cocytus': drawCocytus(cx, cy, tower = mockTower); break;
+        case 'purgatory': drawPurgatory(cx, cy, tower = mockTower); break;
+        case 'reaper': drawReaper(cx, cy, tower = mockTower); break;
+        case 'doom_guide': drawDoomGuide(cx, cy, tower = mockTower); break;
+        case 'forsaken_king': drawForsakenKing(cx, cy, tower = mockTower); break;
+        case 'void_gatekeeper': drawVoidGatekeeper(cx, cy, tower = mockTower); break;
+        case 'eternal_wall': drawEternalWall(cx, cy, tower = mockTower); break;
+    }
+
+    // Restore original state
+    window.ctx = originalCtx;
+    window.lavaPhase = realLavaPhase;
+}
+
 function drawSelectionHalo() {
     const selectedUnit = document.querySelector('.unit.selected');
     if (!selectedUnit) return;

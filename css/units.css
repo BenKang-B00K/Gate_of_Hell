@@ -266,14 +266,21 @@
     opacity: 0.5;
 }
 
-.bestiary-icon {
-    font-size: 80px;
+.bestiary-icon, .node-sprite-canvas, .bestiary-sprite-canvas {
+    width: 120px;
+    height: 120px;
     margin-bottom: 20px;
     filter: drop-shadow(0 0 15px rgba(255,255,255,0.1));
     transition: transform 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 80px;
 }
 
-.bestiary-item:hover .bestiary-icon {
+.bestiary-item:hover .bestiary-icon, 
+.bestiary-item:hover .bestiary-sprite-canvas,
+.unit-node:hover .node-sprite-canvas {
     transform: scale(1.1);
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
 }

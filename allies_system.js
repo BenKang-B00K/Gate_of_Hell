@@ -38,7 +38,7 @@ function summonTower(targetSlot) {
     recordUnlock(s.type);
     const unit = document.createElement('div');
     unit.classList.add('unit', s.type);
-    unit.title = s.name; unit.innerText = s.icon; unit.draggable = true;
+    unit.title = s.name; unit.innerText = ''; unit.draggable = true;
     const cd = document.createElement('div');
     cd.className = 'cooldown-overlay'; cd.style.pointerEvents = 'none';
     unit.appendChild(cd);
@@ -105,7 +105,7 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     
     const ntStr = availablePaths[Math.floor(Math.random()*availablePaths.length)]; 
     const nt = unitTypes.find(x=>x.type===ntStr);
-    el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText=nt.icon;
+    el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     recordUnlock(nt.type); t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
     updateUnitOverlayButtons(t); updateSummonButtonState();
@@ -140,7 +140,7 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     if(typeof updateGauges==='function') updateGauges();
     
     const el = tower.element;
-    el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText=nt.icon;
+    el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     recordUnlock(nt.type); tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; 
     
