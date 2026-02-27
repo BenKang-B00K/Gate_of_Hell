@@ -870,9 +870,43 @@ function updateUnitOverlayButtons(t) {
 }
 
 function sellTower(t) {
-    const confirmMsg = `정말로 이 퇴마사를 타락시키겠습니까?\n\n타락한 퇴마사는 심연의 힘에 잠식되어 강력한 '타락한 유령'이 되어 다시 돌아올 수 있습니다!`;
-    if (!confirm(confirmMsg)) return;
+    isPaused = true;
+    const overlay = document.getElementById('corruption-overlay');
+    const confirmBtn = document.getElementById('confirm-corruption-btn');
+    const cancelBtn = document.getElementById('cancel-corruption-btn');
 
+    if (!overlay || !confirmBtn || !cancelBtn) {
+        // Fallback if elements not found
+        const confirmMsg = `정말로 이 퇴마사를 타락시키겠습니까?\n\n타락한 퇴마사는 심연의 힘에 잠식되어 강력한 '타락한 유령'이 되어 다시 돌아올 수 있습니다!`;
+        if (!confirm(confirmMsg)) { isPaused = false; return; }
+        finalizeSell(t);
+        isPaused = false;
+        return;
+    }
+
+    overlay.style.display = 'flex';
+
+    const onConfirm = () => {
+        finalizeSell(t);
+        cleanup();
+    };
+
+    const onCancel = () => {
+        cleanup();
+    };
+
+    const cleanup = () => {
+        overlay.style.display = 'none';
+        confirmBtn.removeEventListener('click', onConfirm);
+        cancelBtn.removeEventListener('click', onCancel);
+        isPaused = false;
+    };
+
+    confirmBtn.addEventListener('click', onConfirm);
+    cancelBtn.addEventListener('click', onCancel);
+}
+
+function finalizeSell(t) {
     const s = t.slotElement; s.classList.remove('occupied'); t.element.remove();
     
     // Calculate Refund with Relic Bonus

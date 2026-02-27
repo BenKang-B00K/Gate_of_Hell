@@ -53,7 +53,61 @@
     z-index: 5;
 }
 
-/* Unit Classes */
+/* Unit Overlay Buttons - Scaled for 1080p */
+.unit-overlay-btn {
+    position: absolute;
+    width: 48px; /* Scaled from 12px */
+    height: 48px;
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 50%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px; /* Scaled from 8px */
+    cursor: pointer;
+    z-index: 30;
+    border: 3px solid #fff;
+    pointer-events: auto;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.unit.selected .unit-overlay-btn {
+    display: flex;
+}
+
+.unit-overlay-btn:hover {
+    transform: scale(1.3);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px #fff;
+    z-index: 31;
+}
+
+/* Position mapping - 1080p adjusted */
+.promote-btn { top: -20px; left: -20px; border-color: #00ff00; color: #00ff00; }
+.promote-10 { top: -15px; left: -15px; border-color: #ff4500; color: #ff4500; }
+.promote-12 { top: -30px; left: 50%; transform: translateX(-50%); border-color: #00e5ff; color: #00e5ff; }
+.promote-12:hover { transform: translateX(-50%) scale(1.3); }
+.promote-2 { top: -15px; right: -15px; border-color: #ffd700; color: #ffd700; }
+.promote-btn-right { top: -20px; right: -20px; border-color: #ffd700; color: #ffd700; }
+
+.sell-btn {
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-color: #ff0000;
+    color: #ff0000;
+    background: rgba(139, 0, 0, 0.9);
+    box-shadow: 0 0 15px #ff0000;
+}
+
+.sell-btn:hover {
+    background: #ff0000;
+    color: #fff;
+    box-shadow: 0 0 20px #ff0000, 0 0 40px #ff4500;
+    transform: translateX(-50%) scale(1.3);
+}
+
+/* Master classes */
 .unit.apprentice { box-shadow: 0 0 10px #00e5ff; font-size: 16px; }
 .unit.chainer { box-shadow: 0 0 10px #9370db; }
 .unit.talisman { box-shadow: 0 0 10px #ffa500; }
@@ -66,9 +120,39 @@
 .unit.necromancer { box-shadow: 0 0 10px #4b0082; }
 .unit.guardian { box-shadow: 0 0 15px #ffd700; }
 
-/* Master classes */
 .unit.executor { box-shadow: 0 0 15px #483d8b; border: 1px solid #fff; }
 .unit.binder { box-shadow: 0 0 15px #8b008b; border: 1px solid #fff; }
+.unit.grandsealer { box-shadow: 0 0 15px #191970; border: 1px solid #fff; }
+.unit.flamemaster { box-shadow: 0 0 15px #ff4500; border: 1px solid #fff; }
+.unit.vajra { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.saint { box-shadow: 0 0 15px #cd853f; border: 1px solid #fff; }
+.unit.voidsniper { box-shadow: 0 0 15px #00ff00; border: 1px solid #fff; }
+.unit.thousandhand { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.absolutezero { box-shadow: 0 0 15px #00ffff; border: 1px solid #fff; }
+.unit.permafrost { box-shadow: 0 0 15px #87ceeb; border: 1px solid #fff; }
+.unit.hellfire { box-shadow: 0 0 15px #ff4500; border: 1px solid #fff; }
+.unit.phoenix { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.abyssal { box-shadow: 0 0 15px #800080; border: 1px solid #fff; }
+.unit.spatial { box-shadow: 0 0 15px #c0c0c0; border: 1px solid #fff; }
+.unit.seer { box-shadow: 0 0 15px #e6e6fa; border: 1px solid #fff; }
+.unit.commander { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.wraithlord { box-shadow: 0 0 15px #00ff00; border: 1px solid #fff; }
+.unit.cursedshaman { box-shadow: 0 0 15px #708090; border: 1px solid #fff; }
+.unit.rampart { box-shadow: 0 0 15px #ffd700; border: 1px solid #fff; }
+.unit.judgment { box-shadow: 0 0 15px #ff4500; border: 1px solid #fff; }
+
+.unit.abyss { border: 2px solid #9400d3; }
+.unit.warden { box-shadow: 0 0 20px #8a2be2; }
+.unit.cursed_talisman { box-shadow: 0 0 20px #ff4500; }
+.unit.asura { box-shadow: 0 0 20px #b22222; }
+.unit.piercing_shadow { box-shadow: 0 0 20px #32cd32; }
+.unit.cocytus { box-shadow: 0 0 20px #00ffff; }
+.unit.purgatory { box-shadow: 0 0 20px #ff8c00; }
+.unit.reaper { box-shadow: 0 0 20px #4b0082; }
+.unit.doom_guide { box-shadow: 0 0 20px #9932cc; }
+.unit.forsaken_king { box-shadow: 0 0 20px #00ff00; }
+.unit.void_gatekeeper { box-shadow: 0 0 20px #aaaaaa; }
+.unit.eternal_wall { box-shadow: 0 0 20px #ffd700; }
 /* ... (Other unit styles follow same pattern) ... */
 
 .unit-node {
