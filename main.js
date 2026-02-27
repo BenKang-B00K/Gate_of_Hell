@@ -103,8 +103,12 @@ class MainScene extends Phaser.Scene {
 
     initWaveState() {
         this.waveSpawnedCount = 0;
-        this.totalWaveEnemies = 10 + (this.registry.get('stage') * 2);
-        this.registry.set('enemiesLeft', 0);
+        const total = 10 + (this.registry.get('stage') * 2);
+        this.totalWaveEnemies = total;
+        
+        // Registry에 스테이지 총 적 수와 현재 남은 스폰 수 저장
+        this.registry.set('totalEnemiesInStage', total);
+        this.registry.set('enemiesLeft', total);
     }
 
     setupCombat() {
@@ -132,7 +136,11 @@ class MainScene extends Phaser.Scene {
             const x = Phaser.Math.Between(130, 230);
             enemy.spawn(x, -50, data, 'ghost_basic');
             this.waveSpawnedCount++;
-            this.registry.set('enemiesLeft', this.enemies.countActive(true));
+            
+            // [수정] 스폰될 때마다 남은 대기 수 감소
+            const currentLeft = this.registry.get('enemiesLeft');
+            this.registry.set('enemiesLeft', Math.max(0, currentLeft - 1));
+            
             this.dataManager.recordEncounter(data.type);
         }
     }

@@ -297,7 +297,6 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.setVisible(false);
         this.disableBody(true, true);
-        this.scene.registry.set('enemiesLeft', Math.max(0, this.scene.registry.get('enemiesLeft') - 1));
     }
 }
 
