@@ -164,28 +164,55 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
 }
 
 function sellTower(t) {
-    const confirmMsg = `정말로 이 퇴마사를 타락시키겠습니까?
+    const overlay = document.getElementById('corruption-overlay');
+    if (!overlay) return;
 
-타락한 퇴마사는 심연의 힘에 잠식되어 강력한 '타락한 유령'이 되어 다시 돌아올 수 있습니다!`;
-    if (!confirm(confirmMsg)) return;
-
-    const s = t.slotElement; s.classList.remove('occupied'); t.element.remove();
-    
-    // Calculate Refund with Relic Bonus
-    const baseRefund = t.spentSE || 0;
+    const refundAmount = t.spentSE || 0;
     const relicRefundBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('sell_refund') : 0;
-    const finalRefund = Math.floor(baseRefund * (1.0 + relicRefundBonus));
+    const finalRefund = Math.floor(refundAmount * (1.0 + relicRefundBonus));
+
+    const refundDisplay = document.getElementById('corruption-refund-amount');
+    if (refundDisplay) refundDisplay.innerText = finalRefund;
+
+    overlay.style.display = 'flex';
+    isPaused = true;
+
+    const confirmBtn = document.getElementById('confirm-corruption-btn');
+    const cancelBtn = document.getElementById('cancel-corruption-btn');
+
+    // Remove old listeners to avoid multiple calls
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    const newCancelBtn = cancelBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+    newConfirmBtn.addEventListener('click', () => {
+        overlay.style.display = 'none';
+        isPaused = false;
+        completeTowerCorruption(t, finalRefund);
+    });
+
+    newCancelBtn.addEventListener('click', () => {
+        overlay.style.display = 'none';
+        isPaused = false;
+    });
+}
+
+function completeTowerCorruption(t, refund) {
+    const s = t.slotElement; 
+    s.classList.remove('occupied'); 
+    if (t.element) t.element.remove();
     
-    money = Math.min(1000, money + finalRefund);
+    money = Math.min(1000, money + refund);
     if (typeof updateGauges === 'function') updateGauges();
     updateSummonButtonState();
 
-    const idx = towers.indexOf(t); if(idx>-1) towers.splice(idx,1);
+    const idx = towers.indexOf(t); 
+    if(idx > -1) towers.splice(idx, 1);
     
-    // Use window scope or direct call if available
     const spawnFn = window.spawnCorruptedEnemy || (typeof spawnCorruptedEnemy === 'function' ? spawnCorruptedEnemy : null);
     if(spawnFn) {
-        let ct = null; // Default to tier-based if ct remains null
+        let ct = null;
         const type = t.data.type;
         
         if(['monk','vajra','saint'].includes(type)) ct='cursed_vajra';
@@ -200,4 +227,12 @@ function sellTower(t) {
 
         spawnFn(t, ct);
     }
+    
+    // Clear info panel and indicators
+    const d = document.getElementById('unit-info');
+    if (d) d.innerHTML = '<div class="info-default-text">GUARDIANS<br><span style="font-size:10px; opacity:0.8;">of the</span><br>UNDERWORLD</div>';
+    const ri = document.getElementById('range-indicator');
+    if (ri) ri.remove();
+    const ai = document.getElementById('aura-indicator');
+    if (ai) ai.remove();
 }
