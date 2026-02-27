@@ -226,9 +226,21 @@ export class Specter extends Phaser.GameObjects.Sprite {
         if (this.type === 'mimic' && Math.random() < 0.2) { this.y_px += 40; }
         if (this.type === 'soul_eater') { this.speed = this.baseSpeed * 2; }
         if (this.type === 'deceiver' && !this.hasBackstepped) { this.y_px = Math.max(0, this.y_px - 50); this.hasBackstepped = true; }
+        
         if (this.hp <= 0) {
             this.scene.events.emit('enemyKilled', this);
-            this.destroy();
+            
+            // Play death animation
+            if (this.anims.exists(`${this.textureKey}_dead`)) {
+                this.play(`${this.textureKey}_dead`);
+                this.body.stop();
+                this.hpBar.destroy();
+                this.once('animationcomplete', () => {
+                    this.destroy();
+                });
+            } else {
+                this.destroy();
+            }
         }
     }
 

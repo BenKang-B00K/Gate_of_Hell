@@ -6,7 +6,6 @@ class PreloadScene extends Phaser.Scene {
     }
 
     preload() {
-        // Pixel Art Filter Setting (Global for loaded textures)
         this.load.on('filecomplete', (key, type, data) => {
             if (type === 'image' || type === 'spritesheet') {
                 const texture = this.textures.get(key);
@@ -14,15 +13,11 @@ class PreloadScene extends Phaser.Scene {
             }
         });
 
-        // Placeholder textures
         this.load.image('unit_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
         this.load.image('enemy_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
 
-        // Loading SpriteSheets (30x34 based on guidelines)
-        // Mapping Tier 1
+        // Loading Ally SpriteSheets
         this.load.spritesheet('apprentice', 'ImageSample/Tier1/견습퇴마사.png', { frameWidth: 30, frameHeight: 34 });
-        
-        // Mapping Tier 2
         this.load.spritesheet('necromancer', 'ImageSample/Tier2/강령술사.png', { frameWidth: 30, frameHeight: 34 });
         this.load.spritesheet('mirror', 'ImageSample/Tier2/거울 예언자.png', { frameWidth: 30, frameHeight: 34 });
         this.load.spritesheet('assassin', 'ImageSample/Tier2/그림자 암살자.png', { frameWidth: 30, frameHeight: 34 });
@@ -37,28 +32,49 @@ class PreloadScene extends Phaser.Scene {
         this.load.spritesheet('alchemist', 'ImageSample/Tier2/퇴마 연금술사.png', { frameWidth: 30, frameHeight: 34 });
         this.load.spritesheet('fire', 'ImageSample/Tier2/화염 마법사.png', { frameWidth: 30, frameHeight: 34 });
 
-        // Mapping Tier 3
-        this.load.spritesheet('blood_knight', 'ImageSample/Tier3/혈기사.png', { frameWidth: 30, frameHeight: 34 });
-        this.load.spritesheet('illusionist', 'ImageSample/Tier3/환영술사.png', { frameWidth: 30, frameHeight: 34 });
-        // ... Load others as needed
+        // Enemy SpriteSheets (Mapping placeholders or real files if they existed)
+        // For demonstration, we assume enemies follow the same spritesheet format
+        this.load.spritesheet('ghost_basic', 'ImageSample/Tier1/견습퇴마사.png', { frameWidth: 30, frameHeight: 34 }); // Placeholder
     }
 
     create() {
-        // Define Animations
-        // Assuming 6 frames: 0:Idle-L, 1:Idle-R, 2:Attack-L, 3:Attack-R, 4:Special-L, 5:Special-R
-        const units = ['apprentice', 'necromancer', 'mirror', 'assassin', 'talisman', 'ice', 'guardian_unit', 'archer', 'tracker', 'chainer', 'monk', 'knight', 'alchemist', 'fire'];
-        
-        units.forEach(key => {
+        // Define Global Animation Data
+        const unitKeys = [
+            'apprentice', 'necromancer', 'mirror', 'assassin', 'talisman', 'ice', 
+            'guardian_unit', 'archer', 'tracker', 'chainer', 'monk', 'knight', 
+            'alchemist', 'fire', 'ghost_basic'
+        ];
+
+        unitKeys.forEach(key => {
             if (this.textures.exists(key)) {
+                // Idle Animation
                 this.anims.create({
                     key: `${key}_idle`,
                     frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }),
                     frameRate: 4,
                     repeat: -1
                 });
+
+                // Walk Animation (using idle frames if specific walk frames aren't available)
+                this.anims.create({
+                    key: `${key}_walk`,
+                    frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }),
+                    frameRate: 6,
+                    repeat: -1
+                });
+
+                // Attack Animation
                 this.anims.create({
                     key: `${key}_attack`,
                     frames: this.anims.generateFrameNumbers(key, { start: 2, end: 3 }),
+                    frameRate: 10,
+                    repeat: 0
+                });
+
+                // Dead Animation (Assuming frames 4-5 are special/death)
+                this.anims.create({
+                    key: `${key}_dead`,
+                    frames: this.anims.generateFrameNumbers(key, { start: 4, end: 5 }),
                     frameRate: 8,
                     repeat: 0
                 });
@@ -77,27 +93,36 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        this.allies = this.add.group({ runChildUpdate: true });
-        this.enemies = this.add.group({ runChildUpdate: true });
-        this.projectiles = this.add.group({ runChildUpdate: true });
+        // 1. Initialize Physics Groups for Enemies and Allies
+        this.allies = this.physics.add.group({ runChildUpdate: true });
+        this.enemies = this.physics.add.group({ runChildUpdate: true });
+        this.projectiles = this.physics.add.group({ runChildUpdate: true });
+        
+        // 2. Setup Card Slots (Zones)
         this.slots = this.add.group();
-
         this.createSlots();
-        this.setupDragAndDrop();
-        this.setupPhysics();
 
-        // Connect DOM UI
+        // 3. Setup Drag and Drop
+        this.setupDragAndDrop();
+
+        // 4. Setup Collision/Overlap Handling
+        this.physics.add.overlap(this.projectiles, this.enemies, (projectile, enemy) => {
+            enemy.takeDamage(projectile.source.damage);
+            projectile.destroy();
+        });
+
+        // 5. Connect UI Controls
         const summonBtn = document.getElementById('tower-card');
         if (summonBtn) {
-            summonBtn.addEventListener('click', () => {
+            summonBtn.onclick = () => {
                 const emptySlot = this.slots.getChildren().find(s => !s.isOccupied);
                 if (emptySlot) {
                     this.summonGuardian(emptySlot, window.unitTypes[0]);
                 }
-            });
+            };
         }
 
-        // Enemy spawning loop
+        // 6. Start Spawning Loop based on enemies.js categories
         this.time.addEvent({
             delay: 2000,
             callback: this.spawnWave,
@@ -108,14 +133,8 @@ class MainScene extends Phaser.Scene {
 
     createSlots() {
         for (let i = 0; i < 8; i++) {
-            const x = 50;
-            const y = 100 + i * 60;
-            this.addSlot(x, y, 'left');
-        }
-        for (let i = 0; i < 8; i++) {
-            const x = 310;
-            const y = 100 + i * 60;
-            this.addSlot(x, y, 'right');
+            this.addSlot(50, 100 + i * 60, 'left');
+            this.addSlot(310, 100 + i * 60, 'right');
         }
     }
 
@@ -167,26 +186,15 @@ class MainScene extends Phaser.Scene {
         });
     }
 
-    setupPhysics() {
-        this.physics.add.overlap(this.projectiles, this.enemies, (projectile, enemy) => {
-            enemy.takeDamage(projectile.source.damage);
-            projectile.destroy();
-        });
-    }
-
     summonGuardian(slot, unitData) {
         if (slot.isOccupied) return;
-
-        // Use 'guardian_unit' key for Sanctuary Guardian to avoid conflict with class name
         const textureKey = unitData.type === 'guardian' ? 'guardian_unit' : unitData.type;
         const guardian = new Guardian(this, slot.x, slot.y, unitData, textureKey);
         guardian.setInteractive();
         this.input.setDraggable(guardian);
         guardian.currentSlot = slot;
         slot.isOccupied = true;
-        
         this.allies.add(guardian);
-        return guardian;
     }
 
     getNearestEnemy(source) {
@@ -213,14 +221,12 @@ class MainScene extends Phaser.Scene {
     spawnEnemy(data) {
         const x = Phaser.Math.Between(100, 260);
         const y = -50;
-        // For now, Specters use enemy_placeholder or same mapping if exists
-        const enemy = new Specter(this, x, y, data, 'enemy_placeholder');
+        // All specters start with their 'walk' animation
+        const enemy = new Specter(this, x, y, data, 'ghost_basic');
         this.enemies.add(enemy);
     }
 
-    update(time, delta) {
-        // Individual logic for allies and enemies is handled in their respective update() methods
-    }
+    update(time, delta) {}
 }
 
 const config = {
@@ -228,16 +234,12 @@ const config = {
     width: 360,
     height: 640,
     parent: 'game-container',
-    pixelArt: true, // Crucial for dot art
+    pixelArt: true,
     physics: {
         default: 'arcade',
-        arcade: {
-            gravity: { y: 0 },
-            debug: false
-        }
+        arcade: { gravity: { y: 0 }, debug: false }
     },
     scene: [PreloadScene, MainScene]
 };
 
-const game = new Phaser.Game(config);
-export default game;
+new Phaser.Game(config);
