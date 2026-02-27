@@ -1,9 +1,7 @@
 import { Guardian, Specter, Projectile } from './entities.js';
 
 class PreloadScene extends Phaser.Scene {
-    constructor() {
-        super('PreloadScene');
-    }
+    constructor() { super('PreloadScene'); }
 
     preload() {
         this.load.on('filecomplete', (key, type, data) => {
@@ -16,7 +14,6 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('unit_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
         this.load.image('enemy_placeholder', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
 
-        // Loading Ally SpriteSheets
         this.load.spritesheet('apprentice', 'ImageSample/Tier1/견습퇴마사.png', { frameWidth: 30, frameHeight: 34 });
         this.load.spritesheet('necromancer', 'ImageSample/Tier2/강령술사.png', { frameWidth: 30, frameHeight: 34 });
         this.load.spritesheet('mirror', 'ImageSample/Tier2/거울 예언자.png', { frameWidth: 30, frameHeight: 34 });
@@ -32,55 +29,19 @@ class PreloadScene extends Phaser.Scene {
         this.load.spritesheet('alchemist', 'ImageSample/Tier2/퇴마 연금술사.png', { frameWidth: 30, frameHeight: 34 });
         this.load.spritesheet('fire', 'ImageSample/Tier2/화염 마법사.png', { frameWidth: 30, frameHeight: 34 });
 
-        // Enemy SpriteSheets (Mapping placeholders or real files if they existed)
-        // For demonstration, we assume enemies follow the same spritesheet format
-        this.load.spritesheet('ghost_basic', 'ImageSample/Tier1/견습퇴마사.png', { frameWidth: 30, frameHeight: 34 }); // Placeholder
+        this.load.spritesheet('ghost_basic', 'ImageSample/Tier1/견습퇴마사.png', { frameWidth: 30, frameHeight: 34 });
     }
 
     create() {
-        // Define Global Animation Data
-        const unitKeys = [
-            'apprentice', 'necromancer', 'mirror', 'assassin', 'talisman', 'ice', 
-            'guardian_unit', 'archer', 'tracker', 'chainer', 'monk', 'knight', 
-            'alchemist', 'fire', 'ghost_basic'
-        ];
-
+        const unitKeys = ['apprentice', 'necromancer', 'mirror', 'assassin', 'talisman', 'ice', 'guardian_unit', 'archer', 'tracker', 'chainer', 'monk', 'knight', 'alchemist', 'fire', 'ghost_basic'];
         unitKeys.forEach(key => {
             if (this.textures.exists(key)) {
-                // Idle Animation
-                this.anims.create({
-                    key: `${key}_idle`,
-                    frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }),
-                    frameRate: 4,
-                    repeat: -1
-                });
-
-                // Walk Animation (using idle frames if specific walk frames aren't available)
-                this.anims.create({
-                    key: `${key}_walk`,
-                    frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }),
-                    frameRate: 6,
-                    repeat: -1
-                });
-
-                // Attack Animation
-                this.anims.create({
-                    key: `${key}_attack`,
-                    frames: this.anims.generateFrameNumbers(key, { start: 2, end: 3 }),
-                    frameRate: 10,
-                    repeat: 0
-                });
-
-                // Dead Animation (Assuming frames 4-5 are special/death)
-                this.anims.create({
-                    key: `${key}_dead`,
-                    frames: this.anims.generateFrameNumbers(key, { start: 4, end: 5 }),
-                    frameRate: 8,
-                    repeat: 0
-                });
+                this.anims.create({ key: `${key}_idle`, frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }), frameRate: 4, repeat: -1 });
+                this.anims.create({ key: `${key}_walk`, frames: this.anims.generateFrameNumbers(key, { start: 0, end: 1 }), frameRate: 6, repeat: -1 });
+                this.anims.create({ key: `${key}_attack`, frames: this.anims.generateFrameNumbers(key, { start: 2, end: 3 }), frameRate: 10, repeat: 0 });
+                this.anims.create({ key: `${key}_dead`, frames: this.anims.generateFrameNumbers(key, { start: 4, end: 5 }), frameRate: 8, repeat: 0 });
             }
         });
-
         this.scene.start('MainScene');
     }
 }
@@ -93,95 +54,113 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. Initialize Registry with Game State from enemies.js logic
+        // 1. 경제 시스템 초기화 (Phaser Registry)
+        this.initEconomy();
+
+        // 2. 물리 그룹 및 풀링 초기화
+        this.allies = this.add.group({ runChildUpdate: true });
+        this.enemies = this.physics.add.group({ classType: Specter, runChildUpdate: true });
+        this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
+        
+        // 3. 필드 레이아웃 (슬롯)
+        this.slots = this.add.group();
+        this.createSlots();
+
+        // 4. 상호작용 및 물리 설정
+        this.setupInteractions();
+        this.physics.add.overlap(this.projectiles, this.enemies, this.handleCombat, null, this);
+
+        // 5. 스폰 루프
+        this.time.addEvent({ delay: 2000, callback: this.spawnWave, callbackScope: this, loop: true });
+    }
+
+    initEconomy() {
         this.registry.set('money', 150);
         this.registry.set('stage', 1);
         this.registry.set('portalEnergy', 0);
         this.registry.set('maxPortalEnergy', 1500);
         this.registry.set('enemiesLeft', 0);
-        this.registry.set('damageMultiplier', 1.0);
-        this.registry.set('critChance', 0);
-        this.registry.set('critMultiplier', 1.5);
+        this.registry.set('critChance', 0.1);
 
-        // 2. Setup Registry Listeners for UI Sync
-        this.setupRegistryListeners();
-
-        // 3. Initialize Physics Groups
-        this.allies = this.physics.add.group({ runChildUpdate: true });
-        this.enemies = this.physics.add.group({ runChildUpdate: true });
-        this.projectiles = this.physics.add.group({ runChildUpdate: true });
-        
-        this.slots = this.add.group();
-        this.createSlots();
-        this.setupDragAndDrop();
-
-        this.physics.add.overlap(this.projectiles, this.enemies, (projectile, enemy) => {
-            enemy.takeDamage(projectile.source.damage);
-            projectile.destroy();
+        // Registry -> DOM UI 싱크
+        this.registry.events.on('changedata-money', (p, v) => {
+            document.getElementById('se-display-text').innerText = Math.floor(v);
+            document.getElementById('se-gauge-fill').style.width = `${Math.min(v/10, 100)}%`;
         });
-
-        // Connect UI Controls
-        const summonBtn = document.getElementById('tower-card');
-        if (summonBtn) {
-            summonBtn.onclick = () => {
-                const money = this.registry.get('money');
-                const cost = 40; // Hardcoded for now, can be dynamic
-                if (money >= cost) {
-                    const emptySlot = this.slots.getChildren().find(s => !s.isOccupied);
-                    if (emptySlot) {
-                        this.registry.set('money', money - cost);
-                        this.summonGuardian(emptySlot, window.unitTypes[0]);
-                    }
-                }
-            };
-        }
-
-        this.time.addEvent({
-            delay: 2000,
-            callback: this.spawnWave,
-            callbackScope: this,
-            loop: true
+        this.registry.events.on('changedata-portalEnergy', (p, v) => {
+            const max = this.registry.get('maxPortalEnergy');
+            document.getElementById('portal-energy-label').innerText = `${Math.floor(v)} / ${max}`;
+            document.getElementById('portal-gauge-fill').style.width = `${(v/max)*100}%`;
+            if (v >= max) this.gameOver();
         });
-
-        // Initial UI Update
-        this.events.emit('updateUI');
+        this.registry.events.on('changedata-stage', (p, v) => document.getElementById('stage-display').innerText = v);
+        this.registry.events.on('changedata-enemiesLeft', (p, v) => document.getElementById('enemies-left').innerText = v);
     }
 
-    setupRegistryListeners() {
-        // Soul Energy (Money)
-        this.registry.events.on('changedata-money', (parent, value) => {
-            const el = document.getElementById('se-display-text');
-            if (el) el.innerText = Math.floor(value);
-            const fill = document.getElementById('se-gauge-fill');
-            if (fill) fill.style.width = `${Math.min((value / 1000) * 100, 100)}%`;
-        });
+    handleCombat(projectile, enemy) {
+        const isCrit = Math.random() < this.registry.get('critChance');
+        const damage = projectile.source.damage * (isCrit ? 2 : 1);
+        
+        enemy.takeDamage(damage, isCrit);
+        projectile.disableBody(true, true);
 
-        // Portal Energy
-        this.registry.events.on('changedata-portalEnergy', (parent, value) => {
-            const max = this.registry.get('maxPortalEnergy');
-            const el = document.getElementById('portal-energy-label');
-            if (el) el.innerText = `${Math.floor(value)} / ${max}`;
-            const fill = document.getElementById('portal-gauge-fill');
-            if (fill) fill.style.width = `${(value / max) * 100}%`;
-            
-            // Handle Game Over
-            if (value >= max) {
-                document.getElementById('game-over-overlay').style.display = 'flex';
-                this.scene.pause();
+        // 전투 피드백 (attackeffect.js)
+        this.createHitEffect(enemy.x, enemy.y, projectile.source.type);
+    }
+
+    createHitEffect(x, y, type) {
+        const emojis = { 'fire': '🔥', 'ice': '❄️', 'apprentice': '✨' };
+        const txt = this.add.text(x, y, emojis[type] || '💥', { fontSize: '24px' }).setOrigin(0.5);
+        this.tweens.add({ targets: txt, y: y - 60, alpha: 0, duration: 600, onComplete: () => txt.destroy() });
+    }
+
+    showDamageText(x, y, amount, isCrit) {
+        const txt = this.add.text(x, y, Math.floor(amount), {
+            fontSize: isCrit ? '24px' : '18px',
+            color: isCrit ? '#ff4444' : '#ffffff',
+            fontStyle: 'bold'
+        }).setOrigin(0.5);
+        this.tweens.add({ targets: txt, y: y - 40, alpha: 0, duration: 800, onComplete: () => txt.destroy() });
+    }
+
+    setupInteractions() {
+        const summonBtn = document.getElementById('tower-card');
+        if (summonBtn) summonBtn.onclick = () => this.trySummon();
+
+        this.input.on('drag', (pointer, obj, dragX, dragY) => { obj.x = dragX; obj.y = dragY; });
+        this.input.on('drop', (pointer, obj, zone) => {
+            if (zone.isOccupied) {
+                const other = this.allies.getChildren().find(a => a.currentSlot === zone);
+                if (other) {
+                    other.x = obj.currentSlot.x; other.y = obj.currentSlot.y;
+                    other.currentSlot = obj.currentSlot;
+                }
+            } else {
+                obj.currentSlot.isOccupied = false;
             }
+            obj.x = zone.x; obj.y = zone.y;
+            obj.currentSlot = zone;
+            zone.isOccupied = true;
         });
+    }
 
-        // Stage
-        this.registry.events.on('changedata-stage', (parent, value) => {
-            const el = document.getElementById('stage-display');
-            if (el) el.innerText = value;
-        });
+    trySummon() {
+        const cost = 30;
+        if (this.registry.get('money') >= cost) {
+            const slot = this.slots.getChildren().find(s => !s.isOccupied);
+            if (slot) {
+                this.registry.set('money', this.registry.get('money') - cost);
+                this.spawnGuardian(slot);
+            }
+        }
+    }
 
-        // Enemies Left
-        this.registry.events.on('changedata-enemiesLeft', (parent, value) => {
-            const el = document.getElementById('enemies-left');
-            if (el) el.innerText = value;
-        });
+    spawnGuardian(slot) {
+        const unit = new Guardian(this, slot.x, slot.y, window.unitTypes[0], 'apprentice');
+        unit.currentSlot = slot;
+        slot.isOccupied = true;
+        this.input.setDraggable(unit);
+        this.allies.add(unit);
     }
 
     createSlots() {
@@ -194,96 +173,40 @@ class MainScene extends Phaser.Scene {
     addSlot(x, y, side) {
         const slot = this.add.zone(x, y, 50, 50).setRectangleDropZone(50, 50);
         slot.isOccupied = false;
-        slot.side = side;
         this.add.rectangle(x, y, 40, 40, 0x555555, 0.3).setStrokeStyle(2, 0x888888);
         this.slots.add(slot);
     }
 
-    setupDragAndDrop() {
-        this.input.on('dragstart', (pointer, gameObject) => {
-            this.children.bringToTop(gameObject);
-            gameObject.setAlpha(0.8);
-        });
-
-        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-        });
-
-        this.input.on('dragend', (pointer, gameObject, dropped) => {
-            gameObject.setAlpha(1);
-            if (!dropped) {
-                gameObject.x = gameObject.input.dragStartX;
-                gameObject.y = gameObject.input.dragStartY;
-            }
-        });
-
-        this.input.on('drop', (pointer, gameObject, dropZone) => {
-            if (dropZone.isOccupied) {
-                const occupyingUnit = this.allies.getChildren().find(u => u.currentSlot === dropZone);
-                const oldSlot = gameObject.currentSlot;
-                if (occupyingUnit) {
-                    occupyingUnit.x = oldSlot.x;
-                    occupyingUnit.y = oldSlot.y;
-                    occupyingUnit.currentSlot = oldSlot;
-                    oldSlot.isOccupied = true;
-                }
-            } else {
-                gameObject.currentSlot.isOccupied = false;
-            }
-
-            gameObject.x = dropZone.x;
-            gameObject.y = dropZone.y;
-            gameObject.currentSlot = dropZone;
-            dropZone.isOccupied = true;
-        });
+    spawnWave() {
+        const types = window.enemyCategories.basic;
+        const data = types[Phaser.Math.Between(0, types.length - 1)];
+        this.spawnEnemy(data);
     }
 
-    summonGuardian(slot, unitData) {
-        if (slot.isOccupied) return;
-        const textureKey = unitData.type === 'guardian' ? 'guardian_unit' : unitData.type;
-        const guardian = new Guardian(this, slot.x, slot.y, unitData, textureKey);
-        guardian.setInteractive();
-        this.input.setDraggable(guardian);
-        guardian.currentSlot = slot;
-        slot.isOccupied = true;
-        this.allies.add(guardian);
+    spawnEnemy(data) {
+        const x = Phaser.Math.Between(100, 260);
+        const enemy = this.enemies.get();
+        if (enemy) {
+            enemy.spawn(x, -50, data, 'ghost_basic');
+            this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
+        }
     }
 
     getNearestEnemy(source) {
         let nearest = null;
         let minDist = Infinity;
-        this.enemies.getChildren().forEach(enemy => {
-            const dist = Phaser.Math.Distance.Between(source.x, source.y, enemy.x, enemy.y);
-            if (dist < minDist) {
-                minDist = dist;
-                nearest = enemy;
-            }
+        this.enemies.getChildren().forEach(e => {
+            if (!e.active) return;
+            const d = Phaser.Math.Distance.Between(source.x, source.y, e.x, e.y);
+            if (d < minDist) { minDist = d; nearest = e; }
         });
         return nearest;
     }
 
-    spawnWave() {
-        const categories = ['basic'];
-        const category = categories[Math.floor(Math.random() * categories.length)];
-        const types = window.enemyCategories[category];
-        const typeData = types[Math.floor(Math.random() * types.length)];
-        this.spawnEnemy(typeData);
+    gameOver() {
+        document.getElementById('game-over-overlay').style.display = 'flex';
+        this.scene.pause();
     }
-
-    spawnEnemy(data) {
-        const x = Phaser.Math.Between(100, 260);
-        const y = -50;
-        // All specters start with their 'walk' animation
-        const enemy = new Specter(this, x, y, data, 'ghost_basic');
-        this.enemies.add(enemy);
-
-        // Update Registry
-        const current = this.registry.get('enemiesLeft');
-        this.registry.set('enemiesLeft', current + 1);
-    }
-
-    update(time, delta) {}
 }
 
 const config = {
@@ -292,33 +215,16 @@ const config = {
     height: 640,
     parent: 'game-container',
     pixelArt: true,
-    physics: {
-        default: 'arcade',
-        arcade: { gravity: { y: 0 }, debug: false }
-    },
+    physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
     scene: [PreloadScene, MainScene]
 };
 
-// Start Game Logic
 document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-game-btn');
-    const startScreen = document.getElementById('start-screen');
-
-    if (startBtn && startScreen) {
-        startBtn.addEventListener('click', () => {
-            // Start screen transition
-            startScreen.classList.add('shrink-to-info');
-            
-            setTimeout(() => {
-                startScreen.style.display = 'none';
-                
-                // Initialize Phaser Game
-                new Phaser.Game(config);
-
-                // Initialize UI Gauges (from enemies.js)
-                if (typeof window.updateGauges === 'function') window.updateGauges();
-                if (typeof window.updateStageInfo === 'function') window.updateStageInfo();
-            }, 800);
-        });
+    if (startBtn) {
+        startBtn.onclick = () => {
+            document.getElementById('start-screen').style.display = 'none';
+            new Phaser.Game(config);
+        };
     }
 });

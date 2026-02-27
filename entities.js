@@ -1,45 +1,41 @@
 /**
- * entities.js
- * Phaser 3 classes for Gate of Hell
+ * entities.js - 통합 전투 시스템 및 객체 클래스
  */
 
 /**
- * Guardian Class - Represents an Ally (Tower/Unit)
+ * Guardian: 가디언(타워) 클래스
+ * 전직(Job Change) 및 자동 공격 로직 포함
  */
 export class Guardian extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, unitData, textureKey) {
         super(scene, x, y, textureKey);
-        
         this.scene = scene;
-        this.data = unitData;
+        this.unitData = unitData;
         this.textureKey = textureKey;
-        
-        // Add to scene and physics
+
         scene.add.existing(this);
-        scene.physics.add.existing(this, true);
-        
-        // Scale for 360x640 logical resolution (1.5x based on 30x34 base)
+        scene.physics.add.existing(this, true); // 정적 물리 바디
+
         this.setScale(1.5);
+        this.setDepth(10);
+        this.setInteractive();
+
+        // 초기 상태 설정
+        this.setupUnit();
+    }
+
+    setupUnit() {
+        this.type = this.unitData.type;
+        this.damage = this.unitData.damage;
+        this.range = this.unitData.range;
+        this.cooldown = this.unitData.cooldown;
         
-        // Start idle animation based on unit type
-        if (this.anims.exists(`${textureKey}_idle`)) {
-            this.play(`${textureKey}_idle`);
+        if (this.anims.exists(`${this.textureKey}_idle`)) {
+            this.play(`${this.textureKey}_idle`);
         }
 
-        // Stats
-        this.type = unitData.type;
-        this.name = unitData.name;
-        this.damage = unitData.damage;
-        this.range = unitData.range;
-        this.cooldown = unitData.cooldown;
-        
-        this.isStunned = false;
-        this.stunEndTime = 0;
-        this.isFrozenTomb = false;
-        
-        this.setDepth(10);
-
-        // Phaser Time Event for Auto Attack
+        // 기존 타이머 제거 후 재설정 (전직 시 필요)
+        if (this.attackTimer) this.attackTimer.remove();
         this.attackTimer = this.scene.time.addEvent({
             delay: this.cooldown,
             callback: this.autoAttack,
@@ -48,129 +44,86 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         });
     }
 
+    // 전직(Job Change) 로직 통합
+    evolve(newUnitData, newTextureKey) {
+        this.unitData = newUnitData;
+        this.textureKey = newTextureKey;
+        this.setTexture(newTextureKey);
+        this.setupUnit(); // 능력치 및 애니메이션 갱신
+        
+        // 시각적 피드백 (전직 이펙트)
+        this.scene.tweens.add({
+            targets: this,
+            scale: { from: 2.2, to: 1.5 },
+            duration: 300,
+            ease: 'Back.easeOut'
+        });
+    }
+
     autoAttack() {
         if (this.isFrozenTomb) return;
-        
-        // Stun check
-        if (this.isStunned) {
-            if (this.scene.time.now < this.stunEndTime) return;
-            this.isStunned = false;
-        }
-
         const target = this.scene.getNearestEnemy(this);
-        if (target) {
-            const dist = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y);
-            if (dist <= this.range) {
-                this.shoot(target);
-            }
+        if (target && Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y) <= this.range) {
+            this.fireProjectile(target);
         }
     }
 
-    shoot(target) {
-        // Create and add projectile to scene's projectile group
-        const projectile = new Projectile(this.scene, this.x, this.y, target, this);
-        if (this.scene.projectiles) {
-            this.scene.projectiles.add(projectile);
-        }
-        
-        // Play attack animation
-        if (this.anims.exists(`${this.textureKey}_attack`)) {
-            this.play(`${this.textureKey}_attack`).chain(`${this.textureKey}_idle`);
+    fireProjectile(target) {
+        // 객체 풀에서 투사체 가져오기
+        const projectile = this.scene.projectiles.get(this.x, this.y);
+        if (projectile) {
+            projectile.fire(target, this);
+            if (this.anims.exists(`${this.textureKey}_attack`)) {
+                this.play(`${this.textureKey}_attack`).chain(`${this.textureKey}_idle`);
+            }
         }
     }
 
     update(time, delta) {
         // Face the road
         if (this.x < 180) {
-            this.setFlipX(false); // Face right
+            this.setFlipX(false);
         } else {
-            this.setFlipX(true); // Face left
+            this.setFlipX(true);
         }
     }
 
     destroy(fromScene) {
-        if (this.attackTimer) {
-            this.attackTimer.remove();
-        }
+        if (this.attackTimer) this.attackTimer.remove();
         super.destroy(fromScene);
     }
 }
 
 /**
- * Projectile Class - Homing projectile
+ * Specter: 적 유닛 클래스
+ * Boar, Runner 등 특수 이동 로직 통합 및 풀링 지원
  */
-export class Projectile extends Phaser.GameObjects.Arc {
-    constructor(scene, x, y, target, source) {
-        super(scene, x, y, 4, 0, 360, false, 0xffffff);
-        
-        this.scene = scene;
-        this.target = target;
-        this.source = source;
-        this.speed = 400;
-        
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
-        
-        const colors = {
-            'apprentice': 0x00ffff,
-            'chainer': 0x888888,
-            'talisman': 0xffa500,
-            'monk': 0xffff00,
-            'archer': 0x00ff00,
-            'ice': 0x00aaff,
-            'fire': 0xff4400,
-            'assassin': 0xff00ff
-        };
-        this.setFillStyle(colors[source.type] || 0xffffff);
-        this.setDepth(15);
-        this.scene.physics.moveToObject(this, this.target, this.speed);
+export class Specter extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, x, y, texture) {
+        super(scene, x, y, texture);
     }
 
-    update(time, delta) {
-        if (!this.target || !this.target.active || this.target.hp <= 0) {
-            this.destroy();
-            return;
-        }
-        this.scene.physics.moveToObject(this, this.target, this.speed);
-    }
-}
-
-/**
- * Specter Class - Represents an Enemy
- */
-export class Specter extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, enemyData, textureKey) {
-        super(scene, x, y, textureKey);
+    // 풀링을 위한 초기화 메서드
+    spawn(x, y, enemyData, textureKey) {
+        this.enableBody(true, x, y, true, true);
+        this.setActive(true);
+        this.setVisible(true);
         
-        this.scene = scene;
-        this.type = enemyData.type;
+        this.enemyData = enemyData;
         this.textureKey = textureKey;
+        this.setTexture(textureKey);
         
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
-
-        this.hpBar = scene.add.graphics();
-        
-        this.maxHp = enemyData.hp;
         this.hp = enemyData.hp;
-        this.baseSpeed = enemyData.speed;
+        this.maxHp = enemyData.hp;
         this.speed = enemyData.speed;
+        this.type = enemyData.type;
         
-        this.initialX_pct = (x / 360) * 100;
-        this.targetX_pct = enemyData.targetX || 50; 
         this.y_px = y;
-        
-        this.swayPhase = enemyData.swayPhase || (Math.random() * Math.PI * 2);
-        this.swaySpeed = enemyData.swaySpeed || (0.02 + Math.random() * 0.03);
+        this.initialX_pct = (x / 360) * 100;
+        this.swayPhase = Math.random() * Math.PI * 2;
         this.vxSign = Math.random() < 0.5 ? -1 : 1;
         this.hasBackstepped = false;
-        
-        this.LOGICAL_WIDTH = 360;
-        this.LOGICAL_HEIGHT = 640;
-        this.TARGET_Y = this.LOGICAL_HEIGHT + 10;
 
-        this.setDepth(5);
-        this.hpBar.setDepth(7);
         this.setScale(1.5);
         this.body.setSize(20, 20);
 
@@ -180,106 +133,105 @@ export class Specter extends Phaser.GameObjects.Sprite {
     }
 
     update(time, delta) {
-        if (this.hp <= 0) return;
-        const frameAdjust = delta / 16.66;
-        if (this.type === 'soul_eater' && this.speed > this.baseSpeed) {
-            this.speed -= 0.05 * frameAdjust;
-            if (this.speed < this.baseSpeed) this.speed = this.baseSpeed;
-        }
-        this.y_px += this.speed * frameAdjust;
-        const progress = Math.min(this.y_px / this.TARGET_Y, 1);
-        let currentX_pct;
+        if (!this.active) return;
 
+        const frameAdjust = delta / 16.66;
+        const targetY = 650; // 포탈 위치
+        
+        // 1. 특수 이동 로직 (script.js 이식)
         if (this.type === 'boar') {
-            const hf = 0.6;
-            if (this.y_px < this.TARGET_Y * 0.85) {
-                this.initialX_pct += (this.vxSign) * this.speed * hf * frameAdjust;
+            if (this.y_px < targetY * 0.85) {
+                this.initialX_pct += this.vxSign * this.speed * 0.6 * frameAdjust;
                 if (this.initialX_pct <= 10) { this.initialX_pct = 10; this.vxSign = 1; }
                 else if (this.initialX_pct >= 90) { this.initialX_pct = 90; this.vxSign = -1; }
-                currentX_pct = this.initialX_pct;
             } else {
-                this.initialX_pct += (this.targetX_pct - this.initialX_pct) * 0.1 * frameAdjust;
-                currentX_pct = this.initialX_pct;
+                this.initialX_pct += (50 - this.initialX_pct) * 0.1 * frameAdjust; 
             }
         } else if (this.type === 'runner' || this.type === 'dimension') {
-            currentX_pct = this.initialX_pct + (this.targetX_pct - this.initialX_pct) * progress;
-            currentX_pct += Math.sin(this.y_px * 0.04) * 8;
-        } else if (['normal', 'mist', 'memory', 'shade', 'tank'].includes(this.type)) {
-            this.swayPhase += this.swaySpeed * frameAdjust;
-            currentX_pct = this.initialX_pct + (this.targetX_pct - this.initialX_pct) * progress;
-            currentX_pct += Math.sin(this.swayPhase) * 3;
-        } else {
-            currentX_pct = this.initialX_pct + (this.targetX_pct - this.initialX_pct) * progress;
+            this.initialX_pct += Math.sin(this.y_px * 0.04) * 2;
         }
 
-        this.x = (currentX_pct / 100) * this.LOGICAL_WIDTH;
+        this.y_px += this.speed * frameAdjust;
         this.y = this.y_px;
-        
-        this.drawHpBar();
-        if (this.y >= this.TARGET_Y) {
-            this.onReachPortal();
-        }
+        this.x = (this.initialX_pct / 100) * 360;
+
+        if (this.y >= targetY) this.reachPortal();
     }
 
-    takeDamage(amount) {
+    takeDamage(amount, isCrit) {
         this.hp -= amount;
-        if (this.type === 'mimic' && Math.random() < 0.2) { this.y_px += 40; }
-        if (this.type === 'soul_eater') { this.speed = this.baseSpeed * 2; }
-        if (this.type === 'deceiver' && !this.hasBackstepped) { this.y_px = Math.max(0, this.y_px - 50); this.hasBackstepped = true; }
         
-        if (this.hp <= 0) {
-            // Reward Soul Energy via Registry
-            const currentMoney = this.scene.registry.get('money');
-            this.scene.registry.set('money', currentMoney + 10); // Base reward 10
-            
-            // Decrement enemies left
-            const enemiesLeft = this.scene.registry.get('enemiesLeft');
-            this.scene.registry.set('enemiesLeft', Math.max(0, enemiesLeft - 1));
+        // 데미지 팝업 효과
+        this.scene.showDamageText(this.x, this.y, amount, isCrit);
 
-            this.scene.events.emit('enemyKilled', this);
-            
-            // Play death animation
-            if (this.anims.exists(`${this.textureKey}_dead`)) {
-                this.play(`${this.textureKey}_dead`);
-                this.body.stop();
-                this.hpBar.destroy();
-                this.once('animationcomplete', () => {
-                    this.destroy();
-                });
-            } else {
-                this.destroy();
-            }
+        if (this.type === 'mimic' && Math.random() < 0.2) { this.y_px += 40; }
+        if (this.type === 'soul_eater') { this.speed *= 1.1; }
+
+        if (this.hp <= 0) this.die();
+    }
+
+    die() {
+        const currentMoney = this.scene.registry.get('money');
+        this.scene.registry.set('money', currentMoney + (this.enemyData.reward || 10));
+        
+        if (this.anims.exists(`${this.textureKey}_dead`)) {
+            this.play(`${this.textureKey}_dead`);
+            this.body.stop();
+            this.once('animationcomplete', () => this.kill());
+        } else {
+            this.kill();
         }
     }
 
-    drawHpBar() {
-        this.hpBar.clear();
-        const width = 40; const height = 4;
-        const x = this.x - width / 2;
-        const y = this.y - 25;
-        this.hpBar.fillStyle(0x000000, 0.7);
-        this.hpBar.fillRect(x, y, width, height);
-        const hpPercent = Math.max(0, this.hp / this.maxHp);
-        const fillColor = hpPercent > 0.5 ? 0x00ff00 : (hpPercent > 0.2 ? 0xffff00 : 0xff0000);
-        this.hpBar.fillStyle(fillColor, 1);
-        this.hpBar.fillRect(x, y, width * hpPercent, height);
+    reachPortal() {
+        const pe = this.scene.registry.get('portalEnergy');
+        this.scene.registry.set('portalEnergy', pe + this.maxHp * 0.1);
+        this.kill();
     }
 
-    onReachPortal() {
-        // Update Portal Energy via Registry
-        const currentEnergy = this.scene.registry.get('portalEnergy');
-        this.scene.registry.set('portalEnergy', currentEnergy + this.maxHp * 0.1);
+    kill() {
+        this.setActive(false);
+        this.setVisible(false);
+        this.disableBody(true, true);
+        const left = this.scene.registry.get('enemiesLeft');
+        this.scene.registry.set('enemiesLeft', Math.max(0, left - 1));
+    }
+}
+
+/**
+ * Projectile: 최적화된 투사체 클래스
+ */
+export class Projectile extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, x, y) {
+        super(scene, x, y, 'unit_placeholder');
+        scene.add.existing(this);
+        scene.physics.add.existing(this);
+    }
+
+    fire(target, source) {
+        this.enableBody(true, source.x, source.y, true, true);
+        this.setActive(true);
+        this.setVisible(true);
+        this.target = target;
+        this.source = source;
+        this.speed = 400;
         
-        // Decrement enemies left
-        const enemiesLeft = this.scene.registry.get('enemiesLeft');
-        this.scene.registry.set('enemiesLeft', Math.max(0, enemiesLeft - 1));
-
-        this.scene.events.emit('enemyReachedPortal', this);
-        this.destroy();
+        // Visual setup (Arcade Sprite used instead of Arc for pooling)
+        this.setScale(0.5);
+        this.setTint(this.getProjectileColor(source.type));
     }
 
-    destroy(fromScene) {
-        this.hpBar.destroy();
-        super.destroy(fromScene);
+    update() {
+        if (!this.active) return;
+        if (!this.target || !this.target.active) {
+            this.disableBody(true, true);
+            return;
+        }
+        this.scene.physics.moveToObject(this, this.target, this.speed);
+    }
+
+    getProjectileColor(type) {
+        const colors = { 'apprentice': 0x00ffff, 'fire': 0xff4400, 'ice': 0x00aaff };
+        return colors[type] || 0xffffff;
     }
 }
