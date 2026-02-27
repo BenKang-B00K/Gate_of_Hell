@@ -7,10 +7,27 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/game.css">
     <link rel="stylesheet" href="css/ui.css">
+    <link rel="stylesheet" href="css/menu.css">
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
 </head>
 <body>
     <div id="game-container">
+        <!-- New Start Screen Overlay -->
+        <div id="start-screen">
+            <div id="start-content">
+                <div class="title-group">
+                    <h1 class="main-title">GATE<span class="of">OF</span>HELL</h1>
+                    <h2 class="sub-title">Guardians of the Underworld</h2>
+                </div>
+                
+                <button id="start-game-btn">
+                    CAST OUT SPECTERS
+                    <div class="btn-glow"></div>
+                </button>
+            </div>
+            <div class="bottom-mist"></div>
+        </div>
+
         <!-- Top Fixed Controls -->
         <button id="restart-btn-top">RESTART</button>
         <div id="tutorial-toggle-container">
@@ -77,14 +94,6 @@
                 <div id="unit-info">
                     <div class="info-default-text">SELECT GUARDIAN</div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Start Screen -->
-        <div id="start-screen">
-            <div id="start-content">
-                <h1 class="start-title">Gate of Hell</h1>
-                <button id="start-game-btn">CAST OUT SPECTERS</button>
             </div>
         </div>
 

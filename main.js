@@ -253,12 +253,24 @@ const config = {
 
 document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-game-btn');
+    const startScreen = document.getElementById('start-screen');
+    
+    // 즉시 레이아웃 크기 조정 실행
     handleResize();
     window.addEventListener('resize', handleResize);
+
     if (startBtn) {
         startBtn.onclick = () => {
-            document.getElementById('start-screen').style.display = 'none';
-            new Phaser.Game(config);
+            // 버튼 클릭 시 전환 애니메이션 시작
+            startScreen.classList.add('shrink-to-info');
+            
+            // 애니메이션 완료 후 게임 인스턴스 생성
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                
+                // Phaser 게임 시작
+                new Phaser.Game(config);
+            }, 800);
         };
     }
 });
