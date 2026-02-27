@@ -203,7 +203,6 @@ input:checked + .slider:before { transform: translateX(18px); }
 /* Warnings */
 .card-warning { position: absolute; top: -66px; left: 50%; transform: translateX(-50%); background: #ff0000; color: #fff; font-size: 21px; padding: 6px 15px; border-radius: 12px; white-space: nowrap; font-weight: bold; box-shadow: 0 0 30px #ff0000; z-index: 100; pointer-events: none; display: none; }
 .card-warning::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -3px; border-width: 3px; border-style: solid; border-color: #ff0000 transparent transparent transparent; }
-.tower-card.locked:hover .card-warning { display: block; }
 
 #max-units-warning {
     position: fixed; top: 25%; left: 50%; transform: translate(-50%, -50%);

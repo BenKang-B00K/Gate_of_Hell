@@ -353,11 +353,22 @@ function updateUnitOverlayButtons(t) {
             warning.style.top = '-30px';
             btn.appendChild(warning);
 
+            const promoLabel = document.createElement('div');
+            promoLabel.className = 'card-warning';
+            promoLabel.innerText = `ASCEND: ${p.role.toUpperCase()}`;
+            promoLabel.style.fontSize = '12px';
+            promoLabel.style.top = '-30px';
+            promoLabel.style.background = '#4caf50'; // Green for available
+            promoLabel.style.borderColor = '#2e7d32';
+            btn.appendChild(promoLabel);
+
             btn.addEventListener('mouseenter', () => {
                 if (money < 200) warning.style.display = 'block';
+                else promoLabel.style.display = 'block';
             });
             btn.addEventListener('mouseleave', () => {
                 warning.style.display = 'none';
+                promoLabel.style.display = 'none';
             });
 
             btn.addEventListener('click', e => { 
@@ -382,11 +393,22 @@ function updateUnitOverlayButtons(t) {
             warning.style.top = '-30px';
             btn.appendChild(warning);
 
+            const promoLabel = document.createElement('div');
+            promoLabel.className = 'card-warning';
+            const tierName = ud.tier === 4 ? 'ULTIMATE' : 'MASTER';
+            promoLabel.innerText = `${tierName}: ${ud.name.toUpperCase()}`;
+            promoLabel.style.fontSize = '12px';
+            promoLabel.style.top = '-30px';
+            promoLabel.style.background = '#4caf50'; 
+            btn.appendChild(promoLabel);
+
             btn.addEventListener('mouseenter', () => {
                 if (money < seCost) warning.style.display = 'block';
+                else promoLabel.style.display = 'block';
             });
             btn.addEventListener('mouseleave', () => {
                 warning.style.display = 'none';
+                promoLabel.style.display = 'none';
             });
 
             btn.addEventListener('click', e=>{ 
