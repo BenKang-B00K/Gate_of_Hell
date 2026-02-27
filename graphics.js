@@ -50,7 +50,6 @@ function renderGraphics() {
     lavaPhase += 0.02;
     
     drawLavaRoad();
-    drawPortalEnergy();
     drawSlots();
     drawUnits();
     drawSelectionHalo();
