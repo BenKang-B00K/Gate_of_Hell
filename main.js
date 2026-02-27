@@ -147,6 +147,33 @@ class MainScene extends Phaser.Scene {
         this.cameras.main.flash(200, 150, 0, 0); // 화면 붉은색 점멸
     }
 
+    tryCorrupt(guardian) {
+        if (!guardian) return;
+        
+        const slot = guardian.currentSlot;
+        const refund = Math.floor((guardian.spentSE || 30) * 0.5);
+
+        // 1. 자원 환급
+        const currentMoney = this.registry.get('money');
+        this.registry.set('money', currentMoney + refund);
+
+        // 2. 타락 연출
+        this.vfx.shake('medium');
+        this.cameras.main.flash(300, 100, 0, 0, 0.5);
+
+        // 3. 적 유닛으로 변이
+        const fallen = this.enemies.get();
+        if (fallen) {
+            fallen.spawnFallen(guardian.x, guardian.y, guardian.unitData);
+            this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
+        }
+
+        // 4. 제거 및 슬롯 해제
+        if (guardian.altarEffect) guardian.altarEffect.destroy();
+        slot.isOccupied = false;
+        guardian.destroy();
+    }
+
     createBlackHoleEffect(x, y) {
         const hole = this.add.circle(x, y, 10, 0x000000).setDepth(20);
         const aura = this.add.circle(x, y, 100, 0x9400d3, 0.2).setDepth(19);

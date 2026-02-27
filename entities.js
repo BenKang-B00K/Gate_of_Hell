@@ -149,11 +149,54 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, texture);
     }
 
-    spawn(x, y, enemyData, textureKey) {
-        this.enableBody(true, x, y, true, true);
-        this.setActive(true);
-        this.setVisible(true);
-        this.enemyData = enemyData;
+        spawn(x, y, enemyData, textureKey) {
+            this.enableBody(true, x, y, true, true);
+            this.setActive(true);
+            this.setVisible(true);
+            this.setTint(0xffffff); // Reset tint
+            this.setAlpha(1.0);
+            
+            this.enemyData = enemyData;
+    // ... (omitted)
+        spawnFallen(x, y, originalUnitData) {
+            this.enableBody(true, x, y, true, true);
+            this.setActive(true);
+            this.setVisible(true);
+    
+            this.type = 'fallen_guardian';
+            const tex = originalUnitData.type === 'guardian' ? 'guardian_unit' : originalUnitData.type;
+            this.textureKey = tex;
+            this.setTexture(tex);
+            
+            // 티어 기반 능력치 설정
+            const tier = originalUnitData.tier || 1;
+            this.maxHp = 400 * tier; 
+            this.hp = this.maxHp;
+            this.speed = 1.0 + (tier * 0.3);
+            
+            // 타락 시각 연출 (어둡고 붉은 기운)
+            this.setTint(0x660000); 
+            
+            // 도로 난입 애니메이션 (슬롯에서 중앙으로 점프)
+            this.scene.tweens.add({
+                targets: this,
+                x: 180,
+                y: this.y + 40,
+                scale: 2.2,
+                duration: 500,
+                ease: 'Back.easeIn',
+                onComplete: () => {
+                    this.setScale(1.5);
+                    if (this.anims.exists(`${this.textureKey}_walk`)) this.play(`${this.textureKey}_walk`);
+                    this.initialX_pct = 50; 
+                    this.y_px = this.y;
+                }
+            });
+    
+            this.body.setSize(30, 30);
+            this.enemyData = { type: 'fallen_guardian', reward: 30 * tier };
+        }
+    
         this.textureKey = textureKey;
         this.setTexture(textureKey);
         this.hp = enemyData.hp;
