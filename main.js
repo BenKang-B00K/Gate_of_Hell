@@ -154,11 +154,17 @@ class MainScene extends Phaser.Scene {
         const tier = guardian.unitData.tier || 1;
         const refund = Math.floor((guardian.spentSE || 30) * 0.5);
 
-        // 1. 자원 환급
+        // 1. 자원 환급 및 슬롯 해제
         const currentMoney = this.registry.get('money');
         this.registry.set('money', currentMoney + refund);
+        if (guardian.altarEffect) guardian.altarEffect.destroy();
+        slot.isOccupied = false;
 
-        // 2. 티어별 타락 유령 매핑
+        // 2. 타락 연출: 어둠의 파티클 및 부유 텍스트
+        this.vfx.triggerCorruption(guardian.x, guardian.y);
+        this.showFloatingText(guardian.x, guardian.y, '성스러운 서약이 깨졌습니다', '#ff4444');
+
+        // 3. 티어별 타락 유령 매핑
         const fallenMap = {
             1: ['traitorous_neophyte', 'broken_zealot'],
             2: ['abyssal_eulogist', 'shadow_apostate'],
@@ -170,21 +176,37 @@ class MainScene extends Phaser.Scene {
         const selectedType = tierList[Math.random() < 0.5 ? 0 : 1];
         const enemyData = window.enemyCategories.fallen.find(e => e.type === selectedType);
 
-        // 3. 타락 연출
-        this.vfx.shake('medium');
-        this.cameras.main.flash(300, 100, 0, 0, 0.5);
-
-        // 4. 적 유령으로 변이
+        // 4. 적 유령으로 변이 (도로 입구에서 소환)
         const fallen = this.enemies.get();
         if (fallen) {
-            fallen.spawnFallen(guardian.x, guardian.y, guardian.unitData, enemyData);
+            const spawnX = Phaser.Math.Between(120, 240);
+            const stageMult = (typeof window.getStageMultipliers === 'function') ? window.getStageMultipliers().hpStageMult : 1;
+            
+            fallen.spawnFallenAtStart(spawnX, -50, guardian.unitData, enemyData, stageMult);
             this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
         }
 
-        // 5. 제거 및 슬롯 해제
-        if (guardian.altarEffect) guardian.altarEffect.destroy();
-        slot.isOccupied = false;
+        // 5. 제거
         guardian.destroy();
+    }
+
+    showFloatingText(x, y, message, color) {
+        const txt = this.add.text(x, y, message, {
+            fontSize: '20px',
+            color: color,
+            fontStyle: 'bold',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setOrigin(0.5).setDepth(100);
+
+        this.tweens.add({
+            targets: txt,
+            y: y - 100,
+            alpha: 0,
+            duration: 2000,
+            ease: 'Cubic.easeOut',
+            onComplete: () => txt.destroy()
+        });
     }
 
     createBlackHoleEffect(x, y) {

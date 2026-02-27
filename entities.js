@@ -158,7 +158,7 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         if (this.anims.exists(`${textureKey}_walk`)) this.play(`${textureKey}_walk`);
     }
 
-    spawnFallen(x, y, originalUnitData, fallenData) {
+    spawnFallenAtStart(x, y, originalUnitData, fallenData, difficultyMult) {
         this.enableBody(true, x, y, true, true);
         this.setActive(true);
         this.setVisible(true);
@@ -169,27 +169,32 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.textureKey = tex;
         this.setTexture(tex);
         
-        // 시각 연출: 어두운 그림자
-        this.setTint(0x333333); 
+        // 시각 연출: 어두운 붉은 기운
+        this.setTint(0xff0000); 
         this.setAlpha(0.85);
 
-        this.hp = fallenData.hp;
-        this.maxHp = fallenData.hp;
+        this.maxHp = fallenData.hp * difficultyMult;
+        this.hp = this.maxHp;
         this.speed = fallenData.speed;
         
-        // 도로 난입 애니메이션
-        this.scene.tweens.add({
-            targets: this, x: 180, y: this.y + 40,
-            scale: 2.2, duration: 500, ease: 'Back.easeIn',
-            onComplete: () => {
-                this.setScale(1.5);
-                if (this.anims.exists(`${this.textureKey}_walk`)) this.play(`${this.textureKey}_walk`);
-                this.initialX_pct = 50; 
-                this.y_px = this.y;
-            }
-        });
+        this.y_px = y;
+        this.initialX_pct = (x / 360) * 100;
+        this.vxSign = Math.random() < 0.5 ? -1 : 1;
+        this.hasBackstepped = false;
 
+        this.setScale(1.5);
         this.body.setSize(30, 30);
+        if (this.anims.exists(`${this.textureKey}_walk`)) this.play(`${this.textureKey}_walk`);
+
+        // 등장 위압감 트윈
+        this.scene.tweens.add({
+            targets: this, scale: 2.2, duration: 300, yoyo: true, ease: 'Quad.easeIn'
+        });
+    }
+
+    spawnFallen(x, y, originalUnitData, fallenData) {
+        // Legacy/Direct position spawn logic if needed, but refactored to use start spawn
+        this.spawnFallenAtStart(x, y, originalUnitData, fallenData, 1);
     }
 
     update(time, delta) {

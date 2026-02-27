@@ -48,11 +48,27 @@ export class VFXManager {
             blendMode: 'ADD',
             emitting: false
         });
+
+        // 4. Corruption (타락 폭발)
+        this.emitters.corruption = this.scene.add.particles(0, 0, 'vfx_dot', {
+            color: [0x000000, 0x440000, 0x000000],
+            alpha: { start: 1, end: 0 },
+            speed: { min: 20, max: 120 },
+            scale: { start: 2, end: 0.5 },
+            lifespan: 1000,
+            blendMode: 'NORMAL',
+            emitting: false
+        });
     }
 
     triggerHitEffect(x, y, type) {
         const emitter = this.emitters[type] || this.emitters.apprentice;
         emitter.explode(8, x, y);
+    }
+
+    triggerCorruption(x, y) {
+        this.emitters.corruption.explode(40, x, y);
+        this.shake('medium');
     }
 
     shake(intensity = 'light') {
