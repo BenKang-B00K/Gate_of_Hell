@@ -432,7 +432,10 @@ document.addEventListener('DOMContentLoaded', () => {
     gameContainer = document.getElementById('game-container');
     road = document.getElementById('road');
     
-    const startBtn = document.getElementById('start-game-btn');
+    // Explicitly set these for enemies.js as well if needed (though they share global scope usually)
+    // but some browsers/bundlers might behave differently.
+    window.gameContainer = gameContainer;
+    window.road = road;
     const startScreen = document.getElementById('start-screen');
     
     // Start thunder sound loop (will be blocked by browser until first click anywhere)

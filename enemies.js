@@ -697,7 +697,10 @@ const corruptedTypes = {
 function spawnCorruptedEnemy(tower, forcedType = null) {
     totalCorruptedCount++;
     const road = document.getElementById('road');
-    if (!road) return;
+    if (!road) {
+        console.error("CRITICAL ERROR: Road element not found in spawnCorruptedEnemy!");
+        return;
+    }
     
     // Road is 340px wide, centered in 1080px (approx 34.2% to 65.8%)
     const randomX = Math.random() * 20 + 40;
@@ -705,7 +708,10 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
     const tier = Math.min(tower.data.tier, 3);
     const data = forcedType ? corruptedTypes[forcedType] : corruptedTypes[tier];
 
-    if (!data) return;
+    if (!data) {
+        console.error("ERROR: No data found for corrupted enemy type:", forcedType || tier);
+        return;
+    }
 
     if (typeof recordUnlock === 'function') {
         recordUnlock(data.type, true);
@@ -729,6 +735,8 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
     enemyDiv.appendChild(hpBg);
 
     road.appendChild(enemyDiv);
+    console.log("Appended corrupted enemy div to road:", data.type);
+    
     enemyDiv.style.left = `${randomX}%`;
     enemyDiv.style.top = `-40px`; // Spawn at Spawning Pool height
 
@@ -783,6 +791,7 @@ function spawnCorruptedEnemy(tower, forcedType = null) {
     }
 
     enemies.push(enemy);
+    console.log("Successfully added corrupted enemy to array:", enemy.type, "Total enemies:", enemies.length);
 }
 window.spawnCorruptedEnemy = spawnCorruptedEnemy;
 

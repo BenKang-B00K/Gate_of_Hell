@@ -200,15 +200,6 @@ function sellTower(t) {
 
 function completeTowerCorruption(t, refund) {
     const s = t.slotElement; 
-    s.classList.remove('occupied'); 
-    if (t.element) t.element.remove();
-    
-    money = Math.min(1000, money + refund);
-    if (typeof updateGauges === 'function') updateGauges();
-    updateSummonButtonState();
-
-    const idx = towers.indexOf(t); 
-    if(idx > -1) towers.splice(idx, 1);
     
     const spawnFn = window.spawnCorruptedEnemy || (typeof spawnCorruptedEnemy === 'function' ? spawnCorruptedEnemy : null);
     if(spawnFn) {
@@ -225,8 +216,21 @@ function completeTowerCorruption(t, refund) {
         if(t.data.tier===4) ct='bringer_of_doom';
         if(type === 'apprentice') ct='defiled_apprentice';
 
+        console.log("Spawning corrupted enemy for:", type, "forcedType:", ct);
         spawnFn(t, ct);
+    } else {
+        console.error("spawnCorruptedEnemy function not found!");
     }
+
+    s.classList.remove('occupied'); 
+    if (t.element) t.element.remove();
+    
+    money = Math.min(1000, money + refund);
+    if (typeof updateGauges === 'function') updateGauges();
+    updateSummonButtonState();
+
+    const idx = towers.indexOf(t); 
+    if(idx > -1) towers.splice(idx, 1);
     
     // Clear info panel and indicators
     const d = document.getElementById('unit-info');
