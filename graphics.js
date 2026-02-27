@@ -155,6 +155,9 @@ function drawUnits() {
             case 'tracker': drawTracker(cx, cy, tower); break;
             case 'necromancer': drawNecromancer(cx, cy, tower); break;
             case 'guardian': drawGuardian(cx, cy, tower); break;
+            case 'knight': drawKnight(cx, cy, tower); break;
+            case 'alchemist': drawAlchemist(cx, cy, tower); break;
+            case 'mirror': drawMirror(cx, cy, tower); break;
         }
     });
 }
@@ -583,9 +586,103 @@ function drawTracker(cx, cy, tower) {
     ctx.stroke();
 }
 function drawNecromancer(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#4B0082', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 400; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
+
+    // --- 1. BODY & BONE-ADORNED ROBES (Purple / Bone / Black Palette) ---
+    const robeColor = '#4A148C'; // Dark purple
+    const boneColor = '#E0E0E0'; // Bone white
+    const shadowColor = '#212121'; // Black shadow
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-5, 11, shadowColor, 11, 3);
+    
+    // Ribcage Detail (Bone decor)
+    p(-4, 3, boneColor, 9, 1);
+    p(-3, 5, boneColor, 7, 1);
+    p(-2, 7, boneColor, 5, 1);
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Hood (Skull Face)
+    p(-4, -10, '#000', 9, 10); // Hood outline
+    p(-3, -9, robeColor, 7, 9);
+    p(-2, -7, boneColor, 5, 6); // Skull mask
+    p(-1, -5, '#000', 1, 1); // Eye socket L
+    p(1, -5, '#000', 1, 1);  // Eye socket R
+
+    // --- 2. THE SKULL STAFF (Soul Conduit) ---
+    let staffOX = isAttacking ? 9 : 7;
+    let staffOY = -12;
+    
+    const woodColor = '#3E2723';
+    
+    // Staff Handle
+    p(staffOX, staffOY, '#000', 3, 26);
+    p(staffOX + 1, staffOY, woodColor, 1, 26);
+    
+    // Staff Head (Skull)
+    p(staffOX - 2, staffOY - 4, '#000', 7, 7);
+    p(staffOX - 1, staffOY - 3, boneColor, 5, 5);
+    p(staffOX, staffOY - 2, '#000', 1, 1); // Skull eye L
+    p(staffOX + 2, staffOY - 2, '#000', 1, 1); // Skull eye R
+    
+    // Spectral Flame on Staff
+    const flameGlow = (Math.sin(time * 4) + 1) / 2;
+    p(staffOX, staffOY - 6 - (time*10 % 5), `rgba(156, 39, 176, ${0.4 * flameGlow})`, 3, 3);
+
+    // --- 3. SPECTRAL SUMMON (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 30 * flashIntensity;
+        ctx.shadowColor = '#9C27B0';
+        
+        // Ethereal Mist
+        const mistX = isLeft ? cx + (staffOX * S) : cx - (staffOX * S);
+        const mistY = cy + (staffOY * S);
+        
+        ctx.fillStyle = `rgba(156, 39, 176, ${0.3 * flashIntensity})`;
+        ctx.beginPath();
+        ctx.moveTo(mistX, mistY);
+        ctx.quadraticCurveTo(mistX + 50*(isLeft?1:-1), mistY - 40, mistX + 100*(isLeft?1:-1), mistY - 10);
+        ctx.arc(mistX + 100*(isLeft?1:-1), mistY - 10, 10 * S, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Soul Sparks
+        for(let i=0; i<6; i++) {
+            const sang = (i / 6) * Math.PI * 2 + time * 5;
+            const sdist = 20 * flashIntensity;
+            const sx = staffOX + Math.cos(sang) * sdist/S;
+            const sy = staffOY + Math.sin(sang) * sdist/S;
+            p(Math.round(sx), Math.round(sy), '#E1BEE7', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. ABYSSAL AURA ---
+    const abyssPulse = (Math.sin(time * 1.5) + 1) / 2;
+    ctx.fillStyle = `rgba(74, 20, 140, ${0.08 * abyssPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy + 5 * S, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
 }
 function drawChainer(cx, cy, tower) {
     const time = lavaPhase;
@@ -1117,10 +1214,411 @@ function drawAssassin(cx, cy, tower) {
         p(Math.round(px), Math.round(py), `rgba(30, 30, 30, ${0.2 * (1 - (i/3))})`, 2, 2);
     }
 }
+function drawKnight(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 250; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 250) : 0;
+
+    // --- 1. BODY & PLATE ARMOR (Silver / Blue Palette) ---
+    const armorColor = '#90A4AE'; // Silver steel
+    const highlightColor = '#CFD8DC'; // Polished steel
+    const trimColor = '#1565C0'; // Blue cloth detail
+    
+    // Chestplate & Spaulders
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, armorColor, 11, 13);
+    p(-2, 1, highlightColor, 3, 11); // Center shine
+    p(-5, 1, trimColor, 2, 2); // Left shoulder detail
+    p(4, 1, trimColor, 2, 2);  // Right shoulder detail
+    
+    // Tassets / Faulds
+    p(-5, 11, '#455A64', 11, 3);
+    
+    // Gauntlets
+    p(-8, 4, '#000', 4, 6);
+    p(-7, 5, armorColor, 2, 4);
+    p(5, 4, '#000', 4, 6);
+    p(6, 5, armorColor, 2, 4);
+
+    // Boots (Sabatons)
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head (Knightly Helm with Visor)
+    p(-4, -9, '#000', 9, 10); 
+    p(-3, -8, armorColor, 7, 8);
+    p(-3, -5, '#263238', 7, 1); // Visor slit
+    p(-1, -11, highlightColor, 3, 2); // Top crest
+    
+    // Blue Plume
+    const plumeWarp = Math.sin(time * 3) * 2;
+    p(-1 + plumeWarp, -14, '#0D47A1', 3, 4);
+
+    // --- 2. BLESSED BROADSWORD (Holy Edge) ---
+    // Sword swings during attack
+    let swordOX = isAttacking ? 10 : 8;
+    let swordOY = isAttacking ? -18 : -14;
+    
+    const bladeColor = '#ECEFF1';
+    const goldColor = '#FFD700';
+
+    // Guard & Hilt
+    p(swordOX - 3, swordOY + 20, goldColor, 7, 2); // Crossguard
+    p(swordOX - 1, swordOY + 22, '#5D4037', 3, 5); // Leather grip
+    p(swordOX - 1, swordOY + 27, goldColor, 3, 2); // Pommel
+
+    // Blade
+    p(swordOX - 1, swordOY, '#000', 3, 20); // Blade outline
+    p(swordOX, swordOY + 1, bladeColor, 1, 18); // Blade core
+    p(swordOX - 1, swordOY + 1, highlightColor, 1, 18); // Left edge
+    p(swordOX + 1, swordOY + 1, highlightColor, 1, 18); // Right edge
+
+    // --- 3. SLASH EFFECT (Divine Strike) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 35 * flashIntensity;
+        ctx.shadowColor = '#fff';
+        
+        // Arc Swing
+        ctx.strokeStyle = `rgba(255, 255, 255, ${flashIntensity})`;
+        ctx.lineWidth = 6 * S;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 25 * S, -0.3, 0.3);
+        ctx.stroke();
+        
+        // Holy Sparks
+        for(let i=0; i<6; i++) {
+            const sang = (i / 6) * Math.PI * 2 + time * 8;
+            const sdist = 20 + flashIntensity * 25;
+            const sx = Math.cos(sang) * sdist;
+            const sy = Math.sin(sang) * sdist;
+            p(Math.round(sx/S), Math.round(sy/S), '#FFD700', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. VALOR AURA ---
+    const auraStep = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.05 * auraStep})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
 function drawGuardian(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-6, -9, '#000', 36, 54);
-    p(-5, -8, '#C0C0C0', 30, 48);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & HEAVY ARMOR (Gold / White / Silver Palette) ---
+    const armorColor = '#FFD54F'; // Radiant gold
+    const plateColor = '#F5F5F5'; // Holy white plates
+    const glowColor = '#00E5FF'; // Ethereal cyan glow
+    
+    // Heavy Body
+    p(-7, -2, '#000', 15, 18); // Outline
+    p(-6, -1, armorColor, 13, 16);
+    p(-3, -1, plateColor, 7, 14); // White center chest
+    
+    // Massive Pauldrons
+    p(-9, -2, '#000', 5, 6);
+    p(-8, -1, armorColor, 3, 4);
+    p(5, -2, '#000', 5, 6);
+    p(6, -1, armorColor, 3, 4);
+
+    // Boots (Heavy Greaves)
+    p(-5, 14, '#000', 5, 4);
+    p(1, 14, '#000', 5, 4);
+
+    // Head (Great Helm with Halo)
+    p(-4, -10, '#000', 9, 9); 
+    p(-3, -9, plateColor, 7, 7);
+    p(-1, -7, glowColor, 3, 1); // Eye visor glow
+    
+    // The Halo
+    const haloGlow = (Math.sin(time * 2) + 1) / 2;
+    ctx.strokeStyle = `rgba(255, 215, 0, ${0.4 + 0.3 * haloGlow})`;
+    ctx.lineWidth = 2 * S;
+    ctx.beginPath();
+    ctx.arc(cx, cy - 8 * S, 12 * S, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // --- 2. THE HOLY SHIELD (Sanctuary Aegis) ---
+    let shieldOX = isAttacking ? -12 : -10;
+    let shieldOY = -5;
+    
+    // Shield Base
+    p(shieldOX - 2, shieldOY - 4, '#000', 9, 16); // Outline
+    p(shieldOX - 1, shieldOY - 3, plateColor, 7, 14);
+    p(shieldOX, shieldOY - 1, armorColor, 5, 10); // Gold center cross
+    p(shieldOX + 2, shieldOY + 3, glowColor, 1, 2); // Gem
+
+    // --- 3. BANISHMENT BLAST (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 40 * flashIntensity;
+        ctx.shadowColor = '#00E5FF';
+        
+        // Holy Shockwave from shield
+        const waveX = isLeft ? cx + (shieldOX * S) : cx - (shieldOX * S);
+        const waveY = cy + (shieldOY + 4) * S;
+        
+        ctx.fillStyle = `rgba(0, 229, 255, ${0.2 * flashIntensity})`;
+        ctx.beginPath();
+        ctx.arc(waveX, waveY, 30 * flashIntensity * S, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Golden Particles
+        for(let i=0; i<8; i++) {
+            const sang = (i / 8) * Math.PI * 2;
+            const sdist = 20 * flashIntensity;
+            const sx = shieldOX + Math.cos(sang) * sdist;
+            const sy = shieldOY + 4 + Math.sin(sang) * sdist;
+            p(Math.round(sx), Math.round(sy), '#FFD700', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. SANCTUARY AURA ---
+    const auraPulse = (Math.cos(time * 1.5) + 1) / 2;
+    ctx.fillStyle = `rgba(0, 229, 255, ${0.05 * auraPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 35 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawAlchemist(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 350; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
+
+    // --- 1. BODY & SCHOLAR ROBES (Teal / Bronze / Brown Palette) ---
+    const robeColor = '#00695C'; // Deep teal
+    const leatherColor = '#5D4037'; // Bronze/Brown leather
+    const chemicalColor = '#76FF03'; // Toxic green glow
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-5, 11, '#004D40', 11, 3); // Shadow
+    
+    // Bandolier & Pouches
+    p(-5, 4, leatherColor, 11, 2); // Strap
+    p(2, 4, '#FFD700', 2, 2); // Gold vial holder
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Alchemist Cap
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // Protective Cap & Goggles
+    p(-4, -10, '#3E2723', 9, 3); // Cap
+    p(-3, -6, '#212121', 7, 3); // Goggle frame
+    p(-2, -5, chemicalColor, 2, 1); // Goggle lens L
+    p(1, -5, chemicalColor, 2, 1);  // Goggle lens R
+
+    // --- 2. ALCHEMICAL FLASK (Transmutation Vessel) ---
+    let flaskFloat = Math.sin(time * 4) * 2;
+    let flaOX = isAttacking ? 9 : 7;
+    let flaOY = -5 + flaskFloat;
+    
+    // Flask Shape (Round bottom)
+    p(flaOX - 2, flaOY - 3, '#000', 6, 8); // Outline
+    p(flaOX - 1, flaOY - 2, '#CFD8DC', 4, 6); // Glass
+    p(flaOX - 1, flaOY + 1, chemicalColor, 4, 3); // Liquid
+    p(flaOX, flaOY - 3, '#5D4037', 2, 2); // Cork
+
+    // --- 3. ESSENCE TRANSMUTATION (Attack) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 30 * flashIntensity;
+        ctx.shadowColor = '#76FF03';
+        
+        // Chemical Cloud
+        const cloudX = isLeft ? cx + (flaOX * S) : cx - (flaOX * S);
+        const cloudY = cy + (flaOY * S);
+        
+        for(let i=0; i<5; i++) {
+            const sang = (i / 5) * Math.PI * 2 + time * 5;
+            const sdist = 10 + flashIntensity * 25;
+            const sx = flaOX + Math.cos(sang) * sdist/S;
+            const sy = flaOY + Math.sin(sang) * sdist/S;
+            ctx.fillStyle = `rgba(118, 255, 3, ${0.4 * flashIntensity})`;
+            ctx.beginPath();
+            ctx.arc(cx + sx*S*(isLeft?1:-1), cy + sy*S, 6 * S, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.restore();
+    }
+
+    // --- 4. TOXIC VAPOR AURA ---
+    const vaporGlow = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(118, 255, 3, ${0.03 * vaporGlow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy + 5 * S, 28 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawMirror(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 400; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
+
+    // --- 1. BODY & ORACLE ROBES (Ethereal White / Violet Palette) ---
+    const robeColor = '#EDE7F6'; // Off-white/Violet tint
+    const trimColor = '#9575CD'; // Light purple
+    const detailColor = '#00BCD4'; // Cyan magic detail
+    
+    // Flowing Robes
+    p(-7, 0, '#000', 15, 16); // Outline
+    p(-6, 1, robeColor, 13, 14);
+    p(-6, 1, trimColor, 2, 14); // Sleeve edge L
+    p(5, 1, trimColor, 2, 14);  // Sleeve edge R
+    p(-2, 1, detailColor, 3, 11); // Center mystical embroidery
+    
+    // Sash
+    p(-6, 7, '#512DA8', 13, 2);
+
+    // Boots (White)
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Oracle Veil
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Veil/Headband
+    p(-4, -10, trimColor, 9, 3);
+    p(-1, -9, '#FFF', 3, 1); // Forehead gem
+    
+    // Long Ethereal Hair
+    const hairColor = '#B2EBF2';
+    p(-5, -7, hairColor, 2, 12);
+    p(4, -7, hairColor, 2, 12);
+
+    // --- 2. THE SPIRIT MIRROR (Reflective Artifact) ---
+    let mirrorFloat = Math.cos(time * 2) * 5;
+    let mirOX = isAttacking ? 12 : 10;
+    let mirOY = -5 + mirrorFloat;
+    
+    // Mirror Frame (Circular)
+    ctx.save();
+    const mX = isLeft ? cx + (mirOX * S) : cx - (mirOX * S);
+    const mY = cy + (mirOY * S);
+    
+    // Outline
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(mX, mY, 10 * S, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Silver Frame
+    ctx.fillStyle = '#BDBDBD';
+    ctx.beginPath();
+    ctx.arc(mX, mY, 9 * S, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Glass (Cyan reflective)
+    ctx.fillStyle = '#E0F7FA';
+    ctx.beginPath();
+    ctx.arc(mX, mY, 7 * S, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Reflection Shine
+    const sPhase = (time * 2) % (Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 255, 255, 0.6)`;
+    ctx.beginPath();
+    ctx.moveTo(mX - 5*S, mY - 5*S + Math.sin(sPhase)*2*S);
+    ctx.lineTo(mX + 5*S, mY + 5*S + Math.sin(sPhase)*2*S);
+    ctx.lineWidth = 2 * S;
+    ctx.stroke();
+    ctx.restore();
+
+    // --- 3. REFLECTION BOUNCE (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 35 * flashIntensity;
+        ctx.shadowColor = '#00BCD4';
+        
+        // Prism Blast
+        const blastX = isLeft ? cx + (mirOX * S) : cx - (mirOX * S);
+        const blastY = cy + (mirOY * S);
+        
+        ctx.strokeStyle = `rgba(0, 188, 212, ${flashIntensity})`;
+        ctx.lineWidth = 3 * S;
+        for(let i=0; i<3; i++) {
+            const ang = (i / 3) * Math.PI * 2 + time * 3;
+            ctx.beginPath();
+            ctx.moveTo(blastX, blastY);
+            ctx.lineTo(blastX + Math.cos(ang)*40*flashIntensity, blastY + Math.sin(ang)*40*flashIntensity);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    // --- 4. COSMIC AURA ---
+    const cosmicPulse = (Math.sin(time * 1.5) + 1) / 2;
+    ctx.fillStyle = `rgba(149, 117, 205, ${0.05 * cosmicPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
 }
 
 function drawSelectionHalo() {
