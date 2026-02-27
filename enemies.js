@@ -56,37 +56,42 @@ function getBestiaryBonus(type) {
     return 1;
 }
 
-// Calculate gradual stage-based multipliers
+// Calculate gradual stage-based multipliers using a Log-Linear Hybrid Model
 function getStageMultipliers(isBoss = false) {
-    if (isBoss) return { hpStageMult: 1.0, speedStageMult: 1.0 };
+    const stage = window.stage || 1;
     
-    let hpRate = 1.05;
-    let speedRate = 0.003;
+    let hpMult = 1.0;
+    let speedMult = 1.0;
 
-    // Difficulty scaling
-    if (stage >= 15) {
-        hpRate = 1.08; // Increased from 1.06 for late game challenge
-        speedRate = 0.008; // Faster specters in late game
-    } else if (stage >= 5) {
-        hpRate = 1.07; // Increased from 1.06
-        speedRate = 0.006; // Increased from 0.005
+    // 1. HP Growth Curve Logic (Optimized for TTK 3-5s)
+    if (stage <= 50) {
+        // [Stable Phase] Linear + Logarithmic growth
+        hpMult = 1 + (stage * 0.25) + Math.log2(stage);
+    } else {
+        // [Nightmare Phase] Exponential growth for veteran challenge
+        const nightmareBase = 1 + (50 * 0.25) + Math.log2(50); 
+        const nFactor = stage - 50;
+        hpMult = nightmareBase * (1 + (nFactor * 0.08)); 
     }
 
-    // Apply Relic Enemy HP reduction
-    let hpStageMult = Math.pow(hpRate, stage - 1);
-    const relicHPReduction = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_hp') : 0;
-    if (relicHPReduction < 0) {
-        hpStageMult *= (1.0 + relicHPReduction);
+    // 2. Speed Curve Logic (Using atan to cap maximum speed)
+    speedMult = 1 + (Math.atan(stage / 20) * 0.5);
+
+    // 3. Boss Modifiers (10x HP, 30% slower speed)
+    if (isBoss) {
+        hpMult *= 10.0;
+        speedMult *= 0.7;
     }
 
-    // Apply Relic Enemy Speed reduction
-    let speedStageMult = 1 + (stage - 1) * speedRate;
-    const relicSpeedReduction = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_speed') : 0;
-    if (relicSpeedReduction < 0) {
-        speedStageMult *= (1.0 + relicSpeedReduction);
-    }
+    // 4. Relic Bonus Integration
+    const relicHPMod = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_hp') : 0;
+    const relicSpdMod = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_speed') : 0;
 
-    return { hpStageMult, speedStageMult };
+    return { 
+        hpStageMult: hpMult * (1 + relicHPMod), 
+        speedStageMult: speedMult * (1 + relicSpdMod),
+        bossAbilityCooldown: Math.max(2000, 5000 - (stage * 100))
+    };
 }
 
 // Enemy data (Categorized)
@@ -98,6 +103,16 @@ const enemyCategories = {
         { type: 'shade', icon: '👤', speed: 6.6, hp: 60, defense: 0, probability: 0.1, reward: 5, desc: "A weak but fast spirit that moves in a blurring motion.", effectiveness: "Rapid-fire units.", lore: "The faintest remains of a soul, barely holding onto existence." },
         { type: 'tank', icon: '💀', speed: 2.25, hp: 160, defense: 8, probability: 0.15, reward: 7, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
         { type: 'runner', icon: '⚡', speed: 6.6, hp: 35, defense: 0, probability: 0.1, reward: 6, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }
+    ],
+    fallen: [
+        { type: 'traitorous_neophyte', icon: '👤', speed: 2.5, hp: 300, defense: 0, reward: 20, desc: "Traitorous Neophyte: High speed, low HP." },
+        { type: 'broken_zealot', icon: '⛪', speed: 0.8, hp: 600, defense: 15, reward: 20, desc: "Broken Zealot: Low speed, high defense." },
+        { type: 'abyssal_eulogist', icon: '🕯️', speed: 1.2, hp: 1000, defense: 5, reward: 60, desc: "Abyssal Eulogist: Boosts speed of nearby specters." },
+        { type: 'shadow_apostate', icon: '🗡️', speed: 1.8, hp: 800, defense: 10, reward: 60, desc: "Shadow Apostate: 10% chance to dodge attacks." },
+        { type: 'soul_starved_priest', icon: '🩸', speed: 1.0, hp: 2500, defense: 20, reward: 150, desc: "Soul-starved High Priest: Curses nearby guardians' range." },
+        { type: 'fallen_paladin', icon: '🛡️', speed: 0.7, hp: 4000, defense: 30, reward: 150, desc: "Fallen Paladin: Immune to knockback, massive HP." },
+        { type: 'avatar_void', icon: '💠', speed: 0.9, hp: 8000, defense: 40, reward: 400, desc: "Avatar of Void: 20% damage reduction." },
+        { type: 'harbinger_doom', icon: '🛶', speed: 0.6, hp: 12000, defense: 50, reward: 400, desc: "Harbinger of Doom: Summons minor spirits." }
     ],
     pattern: [
         { type: 'defiled_apprentice', icon: '🥀', speed: 1.8, hp: 400, defense: 5, probability: 0.1, reward: 15, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3, lasts 5s).", effectiveness: "Holy attacks and high DPS.", lore: "One moment of weakness, one forbidden scroll, and a soul is lost forever." },

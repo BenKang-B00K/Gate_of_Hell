@@ -151,24 +151,37 @@ class MainScene extends Phaser.Scene {
         if (!guardian) return;
         
         const slot = guardian.currentSlot;
+        const tier = guardian.unitData.tier || 1;
         const refund = Math.floor((guardian.spentSE || 30) * 0.5);
 
         // 1. 자원 환급
         const currentMoney = this.registry.get('money');
         this.registry.set('money', currentMoney + refund);
 
-        // 2. 타락 연출
+        // 2. 티어별 타락 유령 매핑
+        const fallenMap = {
+            1: ['traitorous_neophyte', 'broken_zealot'],
+            2: ['abyssal_eulogist', 'shadow_apostate'],
+            3: ['soul_starved_priest', 'fallen_paladin'],
+            4: ['avatar_void', 'harbinger_doom']
+        };
+
+        const tierList = fallenMap[tier] || fallenMap[1];
+        const selectedType = tierList[Math.random() < 0.5 ? 0 : 1];
+        const enemyData = window.enemyCategories.fallen.find(e => e.type === selectedType);
+
+        // 3. 타락 연출
         this.vfx.shake('medium');
         this.cameras.main.flash(300, 100, 0, 0, 0.5);
 
-        // 3. 적 유닛으로 변이
+        // 4. 적 유령으로 변이
         const fallen = this.enemies.get();
         if (fallen) {
-            fallen.spawnFallen(guardian.x, guardian.y, guardian.unitData);
+            fallen.spawnFallen(guardian.x, guardian.y, guardian.unitData, enemyData);
             this.registry.set('enemiesLeft', this.registry.get('enemiesLeft') + 1);
         }
 
-        // 4. 제거 및 슬롯 해제
+        // 5. 제거 및 슬롯 해제
         if (guardian.altarEffect) guardian.altarEffect.destroy();
         slot.isOccupied = false;
         guardian.destroy();
