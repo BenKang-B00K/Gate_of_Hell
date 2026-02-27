@@ -85,6 +85,8 @@ class MainScene extends Phaser.Scene {
         this.registry.set('maxPortalEnergy', 1500);
         this.registry.set('enemiesLeft', 0);
         this.registry.set('critChance', 0.1);
+        this.registry.set('isTimeFrozen', false);
+        this.registry.set('globalSpeedMult', 1.0);
 
         // Registry -> DOM UI 싱크 리스너 설정
         this.setupUIListeners();
@@ -123,6 +125,7 @@ class MainScene extends Phaser.Scene {
     }
 
     handleCombat(projectile, enemy) {
+        if (this.registry.get('isTimeFrozen')) return;
         const isCrit = Math.random() < this.registry.get('critChance');
         const damage = projectile.source.damage * (isCrit ? 2 : 1);
         
@@ -130,6 +133,33 @@ class MainScene extends Phaser.Scene {
         projectile.disableBody(true, true);
 
         this.createHitEffect(enemy.x, enemy.y, projectile.source.type);
+    }
+
+    createBlackHoleEffect(x, y) {
+        const hole = this.add.circle(x, y, 10, 0x000000).setDepth(20);
+        const aura = this.add.circle(x, y, 100, 0x9400d3, 0.2).setDepth(19);
+        this.tweens.add({
+            targets: hole, scale: 5, alpha: 0.8, duration: 500, yoyo: true, hold: 1000,
+            onComplete: () => { hole.destroy(); aura.destroy(); }
+        });
+        this.tweens.add({ targets: aura, scale: 1.5, alpha: 0, duration: 1500 });
+    }
+
+    applyTimeFreezeVisuals(isFrozen) {
+        if (isFrozen) {
+            this.freezeOverlay = this.add.rectangle(180, 320, 360, 640, 0x00aaff, 0.2)
+                .setDepth(100).setOrigin(0.5);
+        } else {
+            if (this.freezeOverlay) this.freezeOverlay.destroy();
+        }
+    }
+
+    createReapEffect(x, y) {
+        const scythe = this.add.text(x, y, '☠️', { fontSize: '64px' }).setOrigin(0.5).setDepth(30);
+        this.tweens.add({
+            targets: scythe, angle: 360, scale: 2, alpha: 0, duration: 500,
+            onComplete: () => scythe.destroy()
+        });
     }
 
     createHitEffect(x, y, type) {
