@@ -25,14 +25,14 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
 }
 
-/* 상단 게임 레이아웃 (70%) - 영역 확대 */
+/* 상단 게임 레이아웃 (70%) - 높이 고정 */
 #game-layout {
     position: relative;
     width: 100%;
     height: 1344px; /* 1920 * 0.70 */
+    flex-shrink: 0;
     display: flex;
     border-bottom: 1px solid #4a0000;
     padding-top: 148px; 
@@ -40,18 +40,19 @@ body {
     z-index: 10;
 }
 
-/* 하단 컨트롤 패널 (30%) - 영역 축소 */
+/* 하단 컨트롤 패널 (30%) - 높이 고정 */
 #bottom-panel {
     position: relative;
     width: 100%;
     height: 576px; /* 1920 * 0.30 */
+    flex-shrink: 0;
     background: linear-gradient(to bottom, #1a0505, #000000);
-    padding: 10px 30px;
+    padding: 15px 30px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     z-index: 50;
-    gap: 8px; /* 간격 축소 */
+    gap: 10px;
 }
 
 #road {
