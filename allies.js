@@ -54,9 +54,6 @@ function recordUnlock(type, isEnemy = false) {
                 if (bossData[key].type === type) { enemyData = bossData[key]; break; }
             }
         }
-        if (!enemyData && typeof corruptedTypes !== 'undefined') {
-            enemyData = corruptedTypes[type];
-        }
 
         if (enemyData) {
             const modal = document.getElementById('unlock-modal');

@@ -131,23 +131,13 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     }
 
     // Cost logic based on target tier
-    if (nt.tier === 4) {
-        const shardCost = 10;
-        if(corruptedShards < shardCost) {
-            alert(`Not enough Corrupted Shards for [Abyssal]! Need ${shardCost}.`);
-            return;
-        } 
-        corruptedShards -= shardCost;
-        tower.spentSE += 500; // Value for selling
-    } else {
-        const seCost = 400;
-        if(money < seCost) {
-            alert(`Not enough Soul Energy! Need ${seCost}.`);
-            return;
-        }
-        money -= seCost;
-        tower.spentSE += seCost;
+    const seCost = (nt.tier === 4) ? 800 : 400;
+    if(money < seCost) {
+        alert(`Not enough Soul Energy! Need ${seCost}.`);
+        return;
     }
+    money -= seCost;
+    tower.spentSE += seCost;
     
     if(typeof updateGauges==='function') updateGauges();
     
@@ -164,68 +154,18 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
 }
 
 function sellTower(t) {
-    const overlay = document.getElementById('corruption-overlay');
-    if (!overlay) return;
+    const confirmMsg = `Are you sure you want to dismiss this guardian? You will receive a partial refund of Soul Energy.`;
+    if (!confirm(confirmMsg)) return;
 
-    const refundAmount = t.spentSE || 0;
-    const relicRefundBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('sell_refund') : 0;
-    const finalRefund = Math.floor(refundAmount * (1.0 + relicRefundBonus));
-
-    const refundDisplay = document.getElementById('corruption-refund-amount');
-    if (refundDisplay) refundDisplay.innerText = finalRefund;
-
-    overlay.style.display = 'flex';
-    isPaused = true;
-
-    const confirmBtn = document.getElementById('confirm-corruption-btn');
-    const cancelBtn = document.getElementById('cancel-corruption-btn');
-
-    // Remove old listeners to avoid multiple calls
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    const newCancelBtn = cancelBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-
-    newConfirmBtn.addEventListener('click', () => {
-        overlay.style.display = 'none';
-        isPaused = false;
-        completeTowerCorruption(t, finalRefund);
-    });
-
-    newCancelBtn.addEventListener('click', () => {
-        overlay.style.display = 'none';
-        isPaused = false;
-    });
-}
-
-function completeTowerCorruption(t, refund) {
     const s = t.slotElement; 
-    
-    const spawnFn = window.spawnCorruptedEnemy || (typeof spawnCorruptedEnemy === 'function' ? spawnCorruptedEnemy : null);
-    if(spawnFn) {
-        let ct = null;
-        const type = t.data.type;
-        
-        if(['monk','vajra','saint'].includes(type)) ct='cursed_vajra';
-        else if(['archer','voidsniper','thousandhand'].includes(type)) ct='void_piercer';
-        else if(['ice','absolutezero','permafrost'].includes(type)) ct='frost_outcast';
-        else if(['fire','hellfire','phoenix'].includes(type)) ct='ember_hatred';
-        else if(['assassin','abyssal','spatial'].includes(type)) ct='betrayer_blade';
-        else if(t.data.tier>=3) ct='abyssal_acolyte';
-        
-        if(t.data.tier===4) ct='bringer_of_doom';
-        if(type === 'apprentice') ct='defiled_apprentice';
-
-        console.log("Spawning corrupted enemy for:", type, "forcedType:", ct);
-        spawnFn(t, ct);
-    } else {
-        console.error("spawnCorruptedEnemy function not found!");
-    }
-
     s.classList.remove('occupied'); 
     if (t.element) t.element.remove();
     
-    money = Math.min(1000, money + refund);
+    const baseRefund = t.spentSE || 0;
+    const relicRefundBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('sell_refund') : 0;
+    const finalRefund = Math.floor(baseRefund * (0.5 + relicRefundBonus)); // 50% base refund
+    
+    money = Math.min(1000, money + finalRefund);
     if (typeof updateGauges === 'function') updateGauges();
     updateSummonButtonState();
 

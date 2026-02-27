@@ -51,9 +51,6 @@
 .gauge-header span:first-child { color: #aaa; }
 .gauge-half:first-child .gauge-header span:first-child { color: #00e5ff; text-shadow: 0 0 15px rgba(0, 229, 255, 0.5); }
 .gauge-half:first-child .gauge-header span:last-child { color: #00e5ff; text-shadow: 0 0 24px rgba(0, 229, 255, 0.8); }
-.gauge-half:nth-child(2) .gauge-header span:last-child { color: #9400d3; text-shadow: 0 0 24px rgba(148, 0, 211, 0.8); }
-.gauge-half:last-child .gauge-header span:first-child { color: #ff0000; text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000; }
-.gauge-half:last-child .gauge-header span:last-child { color: #ff4500; text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000; }
 
 .gauge-icon { font-size: 36px; margin-right: 6px; vertical-align: middle; }
 .gauge-bar-bg {
@@ -68,7 +65,6 @@
 
 #se-gauge-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #008ba3, #00e5ff); box-shadow: 0 0 24px rgba(0, 229, 255, 0.6); transition: width 0.3s ease; }
 #portal-gauge-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #4b0082, #9400d3); box-shadow: 0 0 24px rgba(148, 0, 211, 0.6); transition: width 0.3s ease; }
-#shard-gauge-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #4a0000, #ff0000); box-shadow: 0 0 24px rgba(255, 0, 0, 0.6); transition: width 0.3s ease; }
 
 /* Status Labels */
 #top-status-bar {
@@ -101,7 +97,6 @@
 #enemies-left { color: #ff0000; font-size: 30px; text-shadow: 0 0 10px #ff0000; }
 #stage-title-container { font-size: 11px; font-weight: bold; color: #ff4500; text-shadow: 0 0 10px rgba(255, 69, 0, 0.8), 0 0 2px #000; letter-spacing: 1px; animation: textBreathing 3s infinite alternate ease-in-out; }
 #stage-debuff-header { font-size: 21px; color: #ff0000; text-align: center; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
-#active-debuffs { position: absolute; bottom: -30px; right: 0; font-size: 19.5px; color: #ff0000; text-align: right; font-style: italic; white-space: nowrap; }
 
 /* Difficulty Message */
 #difficulty-msg-container { position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%); z-index: 200; pointer-events: none; text-align: center; width: 100%; }

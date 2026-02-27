@@ -71,10 +71,9 @@
                     <span id="stage-name">Whispering Gates</span> [Depth: <span id="stage-display">1</span>]
                 </div>
             </div>
-            <!-- Dual Gauge Container (SE and Shards only) -->
+            <!-- Soul Energy Gauge (Full Width) -->
             <div id="gauges-container">
-                <!-- Soul Energy Gauge (Left) -->
-                <div class="gauge-half">
+                <div class="gauge-half" style="flex: 1;">
                     <div class="gauge-header" id="se-label" style="cursor:help;">
                         <span><span class="gauge-icon">✨</span> Soul Energy</span>
                         <span id="se-display-text">100</span>
@@ -82,17 +81,6 @@
                     <div class="gauge-bar-bg se">
                         <div id="se-gauge-fill"></div>
                     </div>
-                </div>
-                <!-- Corrupted Shards Gauge (Right) -->
-                <div class="gauge-half">
-                    <div class="gauge-header" id="shards-label" style="cursor:help;">
-                        <span><span class="gauge-icon">🏮</span> Corrupted Shards</span>
-                        <span id="shards-display-text">0 / 49</span>
-                    </div>
-                    <div class="gauge-bar-bg shards">
-                        <div id="shard-gauge-fill"></div>
-                    </div>
-                    <div id="active-debuffs">Corruption Level: Normal</div>
                 </div>
             </div>
             <div id="stage-debuff-header">Stage Debuff</div>
@@ -140,18 +128,6 @@
     </div>
 
     <!-- Corruption Confirmation Overlay -->
-    <div id="corruption-overlay" style="display: none;">
-        <div id="corruption-content">
-            <h1 id="corruption-title">TEMPTATION OF THE ABYSS</h1>
-            <p id="corruption-msg">Do you truly wish to corrupt this guardian? Their soul will be consumed by the dark, and they may return as a defiled entity to haunt these gates.</p>
-            <div id="corruption-refund-info">Refund: <span id="corruption-refund-amount">0</span> SE</div>
-            <div style="display: flex; gap: 30px; justify-content: center; margin-top: 60px;">
-                <button id="confirm-corruption-btn">YIELD TO DARKNESS</button>
-                <button id="cancel-corruption-btn">RESIST TEMPTATION</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Spooky Game Over Overlay -->
     <div id="game-over-overlay" style="display: none;">
         <div id="game-over-content">

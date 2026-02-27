@@ -118,35 +118,6 @@
     100% { transform: translate(0, 0) rotate(0deg); }
 }
 
-/* Corrupted Enemies */
-.enemy.corrupted.defiled_apprentice { font-size: 54px; box-shadow: 0 0 30px #4a0000; border: 3px dashed #f00; }
-.enemy.corrupted.abyssal_acolyte { font-size: 66px; box-shadow: 0 0 45px #4b0082; text-shadow: 0 0 15px #d000ff; }
-.enemy.corrupted.abyssal_acolyte::after {
-    content: '💪';
-    position: absolute;
-    font-size: 42px;
-    left: -30px; top: -15px;
-    filter: brightness(0) drop-shadow(0 0 6px #d000ff);
-    transform: rotate(45deg);
-    z-index: -1;
-}
-.enemy.corrupted.bringer_of_doom { font-size: 78px; box-shadow: 0 0 60px #ff0000; z-index: 12; }
-.enemy.corrupted.bringer_of_doom::before {
-    content: '';
-    position: absolute;
-    width: 120px; height: 30px;
-    background: radial-gradient(ellipse at center, rgba(139,0,0,0.8) 0%, transparent 70%);
-    bottom: -15px; left: 50%;
-    transform: translateX(-50%);
-    z-index: -1;
-    animation: bloodSpread 2s infinite alternate;
-}
-
-@keyframes bloodSpread {
-    from { transform: translateX(-50%) scale(0.8); opacity: 0.6; }
-    to { transform: translateX(-50%) scale(1.2); opacity: 1; }
-}
-
 /* Status Effects */
 .enemy.slowed { filter: hue-rotate(90deg); }
 .enemy.burning { filter: sepia(1) saturate(5) hue-rotate(-50deg); }

@@ -16,8 +16,6 @@ let money = 150;
 let damageMultiplier = 1.0;
 let critChance = 0;
 let critMultiplier = 1.5;
-let corruptedShards = 0;
-let totalCorruptedCount = 0;
 let totalStageEnemies = 0;
 let currentStageSpawned = 0;
 let lastSpawnTime = 0;
@@ -58,37 +56,6 @@ function getBestiaryBonus(type) {
     return 1;
 }
 
-// Calculate debuff multipliers based on corrupted shards
-function getCorruptionMultipliers() {
-    let hpMult = 1.0;
-    let speedMult = 1.0;
-    const s = corruptedShards;
-
-    if (s >= 40) {
-        hpMult = 1 + (s * 0.02); // Reduced from 4% to 2%
-        speedMult = 1 + (s * 0.0002); // Reduced from 0.05% to 0.02%
-    } else if (s >= 21) {
-        hpMult = 1 + (s * 0.015); // Reduced from 3% to 1.5%
-        speedMult = 1 + (s * 0.0001); // Reduced from 0.02% to 0.01%
-    } else if (s >= 1) {
-        hpMult = 1 + (s * 0.01); // Reduced from 2% to 1%
-    }
-    
-    // Apply Relic Enemy HP reduction
-    const relicHPReduction = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_hp') : 0;
-    if (relicHPReduction < 0) {
-        hpMult *= (1.0 + relicHPReduction);
-    }
-
-    // Apply Relic Enemy Speed reduction
-    const relicSpeedReduction = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_speed') : 0;
-    if (relicSpeedReduction < 0) {
-        speedMult *= (1.0 + relicSpeedReduction);
-    }
-    
-    return { hpMult, speedMult };
-}
-
 // Calculate gradual stage-based multipliers
 function getStageMultipliers(isBoss = false) {
     if (isBoss) return { hpStageMult: 1.0, speedStageMult: 1.0 };
@@ -105,8 +72,20 @@ function getStageMultipliers(isBoss = false) {
         speedRate = 0.006; // Increased from 0.005
     }
 
-    const hpStageMult = Math.pow(hpRate, stage - 1);
-    const speedStageMult = 1 + (stage - 1) * speedRate;
+    // Apply Relic Enemy HP reduction
+    let hpStageMult = Math.pow(hpRate, stage - 1);
+    const relicHPReduction = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_hp') : 0;
+    if (relicHPReduction < 0) {
+        hpStageMult *= (1.0 + relicHPReduction);
+    }
+
+    // Apply Relic Enemy Speed reduction
+    let speedStageMult = 1 + (stage - 1) * speedRate;
+    const relicSpeedReduction = (typeof getRelicBonus === 'function') ? getRelicBonus('enemy_speed') : 0;
+    if (relicSpeedReduction < 0) {
+        speedStageMult *= (1.0 + relicSpeedReduction);
+    }
+
     return { hpStageMult, speedStageMult };
 }
 
@@ -118,37 +97,35 @@ const enemyCategories = {
         { type: 'memory', icon: '👣', speed: 5.1, hp: 90, defense: 0, probability: 0.15, reward: 4, desc: "A faint trace of a once-living being. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Not even a full soul, just the impression left by a strong desire to live." },
         { type: 'shade', icon: '👤', speed: 6.6, hp: 60, defense: 0, probability: 0.1, reward: 5, desc: "A weak but fast spirit that moves in a blurring motion.", effectiveness: "Rapid-fire units.", lore: "The faintest remains of a soul, barely holding onto existence." },
         { type: 'tank', icon: '💀', speed: 2.25, hp: 160, defense: 8, probability: 0.15, reward: 7, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
-        { type: 'runner', icon: '⚡', speed: 6.6, hp: 35, defense: 0, probability: 0.1, reward: 6, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }   
+        { type: 'runner', icon: '⚡', speed: 6.6, hp: 35, defense: 0, probability: 0.1, reward: 6, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." },
+        { type: 'defiled_apprentice', icon: '🥀', speed: 1.8, hp: 400, defense: 5, probability: 0.05, reward: 15, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3, lasts 5s).", effectiveness: "Holy attacks and high DPS.", lore: "One moment of weakness, one forbidden scroll, and a soul is lost forever." }
     ],
     pattern: [
-        { type: 'greedy', icon: '🧛', speed: 3.6, hp: 150, defense: 5, probability: 0.3, reward: 12, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
+        { type: 'greedy', icon: '🧛', speed: 3.6, hp: 150, defense: 5, probability: 0.2, reward: 12, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
         { type: 'mimic', icon: '📦', speed: 3.3, hp: 180, defense: 15, probability: 0.1, reward: 12, desc: "Occasionally blinks forward when targeted (20% chance).", effectiveness: "AOE or slow effects.", lore: "It takes the form of what you desire most, only to reveal its true, hollow self." },
-        { type: 'dimension', icon: '🌀', speed: 5.4, hp: 80, defense: 0, probability: 0.3, reward: 12, desc: "Occasionally phases out of existence, becoming immune to attacks (1% chance per frame).", effectiveness: "Truth-seeking seers or rapid-fire units.", lore: "A hermit who sought to hide from the world, now drifting between dimensions of pain." }, 
-        { type: 'deceiver', icon: '🎭', speed: 4.2, hp: 120, defense: 5, probability: 0.3, reward: 12, desc: "Backsteps and evades when an exorcist first targets them (100% chance, once).", effectiveness: "Area damage or multiple hunters.", lore: "A master of lies whose face was never seen, now eternally hiding behind a spectral mask." }  
+        { type: 'dimension', icon: '🌀', speed: 5.4, hp: 80, defense: 0, probability: 0.2, reward: 12, desc: "Occasionally phases out of existence, becoming immune to attacks (1% chance per frame).", effectiveness: "Truth-seeking seers or rapid-fire units.", lore: "A hermit who sought to hide from the world, now drifting between dimensions of pain." }, 
+        { type: 'deceiver', icon: '🎭', speed: 4.2, hp: 120, defense: 5, probability: 0.2, reward: 12, desc: "Backsteps and evades when an exorcist first targets them (100% chance, once).", effectiveness: "Area damage or multiple hunters.", lore: "A master of lies whose face was never seen, now eternally hiding behind a spectral mask." },
+        { type: 'betrayer_blade', icon: '🗡️', speed: 5.4, hp: 500, defense: 5, probability: 0.15, reward: 25, desc: "A shadow traitor. Occasionally vanishes, forcing attackers to lose target.", effectiveness: "AOE or rapid-fire units.", lore: "The shadow he hid in became his master, and finally, his prison." },
+        { type: 'cursed_vajra', icon: '🏮', speed: 1.5, hp: 1500, defense: 20, probability: 0.1, reward: 40, desc: "A fallen monk. 15% chance to stun the attacker for 1s when hit.", effectiveness: "Long-range units.", lore: "His mace, once used to protect, now only seeks to crush the living." },
+        { type: 'void_piercer', icon: '🏹', speed: 3.6, hp: 600, defense: 5, probability: 0.05, reward: 30, desc: "A traitorous archer. Gains 50% dodge chance against long-range units.", effectiveness: "Short-range units.", lore: "The arrows of light have turned into shards of pure nothingness." }
     ],
     enhanced: [
-        { type: 'boar', icon: '🐗', speed: 1.5, hp: 250, defense: 8, probability: 0.3, reward: 15, desc: "Accelerates exponentially as it nears the portal.", effectiveness: "Knockback and heavy stuns near the gate.", lore: "A violent hunter who enjoyed the thrill of the chase, now driven by an uncontrollable bloodlust." }, 
+        { type: 'boar', icon: '🐗', speed: 1.5, hp: 250, defense: 8, probability: 0.25, reward: 15, desc: "Accelerates exponentially as it nears the portal.", effectiveness: "Knockback and heavy stuns near the gate.", lore: "A violent hunter who enjoyed the thrill of the chase, now driven by an uncontrollable bloodlust." }, 
         { type: 'soul_eater', icon: '🧿', speed: 3.6, hp: 220, defense: 12, probability: 0.1, reward: 15, desc: "Gains a short burst of speed whenever it takes damage.", effectiveness: "High damage single hits.", lore: "It hungers not for flesh, but for the very essence of your exorcists' power." },
-        { type: 'frost', icon: '❄️', speed: 3.0, hp: 180, defense: 5, probability: 0.3, reward: 12, desc: "Emits a freezing aura that boosts the speed of nearby specters.", effectiveness: "Priority targeting and fire energy.", lore: "Died alone in a blizzard, their heart frozen by isolation and cold resentment." }, 
-        { type: 'lightspeed', icon: '✨', speed: 9.6, hp: 60, defense: 0, probability: 0.3, reward: 18, desc: "Moves at incredible speed and ignores speed-boosting auras.", effectiveness: "Instant-kill guardians or void snipers.", lore: "A messenger who failed to deliver a life-saving word, now desperate to reach the end." } 
+        { type: 'frost', icon: '❄️', speed: 3.0, hp: 180, defense: 5, probability: 0.25, reward: 12, desc: "Emits a freezing aura that boosts the speed of nearby specters.", effectiveness: "Priority targeting and fire energy.", lore: "Died alone in a blizzard, their heart frozen by isolation and cold resentment." }, 
+        { type: 'lightspeed', icon: '✨', speed: 9.6, hp: 60, defense: 0, probability: 0.2, reward: 18, desc: "Moves at incredible speed and ignores speed-boosting auras.", effectiveness: "Instant-kill guardians or void snipers.", lore: "A messenger who failed to deliver a life-saving word, now desperate to reach the end." },
+        { type: 'frost_outcast', icon: '❄️', speed: 2.1, hp: 800, defense: 10, probability: 0.1, reward: 35, desc: "A cursed daoist. Emits a cold aura that slows nearby allies' attack speed by 20%.", effectiveness: "Kill from outside its aura range.", lore: "Her heart was frozen long before she entered the abyss." },
+        { type: 'ember_hatred', icon: '☄️', speed: 2.4, hp: 700, defense: 0, probability: 0.1, reward: 30, desc: "A hateful mage. Explodes on death, speeding up nearby enemies by 50% for 3s.", effectiveness: "Kill when isolated.", lore: "Fueling the fire with the very hatred that consumed his life." }
     ],
     armoured: [
-        { type: 'heavy', icon: '⛓️', speed: 1.2, hp: 600, defense: 20, probability: 0.34, knockbackResist: 0.8, reward: 20, desc: "An massive behemoth with high defense and knockback resistance.", effectiveness: "Soul link shared damage or high-penetration strikes.", lore: "An executioner who took pride in their cruelty, now bound by the very chains they once used." }, 
-        { type: 'lava', icon: '🌋', speed: 3.9, hp: 200, defense: 15, probability: 0.33, reward: 18, desc: "Cleanses freeze effects and leaps forward when hit by cold energy.", effectiveness: "Avoid frost; use standard magic or fire.", lore: "A soul consumed by a fiery temper, now literally burning with an unquenchable rage." }, 
-        { type: 'burning', icon: '💢', speed: 3.0, hp: 350, defense: 10, probability: 0.33, reward: 15, desc: "Consumes its own vengeful energy to heal every time it is struck.", effectiveness: "High single-hit damage to overwhelm recovery.", lore: "A martyr whose sacrifice was forgotten, their pain now fueling a cycle of endless regrowth." } 
+        { type: 'heavy', icon: '⛓️', speed: 1.2, hp: 600, defense: 20, probability: 0.3, knockbackResist: 0.8, reward: 20, desc: "An massive behemoth with high defense and knockback resistance.", effectiveness: "Soul link shared damage or high-penetration strikes.", lore: "An executioner who took pride in their cruelty, now bound by the very chains they once used." }, 
+        { type: 'lava', icon: '🌋', speed: 3.9, hp: 200, defense: 15, probability: 0.2, reward: 18, desc: "Cleanses freeze effects and leaps forward when hit by cold energy.", effectiveness: "Avoid frost; use standard magic or fire.", lore: "A soul consumed by a fiery temper, now literally burning with an unquenchable rage." }, 
+        { type: 'burning', icon: '💢', speed: 3.0, hp: 350, defense: 10, probability: 0.2, reward: 15, desc: "Consumes its own vengeful energy to heal every time it is struck.", effectiveness: "High single-hit damage to overwhelm recovery.", lore: "A martyr whose sacrifice was forgotten, their pain now fueling a cycle of endless regrowth." },
+        { type: 'abyssal_acolyte', icon: '🌑', speed: 1.2, hp: 1200, defense: 15, probability: 0.2, reward: 50, desc: "A servant of the void. Reduces hit source's damage by 4 per hit (Max 3 stacks).", effectiveness: "Burst damage or stuns.", lore: "The shadow arms are the grip of the abyss pulling them deeper." },
+        { type: 'bringer_of_doom', icon: '⛓️‍💥', speed: 0.9, hp: 3000, defense: 30, probability: 0.1, reward: 150, desc: "[Rare Behemoth] Permanently reduces damage of 2 random slots by 7.", effectiveness: "Kill as fast as possible!", lore: "Where they walk, the ground itself weeps. No sanctity remains." }
     ],
     treasure: [
         { type: 'gold', icon: '💎', speed: 7.5, hp: 80, defense: 50, probability: 1.0, reward: 200, desc: "A rare spirit that grants a massive amount of Soul Energy upon defeat.", effectiveness: "Rapid-fire assassins to bypass high defense.", lore: "The residual essence of a king's hoard, still sparkling with the vanity of the past." } 
-    ],
-    corrupted: [
-        { type: 'defiled_apprentice', icon: '🥀', speed: 1.8, hp: 400, defense: 5, probability: 0, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3, lasts 5s).", effectiveness: "Holy attacks and high DPS.", lore: "One moment of weakness, one forbidden scroll, and a soul is lost forever." },
-        { type: 'abyssal_acolyte', icon: '🌑', speed: 1.2, hp: 1200, defense: 15, probability: 0, desc: "A servant of the void. Reduces hit source's damage by 4 per hit (Max 3 stacks).", effectiveness: "Burst damage or stuns.", lore: "The shadow arms are the grip of the abyss pulling them deeper." },
-        { type: 'bringer_of_doom', icon: '⛓️‍💥', speed: 0.9, hp: 3000, defense: 30, probability: 0, desc: "[Master Corruption] Permanently reduces damage of 2 random slots by 7.", effectiveness: "Kill as fast as possible!", lore: "Where they walk, the ground itself weeps. No sanctity remains." },
-        { type: 'cursed_vajra', icon: '🏮', speed: 1.5, hp: 1500, defense: 20, probability: 0, desc: "A fallen monk. 15% chance to stun the attacker for 1s when hit.", effectiveness: "Long-range units.", lore: "His mace, once used to protect, now only seeks to crush the living." },
-        { type: 'void_piercer', icon: '🏹', speed: 3.6, hp: 600, defense: 5, probability: 0, desc: "A traitorous archer. Gains 50% dodge chance against long-range units.", effectiveness: "Short-range units.", lore: "The arrows of light have turned into shards of pure nothingness." },
-        { type: 'frost_outcast', icon: '❄️', speed: 2.1, hp: 800, defense: 10, probability: 0, desc: "A cursed daoist. Emits a cold aura that slows nearby allies' attack speed by 20%.", effectiveness: "Kill from outside its aura range.", lore: "Her heart was frozen long before she entered the abyss." },
-        { type: 'ember_hatred', icon: '☄️', speed: 2.4, hp: 700, defense: 0, probability: 0, desc: "A hateful mage. Explodes on death, speeding up nearby enemies by 50% for 3s.", effectiveness: "Kill when isolated.", lore: "Fueling the fire with the very hatred that consumed his life." },
-        { type: 'betrayer_blade', icon: '🗡️', speed: 5.4, hp: 500, defense: 5, probability: 0, desc: "A shadow traitor. Occasionally vanishes, forcing attackers to lose target.", effectiveness: "AOE or rapid-fire units.", lore: "The shadow he hid in became his master, and finally, his prison." }
     ]
 };
 
@@ -251,7 +228,7 @@ function initStage() {
             if (typeof towers !== 'undefined') {
                 const forsakenKings = towers.filter(t => t.data.type === 'forsaken_king');
                 if (forsakenKings.length > 0) {
-                    const spawnCount = Math.floor(totalCorruptedCount / 2);
+                    const spawnCount = 3; // Fixed count or other logic
                     for(let i=0; i<spawnCount; i++) {
                         spawnFriendlyGhost();
                     }
@@ -266,33 +243,8 @@ function initStage() {
     }, 1000);
 }
 
-// Update All Gauges (Soul Energy, Portal Energy, & Corrupted Shards)
+// Update All Gauges (Soul Energy & Portal Energy)
 function updateGauges() {
-    // Shard Gauge
-    const shardFill = document.getElementById('shard-gauge-fill');
-    const shardText = document.getElementById('shards-display-text');
-    const debuffDesc = document.getElementById('active-debuffs');
-    
-    if (shardFill && shardText && debuffDesc) {
-        const shardPercent = (corruptedShards / 49) * 100;
-        shardFill.style.width = `${shardPercent}%`;
-        shardText.innerText = `${corruptedShards} / 49`;
-
-        const { hpStageMult, speedStageMult } = getStageMultipliers();
-        const debuffHeader = document.getElementById('stage-debuff-header');
-        if (debuffHeader) {
-            const hpPct = Math.round((hpStageMult - 1) * 100);
-            const spdPct = Math.round((speedStageMult - 1) * 100);
-            debuffHeader.innerText = `Stage Debuff (HP +${hpPct}%, SPD +${spdPct}%)`;
-        }
-
-        let desc = "Normal";
-        if (corruptedShards >= 40) desc = "💀 +2% HP/shard, +0.02% SPD/shard (SEVERE)";
-        else if (corruptedShards >= 21) desc = "🔥 +1.5% HP/shard, +0.01% SPD/shard";
-        else if (corruptedShards >= 1) desc = "🌑 +1% HP/shard";
-        debuffDesc.innerText = `Corruption Level: ${desc}`;
-    }
-
     // Portal Energy Gauge (Below Portal)
     const portalFill = document.getElementById('portal-gauge-fill');
     const portalText = document.getElementById('portal-energy-label');
@@ -439,7 +391,6 @@ function spawnBoss() {
     hpBg.appendChild(hpFill);
     enemyDiv.appendChild(hpBg);
     
-    const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers(true);
 
     const boss = {
@@ -449,10 +400,10 @@ function spawnBoss() {
         x: 50,
         targetX: 50, // Bosses go to center
         y: 0,
-        baseSpeed: data.speed * speedMult * speedStageMult,
-        speed: data.speed * speedMult * speedStageMult,
-        maxHp: data.hp * hpMult * hpStageMult,
-        hp: data.hp * hpMult * hpStageMult,
+        baseSpeed: data.speed * speedStageMult,
+        speed: data.speed * speedStageMult,
+        maxHp: data.hp * hpStageMult,
+        hp: data.hp * hpStageMult,
         reward: 500,         // Add reward for boss
         isBoss: true,
         data: data,
@@ -593,7 +544,6 @@ function spawnEnemy() {
     hpBg.appendChild(hpFill);
     enemyDiv.appendChild(hpBg);
 
-    const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
 
     // Road is 340px wide, centered in 1080px (approx 34.2% to 65.8%)
@@ -607,11 +557,11 @@ function spawnEnemy() {
         y: -40, // Spawn higher up inside the mist
         swayPhase: Math.random() * Math.PI * 2, // Random starting phase for swaying
         swaySpeed: 0.02 + Math.random() * 0.03, // Unique swaying speed
-        baseSpeed: selectedType.speed * speedMult * speedStageMult,
-        speed: selectedType.speed * speedMult * speedStageMult,
-        maxHp: selectedType.hp * hpMult * hpStageMult,
+        baseSpeed: selectedType.speed * speedStageMult,
+        speed: selectedType.speed * speedStageMult,
+        maxHp: selectedType.hp * hpStageMult,
         defense: selectedType.defense || 0,
-        hp: selectedType.hp * hpMult * hpStageMult,
+        hp: selectedType.hp * hpStageMult,
         reward: selectedType.reward || 10,
         type: selectedType.type,
         icon: selectedType.icon,
@@ -658,7 +608,6 @@ function spawnPassenger(boss) {
     const offsetX = (Math.random() - 0.5) * 30; 
     const offsetY = (Math.random() - 0.5) * 40;
 
-    const { hpMult, speedMult } = getCorruptionMultipliers();
     const { hpStageMult, speedStageMult } = getStageMultipliers();
 
     const enemy = {
@@ -667,10 +616,10 @@ function spawnPassenger(boss) {
         x: boss.x,
         targetX: 50, // Converge to center with boss
         y: boss.y,
-        baseSpeed: 1.5 * speedMult * speedStageMult,
-        speed: 1.5 * speedMult * speedStageMult,
-        maxHp: 100 * hpMult * hpStageMult,
-        hp: 100 * hpMult * hpStageMult,
+        baseSpeed: 1.5 * speedStageMult,
+        speed: 1.5 * speedStageMult,
+        maxHp: 100 * hpStageMult,
+        hp: 100 * hpStageMult,
         type: 'normal',
         isBoarded: true,     
         parentBoss: boss,    
@@ -681,119 +630,6 @@ function spawnPassenger(boss) {
     };
     enemies.push(enemy);
 }
-
-// [Corruption] System: Ally becomes an enemy
-const corruptedTypes = {
-    1: { type: 'defiled_apprentice', name: 'Defiled Apprentice', icon: '🥀', speed: 0.6, hp: 400, defense: 5, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3)." },
-    2: { type: 'abyssal_acolyte', name: 'Abyssal Acolyte', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, desc: "A servant of the void. Reduces hit source's damage by 4 (Max 3 stacks)." },
-    3: { type: 'bringer_of_doom', name: 'Bringer of Doom', icon: '⛓️‍💥', speed: 0.3, hp: 3000, defense: 30, desc: "[Master Corruption] Permanently reduces damage of 2 random slots near the road by 7." },
-    'cursed_vajra': { type: 'cursed_vajra', name: 'Cursed Vajra', icon: '🏮', speed: 0.5, hp: 1500, defense: 20, desc: "A fallen monk. 15% chance to stun the attacker for 1s when hit." },
-    'void_piercer': { type: 'void_piercer', name: 'Void-Piercing Shade', icon: '🏹', speed: 1.2, hp: 600, defense: 5, desc: "A traitorous archer. Gains 50% dodge chance against long-range units." },
-    'frost_outcast': { type: 'frost_outcast', name: 'Frost-Bitten Outcast', icon: '❄️', speed: 0.7, hp: 800, defense: 10, desc: "A cursed daoist. Emits a cold aura that slows nearby allies' attack speed by 20%." },
-    'ember_hatred': { type: 'ember_hatred', name: 'Embers of Hatred', icon: '☄️', speed: 0.8, hp: 700, defense: 0, desc: "A hateful mage. Explodes on death, speeding up nearby enemies by 50% for 3s." },
-    'betrayer_blade': { type: 'betrayer_blade', name: "Betrayer's Blade", icon: '🗡️', speed: 1.8, hp: 500, defense: 5, desc: "A shadow traitor. Occasionally vanishes, forcing attackers to lose target." }
-};
-
-function spawnCorruptedEnemy(tower, forcedType = null) {
-    totalCorruptedCount++;
-    const road = document.getElementById('road');
-    if (!road) {
-        console.error("CRITICAL ERROR: Road element not found in spawnCorruptedEnemy!");
-        return;
-    }
-    
-    // Road is 340px wide, centered in 1080px (approx 34.2% to 65.8%)
-    const randomX = Math.random() * 20 + 40;
-
-    const tier = Math.min(tower.data.tier, 3);
-    const data = forcedType ? corruptedTypes[forcedType] : corruptedTypes[tier];
-
-    if (!data) {
-        console.error("ERROR: No data found for corrupted enemy type:", forcedType || tier);
-        return;
-    }
-
-    if (typeof recordUnlock === 'function') {
-        recordUnlock(data.type, true);
-    }
-
-    const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy', 'corrupted', 'spawning', data.type);
-    enemyDiv.innerText = data.icon;
-    
-    // Remove spawning class after animation
-    setTimeout(() => {
-        enemyDiv.classList.remove('spawning');
-    }, 500);
-
-    // HP Bar
-    const hpBg = document.createElement('div');
-    hpBg.className = 'hp-bar-bg';
-    const hpFill = document.createElement('div');
-    hpFill.className = 'hp-bar-fill';
-    hpBg.appendChild(hpFill);
-    enemyDiv.appendChild(hpBg);
-
-    road.appendChild(enemyDiv);
-    console.log("Appended corrupted enemy div to road:", data.type);
-    
-    enemyDiv.style.left = `${randomX}%`;
-    enemyDiv.style.top = `-40px`; // Spawn at Spawning Pool height
-
-    const { hpMult, speedMult } = getCorruptionMultipliers();
-    const { hpStageMult, speedStageMult } = getStageMultipliers();
-    const hpValue = data.hp * hpMult * hpStageMult;
-
-    const enemy = {
-        element: enemyDiv,
-        hpFill: hpFill,
-        initialX: randomX,
-        x: randomX,
-        targetX: Math.random() * 50 + 25, // Within portal arch
-        y: -40, // Match spawn height
-        baseSpeed: data.speed * speedMult * speedStageMult, 
-        speed: data.speed * speedMult * speedStageMult,
-        maxHp: hpValue, 
-        hp: hpValue,
-        defense: data.defense,
-        reward: 0, 
-        type: data.type,
-        name: data.name,
-        desc: data.desc,
-        isCorrupted: true 
-    };
-
-    // Enemy click event
-    enemyDiv.addEventListener('mousedown', (e) => {
-        e.stopPropagation();
-        if (typeof window.showEnemyInfo === 'function') {
-            window.showEnemyInfo(enemy); 
-        }
-    });
-
-    // Bringer of Doom Special Ability: Master Corruption
-    if (data.type === 'bringer_of_doom') {
-        const innerIndices = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57];
-        const shuffled = innerIndices.sort(() => 0.5 - Math.random());
-        const selected = shuffled.slice(0, 2);
-        
-        selected.forEach(idx => {
-            const slot = slots[idx];
-            if (slot) {
-                slot.classList.add('corrupted-slot');
-                slot.dataset.corruption = (parseInt(slot.dataset.corruption) || 0) + 7;
-                // Visual feedback for the slot
-                const effect = document.createElement('div');
-                effect.style.cssText = 'position:absolute; width:100%; height:100%; background:rgba(139,0,0,0.3); box-shadow:inset 0 0 30px #f00; pointer-events:none;';
-                slot.appendChild(effect);
-            }
-        });
-    }
-
-    enemies.push(enemy);
-    console.log("Successfully added corrupted enemy to array:", enemy.type, "Total enemies:", enemies.length);
-}
-window.spawnCorruptedEnemy = spawnCorruptedEnemy;
 
 // Spawns a friendly ghost (Forsaken King ability)
 function spawnFriendlyGhost() {
@@ -984,18 +820,6 @@ function handleEnemyDeath(target, killer = null) {
             bossInstance = null;
         }
 
-        if (target.isCorrupted) {
-            if (corruptedShards < 49) {
-                corruptedShards += 1;
-                updateGauges();
-                if (typeof createCSGainEffect === 'function' && target.element) {
-                    const rect = target.element.getBoundingClientRect();
-                    const gameRect = gameContainer.getBoundingClientRect();
-                    createCSGainEffect((rect.left + rect.width / 2) - gameRect.left, (rect.top + rect.height / 2) - gameRect.top, 1, gameContainer);
-                }
-            }
-        }
-
         let reward = target.reward;
         if (killer && killer.data && killer.data.type === 'abyssal') {
             reward = Math.floor(reward * 1.5);
@@ -1054,17 +878,6 @@ function createSEGainEffect(x, y, amount, container) {
     const effect = document.createElement('div');
     effect.className = 'se-gain-effect';
     effect.innerText = `+${amount}`;
-    effect.style.left = `${x}px`;
-    effect.style.top = `${y}px`;
-    container.appendChild(effect);
-    setTimeout(() => effect.remove(), 600);
-}
-
-function createCSGainEffect(x, y, amount, container) {
-    if (!container) return;
-    const effect = document.createElement('div');
-    effect.className = 'cs-gain-effect';
-    effect.innerText = `+🏮`;
     effect.style.left = `${x}px`;
     effect.style.top = `${y}px`;
     container.appendChild(effect);

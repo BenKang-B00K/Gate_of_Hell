@@ -559,20 +559,4 @@ function createSEGainEffect(x, y, amount, container) {
     setTimeout(() => effect.remove(), 600);
 }
 
-/**
- * Visual effect when a Corrupted Shard is gained.
- */
-function createCSGainEffect(x, y, amount, container) {
-    const effect = document.createElement('div');
-    effect.className = 'cs-gain-effect';
-    effect.style.left = `${x}px`;
-    effect.style.top = `${y}px`;
-    effect.innerText = `+${amount} CS`;
-    container.appendChild(effect);
-    setTimeout(() => effect.remove(), 600);
-}
-
-
-
-
 // Add more unit effects here as needed

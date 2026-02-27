@@ -69,7 +69,7 @@ const relicsData = {
         effect: "Portal Energy increases 5% slower per stack.", 
         lore: "Fills with the tears of those who failed to guard the gate.", 
         bonus: { type: 'portal_dmg_reduction', value: 0.05 },
-        maxStack: 5, dropSource: 'corrupted'
+        maxStack: 5, dropSource: 'specialized'
     },
     // Boss Artifacts
     'cerberus_fang': { 
@@ -365,10 +365,9 @@ function checkRelicDrop(enemy) {
     // 1% drop chance
     if (Math.random() > 0.01) return;
 
-    const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank'];
-    const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'heavy', 'lava', 'burning'];
-    const FastSpecters = ['runner', 'lightspeed'];
-    const corruptedSpecters = ['defiled_apprentice', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'];
+    const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank', 'defiled_apprentice'];
+    const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'heavy', 'lava', 'burning', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'frost_outcast', 'ember_hatred', 'betrayer_blade'];
+    const FastSpecters = ['runner', 'lightspeed', 'void_piercer'];
 
     let possibleIds = [];
     const allIds = Object.keys(relicsData);
@@ -383,7 +382,6 @@ function checkRelicDrop(enemy) {
         else if (data.dropSource === 'basic' && basicSpecters.includes(enemy.type)) canDrop = true;
         else if (data.dropSource === 'specialized' && specializedWraiths.includes(enemy.type)) canDrop = true;
         else if (data.dropSource === 'fast' && FastSpecters.includes(enemy.type)) canDrop = true;
-        else if (data.dropSource === 'corrupted' && corruptedSpecters.includes(enemy.type)) canDrop = true;
         else if (enemy.isBoss) canDrop = true; // Bosses can drop anything
 
         if (canDrop) possibleIds.push(id);

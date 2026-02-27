@@ -119,12 +119,12 @@ function showUnitInfo(tower) {
     }
     else if(data.upgrades) { 
         const isToAbyssal = unitTypes.find(x=>x.type===data.upgrades[0]).tier === 4;
-        const costLabel = isToAbyssal ? "Unleash Master (10 Shards):" : "Unleash Master (400 SE):";
+        const costLabel = isToAbyssal ? "Unleash Master (800 SE):" : "Unleash Master (400 SE):";
         ch=`<div style="font-size:24px; color:#ffd700; margin-bottom:12px;">${costLabel}</div>
            <div style="display:flex; gap:30px; justify-content:center; margin-bottom:18px;">`; 
         data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); 
-            const costTip = ud.tier === 4 ? "10 Shards" : "400 SE";
+            const costTip = ud.tier === 4 ? "800 SE" : "400 SE";
             ch+=`
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
                     <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)" title="Unleash ${ud.name} (${costTip})" style="background:#222; border:3px solid #aaa; color:#fff; border-radius:12px; cursor:pointer; padding:6px 24px; font-size:30px;">${i===0?'↖️':'↗️'}</button>
@@ -167,13 +167,6 @@ function showResourceInfo(type) {
             <div style="display:inline-block; background:#008ba3; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">ESSENCE</div>
             <div style="font-size:27px; color:#bbb; line-height:1.2;">Used to summon and promote exorcists. Obtained by defeating specters.</div>
             <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"The crystalline fragments of purified regrets, fueling the sacred arts of those who guard the living world."</div>
-        `;
-    } else if (type === 'shards') {
-        d.innerHTML = `
-            <div style="color:#ff4444; font-weight:bold; font-size:39px; margin-bottom:6px;">Corrupted Shards</div>
-            <div style="display:inline-block; background:#8b0000; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">CURSE</div>
-            <div style="font-size:27px; color:#bbb; line-height:1.2;">Increases enemy HP and Speed as they accumulate. Obtained by corrupting (selling) your units.</div>
-            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"Echoes of betrayal left behind when an exorcist succumbs to the dark. The abyss hungers for more of its own kind."</div>
         `;
     } else if (type === 'purge') {
         d.innerHTML = `
@@ -247,8 +240,6 @@ function initAllies() {
     }
     const sel = document.getElementById('se-label');
     if(sel) sel.addEventListener('mouseenter', () => showResourceInfo('se'));
-    const shl = document.getElementById('shards-label');
-    if(shl) shl.addEventListener('mouseenter', () => showResourceInfo('shards'));
     const sdh = document.getElementById('stage-debuff-header');
     if(sdh) {
         sdh.addEventListener('mouseenter', () => {
@@ -315,32 +306,11 @@ function renderBestiary() {
     const bt = document.getElementById('bestiary-tab'); bt.innerHTML = '';
     const names = { 'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory', 'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow', 'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm', 'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater', 'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth', 'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition', 'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom', 'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast', 'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade", 'cerberus': 'Cerberus', 'charon': 'Charon', 'beelzebub': 'Beelzebub', 'lucifer': 'Lucifer' };
     const groups = [
-        { h: 'Basic Specters', c: '#00e5ff', types: ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'] },
-        { h: 'Specialized Wraiths', c: '#ff00ff', types: ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning'] },
+        { h: 'Basic Specters', c: '#00e5ff', types: ['normal', 'mist', 'memory', 'shade', 'tank', 'runner', 'defiled_apprentice'] },
+        { h: 'Specialized Wraiths', c: '#ff00ff', types: ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'] },
         { h: 'Treasure Specters', c: '#ffd700', types: ['gold'] },
-        { h: 'Corrupted Specters', c: '#ff0000', types: ['defiled_apprentice', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'void_piercer', 'frost_outcast', 'ember_hatred', 'betrayer_blade'] },
         { h: 'Abyss Bosses', c: '#8b0000', types: ['cerberus', 'charon', 'beelzebub', 'lucifer'] }
     ];
-    const corruptInfo = {
-        'defiled_apprentice': 'Apprentice',
-        'cursed_vajra': 'Monk Path',
-        'void_piercer': 'Archer Path',
-        'frost_outcast': 'Ice Path',
-        'ember_hatred': 'Fire Path',
-        'betrayer_blade': 'Assassin Path',
-        'abyssal_acolyte': 'Any Tier 3+',
-        'bringer_of_doom': 'Any Tier 4'
-    };
-    const corruptTriggerMap = {
-        'defiled_apprentice': ['apprentice'],
-        'cursed_vajra': ['monk', 'vajra', 'saint', 'asura'],
-        'void_piercer': ['archer', 'voidsniper', 'thousandhand', 'piercing_shadow'],
-        'frost_outcast': ['ice', 'absolutezero', 'permafrost', 'cocytus'],
-        'ember_hatred': ['fire', 'hellfire', 'phoenix', 'purgatory'],
-        'betrayer_blade': ['assassin', 'abyssal', 'spatial', 'reaper'],
-        'abyssal_acolyte': ['executor', 'binder', 'grandsealer', 'flamemaster', 'vajra', 'saint', 'voidsniper', 'thousandhand', 'absolutezero', 'permafrost', 'hellfire', 'phoenix', 'abyssal', 'spatial', 'seer', 'commander', 'wraithlord', 'cursedshaman', 'rampart', 'judgment', 'paladin', 'crusader', 'midas', 'philosopher', 'illusion', 'reflection'],
-        'bringer_of_doom': ['warden', 'cursed_talisman', 'asura', 'piercing_shadow', 'cocytus', 'purgatory', 'reaper', 'doom_guide', 'forsaken_king', 'void_gatekeeper', 'eternal_wall', 'transmuter', 'oracle']
-    };
 
     groups.forEach(g => {
         const h = document.createElement('h3'); h.innerText=g.h; h.style.cssText=`grid-column:1/-1; color:${g.c}; border-bottom:2px solid #333; margin:45px 0 24px 0; font-size:42px;`; bt.appendChild(h);
@@ -348,9 +318,6 @@ function renderBestiary() {
             let isKnown = false;
             if (g.h === 'Basic Specters') {
                 isKnown = true; 
-            } else if (g.h === 'Corrupted Specters') {
-                const triggers = corruptTriggerMap[t] || [];
-                isKnown = triggers.some(unit => unlockedUnits.has(unit));
             } else {
                 isKnown = (window.encounteredEnemies && window.encounteredEnemies.has(t)) || (killCounts[t] > 0);
             }
@@ -361,7 +328,6 @@ function renderBestiary() {
             if (!d) {
                 for(let k in enemyCategories) { const f=enemyCategories[k].find(x=>x.type===t); if(f){d=f; break;} }
             }
-            if(!d && typeof corruptedTypes!=='undefined') d=corruptedTypes[t]; 
             if(!d) return;
             const kills = killCounts[t] || 0; 
             const bonus = getBestiaryBonus(t); 
@@ -369,30 +335,25 @@ function renderBestiary() {
             let rVal = d.reward;
             if (rVal === undefined) {
                 if (g.h === 'Abyss Bosses') rVal = 500;
-                else if (g.h === 'Corrupted Specters') rVal = 0;
                 else rVal = 10;
             }
             const rewardText = ` | ✨ ${rVal}`;
-            const originText = (g.h === 'Corrupted Specters' && corruptInfo[t]) ? `<div style="font-size:21px; color:#ff4444; margin-bottom:6px; font-weight:bold;">[ORIGIN: ${corruptInfo[t]}]</div>` : '';
-            const traitOriginText = (g.h !== 'Corrupted Specters' && corruptInfo[t]) ? `<br><strong style="color:#ff0000;">[Origin]</strong> ${corruptInfo[t]}` : '';
             const item = document.createElement('div'); 
             item.className = `bestiary-item ${isKnown ? '' : 'locked'}`;
             if (isKnown) {
-                const statsDisplay = g.h === 'Corrupted Specters' ? `💀 ${kills}${rewardText}` : `💀 ${kills}${rewardText}${btx}`;
                 item.innerHTML = `
                     <div class="custom-tooltip specter">
-                        <strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}${traitOriginText}
+                        <strong style="color:#ffd700;">[Trait]</strong><br>${d.desc || d.lore || 'A powerful soul from the abyss.'}
                     </div>
-                    ${originText}
                     <div class="bestiary-icon enemy ${t}" style="position:static; transform:none; display:flex; justify-content:center; align-items:center;">${d.icon}</div>
                     <div class="bestiary-info">
                         <div class="bestiary-name">${names[t]||t}</div>
-                        <div class="bestiary-stats">${statsDisplay}</div>
+                        <div class="bestiary-stats">💀 ${kills}${rewardText}${btx}</div>
                     </div>`;
             } else {
                 item.innerHTML = `
                     <div class="custom-tooltip specter">
-                        <strong style="color:#ffd700;">[Information Unavailable]</strong><br>Defeat this specter or unlock its related class to reveal details.
+                        <strong style="color:#ffd700;">[Information Unavailable]</strong><br>Defeat this specter to reveal details.
                     </div>
                     <div class="bestiary-icon" style="position:static; transform:none; display:flex; justify-content:center; align-items:center; background:#222; color:#555; font-size:60px; border:2px dashed #444;">?</div>
                     <div class="bestiary-info">
@@ -463,7 +424,7 @@ function updateUnitOverlayButtons(t) {
     } else if(t.data.upgrades) {
         t.data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); const b=document.createElement('div');
-            const costText = ud.tier === 4 ? "10 Shards" : "400 SE";
+            const costText = ud.tier === 4 ? "800 SE" : "400 SE";
             b.className=i===0?'unit-overlay-btn promote-btn':'unit-overlay-btn promote-btn-right'; b.innerHTML=i===0?'↖️':'↗️'; b.title=`Unleash ${ud.name} (${costText})`;
             b.addEventListener('click', e=>{ e.stopPropagation(); performMasterJobChange(t,u); }); el.appendChild(b);
         });
@@ -488,14 +449,5 @@ function updateSummonButtonState() {
     }
     if(money<finalTowerCost || isMax) tc.classList.add('locked'); else tc.classList.remove('locked');
     const pc = document.getElementById('purge-card'); if(!pc) return;
-    const pw = document.getElementById('purge-warning');
-    if(pw) {
-        if (money < 800 && portalEnergy > 0) {
-            pw.style.display = 'block';
-            pw.innerText = 'NOT ENOUGH SE';
-        } else {
-            pw.style.display = 'none';
-        }
-    }
     if(money<800 || portalEnergy<=0) pc.classList.add('locked'); else pc.classList.remove('locked');
 }
