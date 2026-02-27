@@ -1,49 +1,48 @@
-/* css/ui.css - Interface Alignment */
+/* ui.css - Interface Alignment & Scaling */
 
 #bottom-panel {
-    width: 360px;
-    height: 240px;
     position: absolute;
     bottom: 0;
     left: 0;
-    background: #0a0a0a;
+    width: 360px;
+    height: 240px;
+    background: linear-gradient(to bottom, #0a0a0a, #000);
     border-top: 2px solid #222;
+    padding: 10px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
-    box-sizing: border-box;
     z-index: 110;
 }
 
 #stage-title-central {
     text-align: center;
     color: #ffd700;
-    font-size: 14px;
+    font-size: 13px;
     margin-bottom: 10px;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
 }
 
+/* Gauges Grid (Standardized to 360px) */
 #gauges-grid {
     display: grid;
     grid-template-columns: 1fr 1.2fr 1fr;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 6px;
+    margin-bottom: 15px;
 }
 
 .gauge-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    gap: 3px;
 }
 
-.gauge-info span {
-    font-size: 9px;
-    color: #888;
-}
+.gauge-info span { font-size: 8px; color: #888; }
 
 .gauge-bar {
     width: 100%;
     height: 10px;
-    background: #1a1a1a;
+    background: #111;
     border: 1px solid #333;
     position: relative;
     overflow: hidden;
@@ -59,49 +58,51 @@
     z-index: 2;
 }
 
+/* Main Interaction UI */
 #bottom-main-ui {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 8px;
+    flex: 1;
 }
 
+/* Control Panel (Cards) */
 #control-panel {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    width: 200px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    width: 195px;
 }
 
 .tower-card {
-    width: 60px;
-    height: 80px;
-    border: 1px solid #444;
+    height: 75px;
     background: #111;
+    border: 1px solid #444;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: 0.2s;
 }
 
 .tower-card:hover { border-color: #ffd700; background: #1a1a1a; }
+.tower-card div:nth-child(2) { font-size: 22px; } /* Icon */
+.tower-card div:nth-child(3) { font-size: 9px; font-weight: bold; margin-top: 2px; }
+#summon-cost-display { font-size: 8px !important; opacity: 0.7; }
 
-.tower-card div:nth-child(2) { font-size: 28px; }
-.tower-card div:nth-child(3) { font-size: 10px; font-weight: bold; margin-top: 4px; }
-#summon-cost-display { font-size: 9px !important; opacity: 0.7; }
-
+/* Unit Information Display */
 #unit-info {
-    flex: 1;
-    height: 80px;
-    background: #0d0d0d;
-    border: 1px solid #222;
+    width: 135px;
+    background: rgba(15, 15, 15, 0.9);
+    border: 1px solid #8b0000;
     padding: 8px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
+    box-shadow: inset 0 0 10px rgba(139, 0, 0, 0.2);
 }
 
-.info-default-text { font-size: 12px; color: #555; line-height: 1.2; }
+.info-default-text { font-size: 11px; color: #555; line-height: 1.2; }

@@ -1,32 +1,65 @@
-/* css/game.css - Battlefield Theme and Layout */
+/* game.css - Battlefield Layout & Top Controls */
 
 #game-layout {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 360px;
     height: 400px;
     display: flex;
-    background: #050505;
-    position: relative;
-    overflow: hidden;
+    z-index: 5;
+    pointer-events: none; /* Let clicks pass through to Phaser canvas */
 }
 
-/* Sacred Sanctum Areas */
+/* Locked Top Buttons */
+#restart-btn-top {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 150;
+    padding: 4px 8px;
+    background: rgba(139, 0, 0, 0.8);
+    color: #fff;
+    border: 1px solid #ffd700;
+    font-size: 10px;
+    cursor: pointer;
+    pointer-events: auto; /* Re-enable clicks for buttons */
+}
+
+#tutorial-toggle-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 9px;
+    color: #ffd700;
+    pointer-events: auto;
+}
+
+/* Battlefield Areas (Standardized to 360p) */
 .slot-area {
     width: 80px;
     height: 100%;
     background: linear-gradient(to bottom, rgba(10, 20, 40, 0.9), rgba(20, 40, 80, 0.7));
-    z-index: 10;
+    border-left: 1px solid rgba(255, 215, 0, 0.2);
+    border-right: 1px solid rgba(255, 215, 0, 0.2);
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 10px;
-    gap: 15px;
-    box-sizing: border-box;
+    padding-top: 45px;
+    gap: 10px;
+    z-index: 10;
 }
 
 #left-slots { border-right: 2px solid rgba(255, 215, 0, 0.3); }
 #right-slots { border-left: 2px solid rgba(255, 215, 0, 0.3); }
 
-/* Abyssal Path */
 #road {
     width: 200px;
     height: 100%;
@@ -34,23 +67,10 @@
     position: relative;
 }
 
-/* Corruption Overlays */
-#corruption-layer {
+/* Visual Overlays */
+#corruption-layer, #corruption-vignette {
     position: absolute;
     top: 0; left: 0; width: 360px; height: 640px;
-    background: radial-gradient(circle, transparent 20%, rgba(0, 0, 0, 0.9) 100%);
     pointer-events: none;
     z-index: 100;
-    mix-blend-mode: multiply;
-    opacity: 0;
-    transition: opacity 1s ease;
-}
-
-#corruption-vignette {
-    position: absolute;
-    top: 0; left: 0; width: 360px; height: 640px;
-    box-shadow: inset 0 0 100px rgba(75, 0, 130, 0);
-    pointer-events: none;
-    z-index: 101;
-    transition: box-shadow 1s ease;
 }
