@@ -364,10 +364,15 @@ function shoot(tower, target) {
         const cx = ((tr.left + tr.width / 2) - gr.left) / scaleX;
         const cy = ((tr.top + tr.height / 2) - gr.top) / scaleY;
         
-        // Logical Jewel Pos: staffX+2 = 18, Y = -31
-        // Multiply by S=2.0 used in drawApprentice, and add y-offset +5
-        sx = (cx + (18 * 2.0)) * scaleX;
-        sy = (cy + (-31 * 2.0) + 5) * scaleY;
+        // Logical Jewel Pos: staffOX + 1.5, staffOY - 3.5
+        // If attacking: staffOX=10, staffOY=-14 -> X=11.5, Y=-17.5
+        // Using S=3.0 scale
+        const area = tower.slotElement.dataset.area;
+        const isLeft = area === 'left-slots';
+        const lx = isLeft ? 11.5 : -11.5; 
+        
+        sx = (cx + (lx * 3.0)) * scaleX;
+        sy = (cy + (-17.5 * 3.0)) * scaleY;
     }
 
     proj.style.left = `${sx}px`; proj.style.top = `${sy}px`;
