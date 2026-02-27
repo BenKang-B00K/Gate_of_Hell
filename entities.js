@@ -7,7 +7,6 @@
  */
 export class Guardian extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, unitData, textureKey) {
-        // [수정] 텍스처 유효성 검사 및 플레이스홀더 적용
         const finalKey = scene.textures.exists(textureKey) ? textureKey : 'unit_placeholder';
         super(scene, x, y, finalKey);
         
@@ -18,9 +17,8 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this, true); 
 
-        // [수정] 깊이 및 스케일 보정
         this.setScale(1.5);
-        this.setDepth(20); // 최상단 레이어
+        this.setDepth(20); 
         this.setInteractive();
 
         this.setupUnit();
@@ -149,7 +147,6 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.setTint(0xffffff); 
         this.setAlpha(1.0);
         
-        // [수정] 텍스처 유효성 검사
         const finalKey = this.scene.textures.exists(textureKey) ? textureKey : 'enemy_placeholder';
         this.setTexture(finalKey);
 
@@ -160,12 +157,15 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.speed = enemyData.speed;
         this.type = enemyData.type;
         this.y_px = y;
-        this.initialX_pct = (x / 360) * 100;
+        
+        // 도로 중앙 기준 초기 위치 설정
+        this.baseX_pct = (x / 360) * 100;
+        this.initialX_pct = this.baseX_pct;
+        
         this.vxSign = Math.random() < 0.5 ? -1 : 1;
         this.hasBackstepped = false;
 
-        // [수정] 깊이 및 스케일 보정
-        this.setScale(1.5);
+        this.setScale(1.1); // [수정] 크기 축소
         this.setDepth(10); 
         
         this.body.setSize(20, 20);
@@ -194,16 +194,18 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.speed = fallenData.speed;
         
         this.y_px = y;
-        this.initialX_pct = (x / 360) * 100;
+        this.baseX_pct = (x / 360) * 100;
+        this.initialX_pct = this.baseX_pct;
+        
         this.vxSign = Math.random() < 0.5 ? -1 : 1;
         this.hasBackstepped = false;
 
-        this.setScale(1.5);
+        this.setScale(1.1); // [수정] 크기 축소
         this.body.setSize(30, 30);
         if (this.anims.exists(`${this.textureKey}_walk`)) this.play(`${this.textureKey}_walk`);
 
         this.scene.tweens.add({
-            targets: this, scale: 2.2, duration: 300, yoyo: true, ease: 'Quad.easeIn'
+            targets: this, scale: 1.5, duration: 300, yoyo: true, ease: 'Quad.easeIn'
         });
     }
 
@@ -222,7 +224,7 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
 
         if (this.type === 'abyssal_eulogist' && time % 1000 < 20) {
             this.scene.enemies.getChildren().forEach(e => {
-                if (e !== this && e.active && Phaser.Math.Distance.Between(this.x, this.y, e.x, e.y) < 100) {
+                if (e !== this && e.active && Phaser.Math.Distance.Between(this.x, this.y, e.x, e.y) < 60) {
                     e.speed *= 1.005; 
                 }
             });
@@ -234,19 +236,27 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
 
         if (this.scene.time.now % 500 < 20) this.scene.leaveDecayTrail(this.x, this.y);
 
+        let currentX_pct = this.baseX_pct;
+
         if (this.type === 'boar') {
             if (this.y_px < 640 * 0.85) {
-                this.initialX_pct += this.vxSign * currentSpeed * 0.6;
-                if (this.initialX_pct <= 10) { this.initialX_pct = 10; this.vxSign = 1; }
-                else if (this.initialX_pct >= 90) { this.initialX_pct = 90; this.vxSign = -1; }
-            } else { this.initialX_pct += (50 - this.initialX_pct) * 0.1; }
+                this.baseX_pct += this.vxSign * currentSpeed * 0.6;
+                // [수정] 도로 폭(35% ~ 65%) 준수
+                if (this.baseX_pct <= 35) { this.baseX_pct = 35; this.vxSign = 1; }
+                else if (this.baseX_pct >= 65) { this.baseX_pct = 65; this.vxSign = -1; }
+                currentX_pct = this.baseX_pct;
+            } else {
+                this.baseX_pct += (50 - this.baseX_pct) * 0.1; 
+                currentX_pct = this.baseX_pct;
+            }
         } else if (this.type === 'runner' || this.type === 'dimension') {
-            this.initialX_pct += Math.sin(this.y_px * 0.04) * 2;
+            // [수정] 지그재그 이동 방식 (오프셋)
+            currentX_pct = this.baseX_pct + Math.sin(this.y_px * 0.05) * 5;
         }
 
         this.y_px += currentSpeed;
         this.y = this.y_px;
-        this.x = (this.initialX_pct / 100) * 360;
+        this.x = (currentX_pct / 100) * 360;
 
         if (this.y >= 650) this.reachPortal();
     }

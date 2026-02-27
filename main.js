@@ -136,7 +136,8 @@ class MainScene extends Phaser.Scene {
 
         const enemy = this.enemies.get();
         if (enemy) {
-            const x = Phaser.Math.Between(130, 230);
+            // [수정] 도로 정중앙 부근(140~220)에서 스폰 강제
+            const x = Phaser.Math.Between(140, 220);
             enemy.spawn(x, -50, data, 'ghost_basic');
             this.waveSpawnedCount++;
             
