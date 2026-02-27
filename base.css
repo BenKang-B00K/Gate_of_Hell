@@ -146,6 +146,22 @@ img, .enemy, .tower-card, .relic-slot {
     text-shadow: 0 0 15px #ff0000;
 }
 
+/* Thematic Stage Header */
+#thematic-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 5px;
+    pointer-events: none;
+}
+
+#stage-title-container {
+    font-size: 30px; /* Scaled for 1080p */
+    font-weight: bold;
+    color: #ff4500;
+    text-shadow: 0 0 15px rgba(255, 69, 0, 0.8), 0 0 5px #000;
+    letter-spacing: 2px;
+}
+
 #bottom-panel {
     position: relative; 
     height: 35%;
