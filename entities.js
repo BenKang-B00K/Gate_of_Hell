@@ -42,7 +42,10 @@ export class Guardian extends Phaser.GameObjects.Sprite {
     }
 
     autoAttack() {
-        if (this.isFrozenTomb || this.isStunned) return;
+        if (!this.active || this.isFrozenTomb || this.isStunned) return;
+
+        // 씬이 유효한지 확인 (파괴 중인 경우 방지)
+        if (!this.scene || !this.scene.enemies) return;
 
         const abyssTypes = ['warden', 'cocytus', 'reaper', 'eternal_wall'];
         if (abyssTypes.includes(this.type)) {
@@ -51,7 +54,7 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         }
 
         const target = this.scene.getNearestEnemy(this);
-        if (target && Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y) <= this.range) {
+        if (target && target.active && Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y) <= this.range) {
             this.fireProjectile(target);
         }
     }

@@ -53,7 +53,7 @@ export class DataManager {
             'money': { text: 'se-display-text', fill: 'se-gauge-fill', max: 1000 },
             'portalEnergy': { text: 'portal-energy-label', fill: 'portal-gauge-fill', max: this.registry.get('maxPortalEnergy') },
             'stage': { text: 'stage-display' },
-            'enemiesLeft': { text: 'enemies-left', fill: 'rs-gauge-fill', max: 20 } // Max 20 for visual bar
+            'enemiesLeft': { text: 'enemies-left', fill: 'rs-gauge-fill', max: this.scene.totalWaveEnemies || 20 }
         };
 
         const config = uiMap[key];

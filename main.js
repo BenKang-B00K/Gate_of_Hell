@@ -203,18 +203,34 @@ class MainScene extends Phaser.Scene {
     }
 
     update(time, delta) {
-        // 1. 포탈 에너지 체크 (게임 오버)
-        if (this.registry.get('portalEnergy') >= this.registry.get('maxPortalEnergy')) {
+        // 1. 게임 오버 체크
+        const pe = this.registry.get('portalEnergy');
+        const maxPe = this.registry.get('maxPortalEnergy');
+        if (pe >= maxPe) {
             this.scene.pause();
             document.getElementById('game-over-overlay').style.display = 'flex';
+            return;
         }
 
-        // 2. 스테이지 진행 체크
-        if (this.waveSpawnedCount >= this.totalWaveEnemies && this.registry.get('enemiesLeft') === 0) {
-            const nextStage = this.registry.get('stage') + 1;
-            this.registry.set('stage', nextStage);
-            this.initWaveState(); // 다음 웨이브 준비
+        // 2. 스테이지 진행 체크 (그룹 내 활성화된 적이 없고 스폰이 끝났을 때)
+        const activeEnemies = this.enemies.countActive(true);
+        if (this.waveSpawnedCount >= this.totalWaveEnemies && activeEnemies === 0) {
+            this.startNextStage();
         }
+    }
+
+    startNextStage() {
+        const nextStage = this.registry.get('stage') + 1;
+        this.registry.set('stage', nextStage);
+        
+        // 시각적 알림 (Floating Text)
+        this.showFloatingText(180, 200, `DEPTH ${nextStage} REACHED`, '#ffd700');
+        
+        // 보너스 SE 지급
+        const bonus = 50 + (nextStage * 10);
+        this.registry.set('money', this.registry.get('money') + bonus);
+
+        this.initWaveState();
     }
 }
 
