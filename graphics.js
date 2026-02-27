@@ -272,9 +272,106 @@ function drawApprentice(cx, cy, tower) {
 
 // Simple versions for others at 1080p scale
 function drawIce(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#ADD8E6', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & DAOIST ROBES (Ice Blue / Deep Navy) ---
+    const robeColor = '#1A237E'; // Deep navy base
+    const iceBlue = '#81D4FA';  // Frosty blue detail
+    const trimColor = '#E1F5FE'; // Near white frost
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-2, 1, iceBlue, 3, 11); // Center panel
+    p(-5, 11, '#0D47A1', 11, 3); // Bottom shadow
+    
+    // Traditional Girdle
+    p(-5, 7, '#000', 11, 2);
+    p(-4, 7, '#FFD700', 1, 1); // Small jade/gold ornament
+
+    // Boots (Black)
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Daoist Hat (Guan)
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Hat (Black/Gold Guan)
+    p(-3, -11, '#000', 7, 3);
+    p(-1, -12, '#000', 3, 2); // Top pin
+    p(-1, -11, '#FFD700', 3, 1); // Gold trim on hat
+
+    // Face Features (Calm/Frozen focus)
+    p(-2, -5, '#000', 1, 1);
+    p(2, -5, '#000', 1, 1);
+    p(-1, -3, '#81D4FA', 3, 1); // Frosty breath/beard hint
+
+    // --- 2. THE FROST FOCUS (Levitating Ice Crystal) ---
+    let crystalFloat = Math.sin(time * 3) * 3;
+    let cryOX = isAttacking ? 10 : 8;
+    let cryOY = -8 + crystalFloat;
+    
+    // Main Crystal (Rhombus shape)
+    p(cryOX - 2, cryOY - 4, '#000', 5, 9); // Outline
+    p(cryOX - 1, cryOY - 3, '#E1F5FE', 3, 7); // Core
+    p(cryOX, cryOY - 2, '#fff', 1, 5); // Shine
+    
+    // Small orbiting shards
+    for(let i=0; i<3; i++) {
+        const ang = time * 2 + (i * Math.PI * 0.6);
+        const dx = Math.cos(ang) * 12;
+        const dy = Math.sin(ang) * 12;
+        p(Math.round(cryOX + dx/S), Math.round(cryOY + dy/S), '#81D4FA', 1, 1);
+    }
+
+    // --- 3. ATTACK EFFECTS (Flash Freeze) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 40 * flashIntensity;
+        ctx.shadowColor = '#00E5FF';
+        
+        // Ice Burst
+        const burstSize = 15 * flashIntensity;
+        const bX = isLeft ? cx + (cryOX * S) : cx - (cryOX * S);
+        const bY = cy + (cryOY * S);
+        
+        ctx.fillStyle = `rgba(129, 212, 250, ${flashIntensity})`;
+        ctx.fillRect(bX - burstSize, bY - burstSize, burstSize * 2, burstSize * 2);
+        
+        // Snowflakes
+        for(let i=0; i<8; i++) {
+            const sang = (i / 8) * Math.PI * 2;
+            const sdist = 20 * flashIntensity;
+            const sx = Math.cos(sang) * sdist;
+            const sy = Math.sin(sang) * sdist;
+            p(Math.round(cryOX + sx/S), Math.round(cryOY + sy/S), '#fff', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. AMBIENT COLD AURA ---
+    const mistGlow = (Math.cos(time * 1.5) + 1) / 2;
+    ctx.fillStyle = `rgba(179, 229, 252, ${0.1 * mistGlow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy + 5 * S, 25 * S, 0, Math.PI * 2);
+    ctx.fill();
 }
 function drawFire(cx, cy, tower) {
     const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
