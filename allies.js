@@ -425,14 +425,14 @@ function showEnemyInfo(enemy) {
     const maxHp = Math.floor(enemy.maxHp || hp);
 
     const bonus = typeof getBestiaryBonus === 'function' ? getBestiaryBonus(enemy.type) : 1;
-    const bonusText = bonus > 1 ? `<div style="color: #00ff00; font-size: 8px; margin-bottom: 4px;">Bestiary Bonus: +${((bonus-1)*100).toFixed(0)}% DMG</div>` : '';
+    const bonusText = bonus > 1 ? `<div style="color: #00ff00; font-size: 24px; margin-bottom: 12px;">Bestiary Bonus: +${((bonus-1)*100).toFixed(0)}% DMG</div>` : '';
 
     d.innerHTML = `
-        <div style="color: #ff4500; font-weight: bold; font-size: 13px; margin-bottom: 2px;">${dispName}</div>
-        <div style="display:inline-block; background:#444; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">SPECTER</div>
+        <div style="color: #ff4500; font-weight: bold; font-size: 39px; margin-bottom: 6px;">${dispName}</div>
+        <div style="display:inline-block; background:#444; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">SPECTER</div>
         ${bonusText}
-        <div style="font-size: 9px; color: #ff0000; margin-bottom: 4px;">HP: ${hp} / ${maxHp}</div>
-        <div style="color: #888; font-size: 9px; margin-top: 2px; line-height: 1.2;">${enemy.desc || 'A wandering soul from the abyss.'}</div>
+        <div style="font-size: 27px; color: #ff0000; margin-bottom: 12px;">HP: ${hp} / ${maxHp}</div>
+        <div style="color: #888; font-size: 27px; margin-top: 6px; line-height: 1.2;">${enemy.desc || 'A wandering soul from the abyss.'}</div>
     `;
     startInfoResetTimer();
 }
@@ -443,24 +443,24 @@ function showResourceInfo(type) {
     const d = document.getElementById('unit-info');
     if (type === 'se') {
         d.innerHTML = `
-            <div style="color:#00e5ff; font-weight:bold; font-size:13px; margin-bottom:2px;">Soul Energy (SE)</div>
-            <div style="display:inline-block; background:#008ba3; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">ESSENCE</div>
-            <div style="font-size:9px; color:#bbb; line-height:1.2;">Used to summon and promote exorcists. Obtained by defeating specters.</div>
-            <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"The crystalline fragments of purified regrets, fueling the sacred arts of those who guard the living world."</div>
+            <div style="color:#00e5ff; font-weight:bold; font-size:39px; margin-bottom:6px;">Soul Energy (SE)</div>
+            <div style="display:inline-block; background:#008ba3; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">ESSENCE</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">Used to summon and promote exorcists. Obtained by defeating specters.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"The crystalline fragments of purified regrets, fueling the sacred arts of those who guard the living world."</div>
         `;
     } else if (type === 'shards') {
         d.innerHTML = `
-            <div style="color:#ff4444; font-weight:bold; font-size:13px; margin-bottom:2px;">Corrupted Shards</div>
-            <div style="display:inline-block; background:#8b0000; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">CURSE</div>
-            <div style="font-size:9px; color:#bbb; line-height:1.2;">Increases enemy HP and Speed as they accumulate. Obtained by corrupting (selling) your units.</div>
-            <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"Echoes of betrayal left behind when an exorcist succumbs to the dark. The abyss hungers for more of its own kind."</div>
+            <div style="color:#ff4444; font-weight:bold; font-size:39px; margin-bottom:6px;">Corrupted Shards</div>
+            <div style="display:inline-block; background:#8b0000; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">CURSE</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">Increases enemy HP and Speed as they accumulate. Obtained by corrupting (selling) your units.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"Echoes of betrayal left behind when an exorcist succumbs to the dark. The abyss hungers for more of its own kind."</div>
         `;
     } else if (type === 'purge') {
         d.innerHTML = `
-            <div style="color:#9400d3; font-weight:bold; font-size:13px; margin-bottom:2px;">Purge Portal</div>
-            <div style="display:inline-block; background:#4b0082; color:#fff; padding:1px 4px; border-radius:3px; font-size:8px; font-weight:bold; margin-bottom:4px;">SANCTIFICATION</div>
-            <div style="font-size:9px; color:#bbb; line-height:1.2;">Instantly removes 50% of current Portal Energy accumulation. Costs 800 SE.</div>
-            <div style="color:#555; font-size:8.5px; margin-top:6px; font-style:italic; line-height:1.2;">"A sacred ritual to cleanse the gate of encroaching spirits. It demands a heavy sacrifice of Soul Energy."</div>
+            <div style="color:#9400d3; font-weight:bold; font-size:39px; margin-bottom:6px;">Purge Portal</div>
+            <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">SANCTIFICATION</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">Instantly removes 50% of current Portal Energy accumulation. Costs 800 SE.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"A sacred ritual to cleanse the gate of encroaching spirits. It demands a heavy sacrifice of Soul Energy."</div>
         `;
     }
     startInfoResetTimer();
