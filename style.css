@@ -187,37 +187,71 @@ img, .enemy, .tower-card, .relic-slot {
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
-/* 중앙 길 */
+/* 중앙 길 - 현무암 및 용암 균열 효과 */
 #road {
-    width: 340px; /* Changed from 120px */
-    background: transparent;
+    width: 340px;
+    background-color: #0a0a0a;
+    /* 현무암 돌 질감 (Basalt Texture) */
+    background-image: 
+        radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0),
+        linear-gradient(45deg, #111 25%, transparent 25%, transparent 75%, #111 75%, #111),
+        linear-gradient(45deg, #111 25%, #050505 25%, #050505 75%, #111 75%, #111);
+    background-size: 8px 8px, 40px 40px, 40px 40px;
+    background-position: 0 0, 0 0, 20px 20px;
     box-shadow: 
-        inset 10px 0 20px rgba(0,0,0,0.8),
-        inset -10px 0 20px rgba(0,0,0,0.8),
-        0 0 30px rgba(148, 0, 211, 0.2);
+        inset 20px 0 40px rgba(0,0,0,0.9),
+        inset -20px 0 40px rgba(0,0,0,0.9),
+        0 0 50px rgba(255, 69, 0, 0.1);
     position: relative;
     display: flex;
     justify-content: center;
-    border-left: 2px solid #332244;
-    border-right: 2px solid #332244;
+    border-left: 2px solid #221100;
+    border-right: 2px solid #221100;
+    overflow: hidden;
 }
 
-#road::before, #road::after {
+/* 용암 균열 레이어 (Lava Cracks) */
+#road::before {
     content: "";
     position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: repeating-linear-gradient(
-        #222,
-        #222 10px,
-        #111 10px,
-        #111 20px
-    );
-    opacity: 0.5;
+    top: -100%; /* 여유 있게 위에서부터 시작 */
+    left: 0;
+    width: 100%;
+    height: 300%; /* 흐르는 효과를 위해 높게 설정 */
+    background-image: 
+        /* 불규칙한 균열 그라디언트 */
+        linear-gradient(115deg, transparent 45%, rgba(255, 69, 0, 0.4) 47%, rgba(255, 0, 0, 0.6) 48%, rgba(255, 140, 0, 0.4) 49%, transparent 51%),
+        linear-gradient(245deg, transparent 25%, rgba(255, 69, 0, 0.3) 27%, rgba(255, 0, 0, 0.5) 28%, rgba(255, 140, 0, 0.3) 29%, transparent 31%),
+        linear-gradient(115deg, transparent 75%, rgba(255, 69, 0, 0.4) 77%, rgba(255, 0, 0, 0.6) 78%, rgba(255, 140, 0, 0.4) 79%, transparent 81%),
+        /* 마그마 열기 (Glow) */
+        radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.15) 0%, transparent 70%);
+    background-size: 100% 400px;
+    filter: blur(1.5px);
+    opacity: 0.6;
+    z-index: 0;
+    animation: lavaFlowAnim 25s infinite linear, lavaPulse 4s infinite alternate ease-in-out;
+    pointer-events: none;
 }
-#road::before { left: -6px; border-right: 1px solid #444; }
-#road::after { right: -6px; border-left: 1px solid #444; }
+
+/* 길 양옆 경계면 디테일 */
+#road::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, #000 0%, transparent 15%, transparent 85%, #000 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes lavaFlowAnim {
+    from { transform: translateY(0); }
+    to { transform: translateY(400px); }
+}
+
+@keyframes lavaPulse {
+    0% { opacity: 0.4; filter: blur(1px) brightness(1); }
+    100% { opacity: 0.8; filter: blur(2px) brightness(1.5); }
+}
 
 #spawning-pool {
     position: absolute;
