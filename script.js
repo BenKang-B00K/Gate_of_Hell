@@ -365,13 +365,13 @@ function shoot(tower, target) {
         const cy = ((tr.top + tr.height / 2) - gr.top) / scaleY;
         
         // Logical Jewel Pos (Attacking): staffOX=9, staffOY=-12 -> Jewel is at X=10.5, Y=-13
-        // Using S=4.0 scale
+        // Using S=3.0 scale
         const area = tower.slotElement.dataset.area;
         const isLeft = area === 'left-slots';
         const lx = isLeft ? 10.5 : -10.5; 
         
-        sx = (cx + (lx * 4.0)) * scaleX;
-        sy = (cy + (-13.0 * 4.0)) * scaleY;
+        sx = (cx + (lx * 3.0)) * scaleX;
+        sy = (cy + (-13.0 * 3.0)) * scaleY;
     }
 
     proj.style.left = `${sx}px`; proj.style.top = `${sy}px`;

@@ -172,9 +172,9 @@ function drawApprentice(cx, cy, tower) {
     const timeSinceShot = now - (tower.lastShot || 0);
     const isAttacking = timeSinceShot < 250; 
     
-    // Base Resolution: 30x34, Scale: 4x (120x136)
-    // Fits perfectly into 119x135 slot area
-    const S = 4.0; 
+    // Base Resolution: 30x34, Scale: 3x (90x102)
+    // Fits into 119x135 slot area with breathing room
+    const S = 3.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
