@@ -166,94 +166,107 @@ function drawUnits() {
 function drawApprentice(cx, cy, tower) {
     const time = lavaPhase;
     const area = tower.slotElement.dataset.area; 
-    const isLeft = area === 'left-slots'; // Facing Right if on the left
+    const isLeft = area === 'left-slots'; 
     
-    // State Logic
     const now = Date.now();
     const timeSinceShot = now - (tower.lastShot || 0);
-    const isAttacking = timeSinceShot < 200; 
+    const isAttacking = timeSinceShot < 250; 
     
-    // Base Resolution: 30x34, Scale: 3x
-    const S = 3.0; 
+    // Base Resolution: 30x34, Scale: 4x (120x136)
+    // Fits perfectly into 119x135 slot area
+    const S = 4.0; 
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
-        // Flip X based on orientation (Left facing right, Right facing left)
         const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
     };
 
-    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 200) : 0;
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 250) : 0;
 
-    // --- 1. BODY & ROBE (30x34 base layout) ---
+    // --- 1. BODY & ROBE (ImageSample Palette) ---
+    const robeColor = '#5F7D7E';
+    const robeShadow = '#4A5F60';
+    const robeHighlight = '#8BA8A9';
     
     // Robe Body
     p(-6, 0, '#000', 13, 15); // Outline
-    p(-5, 1, '#777', 11, 13); // Base Gray
-    p(-3, 1, '#999', 7, 12);  // Highlight
-    p(-1, 1, '#BBB', 2, 11);  // Accent
-    p(-5, 12, '#444', 11, 2); // Shadow
+    p(-5, 1, robeColor, 11, 13); // Base
+    p(-2, 1, robeHighlight, 3, 11); // Center Highlight
+    p(-5, 11, robeShadow, 11, 3); // Bottom Shadow
     
+    // Leather Belt
+    p(-5, 7, '#3E2723', 11, 2); 
+    p(-1, 7, '#BCA371', 2, 2); // Buckle
+
     // Boots
     p(-4, 14, '#000', 4, 3);
     p(1, 14, '#000', 4, 3);
 
-    // Head / Face
-    p(-5, -10, '#000', 11, 11); // Outline
-    p(-4, -9, '#FFDBAC', 9, 9);  // Skin
+    // Head & Face
+    p(-5, -10, '#000', 11, 11); 
+    p(-4, -9, '#E8C4A2', 9, 9);  
     
-    // Hair
-    p(-5, -11, '#3E2723', 11, 4);
-    p(-5, -9, '#3E2723', 2, 5);
-    p(4, -9, '#3E2723', 2, 5);
+    // Hair (Dirty Blonde / Messy)
+    const hairColor = '#BCA371';
+    const hairShadow = '#8D7B4B';
+    p(-5, -11, '#000', 11, 5); // Outline
+    p(-5, -11, hairColor, 11, 4);
+    p(-5, -8, hairColor, 2, 5); 
+    p(4, -8, hairColor, 2, 5);
+    p(-2, -11, '#E3D3A3', 5, 1); // Highlight
     
     // Eyes
-    const eyeColor = isAttacking ? '#fff' : '#00FFFF';
-    p(-3, -6, eyeColor, 2, 2);
-    p(2, -6, eyeColor, 2, 2);
+    p(-3, -6, isAttacking ? '#fff' : '#333', 2, 2);
+    p(2, -6, isAttacking ? '#fff' : '#333', 2, 2);
 
-    // --- 2. STAFF (State-based positioning) ---
-    let staffOX = 7;
-    let staffOY = -12;
-    if (isAttacking) {
-        staffOX = 10; staffOY = -14; // Thrusting forward
-    }
-
-    const crossColor = isAttacking ? `rgba(255, 255, 255, ${0.8 + 0.2 * flashIntensity})` : '#ffd700';
+    // --- 2. ORNATE STAFF (Sample Design) ---
+    let staffOX = isAttacking ? 9 : 7;
+    let staffOY = isAttacking ? -12 : -11;
     
-    // Staff body
-    p(staffOX, staffOY, '#000', 3, 26);
-    p(staffOX + 1, staffOY + 1, '#3E2723', 1, 24);
+    const woodColor = '#3E2723';
+    const jewelColor = isAttacking ? '#00FFFF' : '#4CAF50'; // Cyan when casting, Green idle
     
-    // Cross head
-    p(staffOX - 4, staffOY - 6, '#000', 11, 5);
-    p(staffOX - 1, staffOY - 10, '#000', 5, 13);
-    p(staffOX - 3, staffOY - 5, crossColor, 9, 3);
-    p(staffOX, staffOY - 9, crossColor, 3, 11);
+    // Handle
+    p(staffOX, staffOY, woodColor, 3, 25);
+    p(staffOX + 1, staffOY, '#5D4037', 1, 25); // Highlight
+    
+    // Head Socket
+    p(staffOX - 2, staffOY - 4, woodColor, 7, 5);
+    p(staffOX - 1, staffOY - 3, '#000', 5, 3); // Inner dark
     
     // Jewel
-    p(staffOX, staffOY - 5, isAttacking ? '#fff' : '#00FFFF', 3, 3);
-
-    // --- 3. COMBAT FLASH ---
+    p(staffOX, staffOY - 2, jewelColor, 3, 2);
+    
+    // Casting Particles (Blue/Cyan from Sample)
     if (isAttacking) {
+        const pCount = 4;
+        for(let i=0; i<pCount; i++) {
+            const pPhase = (time * 10 + i) % 10;
+            const px = staffOX + 5 + pPhase;
+            const py = staffOY - 2 + Math.sin(time * 5 + i) * 3;
+            p(px, py, '#00E5FF', 1, 1);
+        }
+        
+        // Attack Sparkle
         ctx.save();
-        ctx.shadowBlur = 30 * flashIntensity;
+        ctx.shadowBlur = 40 * flashIntensity;
         ctx.shadowColor = '#00e5ff';
-        const sparkleSize = 20 * flashIntensity;
+        const sparkleSize = 25 * flashIntensity;
         ctx.fillStyle = `rgba(255, 255, 255, ${flashIntensity})`;
         const jX = isLeft ? cx + ((staffOX + 1.5) * S) : cx - ((staffOX + 1.5) * S);
-        const jY = cy + ((staffOY - 3.5) * S);
+        const jY = cy + ((staffOY - 1) * S);
         ctx.fillRect(jX - sparkleSize/2, jY - sparkleSize/2, sparkleSize, sparkleSize);
         ctx.restore();
     }
 
-    // --- 4. HOLY AURA ---
+    // --- 3. AMBIENT MAGIC ---
     const orbGlow = (Math.cos(time * 3) + 1) / 2;
-    for(let i=0; i<5; i++) {
-        const angle = time * 1.5 + (i * Math.PI * 0.4);
-        const dist = 18 + Math.sin(time * 2 + i) * 3;
+    for(let i=0; i<4; i++) {
+        const angle = time * 1.5 + (i * Math.PI * 0.5);
+        const dist = 20 + Math.sin(time * 2 + i) * 4;
         const px = Math.cos(angle) * dist;
         const py = Math.sin(angle) * dist;
-        p(Math.round(px), Math.round(py), `rgba(255, 215, 0, ${0.3 * orbGlow})`, 1, 1);
+        p(Math.round(px), Math.round(py), `rgba(0, 229, 255, ${0.3 * orbGlow})`, 1, 1);
     }
 }
 
