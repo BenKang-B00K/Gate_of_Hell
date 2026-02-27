@@ -161,6 +161,8 @@ function drawUnits() {
             case 'paladin': drawPaladin(cx, cy, tower); break;
             case 'crusader': drawCrusader(cx, cy, tower); break;
             case 'midas': drawMidas(cx, cy, tower); break;
+            case 'illusion': drawIllusion(cx, cy, tower); break;
+            case 'philosopher': drawPhilosopher(cx, cy, tower); break;
         }
     });
 }
@@ -1897,6 +1899,202 @@ function drawMidas(cx, cy, tower) {
     // --- 4. WEALTH AURA ---
     const wealthPulse = (Math.sin(time * 2) + 1) / 2;
     ctx.fillStyle = `rgba(255, 215, 0, ${0.08 * wealthPulse})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawIllusion(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 350; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
+
+    // --- 1. BODY & MYSTICAL ROBES (Magenta / Violet Palette) ---
+    const robeColor = '#880E4F'; // Deep magenta/purple
+    const silkColor = '#E91E63'; // Bright pink/magenta
+    const trimColor = '#F48FB1'; // Light pink trim
+    
+    // Flowing Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    
+    // Sash & Layering
+    p(-5, 3, silkColor, 11, 2);
+    p(-5, 7, silkColor, 11, 3);
+    p(-2, 1, trimColor, 3, 12); // Center trim
+
+    // Ethereal Boots (Fading into shadow)
+    p(-4, 14, '#311B92', 4, 3);
+    p(1, 14, '#311B92', 4, 3);
+
+    // Head & Illusionist Veil
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Mask/Veil (Half-face covered)
+    p(-4, -4, '#000', 9, 4); // Mask outline
+    p(-3, -3, silkColor, 7, 2);
+    
+    // Glowing Eyes
+    p(-2, -6, isAttacking ? '#FF4081' : '#F48FB1', 1, 1);
+    p(1, -6, isAttacking ? '#FF4081' : '#F48FB1', 1, 1);
+
+    // --- 2. FLOATING MASKS (Illusion Foci) ---
+    const maskCount = 3;
+    for(let i=0; i<maskCount; i++) {
+        const ang = (time * 1.5) + (i * (Math.PI * 2 / maskCount));
+        const floatY = Math.sin(time * 3 + i) * 4;
+        const dist = 15 + (isAttacking ? flashIntensity * 8 : 0);
+        
+        let mx = Math.cos(ang) * dist;
+        let my = -5 + Math.sin(ang) * (dist * 0.4) + floatY;
+        
+        // Theatre Mask
+        p(Math.round(mx - 2), Math.round(my - 3), '#000', 5, 7); // Outline
+        p(Math.round(mx - 1), Math.round(my - 2), '#FFF', 3, 5); // White mask
+        p(Math.round(mx), Math.round(my - 1), '#E91E63', 1, 1); // Eye hole
+    }
+
+    // --- 3. CONFUSION BURST (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 35 * flashIntensity;
+        ctx.shadowColor = '#E91E63';
+        
+        // Mind Warp Blast
+        const blastSize = 25 * flashIntensity;
+        ctx.fillStyle = `rgba(233, 30, 99, ${0.3 * flashIntensity})`;
+        ctx.beginPath();
+        ctx.arc(cx + (12 * S * (isLeft?1:-1)), cy - 4 * S, blastSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Illusion Ripples
+        ctx.strokeStyle = `rgba(244, 143, 177, ${flashIntensity})`;
+        ctx.lineWidth = 2 * S;
+        ctx.beginPath();
+        ctx.arc(cx + (12 * S * (isLeft?1:-1)), cy - 4 * S, blastSize * 1.5, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        ctx.restore();
+    }
+
+    // --- 4. HALLUCINATION AURA ---
+    const warpGlow = (Math.sin(time * 3) + 1) / 2;
+    ctx.fillStyle = `rgba(233, 30, 99, ${0.05 * warpGlow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 32 * S, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawPhilosopher(cx, cy, tower) {
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 350; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
+
+    // --- 1. BODY & VOID ROBES (Black / Emerald Palette) ---
+    const robeColor = '#1B1B1B'; // Pitch black
+    const voidColor = '#004D40'; // Deep void green
+    const trimColor = '#69F0AE'; // Acidic neon green
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-2, 1, voidColor, 3, 11); // Center panel
+    p(-5, 11, '#000', 11, 3); // Shadow
+    
+    // Void Runes
+    p(-4, 4, trimColor, 1, 2);
+    p(3, 8, trimColor, 1, 2);
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head (Eldritch Hood)
+    p(-5, -10, '#000', 11, 10); 
+    p(-4, -9, robeColor, 9, 8);
+    
+    // Void Face (No features, just glowing energy)
+    p(-2, -7, '#000', 5, 5); // Dark void inside hood
+    p(-1, -6, trimColor, 1, 1); // Single glowing eye L
+    p(1, -5, trimColor, 1, 1);  // Single glowing eye R
+
+    // --- 2. THE PHILOSOPHER'S STONE (Acidic Core) ---
+    let stoneFloat = Math.sin(time * 2.5) * 3;
+    let stnOX = isAttacking ? 10 : 8;
+    let stnOY = -8 + stoneFloat;
+    
+    // Stone Body (Irregular Diamond)
+    p(stnOX - 3, stnOY - 4, '#000', 7, 9); // Outline
+    p(stnOX - 2, stnOY - 3, '#00695C', 5, 7); // Dark green base
+    p(stnOX - 1, stnOY - 2, trimColor, 3, 5); // Neon core
+    p(stnOX, stnOY - 1, '#FFF', 1, 3); // Shine
+    
+    // Orbiting Void Matter
+    for(let i=0; i<4; i++) {
+        const ang = time * 3 + (i * Math.PI * 0.5);
+        const dx = Math.cos(ang) * 8;
+        const dy = Math.sin(ang) * 8;
+        p(Math.round(stnOX + dx/S), Math.round(stnOY + dy/S), '#1B1B1B', 2, 2);
+    }
+
+    // --- 3. ACIDIC CURSE (Attack Effect) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 40 * flashIntensity;
+        ctx.shadowColor = '#69F0AE';
+        
+        // Corrosive Beam
+        const beamX = isLeft ? cx + (stnOX * S) : cx - (stnOX * S);
+        const beamY = cy + (stnOY * S);
+        
+        ctx.strokeStyle = `rgba(105, 240, 174, ${flashIntensity})`;
+        ctx.lineWidth = 4 * S;
+        ctx.beginPath();
+        ctx.moveTo(beamX, beamY);
+        ctx.lineTo(beamX + 100*(isLeft?1:-1)*flashIntensity, beamY);
+        ctx.stroke();
+        
+        // Acid Splatter
+        for(let i=0; i<6; i++) {
+            const px = beamX + (Math.random() * 80 * (isLeft?1:-1));
+            const py = beamY + (Math.random() - 0.5) * 20;
+            ctx.fillStyle = '#69F0AE';
+            ctx.fillRect(px, py, 2*S, 2*S);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. CORROSIVE AURA ---
+    const acidPulse = (Math.cos(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(105, 240, 174, ${0.06 * acidPulse})`;
     ctx.beginPath();
     ctx.arc(cx, cy, 30 * S, 0, Math.PI * 2);
     ctx.fill();
