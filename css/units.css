@@ -81,7 +81,7 @@
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.unit.apprentice { color: transparent !important; text-shadow: none !important; }
+.unit.apprentice { color: transparent !important; text-shadow: none !important; font-size: 0; }
 
 /* Unit Overlay Buttons */
 .unit-overlay-btn {

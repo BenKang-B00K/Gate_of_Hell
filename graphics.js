@@ -488,64 +488,79 @@ function drawMonk(cx, cy) {
 
 function drawApprentice(cx, cy) {
     const time = lavaPhase;
-    const floatingY = Math.sin(time * 2) * 2.5; 
-    const y = cy + floatingY;
+    const floatingY = Math.sin(time * 2) * 4; 
+    // Shift slightly up to center the 64x64 sprite in the slot
+    const y = cy + floatingY - 10; 
 
+    // Helper for 64x64 scale. We draw at a larger logical size.
+    // cx, cy is the center. 
+    // We want the total width to be ~48-56px and height ~64px.
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
-        ctx.fillRect(cx + ox, y + oy, w, h);
+        // Multiply by 2.5 to scale up the original ~15x25 to roughly ~37x62
+        ctx.fillRect(cx + (ox * 2.5), y + (oy * 2.5), w * 2.5, h * 2.5);
     };
 
-    // --- 1. BLACK OUTLINE (1px) ---
+    // --- 1. BLACK OUTLINE ---
     p(-6, -2, '#000', 12, 13); 
     p(-5, -11, '#000', 10, 10); 
-    p(5, -13, '#000', 3, 20); 
-    p(3, -14, '#000', 7, 7);  
+    // Staff outline
+    p(7, -13, '#000', 3, 22); 
+    p(5, -15, '#000', 7, 7);  
 
     // --- 2. ROBE (Deep Indigo) ---
     p(-5, -1, '#2E1A47', 10, 11); 
     p(-4, -1, '#4B0082', 8, 10);  
     p(-4, -1, '#6A0DAD', 2, 9);   
+    // Gold trim at bottom
     p(-5, 8, '#B8860B', 10, 2);
     p(-4, 8, '#FFD700', 8, 1);
 
     // --- 3. HOOD & FACE ---
     p(-4, -10, '#4B0082', 8, 8);  
     p(-3, -10, '#6A0DAD', 6, 2);  
+    // Face shadow
     p(-3, -8, '#1a1a1a', 6, 6); 
+    // Skin
     p(-2, -5, '#FFDBAC', 4, 3);
     
+    // Glowing Eyes
     const eyeGlow = (Math.sin(time * 4) + 1) / 2;
     const eyeColor = `rgba(0, 255, 255, ${0.8 + 0.2 * eyeGlow})`;
     p(-2, -7, eyeColor, 1, 1);
     p(1, -7, eyeColor, 1, 1);
     
+    // Eye trail effect
     ctx.fillStyle = `rgba(0, 255, 255, ${0.2 * eyeGlow})`;
-    ctx.fillRect(cx - 2, y - 7, -2, 1);
-    ctx.fillRect(cx + 2, y - 7, 2, 1);
+    ctx.fillRect(cx - 5, y - 17.5, -5, 2.5); // Scaled coords
+    ctx.fillRect(cx + 5, y - 17.5, 5, 2.5);
 
     // --- 4. ORNATE STAFF ---
-    const staffX = 6;
-    p(staffX, -12, '#3E2723', 1, 18);
-    p(staffX, -8, '#5D4037', 1, 4); 
-    p(4, -13, '#B8860B', 5, 5); 
-    p(5, -14, '#FFD700', 1, 7); 
-    p(3, -12, '#FFD700', 7, 1); 
+    const staffX = 8; // Moved slightly further right
+    p(staffX, -12, '#3E2723', 1, 20); // Longer wood
+    p(staffX, -8, '#5D4037', 1, 6);   // Wood highlight
     
+    // Staff Head
+    p(6, -14, '#B8860B', 5, 5); 
+    p(7, -15, '#FFD700', 1, 7); 
+    p(5, -13, '#FFD700', 7, 1); 
+    
+    // Orb Core
     const orbGlow = (Math.cos(time * 3) + 1) / 2;
-    p(5, -12, '#00FFFF', 1, 1); 
-    ctx.fillStyle = `rgba(255, 255, 255, ${0.3 * orbGlow})`;
-    ctx.fillRect(cx + 4, y - 13, 3, 3);
+    p(7, -13, '#00FFFF', 1, 1); 
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.4 * orbGlow})`;
+    ctx.fillRect(cx + (staffX * 2.5) - 2.5, y + (-13 * 2.5) - 2.5, 7.5, 7.5);
 
-    // --- 5. HOLY AURA PARTICLES ---
-    for(let i=0; i<4; i++) {
-        const angle = time * 1.5 + (i * Math.PI / 2);
-        const dist = 9 + Math.sin(time * 2 + i) * 2;
+    // --- 5. HOLY AURA PARTICLES (Scaled out) ---
+    for(let i=0; i<5; i++) {
+        const angle = time * 1.5 + (i * Math.PI * 0.4);
+        const dist = 12 + Math.sin(time * 2 + i) * 3;
         const px = Math.cos(angle) * dist;
         const py = Math.sin(angle) * dist;
-        p(Math.round(px), Math.round(py), `rgba(255, 215, 0, ${0.4 * orbGlow})`);
+        p(px, py, `rgba(255, 215, 0, ${0.5 * orbGlow})`, 1, 1);
     }
 }
+
 
 function drawSelectionHalo() {
     const selectedUnit = document.querySelector('.unit.selected');
