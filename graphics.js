@@ -588,9 +588,107 @@ function drawNecromancer(cx, cy, tower) {
     p(-4, -7, '#4B0082', 24, 42);
 }
 function drawChainer(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#333', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & MYSTICAL ROBES (Deep Purple / Indigo / Silver Palette) ---
+    const robeColor = '#311B92'; // Deep indigo
+    const sashColor = '#6200EA'; // Vibrant purple
+    const detailColor = '#B0BEC5'; // Silver/Grey bandages
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-5, 11, '#1A237E', 11, 3); // Bottom shadow
+    
+    // Bandages/Wrappings
+    p(-5, 4, detailColor, 11, 1);
+    p(-5, 8, detailColor, 11, 1);
+    
+    // Center Medallion
+    p(-1, 5, '#000', 3, 3);
+    p(0, 6, '#00E5FF', 1, 1); // Glowing cyan core
+
+    // Boots (Dark)
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head (Hooded & Masked)
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, robeColor, 7, 7); // Hood interior
+    
+    // Soul Mask
+    p(-2, -6, '#FFF', 5, 5); // White mask base
+    p(-1, -5, '#000', 1, 1); // Eye L
+    p(1, -5, '#000', 1, 1);  // Eye R
+
+    // --- 2. SPIRITUAL CHAINS (Ethereal Shackles) ---
+    const chainColor = isAttacking ? '#00E5FF' : '#7986CB';
+    const chainLinks = 5;
+    
+    for(let i=0; i<2; i++) {
+        const side = i === 0 ? -1 : 1;
+        const phase = time * 3 + (i * Math.PI);
+        
+        for(let j=0; j<chainLinks; j++) {
+            const jPhase = phase + (j * 0.5);
+            const cxo = (side * 12) + Math.sin(jPhase) * 3;
+            const cyo = -2 + (j * 4) + Math.cos(jPhase) * 2;
+            
+            p(Math.round(cxo), Math.round(cyo), '#000', 3, 3); // Link outline
+            p(Math.round(cxo + 0.5), Math.round(cyo + 0.5), chainColor, 2, 2);
+        }
+    }
+
+    // --- 3. BINDING BURST (Attack) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 40 * flashIntensity;
+        ctx.shadowColor = '#00E5FF';
+        
+        // Chain Strike Energy
+        const burstSize = 25 * flashIntensity;
+        const bX = isLeft ? cx + (15 * S) : cx - (15 * S);
+        const bY = cy + (5 * S);
+        
+        ctx.strokeStyle = `rgba(0, 229, 255, ${flashIntensity})`;
+        ctx.lineWidth = 2 * S;
+        ctx.beginPath();
+        ctx.arc(bX, bY, burstSize, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Ethereal Sparks
+        for(let i=0; i<8; i++) {
+            const ang = (i / 8) * Math.PI * 2 + time * 10;
+            const dist = 10 + flashIntensity * 30;
+            const px = 15 + Math.cos(ang) * dist/S;
+            const py = 5 + Math.sin(ang) * dist/S;
+            p(Math.round(px), Math.round(py), '#E1F5FE', 1, 1);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. AMBIENT SOUL MIST ---
+    const mistGlow = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(103, 58, 183, ${0.1 * mistGlow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy + 5 * S, 30 * S, 0, Math.PI * 2);
+    ctx.fill();
 }
 function drawMonk(cx, cy, tower) {
     const time = lavaPhase;
@@ -710,9 +808,102 @@ function drawMonk(cx, cy, tower) {
     }
 }
 function drawTalisman(cx, cy, tower) {
-    const p = (ox, oy, color, w=3, h=3) => { ctx.fillStyle = color; ctx.fillRect(cx + ox*3, cy + oy*3, w, h); };
-    p(-5, -8, '#000', 30, 48);
-    p(-4, -7, '#DAA520', 24, 42);
+    const time = lavaPhase;
+    const area = tower.slotElement.dataset.area; 
+    const isLeft = area === 'left-slots'; 
+    
+    const now = Date.now();
+    const timeSinceShot = now - (tower.lastShot || 0);
+    const isAttacking = timeSinceShot < 300; 
+    
+    const S = 3.0; 
+    const p = (ox, oy, color, w=1, h=1) => {
+        ctx.fillStyle = color;
+        const finalOx = isLeft ? ox : -ox - w;
+        ctx.fillRect(cx + (finalOx * S), cy + (oy * S), w * S, h * S);
+    };
+
+    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
+
+    // --- 1. BODY & TRADITIONAL ROBES (Yellow / Brown / Black Palette) ---
+    const robeColor = '#FFD54F'; // Golden yellow
+    const detailColor = '#3E2723'; // Dark brown leather/trim
+    const patternColor = '#F44336'; // Red seal marks
+    
+    // Robe Body
+    p(-6, 0, '#000', 13, 15); // Outline
+    p(-5, 1, robeColor, 11, 13);
+    p(-1, 1, detailColor, 2, 11); // Center sash
+    p(-5, 11, '#FBC02D', 11, 3); // Bottom shadow
+    
+    // Seal Patterns on Robe
+    p(-4, 3, patternColor, 1, 3);
+    p(3, 3, patternColor, 1, 3);
+
+    // Boots
+    p(-4, 14, '#000', 4, 3);
+    p(1, 14, '#000', 4, 3);
+
+    // Head & Traditional Cap
+    const skinColor = '#F5DDC7';
+    p(-4, -9, '#000', 9, 9); 
+    p(-3, -8, skinColor, 7, 7);
+    
+    // The Cap (Black with Gold trim)
+    p(-3, -11, '#000', 7, 4);
+    p(-3, -11, '#212121', 7, 3);
+    p(-1, -10, '#FFD700', 3, 1); // Center gold emblem
+
+    // Face (Focused)
+    p(-2, -5, '#333', 1, 1);
+    p(2, -5, '#333', 1, 1);
+
+    // --- 2. FLOATING TALISMANS (Explosive Seals) ---
+    const talismanCount = 3;
+    for(let i=0; i<talismanCount; i++) {
+        const ang = (time * 2) + (i * (Math.PI * 2 / talismanCount));
+        const floatY = Math.sin(time * 3 + i) * 3;
+        const dist = 14 + (isAttacking ? flashIntensity * 10 : 0);
+        
+        let tx = Math.cos(ang) * dist;
+        let ty = -5 + Math.sin(ang) * (dist * 0.5) + floatY;
+        
+        // Talisman Paper (Yellow with Red Script)
+        p(Math.round(tx - 1), Math.round(ty - 3), '#000', 4, 7); // Outline
+        p(Math.round(tx), Math.round(ty - 2), '#FFF59D', 2, 5); // Base
+        p(Math.round(tx), Math.round(ty - 1), '#F44336', 2, 3); // Red Script
+    }
+
+    // --- 3. EXPLOSIVE SEAL BURST (Attack) ---
+    if (isAttacking) {
+        ctx.save();
+        ctx.shadowBlur = 45 * flashIntensity;
+        ctx.shadowColor = '#F44336';
+        
+        // Energy Burst
+        const burstSize = 18 * flashIntensity;
+        ctx.fillStyle = `rgba(255, 235, 59, ${flashIntensity})`;
+        ctx.beginPath();
+        ctx.arc(cx + (10 * S * (isLeft?1:-1)), cy - 5 * S, burstSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Flying Scripts
+        for(let i=0; i<8; i++) {
+            const sang = (i / 8) * Math.PI * 2 + time * 5;
+            const sdist = 20 * flashIntensity;
+            const sx = 10 + Math.cos(sang) * sdist;
+            const sy = -5 + Math.sin(sang) * sdist;
+            p(Math.round(sx), Math.round(sy), '#F44336', 1, 2);
+        }
+        ctx.restore();
+    }
+
+    // --- 4. AMBIENT SEAL GLOW ---
+    const glow = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 215, 0, ${0.05 * glow})`;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 28 * S, 0, Math.PI * 2);
+    ctx.fill();
 }
 function drawArcher(cx, cy, tower) {
     const time = lavaPhase;
