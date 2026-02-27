@@ -291,12 +291,13 @@ function drawGuardian(cx, cy, tower) {
 
 function drawApprentice(cx, cy, tower) {
     const time = lavaPhase;
-    const y = cy - 2; 
+    const y = cy; // Center in slot
 
-    const S = 1.5;
+    // Drawing at 1:1 logical pixels (no S multiplier for blocks)
+    // This gives a finer '64x64' style detail relative to the physical screen
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
-        ctx.fillRect(cx + (ox * S), y + (oy * S), w * S, h * S);
+        ctx.fillRect(cx + ox, y + oy, w, h);
     };
 
     // Attack Flash Logic
@@ -305,73 +306,76 @@ function drawApprentice(cx, cy, tower) {
     const isFlashing = timeSinceShot < 150; 
     const flashIntensity = isFlashing ? 1.0 - (timeSinceShot / 150) : 0;
 
-    // --- 1. BLACK OUTLINE ---
-    p(-6, -2, '#000', 12, 13); 
-    p(-5, -11, '#000', 10, 10); 
+    // --- 1. YOUNG EXORCIST (Young boy/girl in gray robe) ---
     
-    // Staff outline (Ornate Cross Head)
-    const staffX = 8;
-    p(staffX - 1, -12, '#000', 3, 22); // Staff body outline
-    p(staffX - 3, -16, '#000', 7, 3);  // Cross horizontal outline
-    p(staffX - 1, -18, '#000', 3, 7);  // Cross vertical outline
-
-    // --- 2. ROBE (Deep Indigo) ---
-    p(-5, -1, '#2E1A47', 10, 11); 
-    p(-4, -1, '#4B0082', 8, 10);  
-    p(-4, -1, '#6A0DAD', 2, 9);   
-    p(-5, 8, '#B8860B', 10, 2);
-    p(-4, 8, '#FFD700', 8, 1);
-
-    // --- 3. HOOD & FACE ---
-    p(-4, -10, '#4B0082', 8, 8);  
-    p(-3, -10, '#6A0DAD', 6, 2);  
-    p(-3, -8, '#1a1a1a', 6, 6); 
-    p(-2, -5, '#FFDBAC', 4, 3);
+    // Body / Robe (Oversized Gray Robe)
+    p(-5, 0, '#000', 11, 14); // Robe Outline
+    p(-4, 1, '#777', 9, 12);  // Base Gray
+    p(-3, 1, '#999', 7, 11);  // Lighter gray inside
+    p(-2, 1, '#BBB', 3, 10);  // Center fold
+    // Shadow at bottom
+    p(-4, 11, '#555', 9, 2);
     
-    // Glowing Eyes
-    const eyeGlow = (Math.sin(time * 4) + 1) / 2;
-    const eyeColor = `rgba(0, 255, 255, ${0.8 + 0.2 * eyeGlow})`;
-    p(-2, -7, eyeColor, 1, 1);
-    p(1, -7, eyeColor, 1, 1);
-    
-    ctx.fillStyle = `rgba(0, 255, 255, ${0.2 * eyeGlow})`;
-    ctx.fillRect(cx - (5*S), y - (7*S), -5*S, 1*S); 
-    ctx.fillRect(cx + (2*S), y - (7*S), 5*S, 1*S);
+    // Feet (Small boots)
+    p(-3, 13, '#222', 3, 2);
+    p(1, 13, '#222', 3, 2);
 
-    // --- 4. ORNATE STAFF (CROSS) ---
-    const staffColor = '#3E2723';
+    // Head / Face
+    p(-4, -9, '#000', 9, 9); // Head Outline
+    p(-3, -8, '#FFDBAC', 7, 7); // Skin
+    
+    // Hair (Young, messy hair - Dark Brown)
+    p(-4, -10, '#3E2723', 9, 3); // Top hair
+    p(-4, -8, '#3E2723', 2, 4);  // Left side hair
+    p(3, -8, '#3E2723', 2, 4);   // Right side hair
+    p(-1, -8, '#5D4037', 3, 1);  // Highlight
+    
+    // Eyes (Younger, larger appearance)
+    const eyeColor = isFlashing ? '#fff' : '#00FFFF';
+    p(-2, -5, eyeColor, 1, 1);
+    p(1, -5, eyeColor, 1, 1);
+    
+    // Face shadow/detail
+    p(-3, -3, 'rgba(0,0,0,0.1)', 7, 2);
+
+    // --- 2. ORNATE STAFF (Inherited design) ---
+    const staffX = 7;
     const crossColor = isFlashing ? `rgba(255, 255, 255, ${0.8 + 0.2 * flashIntensity})` : '#ffd700';
     
-    p(staffX, -11, staffColor, 1, 20); 
-    p(staffX, -7, '#5D4037', 1, 6);   
+    // Staff body
+    p(staffX, -10, '#000', 3, 22); // Outline
+    p(staffX+1, -9, '#3E2723', 1, 20); // Wood
     
-    // Cross Head (Like the bolt icon)
-    p(staffX - 2, -15, crossColor, 5, 1); // Horizontal bar
-    p(staffX, -17, crossColor, 1, 5);     // Vertical bar
+    // Cross Head
+    p(staffX - 2, -14, '#000', 7, 3);  // Cross horizontal outline
+    p(staffX, -16, '#000', 3, 7);      // Cross vertical outline
+    
+    p(staffX - 1, -13, crossColor, 5, 1); // Horizontal bar
+    p(staffX+1, -15, crossColor, 1, 5);   // Vertical bar
     
     // Center jewel / glow
     const orbGlow = (Math.cos(time * 3) + 1) / 2;
     const jewelColor = isFlashing ? '#fff' : '#00FFFF';
-    p(staffX, -15, jewelColor, 1, 1); 
+    p(staffX+1, -13, jewelColor, 1, 1); 
     
     // Attack Sparkle / Flash Effect
     if (isFlashing) {
         ctx.save();
-        ctx.shadowBlur = 15 * flashIntensity;
+        ctx.shadowBlur = 10 * flashIntensity;
         ctx.shadowColor = '#00e5ff';
-        const sparkleSize = 8 * flashIntensity;
+        const sparkleSize = 6 * flashIntensity;
         ctx.fillStyle = `rgba(255, 255, 255, ${flashIntensity})`;
-        ctx.fillRect(cx + (staffX * S) - (sparkleSize/2), y + (-15 * S) - (sparkleSize/2), sparkleSize, sparkleSize);
+        ctx.fillRect(cx + (staffX+1) - (sparkleSize/2), y + -13 - (sparkleSize/2), sparkleSize, sparkleSize);
         ctx.restore();
     }
 
-    // --- 5. HOLY AURA PARTICLES ---
-    for(let i=0; i<5; i++) {
-        const angle = time * 1.5 + (i * Math.PI * 0.4);
-        const dist = 10 + Math.sin(time * 2 + i) * 2;
+    // --- 3. HOLY AURA PARTICLES ---
+    for(let i=0; i<4; i++) {
+        const angle = time * 1.5 + (i * Math.PI * 0.5);
+        const dist = 12 + Math.sin(time * 2 + i) * 2;
         const px = Math.cos(angle) * dist;
         const py = Math.sin(angle) * dist;
-        p(px, py, `rgba(255, 215, 0, ${0.5 * orbGlow})`, 1, 1);
+        p(Math.round(px), Math.round(py), `rgba(255, 215, 0, ${0.4 * orbGlow})`, 1, 1);
     }
 }
 

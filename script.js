@@ -363,8 +363,9 @@ function shoot(tower, target) {
         const scaleY = gr.height / 640;
         const cx = ((tr.left + tr.width / 2) - gr.left) / scaleX;
         const cy = ((tr.top + tr.height / 2) - gr.top) / scaleY;
-        sx = (cx + (8 * 1.5)) * scaleX;
-        sy = (cy + (-15 * 1.5) - 2) * scaleY;
+        // New coordinates: staffX+1, -13 (logical jewel center)
+        sx = (cx + 8) * scaleX;
+        sy = (cy - 13) * scaleY;
     }
 
     proj.style.left = `${sx}px`; proj.style.top = `${sy}px`;
