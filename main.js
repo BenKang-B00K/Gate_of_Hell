@@ -6,15 +6,21 @@ class PreloadScene extends Phaser.Scene {
     constructor() { super('PreloadScene'); }
 
     preload() {
-        // [수정] Graphics로 실시간 텍스처 생성 (Base64 에러 방지)
+        // [수정] Graphics로 실시간 텍스처 생성 (base64 에러 및 회색박스 방지)
         const graphics = this.make.graphics({ x: 0, y: 0, add: false });
         
-        graphics.lineStyle(2, 0x00aaff);
+        // Guardian용 푸른색 플레이스홀더
+        graphics.fillStyle(0x00aaff, 1);
+        graphics.fillRect(0, 0, 32, 32);
+        graphics.lineStyle(2, 0xffffff, 1);
         graphics.strokeRect(0, 0, 32, 32);
         graphics.generateTexture('unit_placeholder', 32, 32);
         graphics.clear();
 
-        graphics.lineStyle(2, 0xff4444);
+        // Specter용 붉은색 플레이스홀더
+        graphics.fillStyle(0xff4444, 1);
+        graphics.fillRect(0, 0, 32, 32);
+        graphics.lineStyle(2, 0xffff00, 1);
         graphics.strokeRect(0, 0, 32, 32);
         graphics.generateTexture('enemy_placeholder', 32, 32);
 
@@ -71,14 +77,11 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-        // 1. 매니저 초기화
         this.dataManager = new DataManager(this);
         this.vfx = new VFXManager(this);
 
-        // [강제 초기 UI 업데이트] 레지스트리 세팅 후 즉시 반영
         if (window.syncUIWithRegistry) window.syncUIWithRegistry();
 
-        // 2. 물리 그룹
         this.allies = this.add.group({ runChildUpdate: true });
         this.enemies = this.physics.add.group({ classType: Specter, runChildUpdate: true });
         this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
@@ -237,7 +240,8 @@ class MainScene extends Phaser.Scene {
         const pe = this.registry.get('portalEnergy');
         if (pe >= this.registry.get('maxPortalEnergy')) {
             this.scene.pause();
-            document.getElementById('game-over-overlay').style.display = 'flex';
+            const over = document.getElementById('game-over-overlay');
+            if (over) over.style.display = 'flex';
             return;
         }
 
@@ -261,6 +265,28 @@ class MainScene extends Phaser.Scene {
         }).setOrigin(0.5).setDepth(100);
         this.tweens.add({ targets: txt, y: y - 100, alpha: 0, duration: 2000, ease: 'Cubic.easeOut', onComplete: () => txt.destroy() });
     }
+
+    tryCorrupt(guardian) {
+        if (!guardian) return;
+        const slot = guardian.currentSlot;
+        const tier = guardian.unitData.tier || 1;
+        const refund = Math.floor((guardian.spentSE || 30) * 0.5);
+        this.registry.set('money', this.registry.get('money') + refund);
+        if (guardian.altarEffect) guardian.altarEffect.destroy();
+        slot.isOccupied = false;
+        this.vfx.triggerCorruption(guardian.x, guardian.y);
+        this.showFloatingText(guardian.x, guardian.y, '성스러운 서약이 깨졌습니다', '#ff4444');
+        const fallenMap = { 1: ['traitorous_neophyte', 'broken_zealot'], 2: ['abyssal_eulogist', 'shadow_apostate'], 3: ['soul_starved_priest', 'fallen_paladin'], 4: ['avatar_void', 'harbinger_doom'] };
+        const selectedType = fallenMap[tier][Math.random() < 0.5 ? 0 : 1];
+        const enemyData = window.enemyCategories.fallen.find(e => e.type === selectedType);
+        const fallen = this.enemies.get();
+        if (fallen) {
+            const spawnX = Phaser.Math.Between(130, 230);
+            const stageMult = window.getStageMultipliers ? window.getStageMultipliers().hpStageMult : 1;
+            fallen.spawnFallenAtStart(spawnX, -50, guardian.unitData, enemyData, stageMult);
+        }
+        guardian.destroy();
+    }
 }
 
 function handleResize() {
@@ -274,7 +300,11 @@ function handleResize() {
 }
 
 const config = {
-    type: Phaser.AUTO, width: 360, height: 640, parent: 'game-container', pixelArt: true,
+    type: Phaser.AUTO,
+    width: 360, height: 640,
+    parent: 'game-container',
+    transparent: true, // [수정] 배경 투명화
+    pixelArt: true,
     physics: { default: 'arcade', arcade: { gravity: { y: 0 } } },
     scene: [PreloadScene, MainScene]
 };

@@ -1,70 +1,38 @@
-/* game.css - Battlefield 3-Column Layout */
+/* game.css - Layering & Interaction Fix */
+
+#game-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2; /* Road background is 1, Canvas is 2, Top UI is 3 */
+    pointer-events: auto !important;
+}
 
 #game-layout {
     position: absolute;
     top: 0;
     left: 0;
     width: 360px;
-    height: 416px; /* 65% of 640px */
+    height: 416px;
     display: flex;
     z-index: 10;
     pointer-events: none;
 }
 
-/* Absolute Positioned Controls */
-#restart-btn-top {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 150;
-    padding: 4px 8px;
-    background: #8b0000;
-    color: #fff;
-    border: 1px solid #ffd700;
-    font-size: 9px;
-    cursor: pointer;
+/* Slots and Buttons must remain interactive */
+.slot-area, #restart-btn-top, #tutorial-toggle-container {
     pointer-events: auto;
 }
-
-#tutorial-toggle-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 150;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 4px 6px;
-    border-radius: 3px;
-    font-size: 8px;
-    color: #ffd700;
-    pointer-events: auto;
-}
-
-/* Grid Layout: Left(120px) | Road(120px) | Right(120px) */
-.slot-area {
-    width: 120px;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(10, 20, 40, 0.6), transparent);
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns of slots */
-    padding: 50px 5px 10px 5px;
-    gap: 4px;
-    z-index: 10;
-}
-
-#left-slots { border-right: 1px solid rgba(255, 215, 0, 0.2); }
-#right-slots { border-left: 1px solid rgba(255, 215, 0, 0.2); }
 
 #road {
     width: 120px;
     height: 100%;
     background: radial-gradient(circle at center, #1a0505 0%, #050000 100%);
     position: relative;
+    z-index: 1; /* Below the canvas */
 }
 
-/* Corruption Overlays */
+/* Overlays should be above everything but under popups */
 #corruption-layer, #corruption-vignette {
     position: absolute;
     top: 0; left: 0; width: 360px; height: 640px;

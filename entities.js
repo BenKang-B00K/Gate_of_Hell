@@ -7,7 +7,10 @@
  */
 export class Guardian extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, unitData, textureKey) {
-        super(scene, x, y, textureKey);
+        // [수정] 텍스처 유효성 검사 및 플레이스홀더 적용
+        const finalKey = scene.textures.exists(textureKey) ? textureKey : 'unit_placeholder';
+        super(scene, x, y, finalKey);
+        
         this.scene = scene;
         this.unitData = unitData;
         this.textureKey = textureKey;
@@ -15,8 +18,9 @@ export class Guardian extends Phaser.GameObjects.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this, true); 
 
+        // [수정] 깊이 및 스케일 보정
         this.setScale(1.5);
-        this.setDepth(10);
+        this.setDepth(20); // 최상단 레이어
         this.setInteractive();
 
         this.setupUnit();
@@ -43,8 +47,6 @@ export class Guardian extends Phaser.GameObjects.Sprite {
 
     autoAttack() {
         if (!this.active || this.isFrozenTomb || this.isStunned) return;
-
-        // 씬이 유효한지 확인 (파괴 중인 경우 방지)
         if (!this.scene || !this.scene.enemies) return;
 
         const abyssTypes = ['warden', 'cocytus', 'reaper', 'eternal_wall'];
@@ -78,6 +80,7 @@ export class Guardian extends Phaser.GameObjects.Sprite {
             if (!enemy.active) return;
             const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, centerX, centerY);
             this.scene.physics.velocityFromAngle(Phaser.Math.RadToDeg(angle), 300, enemy.body.velocity);
+            
             this.scene.tweens.add({
                 targets: enemy, x: centerX + Phaser.Math.Between(-20, 20), y: centerY + Phaser.Math.Between(-20, 20),
                 duration: 500, ease: 'Power2',
@@ -136,7 +139,7 @@ export class Guardian extends Phaser.GameObjects.Sprite {
  */
 export class Specter extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture) {
-        super(scene, x, y, texture);
+        super(scene, x, y, 'enemy_placeholder');
     }
 
     spawn(x, y, enemyData, textureKey) {
@@ -145,9 +148,13 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.setVisible(true);
         this.setTint(0xffffff); 
         this.setAlpha(1.0);
+        
+        // [수정] 텍스처 유효성 검사
+        const finalKey = this.scene.textures.exists(textureKey) ? textureKey : 'enemy_placeholder';
+        this.setTexture(finalKey);
+
         this.enemyData = enemyData;
         this.textureKey = textureKey;
-        this.setTexture(textureKey);
         this.hp = enemyData.hp;
         this.maxHp = enemyData.hp;
         this.speed = enemyData.speed;
@@ -156,7 +163,11 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.initialX_pct = (x / 360) * 100;
         this.vxSign = Math.random() < 0.5 ? -1 : 1;
         this.hasBackstepped = false;
+
+        // [수정] 깊이 및 스케일 보정
         this.setScale(1.5);
+        this.setDepth(10); 
+        
         this.body.setSize(20, 20);
         if (this.anims.exists(`${textureKey}_walk`)) this.play(`${textureKey}_walk`);
     }
@@ -170,11 +181,13 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.enemyData = fallenData;
         const tex = originalUnitData.type === 'guardian' ? 'guardian_unit' : originalUnitData.type;
         this.textureKey = tex;
-        this.setTexture(tex);
         
-        // 시각 연출: 어두운 붉은 기운
+        const finalKey = this.scene.textures.exists(tex) ? tex : 'enemy_placeholder';
+        this.setTexture(finalKey);
+        
         this.setTint(0xff0000); 
         this.setAlpha(0.85);
+        this.setDepth(10);
 
         this.maxHp = fallenData.hp * difficultyMult;
         this.hp = this.maxHp;
@@ -189,15 +202,9 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.body.setSize(30, 30);
         if (this.anims.exists(`${this.textureKey}_walk`)) this.play(`${this.textureKey}_walk`);
 
-        // 등장 위압감 트윈
         this.scene.tweens.add({
             targets: this, scale: 2.2, duration: 300, yoyo: true, ease: 'Quad.easeIn'
         });
-    }
-
-    spawnFallen(x, y, originalUnitData, fallenData) {
-        // Legacy/Direct position spawn logic if needed, but refactored to use start spawn
-        this.spawnFallenAtStart(x, y, originalUnitData, fallenData, 1);
     }
 
     update(time, delta) {
@@ -213,7 +220,6 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         const globalSpeed = this.scene.registry.get('globalSpeedMult') || 1.0;
         const currentSpeed = this.speed * globalSpeed * frameAdjust;
 
-        // 특수 능력: Abyssal Eulogist 버프
         if (this.type === 'abyssal_eulogist' && time % 1000 < 20) {
             this.scene.enemies.getChildren().forEach(e => {
                 if (e !== this && e.active && Phaser.Math.Distance.Between(this.x, this.y, e.x, e.y) < 100) {
@@ -222,7 +228,6 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
             });
         }
 
-        // 특수 능력: Harbinger of Doom 소환
         if (this.type === 'harbinger_doom' && time % 4000 < 20) {
             this.scene.spawnEnemy(window.enemyCategories.basic[0]);
         }
@@ -247,18 +252,20 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
     }
 
     takeDamage(amount, isCrit) {
-        // Shadow Apostate: 10% 회피
         if (this.type === 'shadow_apostate' && Math.random() < 0.1) {
             this.scene.showDamageText(this.x, this.y, "MISS", false);
             return;
         }
-
-        // Avatar of Void: 20% 피해 감소
         if (this.type === 'avatar_void') amount *= 0.8;
 
         this.hp -= amount;
         this.setTint(isCrit ? 0xff0000 : 0xffffff); 
-        this.scene.time.delayedCall(50, () => { if (this.active) this.setTint(this.enemyData.type.startsWith('fallen') || ['traitorous_neophyte', 'broken_zealot', 'abyssal_eulogist', 'shadow_apostate', 'soul_starved_priest', 'fallen_paladin', 'avatar_void', 'harbinger_doom'].includes(this.type) ? 0x333333 : 0xffffff); });
+        this.scene.time.delayedCall(50, () => { 
+            if (this.active) {
+                const isFallen = ['traitorous_neophyte', 'broken_zealot', 'abyssal_eulogist', 'shadow_apostate', 'soul_starved_priest', 'fallen_paladin', 'avatar_void', 'harbinger_doom'].includes(this.type);
+                this.setTint(isFallen ? 0x333333 : 0xffffff); 
+            }
+        });
 
         const kbDist = (this.type === 'fallen_paladin') ? 0 : (isCrit ? 15 : 5);
         this.y_px = Math.max(0, this.y_px - kbDist); 
@@ -275,12 +282,13 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         if (this.anims.exists(`${this.textureKey}_dead`)) {
             this.play(`${this.textureKey}_dead`);
             this.body.stop();
+            this.hpBar.destroy();
             this.once('animationcomplete', () => this.kill());
         } else { this.kill(); }
     }
 
     reachPortal() {
-        this.scene.registry.set('portalEnergy', this.scene.registry.get('portalEnergy') + this.maxHp * 0.1);
+        this.scene.registry.set('portalEnergy', this.scene.registry.get('portalEnergy') + (this.maxHp * 0.1));
         if (this.scene.onPortalHit) this.scene.onPortalHit();
         this.kill();
     }
