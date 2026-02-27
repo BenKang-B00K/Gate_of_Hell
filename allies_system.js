@@ -59,6 +59,8 @@ function summonTower(targetSlot) {
         e.stopPropagation(); 
         if(Date.now()-ds<400) { 
             document.querySelectorAll('.unit').forEach(u=>u.classList.remove('selected')); 
+            const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
+            const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
             this.classList.add('selected'); 
             const t=towers.find(x=>x.element===this); 
             if(t){

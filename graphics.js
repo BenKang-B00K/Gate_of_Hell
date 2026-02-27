@@ -5251,25 +5251,60 @@ function drawSelectionHalo() {
     const cy = ((rect.top + rect.height / 2) - containerRect.top) * scaleY;
     
     const pulse = (Math.sin(lavaPhase * 4) + 1) / 2; 
-    const radius = ((rect.width * scaleX) / 2) + 12 + (pulse * 6);
+    const size = (rect.width * scaleX) * 0.6; // Halo size relative to unit
     
     ctx.save();
     ctx.imageSmoothingEnabled = true; 
     
-    // Outer glow
+    // 1. Divine Outer Glow
+    const gradient = ctx.createRadialGradient(cx, cy, size * 0.8, cx, cy, size * 1.5);
+    gradient.addColorStop(0, `rgba(255, 215, 0, ${0.2 * pulse})`);
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
     ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(255, 215, 0, ${0.3 + 0.3 * pulse})`;
-    ctx.lineWidth = 6;
+    ctx.arc(cx, cy, size * 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Corner Brackets (Crosshair style)
+    ctx.strokeStyle = '#ffd700';
+    ctx.lineWidth = 4;
+    const bSize = 20 + pulse * 5;
+    const offset = size + 5;
+
+    // Top-Left
+    ctx.beginPath();
+    ctx.moveTo(cx - offset, cy - offset + bSize);
+    ctx.lineTo(cx - offset, cy - offset);
+    ctx.lineTo(cx - offset + bSize, cy - offset);
     ctx.stroke();
 
-    // Inner markings
-    ctx.strokeStyle = '#ffd700';
-    const markSize = 6;
-    ctx.fillRect(cx - 1.5, cy - radius - markSize, 3, markSize * 2); 
-    ctx.fillRect(cx - 1.5, cy + radius - markSize, 3, markSize * 2); 
-    ctx.fillRect(cx - radius - markSize, cy - 1.5, markSize * 2, 3); 
-    ctx.fillRect(cx + radius - markSize, cy - 1.5, markSize * 2, 3); 
+    // Top-Right
+    ctx.beginPath();
+    ctx.moveTo(cx + offset, cy - offset + bSize);
+    ctx.lineTo(cx + offset, cy - offset);
+    ctx.lineTo(cx + offset - bSize, cy - offset);
+    ctx.stroke();
+
+    // Bottom-Left
+    ctx.beginPath();
+    ctx.moveTo(cx - offset, cy + offset - bSize);
+    ctx.lineTo(cx - offset, cy + offset);
+    ctx.lineTo(cx - offset + bSize, cy + offset);
+    ctx.stroke();
+
+    // Bottom-Right
+    ctx.beginPath();
+    ctx.moveTo(cx + offset, cy + offset - bSize);
+    ctx.lineTo(cx + offset, cy + offset);
+    ctx.lineTo(cx + offset - bSize, cy + offset);
+    ctx.stroke();
+
+    // 3. Central Target Ring
+    ctx.strokeStyle = `rgba(255, 215, 0, ${0.5 + 0.5 * pulse})`;
+    ctx.setLineDash([5, 10]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, size, 0, Math.PI * 2);
+    ctx.stroke();
 
     ctx.restore();
     disableSmoothing();

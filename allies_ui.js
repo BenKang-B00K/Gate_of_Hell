@@ -58,7 +58,6 @@ function showRangeIndicator(tower) {
         indicator.style.left = `${centerX}px`;
         indicator.style.top = `${centerY}px`;
         gameContainer.appendChild(indicator);
-        setTimeout(() => { if (indicator.parentElement) indicator.remove(); }, 3000);
     }
 
     const auraUnits = ['tracker', 'seer', 'commander', 'eternal_wall'];
@@ -76,7 +75,6 @@ function showRangeIndicator(tower) {
         auraIndicator.style.left = `${centerX}px`;
         auraIndicator.style.top = `${centerY}px`;
         gameContainer.appendChild(auraIndicator);
-        setTimeout(() => { if (auraIndicator.parentElement) auraIndicator.remove(); }, 3000);
     }
 }
 
