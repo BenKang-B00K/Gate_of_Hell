@@ -488,17 +488,15 @@ function drawMonk(cx, cy) {
 
 function drawApprentice(cx, cy) {
     const time = lavaPhase;
-    const floatingY = Math.sin(time * 2) * 4; 
-    // Shift slightly up to center the 64x64 sprite in the slot
-    const y = cy + floatingY - 10; 
+    const floatingY = Math.sin(time * 2) * 3; 
+    // Shift slightly up to center the sprite in the slot
+    const y = cy + floatingY - 5; 
 
-    // Helper for 64x64 scale. We draw at a larger logical size.
-    // cx, cy is the center. 
-    // We want the total width to be ~48-56px and height ~64px.
+    // Reduced scale from 2.5 to 1.8 to fit slot perfectly
+    const S = 1.8;
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
-        // Multiply by 2.5 to scale up the original ~15x25 to roughly ~37x62
-        ctx.fillRect(cx + (ox * 2.5), y + (oy * 2.5), w * 2.5, h * 2.5);
+        ctx.fillRect(cx + (ox * S), y + (oy * S), w * S, h * S);
     };
 
     // --- 1. BLACK OUTLINE ---
@@ -532,11 +530,11 @@ function drawApprentice(cx, cy) {
     
     // Eye trail effect
     ctx.fillStyle = `rgba(0, 255, 255, ${0.2 * eyeGlow})`;
-    ctx.fillRect(cx - 5, y - 17.5, -5, 2.5); // Scaled coords
-    ctx.fillRect(cx + 5, y - 17.5, 5, 2.5);
+    ctx.fillRect(cx - (5*S), y - (7*S), -5*S, 1*S); 
+    ctx.fillRect(cx + (2*S), y - (7*S), 5*S, 1*S);
 
     // --- 4. ORNATE STAFF ---
-    const staffX = 8; // Moved slightly further right
+    const staffX = 8; 
     p(staffX, -12, '#3E2723', 1, 20); // Longer wood
     p(staffX, -8, '#5D4037', 1, 6);   // Wood highlight
     
@@ -549,12 +547,12 @@ function drawApprentice(cx, cy) {
     const orbGlow = (Math.cos(time * 3) + 1) / 2;
     p(7, -13, '#00FFFF', 1, 1); 
     ctx.fillStyle = `rgba(255, 255, 255, ${0.4 * orbGlow})`;
-    ctx.fillRect(cx + (staffX * 2.5) - 2.5, y + (-13 * 2.5) - 2.5, 7.5, 7.5);
+    ctx.fillRect(cx + (staffX * S) - S, y + (-13 * S) - S, 3*S, 3*S);
 
     // --- 5. HOLY AURA PARTICLES (Scaled out) ---
     for(let i=0; i<5; i++) {
         const angle = time * 1.5 + (i * Math.PI * 0.4);
-        const dist = 12 + Math.sin(time * 2 + i) * 3;
+        const dist = 10 + Math.sin(time * 2 + i) * 2;
         const px = Math.cos(angle) * dist;
         const py = Math.sin(angle) * dist;
         p(px, py, `rgba(255, 215, 0, ${0.5 * orbGlow})`, 1, 1);
