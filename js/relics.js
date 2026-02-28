@@ -227,6 +227,9 @@ function renderRelicsGrid() {
                 slot.classList.add('selected');
                 showRelicDetail(id);
             });
+            slot.addEventListener('mouseenter', () => {
+                showRelicDetail(id);
+            });
         }
         return slot;
     };
@@ -249,29 +252,29 @@ function renderRelicsGrid() {
 }
 
 function renderTotalBonuses() {
-    const details = document.getElementById('relic-details');
-    if (!details || document.querySelector('.relic-slot.selected')) return;
+    const bonusPane = document.getElementById('relic-bonus-pane');
+    if (!bonusPane) return;
 
-    let bonusHtml = '<div class="relic-detail-title">총 유물 보너스</div>';
+    let bonusHtml = '<div class="relic-bonus-title">총 유물 보너스</div>';
     let hasAnyBonus = false;
 
     const labels = {
-        damage: "글로벌 피해량",
-        range: "글로벌 사거리",
-        cooldown: "쿨다운 감소",
-        se_gain: "SE 획득량 증가",
-        stun_duration: "기절 지속 시간",
+        damage: "공격력 증가",
+        range: "사거리 보너스",
+        cooldown: "쿨다운 단축",
+        se_gain: "SE 획득 보너스",
+        stun_duration: "기절 시간 강화",
         crit_damage: "치명타 피해량",
         crit_chance: "치명타 확률",
         pierce_chance: "관통 확률",
-        enemy_hp: "적 체력 감소",
-        enemy_speed: "적 이동 속도 감소",
-        treasure_chance: "보물 악령 출현율",
-        slow_strength: "둔화 강도",
+        enemy_hp: "악령 체력 약화",
+        enemy_speed: "악령 속도 둔화",
+        treasure_chance: "보물 출현율",
+        slow_strength: "둔화 효과 강화",
         portal_dmg_reduction: "포탈 안정성",
-        summon_cost_reduction: "소환 비용 감소",
+        summon_cost_reduction: "소환 비용 절감",
         execute_threshold: "처형 임계치",
-        aura_range: "오라 범위 보너스",
+        aura_range: "오라 범위 확장",
         sell_refund: "판매 환급 보너스"
     };
 
@@ -284,32 +287,29 @@ function renderTotalBonuses() {
                 dispVal = val > 0 ? `+${val.toFixed(0)}` : `${val.toFixed(0)}`;
             }
             
-            bonusHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:27px;">
+            bonusHtml += `<div class="total-bonus-item">
                 <span>${labels[key]}</span>
-                <span style="color:#00ff00;">${dispVal}</span>
+                <span class="val">${dispVal}</span>
             </div>`;
         }
     }
 
     if (!hasAnyBonus) {
-        bonusHtml += '<div style="color:#666; font-style:italic; margin-top:30px; font-size:24px;">아직 수집된 유물이 없습니다. 적을 처치하여 유물을 찾으세요.</div>';
+        bonusHtml += '<div style="color:#666; font-style:italic; text-align:center; margin-top:30px; font-size:24px;">수집된 유물이 없습니다.</div>';
     }
 
-    details.innerHTML = bonusHtml;
+    bonusPane.innerHTML = bonusHtml;
 }
 
 function showRelicDetail(id) {
-    const details = document.getElementById('relic-details');
-    if (!details) return;
+    const infoPane = document.getElementById('relic-info-pane');
+    if (!infoPane) return;
     const data = relicsData[id];
     const count = collectedRelics[id] || 0;
     
-    details.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <div class="relic-detail-title">${data.name} ${count > 1 ? '(x' + count + ')' : ''}</div>
-            <button onclick="document.querySelectorAll('.relic-slot').forEach(s=>s.classList.remove('selected')); renderRelicsGrid();" style="background:#333; border:none; color:#888; font-size:21px; cursor:pointer; padding:6px 12px; border-radius:9px;">뒤로가기</button>
-        </div>
-        <div class="relic-detail-effect">${data.effect} (최대 중첩: ${data.maxStack})</div>
+    infoPane.innerHTML = `
+        <div class="relic-detail-title">${data.name} ${count > 1 ? '(x' + count + ')' : ''}</div>
+        <div class="relic-detail-effect">${data.effect}</div>
         <div class="relic-detail-lore">"${data.lore}"</div>
     `;
 }

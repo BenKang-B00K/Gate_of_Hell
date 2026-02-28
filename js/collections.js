@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         collectionsBtn.onclick = () => {
             collectionsOverlay.style.display = 'flex';
             isPaused = true;
-            renderGhostGrid('basic'); // First category
+            renderGhostGrid('basic'); 
         };
     }
 
@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.onclick = () => {
             catBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            // Mapping UI buttons to categories
             const catMap = {
                 'normal': 'basic',
                 'enhanced': 'enhanced',
@@ -66,13 +65,12 @@ function renderGhostGrid(category) {
         const item = document.createElement('div');
         const isUnlocked = (window.encounteredEnemies && window.encounteredEnemies.has(enemy.type));
         item.className = `col-item ${isUnlocked ? '' : 'locked'}`;
-        item.innerText = enemy.icon;
+        item.innerText = isUnlocked ? enemy.icon : '?';
         
         if (isUnlocked) {
             item.onclick = () => showGhostDetail(enemy);
             item.onmouseenter = () => {
                 if (typeof showEnemyInfo === 'function') {
-                    // Create a temporary object that matches the expected format for showEnemyInfo
                     const tempEnemy = {
                         type: enemy.type,
                         hp: enemy.hp,
@@ -92,7 +90,6 @@ function renderGhostGrid(category) {
         grid.appendChild(item);
     });
     
-    // Fill remaining to maintain 7 columns grid look (7 cols * 2 rows = 14)
     const minItems = 14;
     for (let i = pool.length; i < minItems; i++) {
         const empty = document.createElement('div');
@@ -103,10 +100,9 @@ function renderGhostGrid(category) {
 }
 
 function showGhostDetail(enemy) {
-    const details = document.getElementById('collection-details');
+    const infoPane = document.getElementById('col-info-pane');
     const killCount = (window.killCounts && window.killCounts[enemy.type]) || 0;
     
-    // Original Korean Name Mapping
     const enemyNames = {
         'normal': '평범한 원령', 'mist': '떠도는 안개', 'memory': '흐릿한 기억',
         'shade': '깜빡이는 그림자', 'tank': '죄악의 괴수', 'runner': '저주받은 도둑',
@@ -122,7 +118,7 @@ function showGhostDetail(enemy) {
 
     const dispName = enemyNames[enemy.type] || enemy.name || enemy.type;
     
-    details.innerHTML = `
+    infoPane.innerHTML = `
         <div class="col-detail-header">
             <div class="col-detail-icon">${enemy.icon}</div>
             <div class="col-detail-title-group">
@@ -142,7 +138,6 @@ function renderExorcistTree() {
     const container = document.getElementById('exorcist-tree-container');
     container.innerHTML = '';
     
-    // Rows: Apprentice -> Tier 2 -> Tier 3 -> Tier 4
     const trees = [
         { apprentice: 'apprentice', t2: 'chainer', t3: 'executor', t4: 'transmuter' },
         { apprentice: 'apprentice', t2: 'talisman', t3: 'grandsealer', t4: 'cursed_talisman' },
@@ -161,12 +156,24 @@ function renderExorcistTree() {
     trees.forEach(tree => {
         const row = document.createElement('div');
         row.className = 'ex-tree-row';
+        
         row.appendChild(createExNode(tree.apprentice));
+        row.appendChild(createArrow());
         row.appendChild(createExNode(tree.t2));
+        row.appendChild(createArrow());
         row.appendChild(createExNode(tree.t3));
+        row.appendChild(createArrow());
         row.appendChild(createExNode(tree.t4));
+        
         container.appendChild(row);
     });
+}
+
+function createArrow() {
+    const arrow = document.createElement('div');
+    arrow.className = 'ex-arrow';
+    arrow.innerHTML = '▶';
+    return arrow;
 }
 
 function createExNode(type) {
@@ -178,31 +185,28 @@ function createExNode(type) {
     const isUnlocked = (window.unlockedUnits && window.unlockedUnits.has(type));
     
     node.innerHTML = `
-        <div class="icon ${isUnlocked ? '' : 'locked'}">${data.icon}</div>
-        <div class="name">${data.name}</div>
+        <div class="icon ${isUnlocked ? '' : 'locked'}">${isUnlocked ? data.icon : '?'}</div>
+        <div class="name">${isUnlocked ? data.name : '???'}</div>
     `;
     
-    node.onclick = () => showExorcistDetail(data);
-    node.onmouseenter = () => {
-        if (isUnlocked && typeof showUnitInfo === 'function') {
-            // Create a temporary tower-like object for showUnitInfo
-            const tempTower = {
-                data: data,
-                cooldown: data.cooldown,
-                damageBonus: 0
-            };
-            showUnitInfo(tempTower);
-        }
-    };
-    node.onmouseleave = () => {
-        if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
-    };
+    if (isUnlocked) {
+        node.onclick = () => showExorcistDetail(data);
+        node.onmouseenter = () => {
+            if (typeof showUnitInfo === 'function') {
+                const tempTower = { data: data, cooldown: data.cooldown, damageBonus: 0 };
+                showUnitInfo(tempTower);
+            }
+        };
+        node.onmouseleave = () => {
+            if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+        };
+    }
     return node;
 }
 
 function showExorcistDetail(unit) {
-    const details = document.getElementById('collection-details');
-    details.innerHTML = `
+    const infoPane = document.getElementById('col-info-pane');
+    infoPane.innerHTML = `
         <div class="col-detail-header">
             <div class="col-detail-icon">${unit.icon}</div>
             <div class="col-detail-title-group">
