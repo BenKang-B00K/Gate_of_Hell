@@ -41,10 +41,10 @@ function createSlots(containerId, count) {
  * Main Initialization for Ally System UI
  */
 function initAllies() {
-    // 1. Setup Slots
+    // 1. Setup Slots (7x3 grid = 21 slots per side)
     slots.length = 0; 
-    createSlots('left-slots', 24); 
-    createSlots('right-slots', 24);
+    createSlots('left-slots', 21); 
+    createSlots('right-slots', 21);
 
     // 2. Summon Button Logic
     const tc = document.getElementById('tower-card');
@@ -283,22 +283,22 @@ function showResourceInfo(type) {
 
     if (type === 'se') {
         d.innerHTML = `
-            <div style="color:#00e5ff; font-weight:bold; font-size:39px; margin-bottom:6px;">소울 에너지 (SE)</div>
-            <div style="display:inline-block; background:#008ba3; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">정수</div>
+            <div style="color:#00e5ff; font-weight:bold; font-size:39px; margin-bottom:6px;">Soul Energy (SE)</div>
+            <div style="display:inline-block; background:#008ba3; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">소울 에너지</div>
             <div style="font-size:27px; color:#bbb; line-height:1.2;">퇴마사를 소환하고 진화시키는 데 사용됩니다. 악령을 처치하여 획득합니다.</div>
             <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"정화된 미련의 결정체로, 산 자의 세계를 지키는 성스러운 기술의 원동력입니다."</div>
         `;
     } else if (type === 'pe') {
         d.innerHTML = `
-            <div style="color:#ff00ff; font-weight:bold; font-size:39px; margin-bottom:6px;">포탈 오염도 (PE)</div>
-            <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">타락</div>
+            <div style="color:#ff00ff; font-weight:bold; font-size:39px; margin-bottom:6px;">Portal Energy (PE)</div>
+            <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">포탈 오염도</div>
             <div style="font-size:27px; color:#bbb; line-height:1.2;">문의 불안정성을 나타냅니다. 악령이 통과할 때마다 증가하며, 100%에 도달하면 게임 오버됩니다.</div>
             <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"두 세계 사이의 가교는 연약합니다. 반대편의 슬픔이 너무 많이 유입되면 완전히 산산조각날 것입니다."</div>
         `;
     } else if (type === 'rs') {
         d.innerHTML = `
-            <div style="color:#ff1744; font-weight:bold; font-size:39px; margin-bottom:6px;">남은 악령 (RS)</div>
-            <div style="display:inline-block; background:#b71c1c; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">침공 진행도</div>
+            <div style="color:#ff1744; font-weight:bold; font-size:39px; margin-bottom:6px;">Remaining Specters (RS)</div>
+            <div style="display:inline-block; background:#b71c1c; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">남은 악령</div>
             <div style="font-size:27px; color:#bbb; line-height:1.2;">현재 Depth에서 아직 소멸시키지 못한 악령들의 수입니다.</div>
             <div style="color:#00ff00; font-size:24px; margin-top:12px;">* 모든 악령을 처치하면 더 깊은 심연으로 내려갑니다.</div>
             <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"그들은 그림자의 파도처럼 몰려옵니다. 마지막 하나가 쓰러질 때까지 굳건히 버티십시오."</div>

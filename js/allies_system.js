@@ -27,6 +27,59 @@ function executeMove(unit, targetSlot) {
 
 function cancelMovement() { if (draggedUnit) draggedUnit.classList.remove('move-ready'); draggedUnit = null; isMovingUnit = false; }
 
+function showRangeIndicator(tower) {
+    const ri = document.getElementById('range-indicator');
+    if (ri) ri.remove();
+    const ai = document.getElementById('aura-indicator');
+    if (ai) ai.remove();
+
+    const indicator = document.createElement('div');
+    indicator.id = 'range-indicator';
+    indicator.className = 'range-indicator';
+    
+    // Scale for 1080p design but using 360 logical coordinates
+    const finalRange = tower.range + (tower.rangeBonus || 0);
+    indicator.style.width = `${finalRange * 2}px`;
+    indicator.style.height = `${finalRange * 2}px`;
+    
+    const rect = tower.element.getBoundingClientRect();
+    const containerRect = document.getElementById('game-container').getBoundingClientRect();
+    
+    indicator.style.left = `${(rect.left + rect.width / 2) - containerRect.left}px`;
+    indicator.style.top = `${(rect.top + rect.height / 2) - containerRect.top}px`;
+    
+    document.getElementById('game-container').appendChild(indicator);
+
+    // If support unit, also show aura range
+    if (['tracker', 'seer', 'commander', 'eternal_wall'].includes(tower.data.type)) {
+        showAuraIndicator(tower);
+    }
+}
+
+function showAuraIndicator(tower) {
+    const ai = document.getElementById('aura-indicator');
+    if (ai) ai.remove();
+
+    const indicator = document.createElement('div');
+    indicator.id = 'aura-indicator';
+    indicator.className = 'aura-indicator';
+    
+    // Aura range: Base 195px covers ~1 tile in 1080p
+    const relicAuraBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('aura_range') : 0;
+    const auraRange = 195 + relicAuraBonus;
+    
+    indicator.style.width = `${auraRange * 2}px`;
+    indicator.style.height = `${auraRange * 2}px`;
+    
+    const rect = tower.element.getBoundingClientRect();
+    const containerRect = document.getElementById('game-container').getBoundingClientRect();
+    
+    indicator.style.left = `${(rect.left + rect.width / 2) - containerRect.left}px`;
+    indicator.style.top = `${(rect.top + rect.height / 2) - containerRect.top}px`;
+    
+    document.getElementById('game-container').appendChild(indicator);
+}
+
 function summonTower(targetSlot) {
     // 1. targetSlot validation
     if (!targetSlot || targetSlot.classList.contains('occupied')) return;
