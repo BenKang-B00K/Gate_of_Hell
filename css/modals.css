@@ -115,7 +115,7 @@
 }
 
 #collections-content {
-    width: 1000px; height: 85vh; padding: 50px;
+    width: 1000px; max-height: 90%; padding: 50px;
     background: linear-gradient(145deg, #1a1a1a, #050505);
     border: 5px solid #ffd700; border-radius: 50px 50px 20px 20px;
     display: flex; flex-direction: column; gap: 20px;
@@ -174,9 +174,9 @@
 /* Ghost Section Styles */
 .col-category-nav { display: flex; gap: 10px; margin-bottom: 10px; }
 .col-cat-btn {
-    padding: 10px 20px; font-size: 20px; font-weight: bold;
+    padding: 15px 30px; font-size: 28px; font-weight: bold;
     background: #111; color: #aaa; border: 1px solid #333;
-    border-radius: 8px; cursor: pointer; transition: all 0.2s;
+    border-radius: 12px; cursor: pointer; transition: all 0.2s;
 }
 .col-cat-btn.active { background: #333; color: #ffd700; border-color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
 

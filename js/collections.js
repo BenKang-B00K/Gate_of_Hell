@@ -1,5 +1,8 @@
 /* js/collections.js - Collections (도감) System */
 
+let colInfoLockedUntil = 0;
+let colInfoResetTimer = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const collectionsBtn = document.getElementById('collections-btn');
     const collectionsOverlay = document.getElementById('collections-overlay');
@@ -11,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
         collectionsBtn.onclick = () => {
             collectionsOverlay.style.display = 'flex';
             isPaused = true;
+            colInfoLockedUntil = 0;
+            resetColInfo();
             renderGhostGrid('basic'); 
         };
     }
@@ -30,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.collections-section').forEach(s => s.classList.remove('active'));
             document.getElementById(`${tab}-section`).classList.add('active');
             
+            colInfoLockedUntil = 0;
+            resetColInfo();
             if (tab === 'ghosts') renderGhostGrid('basic');
             else if (tab === 'exorcists') renderExorcistTree();
         };
@@ -50,6 +57,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function resetColInfo() {
+    if (Date.now() < colInfoLockedUntil) return;
+    const infoPane = document.getElementById('col-info-pane');
+    if (infoPane) {
+        infoPane.innerHTML = `
+            <div class="info-default-text">Gate of Hell<br>도감</div>
+        `;
+    }
+}
+
+function startColInfoResetTimer() {
+    if (colInfoResetTimer) clearTimeout(colInfoResetTimer);
+    colInfoResetTimer = setTimeout(() => {
+        colInfoLockedUntil = 0;
+        resetColInfo();
+    }, 15000); // 15 seconds lock
+}
+
 function renderGhostGrid(category) {
     const grid = document.getElementById('ghost-grid');
     grid.innerHTML = '';
@@ -68,21 +93,25 @@ function renderGhostGrid(category) {
         item.innerText = isUnlocked ? enemy.icon : '?';
         
         if (isUnlocked) {
-            item.onclick = () => showGhostDetail(enemy);
+            item.onclick = () => {
+                showGhostDetail(enemy);
+                colInfoLockedUntil = Date.now() + 15000;
+                startColInfoResetTimer();
+            };
             item.onmouseenter = () => {
+                if (Date.now() > colInfoLockedUntil) {
+                    showGhostDetail(enemy);
+                }
                 if (typeof showEnemyInfo === 'function') {
                     const tempEnemy = {
-                        type: enemy.type,
-                        hp: enemy.hp,
-                        maxHp: enemy.hp,
-                        defense: enemy.defense || 0,
-                        desc: enemy.desc,
-                        data: { name: enemy.name, lore: enemy.lore }
+                        type: enemy.type, hp: enemy.hp, maxHp: enemy.hp, defense: enemy.defense || 0,
+                        desc: enemy.desc, data: { name: enemy.name, lore: enemy.lore }
                     };
                     showEnemyInfo(tempEnemy);
                 }
             };
             item.onmouseleave = () => {
+                resetColInfo();
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             };
         }
@@ -124,8 +153,8 @@ function showGhostDetail(enemy) {
             <div class="col-detail-title-group">
                 <div class="col-detail-title">${dispName}</div>
                 <div class="col-detail-stats">
-                    <span>HP: ${Math.floor(enemy.hp)}</span>
-                    <span>보상: ${enemy.reward} SE</span>
+                    <span>체력: ${Math.floor(enemy.hp)}</span>
+                    <span>보상: ${enemy.reward} Soul Energy</span>
                     <span>처치 수: ${killCount}</span>
                 </div>
             </div>
@@ -190,14 +219,22 @@ function createExNode(type) {
     `;
     
     if (isUnlocked) {
-        node.onclick = () => showExorcistDetail(data);
+        node.onclick = () => {
+            showExorcistDetail(data);
+            colInfoLockedUntil = Date.now() + 15000;
+            startColInfoResetTimer();
+        };
         node.onmouseenter = () => {
+            if (Date.now() > colInfoLockedUntil) {
+                showExorcistDetail(data);
+            }
             if (typeof showUnitInfo === 'function') {
                 const tempTower = { data: data, cooldown: data.cooldown, damageBonus: 0 };
                 showUnitInfo(tempTower);
             }
         };
         node.onmouseleave = () => {
+            resetColInfo();
             if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
         };
     }

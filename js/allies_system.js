@@ -254,6 +254,9 @@ function summonTower(targetSlot) {
     };
     towers.push(tower);
 
+    // [User Request] Record unlock for collections
+    if (typeof recordUnlock === 'function') recordUnlock('apprentice');
+
     // 8. Post-summon updates & synchronization
     window.towerCost += 5;
     updateUnitOverlayButtons(tower);
@@ -350,6 +353,10 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
+    
+    // [User Request] Record unlock for collections
+    if (typeof recordUnlock === 'function') recordUnlock(nt.type);
+
     updateUnitOverlayButtons(t);
     updateSummonButtonState();
     if (fromInfo) showUnitInfo(t);
@@ -401,6 +408,9 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; 
     
+    // [User Request] Record unlock for collections
+    if (typeof recordUnlock === 'function') recordUnlock(nt.type);
+
     if(nt.type==='rampart') tower.charges=5;
     updateUnitOverlayButtons(tower);
     updateSummonButtonState();
