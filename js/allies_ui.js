@@ -255,7 +255,7 @@ function startInfoResetTimer() {
     if (infoResetTimer) clearTimeout(infoResetTimer);
     infoResetTimer = setTimeout(() => {
         const d = document.getElementById('unit-info');
-        if (d) d.innerHTML = '<div class="info-default-text">명계의<br><span style="font-size:30px; opacity:0.8;">수호자들</span></div>';
+        if (d) d.innerHTML = '<div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 공세</span></div>';
         if(corruptBtnElement) { corruptBtnElement.remove(); corruptBtnElement = null; }
     }, 10000);
 }
@@ -284,7 +284,7 @@ function showResourceInfo(type) {
         d.innerHTML = `
             <div style="color:#ff1744; font-weight:bold; font-size:39px; margin-bottom:6px;">남은 악령 (RS)</div>
             <div style="display:inline-block; background:#b71c1c; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">침공 진행도</div>
-            <div style="font-size:27px; color:#bbb; line-height:1.2;">현재 심도에서 아직 소멸시키지 못한 악령들의 수입니다.</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">현재 Depth에서 아직 소멸시키지 못한 악령들의 수입니다.</div>
             <div style="color:#00ff00; font-size:24px; margin-top:12px;">* 모든 악령을 처치하면 더 깊은 심연으로 내려갑니다.</div>
             <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"그들은 그림자의 파도처럼 몰려옵니다. 마지막 하나가 쓰러질 때까지 굳건히 버티십시오."</div>
         `;

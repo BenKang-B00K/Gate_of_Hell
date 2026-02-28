@@ -394,9 +394,10 @@ function spawnBoss() {
         enemyDiv.classList.remove('spawning');
     }, 500);
 
-    // HP Bar
+    // HP Bar (DOM element used for logic, hidden from view)
     const hpBg = document.createElement('div');
     hpBg.className = 'hp-bar-bg';
+    hpBg.style.display = 'none'; // Hide DOM bar, use Canvas rendering instead
     const hpFill = document.createElement('div');
     hpFill.className = 'hp-bar-fill';
     hpBg.appendChild(hpFill);
@@ -547,9 +548,10 @@ function spawnEnemy() {
         enemyDiv.classList.remove('spawning');
     }, 500);
 
-    // HP Bar
+    // HP Bar (DOM element used for logic, hidden from view)
     const hpBg = document.createElement('div');
     hpBg.className = 'hp-bar-bg';
+    hpBg.style.display = 'none'; // Hide DOM bar, use Canvas rendering instead
     const hpFill = document.createElement('div');
     hpFill.className = 'hp-bar-fill';
     hpBg.appendChild(hpFill);
