@@ -132,8 +132,8 @@ function updateSummonButtonState() {
     const isBroke = money < finalTowerCost;
 
     if (sw) {
-        if (isMax) { sw.innerText = 'MAX UNITS'; sw.style.display = 'block'; }
-        else if (isBroke) { sw.innerText = 'NOT ENOUGH SE'; sw.style.display = 'block'; }
+        if (isMax) { sw.innerText = '인원 초과'; sw.style.display = 'block'; }
+        else if (isBroke) { sw.innerText = 'SE 부족'; sw.style.display = 'block'; }
         else { sw.style.display = 'none'; }
     }
 
@@ -160,22 +160,38 @@ function showUnitInfo(tower) {
     const finalDmg = Math.round(data.damage * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
     
     let th = `<div style="color:#ffd700; font-weight:bold; font-size:32px; margin-bottom:4px;">${data.name}</div>`;
-    let ih = `<div style="font-size:24px; color:#bbb; margin-bottom:8px;">ATK: ${finalDmg} | Range: ${data.range} | CD: ${(tower.cooldown/1000).toFixed(1)}s</div>`;
+    let ih = `<div style="font-size:24px; color:#bbb; margin-bottom:8px;">공격력: ${finalDmg} | 사거리: ${data.range} | 쿨다운: ${(tower.cooldown/1000).toFixed(1)}초</div>`;
     
     let ch = ''; 
     if(data.type === 'apprentice') {
         ch = `
             <div class="master-btn-container">
-                <button class="info-promo-btn" onclick="performJobChange(null, 'Attack')">⚔️</button>
-                <button class="info-promo-btn" onclick="performJobChange(null, 'Support')">🪄</button>
-                <button class="info-promo-btn" onclick="performJobChange(null, 'Special')">💠</button>
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Attack')">⚔️</button>
+                    <span style="font-size:14px; color:#ff4500;">공격형</span>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Support')">🪄</button>
+                    <span style="font-size:14px; color:#00e5ff;">지원형</span>
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Special')">💠</button>
+                    <span style="font-size:14px; color:#ffd700;">특수형</span>
+                </div>
             </div>
         `;
     } else if(data.upgrades) {
         ch = `<div class="master-btn-container">`;
         data.upgrades.forEach((u, i) => {
             const ud = unitTypes.find(x => x.type === u);
-            if(ud) ch += `<button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}')">${ud.icon}</button>`;
+            if(ud) {
+                ch += `
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}')">${ud.icon}</button>
+                        <span style="font-size:14px; color:#aaa; max-width:80px; text-align:center;">${ud.name}</span>
+                    </div>
+                `;
+            }
         });
         ch += `</div>`;
     }
@@ -204,7 +220,7 @@ function updateEvolutionTree(exorcistType) {
         if(!corruptBtnElement) {
             corruptBtnElement = document.createElement('div');
             corruptBtnElement.id = 'corrupt-btn-variant';
-            corruptBtnElement.innerText = 'BEGIN CORRUPTION';
+            corruptBtnElement.innerText = '타락 의식 시작';
             corruptBtnElement.addEventListener('click', () => attemptCorruption(exorcistType, targetResult));
             document.body.appendChild(corruptBtnElement);
         }
@@ -221,9 +237,9 @@ function updateCorruptButtonState() {
 
 function attemptCorruption(baseType, resultType) {
     const cost = 666; 
-    if (money < cost) { showCorruptWarning("NOT ENOUGH SOUL ENERGY"); return; }
+    if (money < cost) { showCorruptWarning("소울 에너지가 부족합니다"); return; }
     if (typeof proceedEvolution === 'function') {
-        if(!proceedEvolution(baseType, resultType, cost)) showCorruptWarning("SACRIFICE REQUIRED");
+        if(!proceedEvolution(baseType, resultType, cost)) showCorruptWarning("제물이 필요합니다");
     }
 }
 
@@ -239,9 +255,41 @@ function startInfoResetTimer() {
     if (infoResetTimer) clearTimeout(infoResetTimer);
     infoResetTimer = setTimeout(() => {
         const d = document.getElementById('unit-info');
-        if (d) d.innerHTML = '<div class="info-default-text">GUARDIANS<br><span style="font-size:30px; opacity:0.8;">of the</span><br>UNDERWORLD</div>';
+        if (d) d.innerHTML = '<div class="info-default-text">명계의<br><span style="font-size:30px; opacity:0.8;">수호자들</span></div>';
         if(corruptBtnElement) { corruptBtnElement.remove(); corruptBtnElement = null; }
     }, 10000);
+}
+
+// Resource Info Function
+function showResourceInfo(type) {
+    if (Date.now() < infoPanelLockedUntil) return;
+    const d = document.getElementById('unit-info');
+    if (!d) return;
+
+    if (type === 'se') {
+        d.innerHTML = `
+            <div style="color:#00e5ff; font-weight:bold; font-size:39px; margin-bottom:6px;">소울 에너지 (SE)</div>
+            <div style="display:inline-block; background:#008ba3; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">정수</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">퇴마사를 소환하고 진화시키는 데 사용됩니다. 악령을 처치하여 획득합니다.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"정화된 미련의 결정체로, 산 자의 세계를 지키는 성스러운 기술의 원동력입니다."</div>
+        `;
+    } else if (type === 'pe') {
+        d.innerHTML = `
+            <div style="color:#ff00ff; font-weight:bold; font-size:39px; margin-bottom:6px;">포탈 오염도 (PE)</div>
+            <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">타락</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">문의 불안정성을 나타냅니다. 악령이 통과할 때마다 증가하며, 100%에 도달하면 게임 오버됩니다.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"두 세계 사이의 가교는 연약합니다. 반대편의 슬픔이 너무 많이 유입되면 완전히 산산조각날 것입니다."</div>
+        `;
+    } else if (type === 'rs') {
+        d.innerHTML = `
+            <div style="color:#ff1744; font-weight:bold; font-size:39px; margin-bottom:6px;">남은 악령 (RS)</div>
+            <div style="display:inline-block; background:#b71c1c; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">침공 진행도</div>
+            <div style="font-size:27px; color:#bbb; line-height:1.2;">현재 심도에서 아직 소멸시키지 못한 악령들의 수입니다.</div>
+            <div style="color:#00ff00; font-size:24px; margin-top:12px;">* 모든 악령을 처치하면 더 깊은 심연으로 내려갑니다.</div>
+            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"그들은 그림자의 파도처럼 몰려옵니다. 마지막 하나가 쓰러질 때까지 굳건히 버티십시오."</div>
+        `;
+    }
+    startInfoResetTimer();
 }
 
 // Global Exports
@@ -249,4 +297,5 @@ window.initAllies = initAllies;
 window.updateGauges = updateGauges;
 window.updateSummonButtonState = updateSummonButtonState;
 window.showUnitInfo = showUnitInfo;
-window.showResourceInfo = (type) => {}; // Placeholder for legacy calls
+window.showResourceInfo = showResourceInfo;
+window.startInfoResetTimer = startInfoResetTimer;

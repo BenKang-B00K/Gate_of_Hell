@@ -2,137 +2,137 @@
 
 const relicsData = {
     'cursed_mask': { 
-        name: "Cursed Hannya Mask", icon: '👺', 
-        effect: "Allies deal +1% damage per stack.", 
-        lore: "A mask that vibrates with the screams of a thousand forgotten souls.", 
+        name: "저주받은 한냐 가면", icon: '👺', 
+        effect: "모든 아군의 피해량이 중첩당 +1% 증가합니다.", 
+        lore: "수천 명의 잊혀진 영혼들의 비명으로 진동하는 가면입니다.", 
         bonus: { type: 'damage', value: 0.01 },
         maxStack: 20, dropSource: 'basic'
     },
     'spectral_lantern': { 
-        name: "Spectral Lantern", icon: '🏮', 
-        effect: "Increases attack range of all units by 10.", 
-        lore: "Its light doesn't illuminate the path, it reveals the prey.", 
+        name: "유령 등불", icon: '🏮', 
+        effect: "모든 유닛의 공격 사거리가 10 증가합니다.", 
+        lore: "이 등불의 빛은 길을 비추는 것이 아니라, 사냥감을 드러냅니다.", 
         bonus: { type: 'range', value: 10 },
         maxStack: 1, dropSource: 'specialized'
     },
     'ancient_beads': { 
-        name: "Corrupted Prayer Beads", icon: '📿', 
-        effect: "Reduces all cooldowns by 1% per stack.", 
-        lore: "Each bead is carved from the bone of a fallen saint.", 
+        name: "타락한 염주", icon: '📿', 
+        effect: "모든 쿨다운이 중첩당 1% 감소합니다.", 
+        lore: "각 알은 쓰러진 성자의 뼈로 깎아 만들어졌습니다.", 
         bonus: { type: 'cooldown', value: 0.01 },
         maxStack: 10, dropSource: 'all'
     },
     'soul_urn': { 
-        name: "Soul-Binding Urn", icon: '⚱️', 
-        effect: "Gain +1 Soul Energy from kills per stack.", 
-        lore: "It hungers for the essence of the departed.", 
+        name: "영혼을 묶는 단지", icon: '⚱️', 
+        effect: "처치 시 획득하는 소울 에너지가 중첩당 +1 증가합니다.", 
+        lore: "떠난 자들의 본질을 갈구하는 단지입니다.", 
         bonus: { type: 'se_gain', value: 1 },
         maxStack: 10, dropSource: 'all'
     },
     'withered_bell': { 
-        name: "Withered Temple Bell", icon: '🔔', 
-        effect: "Stuns enemies 2% longer per stack.", 
-        lore: "Its toll sounds like a funeral dirge for the living.", 
+        name: "말라버린 사찰 종", icon: '🔔', 
+        effect: "적 기절 지속 시간이 중첩당 2% 증가합니다.", 
+        lore: "이 종소리는 산 자들을 위한 장례곡처럼 들립니다.", 
         bonus: { type: 'stun_duration', value: 0.02 },
         maxStack: 5, dropSource: 'all'
     },
     'broken_talisman': { 
-        name: "Blood-Stained Talisman", icon: '📜', 
-        effect: "Crit Multiplier +0.5% per stack.", 
-        lore: "The ink was mixed with the blood of a thousand sacrifices.", 
+        name: "피 묻은 부적", icon: '📜', 
+        effect: "치명타 피해량이 중첩당 +0.5% 증가합니다.", 
+        lore: "부적의 먹물은 수천 번의 희생으로 얻은 피와 섞여 있습니다.", 
         bonus: { type: 'crit_damage', value: 0.005 },
         maxStack: 50, dropSource: 'all'
     },
     'obsidian_mirror': { 
-        name: "Obsidian Mirror", icon: '🪞', 
-        effect: "Projectiles gain 2% pierce chance per stack.", 
-        lore: "Reflects a world where the sun never rises.", 
+        name: "흑요석 거울", icon: '🪞', 
+        effect: "투사체가 중첩당 2% 확률로 적을 관통합니다.", 
+        lore: "태양이 결코 뜨지 않는 세상을 비춥니다.", 
         bonus: { type: 'pierce_chance', value: 0.02 },
         maxStack: 10, dropSource: 'all'
     },
     'rusted_scythe': { 
-        name: "Rusted Reaper Scythe", icon: '🧹', 
-        effect: "Enemies have 2% less Max HP per stack.", 
-        lore: "Even rust cannot dull the edge that harvests souls.", 
+        name: "녹슨 사신의 낫", icon: '🧹', 
+        effect: "적의 최대 체력이 중첩당 2% 감소합니다.", 
+        lore: "녹조차도 영혼을 수확하는 칼날의 날카로움을 무디게 할 수 없습니다.", 
         bonus: { type: 'enemy_hp', value: -0.02 },
         maxStack: 10, dropSource: 'all'
     },
     'spectral_chain': { 
-        name: "Chains of the Damned", icon: '⛓️', 
-        effect: "Slow effects are 2% stronger per stack.", 
-        lore: "The more they struggle, the tighter they bind.", 
+        name: "저주받은 자의 사슬", icon: '⛓️', 
+        effect: "둔화 효과가 중첩당 2% 더 강력해집니다.", 
+        lore: "적들이 저항할수록 사슬은 더 단단히 조여옵니다.", 
         bonus: { type: 'slow_strength', value: 0.02 },
         maxStack: 10, dropSource: 'fast'
     },
     'unholy_grail': { 
-        name: "Unholy Grail", icon: '🏆', 
-        effect: "Portal Energy increases 5% slower per stack.", 
-        lore: "Fills with the tears of those who failed to guard the gate.", 
+        name: "부정 시종", icon: '🏆', 
+        effect: "포탈 오염도가 중첩당 5% 더 천천히 증가합니다.", 
+        lore: "문을 지키지 못한 자들의 눈물로 채워져 있습니다.", 
         bonus: { type: 'portal_dmg_reduction', value: 0.05 },
         maxStack: 5, dropSource: 'specialized'
     },
     // Boss Artifacts
     'cerberus_fang': { 
-        name: "Cerberus's Fang", icon: '🦴', 
-        effect: "Global ATK +10%.", 
-        lore: "A jagged tooth from the triple-headed guardian. It still carries the heat of hellfire.", 
+        name: "케르베로스의 송곳니", icon: '🦴', 
+        effect: "모든 아군의 공격력이 10% 증가합니다.", 
+        lore: "세 개의 머리를 가진 수호자의 날카로운 이빨입니다. 여전히 지옥불의 열기를 품고 있습니다.", 
         bonus: { type: 'damage', value: 0.1 },
         maxStack: 1, dropSource: 'boss'
     },
     'stygian_oar': { 
-        name: "Stygian Oar", icon: '🛶', 
-        effect: "Global Enemy Speed -15%.", 
-        lore: "Used to ferry souls across the river Styx. Now it slows the very essence of time.", 
+        name: "스틱스 노", icon: '🛶', 
+        effect: "모든 적의 이동 속도가 15% 감소합니다.", 
+        lore: "스틱스 강을 건너 영혼들을 실어 나를 때 사용되었습니다. 이제는 시간의 흐름 자체를 늦춥니다.", 
         bonus: { type: 'enemy_speed', value: -0.15 },
         maxStack: 1, dropSource: 'boss'
     },
     'gluttony_crown': { 
-        name: "Crown of Gluttony", icon: '👑', 
-        effect: "Treasure Specter Spawn Rate +1%.", 
-        lore: "A crown that smells of decay. It draws out the greediest spirits from the shadows.", 
+        name: "폭식의 왕관", icon: '👑', 
+        effect: "보물 악령의 출현 확률이 1% 증가합니다.", 
+        lore: "부패의 냄새가 나는 왕관입니다. 그림자 속에서 가장 탐욕스러운 영혼들을 끌어냅니다.", 
         bonus: { type: 'treasure_chance', value: 0.01 },
         maxStack: 1, dropSource: 'boss'
     },
     'fallen_wings': { 
-        name: "Fallen Angel's Wings", icon: '🪽', 
-        effect: "Global Crit Chance +10%.", 
-        lore: "Feathers of pure darkness. They guides strikes toward the most vulnerable parts of a soul.", 
+        name: "타락천사의 날개", icon: '🪽', 
+        effect: "치명타 확률이 10% 증가합니다.", 
+        lore: "순수한 어둠의 깃털입니다. 영혼의 가장 취약한 부분을 타격하도록 인도합니다.", 
         bonus: { type: 'crit_chance', value: 0.1 },
         maxStack: 1, dropSource: 'boss'
     },
     // Balanced Normal Relics
     'soul_candle': { 
-        name: "Soul Candle", icon: '🕯️', 
-        effect: "Apprentice summon cost -2 SE per stack.", 
-        lore: "A faint light that guides wandering souls at a cheaper price.", 
+        name: "영혼의 양초", icon: '🕯️', 
+        effect: "견습 퇴마사 소환 비용이 중첩당 2 SE 감소합니다.", 
+        lore: "방황하는 영혼들을 더 싼 가격에 인도하는 희미한 빛입니다.", 
         bonus: { type: 'summon_cost_reduction', value: 2 },
         maxStack: 10, dropSource: 'basic'
     },
     'blood_ring': { 
-        name: "Bloodstone Ring", icon: '🩸', 
-        effect: "Global Crit Chance +0.5% per stack.", 
-        lore: "Pulses in sync with the wearer's heartbeat, seeking vital spots.", 
+        name: "혈석 반지", icon: '🩸', 
+        effect: "치명타 확률이 중첩당 +0.5% 증가합니다.", 
+        lore: "착용자의 심장 박동에 맞춰 진동하며 급소를 찾아냅니다.", 
         bonus: { type: 'crit_chance', value: 0.005 },
         maxStack: 20, dropSource: 'all'
     },
     'execution_mark': { 
-        name: "Executioner's Mark", icon: '🗡️', 
-        effect: "Executes enemies below 1% HP per stack.", 
-        lore: "To those marked, the judgment of the abyss is inevitable.", 
+        name: "처형자의 낙인", icon: '🗡️', 
+        effect: "체력이 중첩당 1% 이하인 적을 즉시 처형합니다.", 
+        lore: "낙인이 찍힌 자들에게 심연의 심판은 피할 수 없는 운명입니다.", 
         bonus: { type: 'execute_threshold', value: 0.01 },
         maxStack: 5, dropSource: 'specialized'
     },
     'foresight_eye': { 
-        name: "Eye of Foresight", icon: '🧿', 
-        effect: "Increases aura range of support units by 5 per stack.", 
-        lore: "Reads the invisible threads of causality to strengthen bonds.", 
+        name: "선견지명의 눈", icon: '🧿', 
+        effect: "지원 유닛의 오라 범위가 중첩당 5 증가합니다.", 
+        lore: "인과 관계의 보이지 않는 실을 읽어 유대를 강화합니다.", 
         bonus: { type: 'aura_range', value: 5 },
         maxStack: 10, dropSource: 'specialized'
     },
     'cursed_coin': { 
-        name: "Cursed Gold Coin", icon: '🪙', 
-        effect: "Increases SE refund when selling units by 2% per stack.", 
-        lore: "Betrayer has a price, and this coin makes it a bit sweeter.", 
+        name: "저주받은 금화", icon: '🪙', 
+        effect: "유닛 판매 시 환급받는 SE가 중첩당 2% 증가합니다.", 
+        lore: "배신에는 대가가 따르며, 이 동전은 그 대가를 조금 더 달콤하게 만듭니다.", 
         bonus: { type: 'sell_refund', value: 0.02 },
         maxStack: 5, dropSource: 'all'
     }
@@ -174,10 +174,10 @@ function initRelics() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#ff4500; font-weight:bold; font-size:39px; margin-bottom:6px;">Abyssal Relics</div>
-                    <div style="display:inline-block; background:#8b2200; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">COLLECTION</div>
-                    <div style="font-size:27px; color:#bbb; line-height:1.2;">Permanent global bonuses found by defeating enemies. Collect them all to dominate the abyss.</div>
-                    <div style="color:#555; font-size:25px; margin-top:18px; font-style:italic; line-height:1.2;">"Artifacts of power that survived the fall. Each one carries the weight of a legendary soul."</div>
+                    <div style="color:#ff4500; font-weight:bold; font-size:39px; margin-bottom:6px;">심연의 유물</div>
+                    <div style="display:inline-block; background:#8b2200; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">수집품</div>
+                    <div style="font-size:27px; color:#bbb; line-height:1.2;">적을 처치하여 획득할 수 있는 영구적인 글로벌 보너스입니다. 모두 수집하여 심연을 지배하세요.</div>
+                    <div style="color:#555; font-size:25px; margin-top:18px; font-style:italic; line-height:1.2;">"몰락 속에서도 살아남은 권능의 유물들입니다. 각각 전설적인 영혼의 무게를 담고 있습니다."</div>
                 `;
             }
         });
@@ -234,14 +234,14 @@ function renderRelicsGrid() {
     // Normal Section
     const normalHeader = document.createElement('div');
     normalHeader.style.cssText = 'grid-column: 1 / -1; color: #aaa; font-size: 30px; font-weight: bold; margin-top: 15px; border-bottom: 3px solid #333; padding-bottom: 6px;';
-    normalHeader.innerText = 'NORMAL RELICS';
+    normalHeader.innerText = '일반 유물';
     grid.appendChild(normalHeader);
     normalRelics.forEach(id => grid.appendChild(createSlot(id)));
 
     // Boss Section
     const bossHeader = document.createElement('div');
     bossHeader.style.cssText = 'grid-column: 1 / -1; color: #ff4500; font-size: 30px; font-weight: bold; margin-top: 45px; border-bottom: 3px solid #ff4500; padding-bottom: 6px;';
-    bossHeader.innerText = 'BOSS ARTIFACTS';
+    bossHeader.innerText = '보스 아티팩트';
     grid.appendChild(bossHeader);
     bossArtifacts.forEach(id => grid.appendChild(createSlot(id)));
 
@@ -252,27 +252,27 @@ function renderTotalBonuses() {
     const details = document.getElementById('relic-details');
     if (!details || document.querySelector('.relic-slot.selected')) return;
 
-    let bonusHtml = '<div class="relic-detail-title">Total Relic Buffs</div>';
+    let bonusHtml = '<div class="relic-detail-title">총 유물 보너스</div>';
     let hasAnyBonus = false;
 
     const labels = {
-        damage: "Global Damage",
-        range: "Global Range",
-        cooldown: "Cooldown Reduction",
-        se_gain: "Flat SE Bonus",
-        stun_duration: "Stun Duration",
-        crit_damage: "Crit Multiplier",
-        crit_chance: "Crit Chance",
-        pierce_chance: "Pierce Chance",
-        enemy_hp: "Enemy HP Reduction",
-        enemy_speed: "Enemy Speed Reduction",
-        treasure_chance: "Treasure Spawn Rate",
-        slow_strength: "Slow Intensity",
-        portal_dmg_reduction: "Portal Stability",
-        summon_cost_reduction: "Summon Cost Reduc.",
-        execute_threshold: "Execute Threshold",
-        aura_range: "Aura Range Bonus",
-        sell_refund: "Sell Refund Bonus"
+        damage: "글로벌 피해량",
+        range: "글로벌 사거리",
+        cooldown: "쿨다운 감소",
+        se_gain: "SE 획득량 증가",
+        stun_duration: "기절 지속 시간",
+        crit_damage: "치명타 피해량",
+        crit_chance: "치명타 확률",
+        pierce_chance: "관통 확률",
+        enemy_hp: "적 체력 감소",
+        enemy_speed: "적 이동 속도 감소",
+        treasure_chance: "보물 악령 출현율",
+        slow_strength: "둔화 강도",
+        portal_dmg_reduction: "포탈 안정성",
+        summon_cost_reduction: "소환 비용 감소",
+        execute_threshold: "처형 임계치",
+        aura_range: "오라 범위 보너스",
+        sell_refund: "판매 환급 보너스"
     };
 
     for (let key in totalRelicBonuses) {
@@ -292,7 +292,7 @@ function renderTotalBonuses() {
     }
 
     if (!hasAnyBonus) {
-        bonusHtml += '<div style="color:#666; font-style:italic; margin-top:30px; font-size:24px;">No relics collected yet. Defeat specters to find them.</div>';
+        bonusHtml += '<div style="color:#666; font-style:italic; margin-top:30px; font-size:24px;">아직 수집된 유물이 없습니다. 적을 처치하여 유물을 찾으세요.</div>';
     }
 
     details.innerHTML = bonusHtml;
@@ -307,9 +307,9 @@ function showRelicDetail(id) {
     details.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div class="relic-detail-title">${data.name} ${count > 1 ? '(x' + count + ')' : ''}</div>
-            <button onclick="document.querySelectorAll('.relic-slot').forEach(s=>s.classList.remove('selected')); renderRelicsGrid();" style="background:#333; border:none; color:#888; font-size:21px; cursor:pointer; padding:6px 12px; border-radius:9px;">BACK</button>
+            <button onclick="document.querySelectorAll('.relic-slot').forEach(s=>s.classList.remove('selected')); renderRelicsGrid();" style="background:#333; border:none; color:#888; font-size:21px; cursor:pointer; padding:6px 12px; border-radius:9px;">뒤로가기</button>
         </div>
-        <div class="relic-detail-effect">${data.effect} (Max Stack: ${data.maxStack})</div>
+        <div class="relic-detail-effect">${data.effect} (최대 중첩: ${data.maxStack})</div>
         <div class="relic-detail-lore">"${data.lore}"</div>
     `;
 }
@@ -345,9 +345,9 @@ function showRelicInfoInPanel(relic) {
     window.infoPanelLockedUntil = Date.now() + 4000;
     
     d.innerHTML = `
-        <div style="color:#ffd700; font-weight:bold; font-size:39px; margin-bottom:6px;">✨ RELIC FOUND!</div>
+        <div style="color:#ffd700; font-weight:bold; font-size:39px; margin-bottom:6px;">✨ 유물 획득!</div>
         <div style="color:#ff4500; font-size:33px; font-weight:bold; margin-bottom:12px;">${relic.icon} ${relic.name}</div>
-        <div style="display:inline-block; background:#00ff00; color:#000; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">NEW POWER ACQUIRED</div>
+        <div style="display:inline-block; background:#00ff00; color:#000; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">새로운 힘이 깨어났습니다</div>
         <div style="font-size:27px; color:#bbb; line-height:1.2;">${relic.effect}</div>
         <div style="color:#555; font-size:25px; margin-top:18px; font-style:italic; line-height:1.2;">"${relic.lore}"</div>
     `;

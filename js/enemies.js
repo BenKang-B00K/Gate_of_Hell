@@ -69,50 +69,51 @@ function getStageMultipliers(isBoss = false) {
 // Enemy data (Categorized)
 const enemyCategories = {
     basic: [
-        { type: 'normal', icon: '👻', speed: 4.5, hp: 110, defense: 0, probability: 0.35, reward: 4, desc: "A common soul lingering in the abyss. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "A soul that couldn't let go of earthly regrets, now aimlessly wandering the dark." }, 
-        { type: 'mist', icon: '🌫️', speed: 3.9, hp: 140, defense: 0, probability: 0.15, reward: 4, desc: "A spectral fog that drifts slowly. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Condensation of thousands of tiny, forgotten sorrows." },
-        { type: 'memory', icon: '👣', speed: 5.1, hp: 90, defense: 0, probability: 0.15, reward: 4, desc: "A faint trace of a once-living being. No special traits.", effectiveness: "Standard exorcism attacks.", lore: "Not even a full soul, just the impression left by a strong desire to live." },
-        { type: 'shade', icon: '👤', speed: 6.6, hp: 60, defense: 0, probability: 0.1, reward: 5, desc: "A weak but fast spirit that moves in a blurring motion.", effectiveness: "Rapid-fire units.", lore: "The faintest remains of a soul, barely holding onto existence." },
-        { type: 'tank', icon: '💀', speed: 2.25, hp: 160, defense: 8, probability: 0.15, reward: 7, desc: "A soul hardened by sin. High HP and moderate defense.", effectiveness: "Critical hits and defense-ignoring assassins.", lore: "The weight of their heavy sins in life has manifested as an unbreakable iron shell." },  
-        { type: 'runner', icon: '⚡', speed: 6.6, hp: 35, defense: 0, probability: 0.1, reward: 6, desc: "An agile shadow that rushes toward the portal at high speed.", effectiveness: "Slowing chains or frost energy.", lore: "A thief who spent a lifetime fleeing from justice, now cursed to run for eternity." }
+        { type: 'normal', icon: '👻', speed: 4.5, hp: 110, defense: 0, probability: 0.35, reward: 4, desc: "심연을 떠도는 평범한 영혼입니다. 특수한 능력은 없습니다.", effectiveness: "표준 퇴마 공격.", lore: "이승의 미련을 버리지 못한 채 어둠 속을 목적 없이 배회하는 영혼입니다." }, 
+        { type: 'mist', icon: '🌫️', speed: 3.9, hp: 140, defense: 0, probability: 0.15, reward: 4, desc: "천천히 흘러가는 영적인 안개입니다. 특수한 능력은 없습니다.", effectiveness: "표준 퇴마 공격.", lore: "수천 명의 잊혀진 작은 슬픔들이 응축되어 형성되었습니다." },
+        { type: 'memory', icon: '👣', speed: 5.1, hp: 90, defense: 0, probability: 0.15, reward: 4, desc: "한때 살아있던 존재의 희미한 흔적입니다. 특수한 능력은 없습니다.", effectiveness: "표준 퇴마 공격.", lore: "완전한 영혼조차 아니며, 단지 살고자 했던 강력한 욕망이 남긴 잔상입니다." },
+        { type: 'shade', icon: '👤', speed: 6.6, hp: 60, defense: 0, probability: 0.1, reward: 5, desc: "흐릿하게 움직이는 약하지만 빠른 영입니다.", effectiveness: "속사형 유닛.", lore: "존재를 간신히 유지하고 있는 영혼의 아주 미세한 파편입니다." },
+        { type: 'tank', icon: '💀', speed: 2.25, hp: 160, defense: 8, probability: 0.15, reward: 7, desc: "죄악으로 단단해진 영혼입니다. 높은 체력과 보통의 방어력을 가집니다.", effectiveness: "치명타 및 방어 무시 암살자.", lore: "생전의 무거운 죄가 깨지지 않는 강철 껍질로 형상화되었습니다." },  
+        { type: 'runner', icon: '⚡', speed: 6.6, hp: 35, defense: 0, probability: 0.1, reward: 6, desc: "빠른 속도로 포탈을 향해 돌진하는 민첩한 그림자입니다.", effectiveness: "둔화 사슬 또는 빙결 에너지.", lore: "평생 정의를 피해 도망 다니던 도둑으로, 이제 영원히 달려야 하는 저주에 걸렸습니다." }
     ],
     pattern: [
-        { type: 'defiled_apprentice', icon: '🥀', speed: 1.8, hp: 400, defense: 5, probability: 0.1, reward: 15, desc: "A trainee who touched forbidden arts. 10% chance to curse attacker's damage (-3, lasts 5s).", effectiveness: "Holy attacks and high DPS.", lore: "One moment of weakness, one forbidden scroll, and a soul is lost forever." },
-        { type: 'greedy', icon: '🧛', speed: 3.6, hp: 150, defense: 5, probability: 0.2, reward: 12, desc: "Forcibly relocates the attacking unit to a random slot on hit (10% chance).", effectiveness: "High range snipers to minimize movement.", lore: "Driven mad by avarice, this spirit tries to steal the very ground the exorcists stand on." }, 
-        { type: 'mimic', icon: '📦', speed: 3.3, hp: 180, defense: 15, probability: 0.1, reward: 12, desc: "Occasionally blinks forward when targeted (20% chance).", effectiveness: "AOE or slow effects.", lore: "It takes the form of what you desire most, only to reveal its true, hollow self." },
-        { type: 'dimension', icon: '🌀', speed: 5.4, hp: 80, defense: 0, probability: 0.2, reward: 12, desc: "Occasionally phases out of existence, becoming immune to attacks (1% chance per frame).", effectiveness: "Truth-seeking seers or rapid-fire units.", lore: "A hermit who sought to hide from the world, now drifting between dimensions of pain." }, 
-        { type: 'deceiver', icon: '🎭', speed: 4.2, hp: 120, defense: 5, probability: 0.2, reward: 12, desc: "Backsteps and evades when an exorcist first targets them (100% chance, once).", effectiveness: "Area damage or multiple hunters.", lore: "A master of lies whose face was never seen, now eternally hiding behind a spectral mask." },
-        { type: 'betrayer_blade', icon: '🗡️', speed: 5.4, hp: 500, defense: 5, probability: 0.15, reward: 25, desc: "A shadow traitor. Occasionally vanishes, forcing attackers to lose target.", effectiveness: "AOE or rapid-fire units.", lore: "The shadow he hid in became his master, and finally, his prison." },
-        { type: 'cursed_vajra', icon: '🏮', speed: 1.5, hp: 1500, defense: 20, probability: 0.1, reward: 40, desc: "A fallen monk. 15% chance to stun the attacker for 1s when hit.", effectiveness: "Long-range units.", lore: "His mace, once used to protect, now only seeks to crush the living." },
-        { type: 'void_piercer', icon: '🏹', speed: 3.6, hp: 600, defense: 5, probability: 0.05, reward: 30, desc: "A traitorous archer. Gains 50% dodge chance against long-range units.", effectiveness: "Short-range units.", lore: "The arrows of light have turned into shards of pure nothingness." }
+        { type: 'defiled_apprentice', icon: '🥀', speed: 1.8, hp: 400, defense: 5, probability: 0.1, reward: 15, desc: "금기된 술법에 손을 댄 수련생입니다. 타격 시 10% 확률로 공격자의 데미지를 감소시킵니다.", effectiveness: "신성 공격 및 높은 DPS.", lore: "한 순간의 나약함으로 금지된 두루마리를 펼친 대가는 영원한 타락이었습니다." },
+        { type: 'greedy', icon: '🧛', speed: 3.6, hp: 150, defense: 5, probability: 0.2, reward: 12, desc: "타격 시 10% 확률로 공격 중인 유닛을 무작위 슬롯으로 강제 이동시킵니다.", effectiveness: "이동을 최소화하기 위한 장거리 저격수.", lore: "탐욕에 미친 이 영은 퇴마사들이 딛고 선 땅마저 훔치려 합니다." }, 
+        { type: 'mimic', icon: '📦', speed: 3.3, hp: 180, defense: 15, probability: 0.1, reward: 12, desc: "타겟이 되었을 때 가끔 앞으로 순간이동합니다 (20% 확률).", effectiveness: "범위 공격 또는 둔화 효과.", lore: "당신이 가장 갈망하는 모습으로 나타나지만, 그 속은 텅 비어있습니다." },
+        { type: 'dimension', icon: '🌀', speed: 5.4, hp: 80, defense: 0, probability: 0.2, reward: 12, desc: "가끔 존재 자체가 사라져 공격에 면역이 됩니다.", effectiveness: "진실을 보는 선지자 또는 속사형 유닛.", lore: "세상으로부터 숨으려 했던 은둔자로, 이제 고통의 차원 사이를 떠돌고 있습니다." }, 
+        { type: 'deceiver', icon: '🎭', speed: 4.2, hp: 120, defense: 5, probability: 0.2, reward: 12, desc: "처음 타겟이 되었을 때 뒤로 물러나며 공격을 회피합니다.", effectiveness: "범위 피해 또는 다수의 사냥꾼.", lore: "얼굴을 한 번도 보인 적 없는 거짓말의 명수로, 영원히 가면 뒤에 숨어있습니다." },
+        { type: 'betrayer_blade', icon: '🗡️', speed: 5.4, hp: 500, defense: 5, probability: 0.15, reward: 25, desc: "그림자 배신자입니다. 가끔 사라져 공격자가 타겟을 잃게 만듭니다.", effectiveness: "범위 공격 또는 속사형 유닛.", lore: "그가 숨어들었던 그림자가 그의 주인이 되었고, 결국 감옥이 되었습니다." },
+        { type: 'cursed_vajra', icon: '🏮', speed: 1.5, hp: 1500, defense: 20, probability: 0.1, reward: 40, desc: "타락한 승려입니다. 타격 시 15% 확률로 공격자를 1초 동안 기절시킵니다.", effectiveness: "장거리 유닛.", lore: "지키기 위해 사용되던 그의 철퇴는 이제 산 자를 부수는 데만 쓰입니다." },
+        { type: 'void_piercer', icon: '🏹', speed: 3.6, hp: 600, defense: 5, probability: 0.05, reward: 30, desc: "배신한 궁수입니다. 장거리 유닛의 공격에 대해 50% 회피 확률을 얻습니다.", effectiveness: "단거리 유닛.", lore: "빛의 화살들은 이제 순수한 무(無)의 파편으로 변했습니다." }
     ],
     enhanced: [
-        { type: 'boar', icon: '🐗', speed: 1.5, hp: 250, defense: 8, probability: 0.25, reward: 15, desc: "Accelerates exponentially as it nears the portal.", effectiveness: "Knockback and heavy stuns near the gate.", lore: "A violent hunter who enjoyed the thrill of the chase, now driven by an uncontrollable bloodlust." }, 
-        { type: 'soul_eater', icon: '🧿', speed: 3.6, hp: 220, defense: 12, probability: 0.1, reward: 15, desc: "Gains a short burst of speed whenever it takes damage.", effectiveness: "High damage single hits.", lore: "It hungers not for flesh, but for the very essence of your exorcists' power." },
-        { type: 'frost', icon: '❄️', speed: 3.0, hp: 180, defense: 5, probability: 0.25, reward: 12, desc: "Emits a freezing aura that boosts the speed of nearby specters.", effectiveness: "Priority targeting and fire energy.", lore: "Died alone in a blizzard, their heart frozen by isolation and cold resentment." }, 
-        { type: 'lightspeed', icon: '✨', speed: 9.6, hp: 60, defense: 0, probability: 0.2, reward: 18, desc: "Moves at incredible speed and ignores speed-boosting auras.", effectiveness: "Instant-kill guardians or void snipers.", lore: "A messenger who failed to deliver a life-saving word, now desperate to reach the end." },
-        { type: 'frost_outcast', icon: '❄️', speed: 2.1, hp: 800, defense: 10, probability: 0.1, reward: 35, desc: "A cursed daoist. Emits a cold aura that slows nearby allies' attack speed by 20%.", effectiveness: "Kill from outside its aura range.", lore: "Her heart was frozen long before she entered the abyss." },
-        { type: 'ember_hatred', icon: '☄️', speed: 2.4, hp: 700, defense: 0, probability: 0.1, reward: 30, desc: "A hateful mage. Explodes on death, speeding up nearby enemies by 50% for 3s.", effectiveness: "Kill when isolated.", lore: "Fueling the fire with the very hatred that consumed his life." }
+        { type: 'boar', icon: '🐗', speed: 1.5, hp: 250, defense: 8, probability: 0.25, reward: 15, desc: "포탈에 가까워질수록 속도가 기하급수적으로 빨라집니다.", effectiveness: "게이트 근처에서의 밀쳐내기와 강력한 기절.", lore: "추격의 전율을 즐기던 폭력적인 사냥꾼으로, 이제 통제할 수 없는 피의 갈증에 사로잡혔습니다." }, 
+        { type: 'soul_eater', icon: '🧿', speed: 3.6, hp: 220, defense: 12, probability: 0.1, reward: 15, desc: "피해를 입을 때마다 짧은 시간 동안 이동 속도가 폭발적으로 증가합니다.", effectiveness: "강력한 단발 타격.", lore: "이것이 굶주린 것은 육체가 아니라 퇴마사들의 힘 그 자체입니다." },
+        { type: 'frost', icon: '❄️', speed: 3.0, hp: 180, defense: 5, probability: 0.25, reward: 12, desc: "주변 악령들의 속도를 높여주는 빙결 오라를 내뿜습니다.", effectiveness: "우선 타겟 지정 및 화염 에너지.", lore: "눈보라 속에서 홀로 죽었으며, 그들의 심장은 고립과 차가운 원망으로 얼어붙었습니다." }, 
+        { type: 'lightspeed', icon: '✨', speed: 9.6, hp: 60, defense: 0, probability: 0.2, reward: 18, desc: "엄청난 속도로 이동하며 속도 강화 오라를 무시합니다.", effectiveness: "즉사 수호자 또는 공허 저격수.", lore: "생명을 구할 말을 전하지 못한 전령으로, 이제 끝에 도달하기 위해 필사적입니다." },
+        { type: 'frost_outcast', icon: '❄️', speed: 2.1, hp: 800, defense: 10, probability: 0.1, reward: 35, desc: "저주받은 도사입니다. 주변 아군의 공격 속도를 20% 감소시키는 냉기 오라를 발산합니다.", effectiveness: "오라 범위 밖에서 처치.", lore: "그녀의 마음은 심연에 들어오기 훨씬 전부터 이미 얼어붙어 있었습니다." },
+        { type: 'ember_hatred', icon: '☄️', speed: 2.4, hp: 700, defense: 0, probability: 0.1, reward: 30, desc: "증오에 찬 마법사입니다. 죽을 때 폭발하여 주변 적들의 속도를 3초간 50% 증가시킵니다.", effectiveness: "고립되었을 때 처치.", lore: "평생을 태웠던 증오로 불꽃을 피우고 있습니다." }
     ],
     armoured: [
-        { type: 'heavy', icon: '⛓️', speed: 1.2, hp: 600, defense: 20, probability: 0.3, knockbackResist: 0.8, reward: 20, desc: "An massive behemoth with high defense and knockback resistance.", effectiveness: "Soul link shared damage or high-penetration strikes.", lore: "An executioner who took pride in their cruelty, now bound by the very chains they once used." }, 
-        { type: 'lava', icon: '🌋', speed: 3.9, hp: 200, defense: 15, probability: 0.2, reward: 18, desc: "Cleanses freeze effects and leaps forward when hit by cold energy.", effectiveness: "Avoid frost; use standard magic or fire.", lore: "A soul consumed by a fiery temper, now literally burning with an unquenchable rage." }, 
-        { type: 'burning', icon: '💢', speed: 3.0, hp: 350, defense: 10, probability: 0.2, reward: 15, desc: "Consumes its own vengeful energy to heal every time it is struck.", effectiveness: "High single-hit damage to overwhelm recovery.", lore: "A martyr whose sacrifice was forgotten, their pain now fueling a cycle of endless regrowth." },
-        { type: 'abyssal_acolyte', icon: '🌑', speed: 1.2, hp: 1200, defense: 15, probability: 0.2, reward: 50, desc: "A servant of the void. Reduces hit source's damage by 4 per hit (Max 3 stacks).", effectiveness: "Burst damage or stuns.", lore: "The shadow arms are the grip of the abyss pulling them deeper." },
-        { type: 'bringer_of_doom', icon: '⛓️‍💥', speed: 0.9, hp: 3000, defense: 30, probability: 0.1, reward: 150, desc: "[Rare Behemoth] Permanently reduces damage of 2 random slots by 7.", effectiveness: "Kill as fast as possible!", lore: "Where they walk, the ground itself weeps. No sanctity remains." }
+        { type: 'heavy', icon: '⛓️', speed: 1.2, hp: 600, defense: 20, probability: 0.3, knockbackResist: 0.8, reward: 20, desc: "높은 방어력과 밀쳐내기 저항을 가진 거대한 괴수입니다.", effectiveness: "영혼 연결 공유 피해 또는 높은 관통 공격.", lore: "자신의 잔혹함을 자랑스러워하던 집행자로, 이제 자신이 사용하던 사슬에 묶여있습니다." }, 
+        { type: 'lava', icon: '🌋', speed: 3.9, hp: 200, defense: 15, probability: 0.2, reward: 18, desc: "빙결 효과를 해제하며 냉기 에너지에 맞으면 앞으로 도약합니다.", effectiveness: "빙결 지양; 표준 마법 또는 화염 사용.", lore: "불같은 성격에 삼켜진 영혼으로, 이제 억누를 수 없는 분노로 불타오르고 있습니다." }, 
+        { type: 'burning', icon: '💢', speed: 3.0, hp: 350, defense: 10, probability: 0.2, reward: 15, desc: "공격받을 때마다 자신의 원한 에너지를 소모하여 회복합니다.", effectiveness: "회복을 압도하는 강력한 단일 타격.", lore: "희생이 잊혀진 순교자로, 그들의 고통은 이제 끝없는 재생의 원동력이 되었습니다." },
+        { type: 'abyssal_acolyte', icon: '🌑', speed: 1.2, hp: 1200, defense: 15, probability: 0.2, reward: 50, desc: "허무의 종복입니다. 타격 시 타격원의 데미지를 감소시킵니다 (최대 3중첩).", effectiveness: "폭발적인 데미지 또는 기절.", lore: "그림자 팔들은 그들을 더 깊이 끌어당기는 심연의 손길입니다." },
+        { type: 'bringer_of_doom', icon: '⛓️‍💥', speed: 0.9, hp: 3000, defense: 30, probability: 0.1, reward: 150, desc: "[희귀 괴수] 무작위 2개 슬롯의 데미지를 영구적으로 감소시킵니다.", effectiveness: "가능한 한 빨리 처치하세요!", lore: "그들이 걷는 곳마다 대지가 비명을 지릅니다. 어떤 신성함도 남지 않습니다." }
     ],
     treasure: [
-        { type: 'gold', icon: '💎', speed: 7.5, hp: 80, defense: 50, probability: 1.0, reward: 200, desc: "A rare spirit that grants a massive amount of Soul Energy upon defeat.", effectiveness: "Rapid-fire assassins to bypass high defense.", lore: "The residual essence of a king's hoard, still sparkling with the vanity of the past." } 
+        { type: 'gold', icon: '💎', speed: 7.5, hp: 80, defense: 50, probability: 1.0, reward: 200, desc: "처치 시 막대한 양의 소울 에너지를 주는 희귀한 영입니다.", effectiveness: "높은 방어력을 우회하기 위한 속사형 암살자.", lore: "과거의 허영심으로 여전히 반짝이는 왕의 보물 잔재입니다." } 
     ]
 };
 
 // Boss data
 const bossData = {
-    10: { name: "Cerberus", type: "cerberus", icon: '👺', hp: 2500, speed: 1.05, size: 180, rewardName: "Cerberus's Fang", rewardEffect: 0.1, lore: "The triple-headed guardian of the gate, driven mad by the endless flow of corrupt souls." },
-    20: { name: "Charon", type: "charon", icon: '🛶', hp: 4500, speed: 0.75, size: 180, rewardName: "Stygian Oar", rewardEffect: 0.15, lore: "The ferryman of the dead, now harvesting souls for himself instead of delivering them." }, 
-    30: { name: "Beelzebub", type: "beelzebub", icon: '🪰', hp: 8000, speed: 0.75, size: 180, rewardName: "Crown of Gluttony", rewardEffect: 0.01, lore: "The Lord of the Flies, spawned from the rot of every broken promise in history." }, 
-    40: { name: "Lucifer", type: "lucifer", icon: '👑', hp: 15000, speed: 0.6, size: 210, rewardName: "Fallen Angel's Wings", rewardEffect: 0.1, lore: "The first to fall, seeking to drag every other light into the same bottomless abyss." } 
+    10: { name: "케르베로스", type: "cerberus", icon: '👺', hp: 2500, speed: 1.05, size: 180, rewardName: "케르베로스의 송곳니", rewardEffect: 0.1, lore: "타락한 영혼들의 끝없는 유입으로 미쳐버린 문지기입니다." },
+    20: { name: "카론", type: "charon", icon: '🛶', hp: 4500, speed: 0.75, size: 180, rewardName: "스틱스 노", rewardEffect: 0.15, lore: "망자를 인도하는 사공이었으나, 이제는 영혼들을 직접 수확하기 시작했습니다." }, 
+    30: { name: "바알세불", type: "beelzebub", icon: '🪰', hp: 8000, speed: 0.75, size: 180, rewardName: "폭식의 왕관", rewardEffect: 0.01, lore: "역사상 모든 깨진 약속의 부패에서 태어난 파리의 왕입니다." }, 
+    40: { name: "루시퍼", type: "lucifer", icon: '👑', hp: 15000, speed: 0.6, size: 210, rewardName: "타락천사의 날개", rewardEffect: 0.1, lore: "최초로 타락한 자로, 모든 빛을 자신과 같은 바닥 없는 심연으로 끌어들이려 합니다." } 
 };
+
 
 function showBossWarning(bossName) {
     const modal = document.getElementById('unlock-modal');
@@ -122,11 +123,11 @@ function showBossWarning(bossName) {
     const desc = document.getElementById('unlock-desc');
     
     if (modal && header && icon && name && desc) {
-        header.innerText = "⚠️ WARNING! BOSS APPEARED!";
+        header.innerText = "⚠️ 경고! 보스 출현!";
         header.style.color = "#ff0000";
         icon.innerText = "👿";
         name.innerText = bossName;
-        desc.innerText = "A powerful entity has emerged from the depths! Prepare for a fierce battle.";
+        desc.innerText = "심연에서 강력한 존재가 나타났습니다! 전투를 준비하십시오.";
         modal.style.display = 'flex';
         isPaused = true;
     }
@@ -143,10 +144,10 @@ function initStage() {
     const diffMsg = document.getElementById('difficulty-msg');
     if (diffMsg && diffMsgContainer) {
         let msg = "";
-        if (stage === 6) msg = "SHADOWS DEEPEN...";
-        else if (stage === 16) msg = "ABYSS AWAKENS!";
-        else if (stage === 31) msg = "ETERNAL NIGHTFALL";
-        else if (stage === 51) msg = "THE VOID CONSUMES ALL";
+        if (stage === 6) msg = "그림자가 깊어집니다...";
+        else if (stage === 16) msg = "심연이 깨어납니다!";
+        else if (stage === 31) msg = "영원한 황혼";
+        else if (stage === 51) msg = "허무가 모든 것을 삼킵니다";
 
         if (msg) {
             diffMsg.innerText = msg;
@@ -169,7 +170,7 @@ function initStage() {
 
     if (isBossStage) {
         totalStageEnemies = 15; 
-        const bossName = bossData[stage] ? bossData[stage].name : "Unknown Boss";
+        const bossName = bossData[stage] ? bossData[stage].name : "알 수 없는 존재";
         
         const tutorialToggle = document.getElementById('tutorial-toggle');
         if (tutorialToggle && tutorialToggle.checked) {
@@ -199,7 +200,7 @@ function initStage() {
             timerElement.innerText = countdown;
         } else {
             clearInterval(timerInterval);
-            timerElement.innerText = "SPECTERS INCOMING!";
+            timerElement.innerText = "악령들이 몰려옵니다!";
             
             // [Master] King of the Forsaken logic
             if (typeof towers !== 'undefined') {
@@ -236,24 +237,25 @@ function updateGauges() {
         // Cursed Logic
         if (cursedElem) {
             if (portalRatio < 0.25) {
-                cursedElem.innerText = "Cursed: Whispering Dread";
+                cursedElem.innerText = "저주: 속삭이는 공포";
                 cursedElem.style.color = "#aaa";
                 window.damageMultiplier = 1.0; 
             } else if (portalRatio < 0.5) {
-                cursedElem.innerText = "Cursed: Creeping Weakness (-5% DMG)";
+                cursedElem.innerText = "저주: 스며드는 무력감 (피해량 -5%)";
                 cursedElem.style.color = "#ffeb3b";
                 window.damageMultiplier = 0.95;
             } else if (portalRatio < 0.75) {
-                cursedElem.innerText = "Cursed: Spectral Blight (-10% DMG & SPD)";
+                cursedElem.innerText = "저주: 영혼의 황폐화 (피해량 & 속도 -10%)";
                 cursedElem.style.color = "#ff9800";
                 window.damageMultiplier = 0.9;
                 // Note: Speed multiplier should be applied in script.js attack logic
             } else {
-                cursedElem.innerText = "Cursed: Abyssal Suffocation (-20% ALL)";
+                cursedElem.innerText = "저주: 심연의 질식 (모든 능력치 -20%)";
                 cursedElem.style.color = "#f44336";
                 window.damageMultiplier = 0.8;
             }
         }
+
 
         // Portal Glow Effect: Transitions to dark red as it fills
         if (portalElement) {
@@ -319,7 +321,7 @@ function updateStageInfo() {
 
     if (enemiesLeft) {
         if (isBossStage) {
-            enemiesLeft.innerText = "BOSS";
+            enemiesLeft.innerText = "보스";
             const rsFill = document.getElementById('rs-gauge-fill');
             if (rsFill) rsFill.style.width = '100%';
         } else {
