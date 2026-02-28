@@ -5779,16 +5779,18 @@ function drawEnemies() {
     if (typeof enemies === 'undefined' || !enemies) return;
     
     const container = document.getElementById('game-container');
-    if (!container) return;
+    const road = document.getElementById('road');
+    if (!container || !road) return;
+
     const containerRect = container.getBoundingClientRect();
+    const roadRect = road.getBoundingClientRect();
     const scaleX = LOGICAL_WIDTH / containerRect.width;
     const scaleY = LOGICAL_HEIGHT / containerRect.height;
+    const targetY = roadRect.height + 10;
 
     enemies.forEach(enemy => {
         if (enemy.hp <= 0) return;
         
-        const road = document.getElementById('road');
-        const roadRect = road.getBoundingClientRect();
         const worldX = (enemy.x / 100) * roadRect.width + roadRect.left - containerRect.left;
         const worldY = enemy.y + roadRect.top - containerRect.top;
         
@@ -5806,9 +5808,6 @@ function drawEnemies() {
         
         // [User Request] Ensure enemies are not too transparent
         // Calculate approach fade-out but cap at 0.5 minimum
-        const road = document.getElementById('road');
-        const roadRect = road.getBoundingClientRect();
-        const targetY = roadRect.height + 10;
         const ap = Math.max(0, (enemy.y - (targetY - 60)) / 60);
         
         const baseAlpha = enemy.isStealthed ? 0.6 : 1.0;
