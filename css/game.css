@@ -1,4 +1,4 @@
-/* base.css - Responsive Master Reset */
+/* game.css - Scaling & Reset */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
 
 * {
@@ -19,48 +19,11 @@ body, html {
 }
 
 #game-container {
-    width: 360px;
-    height: 640px;
-    position: relative;
-    background: #050505;
-    overflow: hidden;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
-    
     /* Auto-scale using CSS while maintaining aspect ratio */
     max-width: 100vw;
     max-height: 100vh;
     aspect-ratio: 9 / 16;
-
-    /* [Fix] Vertical UI Listing */
-    display: flex;
-    flex-direction: column;
-}
-
-#game-layout {
-    height: 65%;
-    display: flex;
-    position: relative;
-    z-index: 2;
-}
-
-#bottom-panel {
-    height: 35%;
-    background: #111;
-    border-top: 2px solid #333;
-    position: relative;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-}
-
-#start-screen {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 9999;
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
 }
 
 canvas {
@@ -70,5 +33,23 @@ canvas {
     display: block;
     width: 100% !important;
     height: 100% !important;
-    z-index: 1;
+}
+
+#bottom-panel {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 35%;
+    background: #0a0a0a;
+    border-top: 2px solid #222;
+}
+
+#start-screen {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
