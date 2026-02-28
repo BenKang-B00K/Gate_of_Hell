@@ -40,13 +40,6 @@ function drawAtmosphericEffects() {
         grad.addColorStop(0, baseColor); grad.addColorStop(1, 'transparent');
         ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2); ctx.fill();
     });
-    ctx.globalAlpha = 0.15;
-    for(let m=0; m<4; m++) {
-        const drift = Math.sin(time * 0.3 + m) * 100;
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(-200 + drift, 0, 400, 300);
-        ctx.fillRect(360 - 200 - drift, 0, 400, 300);
-    }
     ctx.globalAlpha = 1.0; ctx.restore();
 }
 
