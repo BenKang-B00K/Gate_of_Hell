@@ -28,21 +28,40 @@ function executeMove(unit, targetSlot) {
 function cancelMovement() { if (draggedUnit) draggedUnit.classList.remove('move-ready'); draggedUnit = null; isMovingUnit = false; }
 
 function summonTower(targetSlot) {
-    const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
-    const finalTowerCost = Math.max(5, towerCost - reduction);
+    // 1. targetSlot validation
+    if (!targetSlot || targetSlot.classList.contains('occupied')) return;
 
+    // 2. Defensive Relic Bonus check & Cost calculation
+    const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
+    const finalTowerCost = Math.max(5, Math.floor(towerCost - reduction));
+
+    // 3. Pre-summon validation (Resources & Limits)
+    if (money < finalTowerCost || towers.length >= maxTowers) {
+        if (typeof updateSummonButtonState === 'function') updateSummonButtonState();
+        return;
+    }
+
+    // 4. Execution: Deduct resources & update gauges
     money -= finalTowerCost;
     if (typeof updateGauges === 'function') updateGauges();
-    towerCost = Math.min(200, towerCost + 5);
-    const s = unitTypes[0];
-    recordUnlock(s.type);
+
+    // 5. Find 'apprentice' data & create DOM element
+    const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
+    if (!apprenticeData) return;
+
     const unit = document.createElement('div');
-    unit.classList.add('unit', s.type);
-    unit.title = s.name; unit.innerText = ''; unit.draggable = true;
-    const cd = document.createElement('div');
-    cd.className = 'cooldown-overlay'; cd.style.pointerEvents = 'none';
-    unit.appendChild(cd);
-    let ds;
+    unit.classList.add('unit', 'apprentice');
+    unit.title = apprenticeData.name;
+    unit.innerText = ''; 
+    unit.draggable = true;
+
+    const cdOverlay = document.createElement('div');
+    cdOverlay.className = 'cooldown-overlay';
+    cdOverlay.style.pointerEvents = 'none';
+    unit.appendChild(cdOverlay);
+
+    // Attach Event Listeners (Drag & Click)
+    let mousedownTime;
     unit.addEventListener('dragstart', function() { 
         draggedUnit = this; 
         isMovingUnit = true; 
@@ -54,15 +73,15 @@ function summonTower(targetSlot) {
             startInfoResetTimer();
         } 
     });
-    unit.addEventListener('mousedown', function(e) { if(e.button!==0)return; ds=Date.now(); });
+    unit.addEventListener('mousedown', function(e) { if(e.button !== 0) return; mousedownTime = Date.now(); });
     unit.addEventListener('click', function(e) { 
         e.stopPropagation(); 
-        if(Date.now()-ds<400) { 
-            document.querySelectorAll('.unit').forEach(u=>u.classList.remove('selected')); 
+        if(Date.now() - mousedownTime < 400) { 
+            document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected')); 
             const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
             this.classList.add('selected'); 
-            const t=towers.find(x=>x.element===this); 
+            const t = towers.find(x => x.element === this); 
             if(t){
                 showUnitInfo(t); 
                 showRangeIndicator(t);
@@ -70,9 +89,28 @@ function summonTower(targetSlot) {
             } 
         } 
     });
-    targetSlot.appendChild(unit); targetSlot.classList.add('occupied');
-    const tower = { data: s, element: unit, slotElement: targetSlot, range: s.range, cooldown: s.cooldown, lastShot: 0, spentSE: finalTowerCost - 5 };
-    towers.push(tower); updateUnitOverlayButtons(tower); updateSummonButtonState();
+
+    // 6. Insert into targetSlot and add 'occupied' class
+    targetSlot.appendChild(unit);
+    targetSlot.classList.add('occupied');
+
+    // 7. Construct Tower object (360x640 logical resolution context)
+    const tower = {
+        data: apprenticeData,
+        element: unit,
+        slotElement: targetSlot,
+        range: apprenticeData.range,
+        cooldown: apprenticeData.cooldown,
+        lastShot: 0,
+        spentSE: finalTowerCost // Store spent SE for refunds
+    };
+    towers.push(tower);
+
+    // 8. Post-summon updates & synchronization
+    towerCost += 5;
+    updateUnitOverlayButtons(tower);
+    updateSummonButtonState();
+    if (typeof recordUnlock === 'function') recordUnlock('apprentice');
 }
 
 function purgePortal() {

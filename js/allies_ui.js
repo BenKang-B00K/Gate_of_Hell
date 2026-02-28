@@ -421,22 +421,55 @@ function updateUnitOverlayButtons(t) {
 }
 
 function updateSummonButtonState() {
-    const tc = document.getElementById('tower-card'); if(!tc) return;
+    const tc = document.getElementById('tower-card'); 
+    if (!tc) return;
+
     const scd = document.getElementById('summon-cost-display');
-    const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
-    const finalTowerCost = Math.max(5, towerCost - reduction);
-    if(scd) scd.innerText = `${finalTowerCost} SE`;
-    const isMax = towers.length >= maxTowers;
     const sw = document.getElementById('summon-warning');
-    if(sw) {
-        if (money < finalTowerCost && !isMax) {
+
+    // 1. Consistent Cost Calculation
+    const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
+    const finalTowerCost = Math.max(5, Math.floor(towerCost - reduction));
+
+    // 2. Update UI Cost Text
+    if (scd) scd.innerText = `${finalTowerCost} SE`;
+
+    // 3. Exception Handling (Limit & Money)
+    const isMax = towers.length >= maxTowers;
+    const isBroke = money < finalTowerCost;
+
+    if (sw) {
+        if (isMax) {
+            sw.innerText = 'MAX UNITS';
             sw.style.display = 'block';
+        } else if (isBroke) {
             sw.innerText = 'NOT ENOUGH SE';
+            sw.style.display = 'block';
         } else {
             sw.style.display = 'none';
         }
     }
-    if(money<finalTowerCost || isMax) tc.classList.add('locked'); else tc.classList.remove('locked');
-    const pc = document.getElementById('purge-card'); if(!pc) return;
-    if(money<800 || portalEnergy<=0) pc.classList.add('locked'); else pc.classList.remove('locked');
+
+    // 4. Visual Feedback & Interaction Locking
+    if (isMax || isBroke) {
+        tc.classList.add('locked');
+        tc.style.opacity = '0.5';
+        tc.style.pointerEvents = 'none';
+    } else {
+        tc.classList.remove('locked');
+        tc.style.opacity = '1';
+        tc.style.pointerEvents = 'auto';
+    }
+
+    // Sync Purge Card separately (not part of the core summon logic but remains in this sync loop)
+    const pc = document.getElementById('purge-card');
+    if (pc) {
+        if (money < 800 || portalEnergy <= 0) {
+            pc.classList.add('locked');
+            pc.style.opacity = '0.5';
+        } else {
+            pc.classList.remove('locked');
+            pc.style.opacity = '1';
+        }
+    }
 }
