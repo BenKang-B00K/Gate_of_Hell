@@ -7,7 +7,7 @@
     grid-template-rows: repeat(7, 1fr);
     gap: 4px;
     padding: 10px;
-    z-index: 5;
+    z-index: 2; /* [User Request] Slots z=2 */
     background: transparent;
     margin-top: 148px;
 }
@@ -23,6 +23,7 @@
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: visible; 
+    z-index: 2; /* [User Request] Slots z=2 */
 }
 
 .card-slot:hover::before {

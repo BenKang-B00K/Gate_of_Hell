@@ -9,8 +9,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 5000;
-    text-align: center;
+    z-index: 100; /* [User Request] Menu z=100 */
+    overflow: hidden;
 }
 
 #start-content {

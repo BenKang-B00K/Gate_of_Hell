@@ -5,6 +5,7 @@
     background: radial-gradient(circle at center, #100505 0%, #000000 100%);
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
     overflow: hidden;
+    z-index: 0;
 }
 
 #game-layout {
@@ -15,6 +16,7 @@
     padding-top: 0;
     box-sizing: border-box;
     background: transparent;
+    z-index: 1;
 }
 
 #road {
@@ -24,6 +26,7 @@
     display: flex;
     justify-content: center;
     overflow: hidden;
+    z-index: 1;
 }
 
 #road::before, #road::after {
@@ -42,13 +45,13 @@
 
 #spawning-pool {
     position: absolute;
-    top: 0;
+    top: -5px; /* Aligned with Canvas cy=-5 */
     left: 50%;
-    transform: translateX(-50%);
-    width: 160px;
+    transform: translate(-50%, -50%);
+    width: 340px;
     height: 100px;
     background: transparent;
-    z-index: 1;
+    z-index: 3; /* [User Request] Spawning Fire z=3 */
     pointer-events: none;
 }
 
@@ -69,14 +72,14 @@
 
 #portal {
     position: absolute;
-    bottom: 0;
+    top: 410px; /* Aligned with Canvas cy=410 */
     width: 340px;
     height: 100px;
     left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
+    transform: translate(-50%, -50%); /* Center on the top coordinate */
+    z-index: 3; /* [User Request] Portal z=3 */
     pointer-events: none;
-    background: transparent; /* Styles moved to Canvas */
+    background: transparent; /* Visuals are handled by Canvas graphics_env.js */
 }
 
 @keyframes portalSwirl {
@@ -143,10 +146,6 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 1;
-    /* Maintain pixel-perfect sharpness */
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
+    z-index: 4; /* [User Request] Mist z=4 is highest canvas element */
     image-rendering: pixelated;
 }

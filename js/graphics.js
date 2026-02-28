@@ -43,7 +43,7 @@ function renderGraphics() {
     lavaPhase += 0.02;
     globalAnimTimer += 0.06; 
     
-    // Updates from graphics_vfx.js
+    // 0. Logical Updates
     if(typeof updateParticles === 'function') updateParticles();
     if(typeof updateLightPillars === 'function') updateLightPillars();
     if(typeof updatePromotionBursts === 'function') updatePromotionBursts();
@@ -51,20 +51,22 @@ function renderGraphics() {
     if(typeof window.updateBanishEffects === 'function') window.updateBanishEffects();
     if(typeof updatePurgeEffects === 'function') updatePurgeEffects();
     
-    // Environment from graphics_env.js
+    // 1. Level 1: Road (Lava & Lightning)
     if(typeof drawLRoad === 'function') drawLRoad();
-    if(typeof drawAtmosphericEffects === 'function') drawAtmosphericEffects(); 
-    if(typeof drawSpawningGate === 'function') drawSpawningGate(); 
-    if(typeof drawPortal === 'function') drawPortal(); 
+    
+    // 2. Level 2: Units and Enemies
     if(typeof drawSlots === 'function') drawSlots();
-    
-    // Units from graphics_units.js & logic here
-    drawUnits();
-    
-    // Enemies logic from enemies.js (called via drawEnemies here)
+    if(typeof drawUnits === 'function') drawUnits();
     if(typeof drawEnemies === 'function') drawEnemies(); 
     
-    // VFX Drawing
+    // 3. Level 3: Portal, Spawning Gate, and Clouds
+    // Note: Clouds/Mist are handled inside drawAtmosphericEffects. 
+    // We separate them by calling specific environmental renders in order.
+    if(typeof drawPortal === 'function') drawPortal(); 
+    if(typeof drawSpawningGate === 'function') drawSpawningGate(); 
+    if(typeof drawAtmosphericEffects === 'function') drawAtmosphericEffects(); 
+
+    // 4. VFX and Selection (Top Layers)
     if(typeof drawParticles === 'function') drawParticles(); 
     if(typeof drawLightPillars === 'function') drawLightPillars();
     if(typeof drawPromotionBursts === 'function') drawPromotionBursts();
@@ -72,7 +74,6 @@ function renderGraphics() {
     if(typeof drawPurgeEffects === 'function') drawPurgeEffects();
     if(typeof drawStageFlashes === 'function') drawStageFlashes();
     
-    // Selection from this file or units file
     drawSelectionHalo();
 }
 

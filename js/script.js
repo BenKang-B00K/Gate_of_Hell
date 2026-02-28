@@ -590,30 +590,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const retryBtn = document.getElementById('retry-btn');
     if (retryBtn) {
         retryBtn.onclick = () => {
-            const gameOverOverlay = document.getElementById('game-over-overlay');
-            const startScreen = document.getElementById('start-screen');
-            if (gameOverOverlay) gameOverOverlay.style.display = 'none';
-            if (startScreen) {
-                startScreen.style.display = 'flex';
-                startScreen.classList.remove('shrink-to-info'); 
-                
-                const tutorialToggle = document.getElementById('tutorial-toggle');
-                const tutorialStatus = document.getElementById('tutorial-status');
-                const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
-                const gameTutorialStatus = document.getElementById('game-tutorial-status');
-
-                if (tutorialToggle) {
-                    tutorialToggle.checked = false;
-                    if (tutorialStatus) tutorialStatus.innerText = 'OFF';
-                }
-                if (gameTutorialToggle) {
-                    gameTutorialToggle.checked = false;
-                    if (gameTutorialStatus) gameTutorialStatus.innerText = 'OFF';
-                }
-            }
-            resetGameState();
-            gameStarted = false;
-            isPaused = false;
+            // [User Request] Match "Stop Exorcism" behavior: Full page reload for a guaranteed clean state
+            window.location.reload();
         };
     }
 

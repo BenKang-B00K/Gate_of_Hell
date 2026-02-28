@@ -15,7 +15,7 @@ function initAtmosphere() {
             y: Math.random() * 250,
             vx: (Math.random() - 0.5) * 0.4,
             vy: (Math.random() - 0.5) * 0.1,
-            size: 60 + Math.random() * 100,
+            size: 35 + Math.random() * 20, // [User Request] Reduced size to match slot (Radius 35-55px)
             opacity: Math.random(),
             targetOpacity: Math.random(),
             flash: 0
@@ -52,7 +52,7 @@ function drawAtmosphericEffects() {
 
 function drawLavaRoad() {
     const time = globalAnimTimer;
-    const roadWidth = 114; const roadX = (360 - roadWidth) / 2;
+    const roadWidth = 340; const roadX = (360 - roadWidth) / 2;
     ctx.save();
     // Removed opaque black background to unify with the global background image
     if (lightningTimer <= 0) {

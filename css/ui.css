@@ -7,7 +7,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    z-index: 50;
+    z-index: 100; /* [User Request] UI Panel z=100 */
     gap: 12px;
     border-top: 3px solid #441111;
     box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.8), 0 -2px 10px rgba(139, 0, 0, 0.3);
@@ -203,7 +203,7 @@
 
 #tutorial-toggle-container { 
     align-self: flex-end;
-    z-index: 1000; 
+    z-index: 100; /* [User Request] Menu z=100 */
     display: flex; 
     align-items: center; 
     gap: 10px; 
@@ -218,7 +218,7 @@
     position: absolute;
     top: 30px;
     right: 30px;
-    z-index: 1000;
+    z-index: 100; /* [User Request] Menu z=100 */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -244,7 +244,7 @@ input:checked + .slider:before { transform: translateX(18px); }
     position: absolute; 
     top: 30px; 
     left: 30px; 
-    z-index: 1000; 
+    z-index: 100; /* [User Request] Menu z=100 */
     display: flex; 
     align-items: center; 
     justify-content: center;

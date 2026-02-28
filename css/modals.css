@@ -5,7 +5,8 @@
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.95);
     display: flex; justify-content: center; align-items: center;
-    z-index: 2000; backdrop-filter: blur(10px);
+    z-index: 1001; /* [User Request] Top Overlay z=1001 */
+    backdrop-filter: blur(10px);
 }
 
 #sacrifice-content {
@@ -72,7 +73,8 @@
 /* Unlock Modal */
 #unlock-modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.95); z-index: 3000;
+    background: rgba(0, 0, 0, 0.95); 
+    z-index: 1001; /* [User Request] Top Overlay z=1001 */
     display: flex; justify-content: center; align-items: center;
 }
 
@@ -87,17 +89,19 @@
 #game-over-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: radial-gradient(circle, rgba(40, 0, 0, 0.95) 0%, rgba(0, 0, 0, 1) 100%);
-    z-index: 5000; display: flex; justify-content: center; align-items: center;
+    z-index: 1001; /* [User Request] Top Overlay z=1001 */
+    display: flex; justify-content: center; align-items: center;
 }
 
 #game-over-title { color: #ff0000; font-size: 84px; animation: eeriePulse 3s infinite alternate; }
 
 /* Boss Victory Overlay */
 .boss-victory-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.95) 100%);
-    z-index: 5000; display: flex; justify-content: center; align-items: center;
-    backdrop-filter: blur(10px);
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(40, 0, 0, 0.9) 0%, #000 90%);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1001; /* [User Request] Top Overlay z=1001 */
+    backdrop-filter: blur(15px);
 }
 
 .boss-victory-content {
@@ -111,7 +115,8 @@
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.95);
     display: flex; justify-content: center; align-items: center;
-    z-index: 2500; backdrop-filter: blur(15px);
+    z-index: 1000; /* [User Request] Overlay z=1000 */
+    backdrop-filter: blur(15px);
 }
 
 #collections-content {
@@ -174,7 +179,7 @@
 /* Ghost Section Styles */
 .col-category-nav { display: flex; gap: 10px; margin-bottom: 10px; }
 .col-cat-btn {
-    padding: 15px 30px; font-size: 28px; font-weight: bold;
+    padding: 10px 20px; font-size: 28px; font-weight: bold;
     background: #111; color: #aaa; border: 1px solid #333;
     border-radius: 12px; cursor: pointer; transition: all 0.2s;
 }
