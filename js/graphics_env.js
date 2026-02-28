@@ -90,7 +90,7 @@ function drawSpawningGate() {
  * Enhanced Portal Rendering with high-fidelity swirling and status-based effects
  */
 function drawPortal() {
-    const cx = 180; const cy = 410; const time = globalAnimTimer;
+    const cx = 180; const cy = 416; const time = globalAnimTimer;
     const energyRatio = (typeof portalEnergy !== 'undefined') ? portalEnergy / maxPortalEnergy : 0;
     
     ctx.save();

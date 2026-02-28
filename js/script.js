@@ -168,8 +168,7 @@ function gameLoop() {
 
     if (!gameStarted || isPaused) { requestAnimationFrame(gameLoop); return; }
     
-    const roadRect = road.getBoundingClientRect();
-    const targetY = roadRect.height + 10; 
+    const targetY = 416; // [User Request] Match portal logical boundary
     gameWidth = gameContainer.offsetWidth;
     const nowTime = Date.now();
 

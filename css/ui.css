@@ -37,6 +37,21 @@
     overflow: visible;
 }
 
+/* Decorative Corner Crescents */
+.panel-corner {
+    position: absolute;
+    font-size: 24px;
+    color: rgba(255, 23, 68, 0.6); /* Crimson red with transparency */
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.panel-corner.tl { top: 10px; left: 10px; transform: rotate(-45deg); }
+.panel-corner.tr { top: 10px; right: 10px; transform: rotate(45deg); }
+.panel-corner.bl { bottom: 10px; left: 10px; transform: rotate(-135deg); }
+.panel-corner.br { bottom: 10px; right: 10px; transform: rotate(135deg); }
+
 #bottom-main-ui {
     display: flex;
     flex: 1;

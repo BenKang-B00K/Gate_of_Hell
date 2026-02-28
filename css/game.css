@@ -21,7 +21,7 @@
 
 #road {
     width: 340px;
-    background-color: transparent;
+    background-color: #000000;
     position: relative;
     display: flex;
     justify-content: center;
@@ -45,13 +45,13 @@
 
 #spawning-pool {
     position: absolute;
-    top: -5px; /* Aligned with Canvas cy=-5 */
+    top: -5px; /* Precise logical Y center */
     left: 50%;
     transform: translate(-50%, -50%);
     width: 340px;
-    height: 100px;
+    height: 10px; /* Reduced height for tighter center alignment */
     background: transparent;
-    z-index: 3; /* [User Request] Spawning Fire z=3 */
+    z-index: 3;
     pointer-events: none;
 }
 
@@ -72,14 +72,14 @@
 
 #portal {
     position: absolute;
-    top: 410px; /* Aligned with Canvas cy=410 */
+    top: 416px; /* Precise logical boundary Y center */
     width: 340px;
-    height: 100px;
+    height: 10px;
     left: 50%;
-    transform: translate(-50%, -50%); /* Center on the top coordinate */
-    z-index: 3; /* [User Request] Portal z=3 */
+    transform: translate(-50%, -50%);
+    z-index: 3;
     pointer-events: none;
-    background: transparent; /* Visuals are handled by Canvas graphics_env.js */
+    background: transparent;
 }
 
 @keyframes portalSwirl {
@@ -98,19 +98,6 @@
 @keyframes flowFill {
     0% { background-position: 0% 50%; }
     100% { background-position: 200% 50%; }
-}
-
-#stage-info {
-    position: absolute;
-    top: 150px;
-    width: 100%;
-    text-align: center;
-    color: #ffffff;
-    font-size: 24px;
-    font-weight: bold;
-    text-shadow: 0 0 4px #000000;
-    z-index: 20;
-    pointer-events: none;
 }
 
 #start-timer {
