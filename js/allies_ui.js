@@ -184,17 +184,17 @@ function showUnitInfo(tower) {
         ch = `
             <div class="master-btn-container">
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Attack')">⚔️</button>
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Attack', true)">⚔️</button>
                     <span style="font-size:14px; color:#ff4500; font-weight:bold;">공격형</span>
                     <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Support')">🪄</button>
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Support', true)">🪄</button>
                     <span style="font-size:14px; color:#00e5ff; font-weight:bold;">지원형</span>
                     <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Special')">💠</button>
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Special', true)">💠</button>
                     <span style="font-size:14px; color:#ffd700; font-weight:bold;">특수형</span>
                     <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
@@ -208,7 +208,7 @@ function showUnitInfo(tower) {
                 const cost = (ud.tier === 4) ? 800 : 400;
                 ch += `
                     <div style="display:flex; flex-direction:column; align-items:center;">
-                        <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}')">${ud.icon}</button>
+                        <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)">${ud.icon}</button>
                         <span style="font-size:14px; color:#aaa; max-width:80px; text-align:center; font-weight:bold;">${ud.name}</span>
                         <span style="font-size:11px; color:#888;">(${cost} SE)</span>
                     </div>
