@@ -199,15 +199,99 @@ function drawParticles() {
 }
 
 
+// --- Hell's Path State ---
+let lightningTimer = 0;
+let lightningIntensity = 0;
+const roadSouls = []; // {x, y, speed, opacity}
+
 function drawLavaRoad() {
-    const time = lavaPhase;
-    // Road width proportional to 360 (approx 1/3 of screen)
+    const time = globalAnimTimer;
     const roadWidth = 114; 
     const roadX = (LOGICAL_WIDTH - roadWidth) / 2;
     
-    const haze = (Math.sin(time) + 1) / 2;
-    ctx.fillStyle = `rgba(255, 69, 0, ${0.05 + haze * 0.05})`;
+    ctx.save();
+
+    // 1. Base: Dark Granite Texture
+    ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(roadX, 0, roadWidth, LOGICAL_HEIGHT);
+    
+    // Procedural Granite Specks
+    ctx.fillStyle = '#1a1a1a';
+    for(let i=0; i<100; i++) {
+        const gx = roadX + (Math.sin(i * 567) * 0.5 + 0.5) * roadWidth;
+        const gy = (Math.sin(i * 123) * 0.5 + 0.5) * LOGICAL_HEIGHT;
+        ctx.fillRect(Math.floor(gx), Math.floor(gy), 2, 2);
+    }
+
+    // 2. Static Lava Cracks (Fissures)
+    ctx.strokeStyle = '#4a0e00'; // Hardened lava
+    ctx.lineWidth = 2;
+    for (let j = 0; j < 5; j++) {
+        ctx.beginPath();
+        const startY = (j * 150) % LOGICAL_HEIGHT;
+        ctx.moveTo(roadX + 20, startY);
+        ctx.lineTo(roadX + 50, startY + 40);
+        ctx.lineTo(roadX + 30, startY + 80);
+        ctx.lineTo(roadX + 80, startY + 120);
+        ctx.stroke();
+    }
+
+    // Glowing Lava Core (Pulsing)
+    const lavaGlow = (Math.sin(time * 2) + 1) / 2;
+    ctx.strokeStyle = `rgba(255, 69, 0, ${0.2 + lavaGlow * 0.3})`;
+    ctx.lineWidth = 1;
+    ctx.shadowBlur = 10 * lavaGlow;
+    ctx.shadowColor = '#ff4500';
+    // Re-draw same cracks with glow
+    for (let j = 0; j < 5; j++) {
+        ctx.beginPath();
+        const startY = (j * 150) % LOGICAL_HEIGHT;
+        ctx.moveTo(roadX + 20, startY);
+        ctx.lineTo(roadX + 50, startY + 40);
+        ctx.lineTo(roadX + 30, startY + 80);
+        ctx.lineTo(roadX + 80, startY + 120);
+        ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+
+    // 3. Lightning/Flicker (Dark Yellow + Orange)
+    if (lightningTimer <= 0) {
+        if (Math.random() < 0.01) { // Rare strike
+            lightningTimer = 10 + Math.random() * 20;
+            lightningIntensity = 0.3 + Math.random() * 0.4;
+        }
+    } else {
+        lightningTimer--;
+        const flicker = Math.random() > 0.5 ? 1 : 0.5;
+        ctx.fillStyle = `rgba(255, 215, 0, ${lightningIntensity * flicker * 0.15})`; // Dark Yellow
+        ctx.fillRect(roadX, 0, roadWidth, LOGICAL_HEIGHT);
+        ctx.fillStyle = `rgba(255, 69, 0, ${lightningIntensity * flicker * 0.1})`; // Orange tint
+        ctx.fillRect(roadX, 0, roadWidth, LOGICAL_HEIGHT);
+        lightningIntensity *= 0.95; // Fade out
+    }
+
+    // 4. Ascending Soul Particles (White Specks)
+    if (roadSouls.length < 15 && Math.random() < 0.1) {
+        roadSouls.push({
+            x: roadX + Math.random() * roadWidth,
+            y: LOGICAL_HEIGHT + 10,
+            speed: 0.5 + Math.random() * 1.5,
+            opacity: 0.2 + Math.random() * 0.5
+        });
+    }
+
+    ctx.fillStyle = '#ffffff';
+    for (let s = roadSouls.length - 1; s >= 0; s--) {
+        const soul = roadSouls[s];
+        soul.y -= soul.speed;
+        soul.opacity -= 0.001;
+        ctx.globalAlpha = Math.max(0, soul.opacity);
+        ctx.fillRect(Math.floor(soul.x), Math.floor(soul.y), 1, 2);
+        if (soul.y < -10 || soul.opacity <= 0) roadSouls.splice(s, 1);
+    }
+    ctx.globalAlpha = 1.0;
+
+    ctx.restore();
 }
 
 function drawPortalEnergy() {

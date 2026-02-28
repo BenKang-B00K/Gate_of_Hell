@@ -21,17 +21,10 @@
 
 #road {
     width: 340px;
-    background-color: #0a0a0a;
-    background-image: 
-        radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0),
-        linear-gradient(45deg, #111 25%, transparent 25%, transparent 75%, #111 75%, #111),
-        linear-gradient(45deg, #111 25%, #050505 25%, #050505 75%, #111 75%, #111);
-    background-size: 8px 8px, 40px 40px, 40px 40px;
-    background-position: 0 0, 0 0, 20px 20px;
+    background-color: #050505;
     box-shadow: 
         inset 20px 0 40px rgba(0,0,0,0.9),
-        inset -20px 0 40px rgba(0,0,0,0.9),
-        0 0 50px rgba(255, 69, 0, 0.1);
+        inset -20px 0 40px rgba(0,0,0,0.9);
     position: relative;
     display: flex;
     justify-content: center;
@@ -40,33 +33,8 @@
     overflow: hidden;
 }
 
-#road::before {
-    content: "";
-    position: absolute;
-    top: -100%;
-    left: 0;
-    width: 100%;
-    height: 300%;
-    background-image: 
-        linear-gradient(115deg, transparent 45%, rgba(255, 69, 0, 0.4) 47%, rgba(255, 0, 0, 0.6) 48%, rgba(255, 140, 0, 0.4) 49%, transparent 51%),
-        linear-gradient(245deg, transparent 25%, rgba(255, 69, 0, 0.3) 27%, rgba(255, 0, 0, 0.5) 28%, rgba(255, 140, 0, 0.3) 29%, transparent 31%),
-        linear-gradient(115deg, transparent 75%, rgba(255, 69, 0, 0.4) 77%, rgba(255, 0, 0, 0.6) 78%, rgba(255, 140, 0, 0.4) 79%, transparent 81%),
-        radial-gradient(circle at 50% 50%, rgba(255, 69, 0, 0.15) 0%, transparent 70%);
-    background-size: 100% 400px;
-    filter: blur(1.5px);
-    opacity: 0.6;
-    z-index: 0;
-    animation: lavaFlowAnim 25s infinite linear, lavaPulse 4s infinite alternate ease-in-out;
-    pointer-events: none;
-}
-
-#road::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, #000 0%, transparent 15%, transparent 85%, #000 100%);
-    pointer-events: none;
-    z-index: 1;
+#road::before, #road::after {
+    display: none; /* Removed old CSS effects */
 }
 
 @keyframes lavaFlowAnim {
