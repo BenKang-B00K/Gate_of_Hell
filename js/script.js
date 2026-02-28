@@ -1,7 +1,7 @@
 /* script.js */
 let thunderInterval;
 
-let spawnInterval = 1200; 
+let spawnInterval = 2150; 
 let isPaused = false;
 let gameWidth = 360; 
 
@@ -211,19 +211,23 @@ function gameLoop() {
     }
 
     if (!isStageStarting) {
-        if (isBossStage) {
-            // Spawn boss first, then minions until limit - Slower spawn for boss stage
-            if (!bossSpawned || (bossInstance && bossInstance.hp > 0 && currentStageSpawned < totalStageEnemies)) {
-                if (Date.now() - lastSpawnTime > spawnInterval) {
-                    spawnWave(); 
-                    spawnInterval = Math.random() * 2000 + 2000; // Much slower: 2-4 seconds
+        const canSpawnMore = currentStageSpawned < totalStageEnemies;
+        const noEnemiesLeft = enemies.length === 0;
+        const timeElapsed = Date.now() - lastSpawnTime > spawnInterval;
+
+        if (canSpawnMore) {
+            if (isBossStage) {
+                // Spawn boss first, then minions until limit - Slower spawn for boss stage
+                if (!bossSpawned || (bossInstance && bossInstance.hp > 0)) {
+                    if (timeElapsed || noEnemiesLeft) {
+                        spawnWave(); 
+                        lastSpawnTime = Date.now();
+                    }
                 }
-            }
-        } else {
-            if (currentStageSpawned < totalStageEnemies) {
-                if (Date.now() - lastSpawnTime > spawnInterval) {
+            } else {
+                if (timeElapsed || noEnemiesLeft) {
                     spawnWave(); 
-                    spawnInterval = Math.random() * 600 + 800; // Adjusted to 0.8-1.4 seconds
+                    lastSpawnTime = Date.now();
                 }
             }
         }

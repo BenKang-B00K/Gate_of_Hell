@@ -95,14 +95,19 @@ function spawnWave() {
     if (currentStageSpawned >= totalStageEnemies && !isBossStage) return;
     if (isBossStage && bossSpawned && currentStageSpawned >= totalStageEnemies) return;
     if (isBossStage && !bossSpawned) { spawnBoss(); bossSpawned = true; }
-    let min = 1, max = 2;
-    if (isBossStage) { min = 1; max = 2; } 
-    else if (stage >= 20) { min = 2; max = 4; } 
-    else if (stage >= 10) { min = 1; max = 3; }
+    
+    // [User Request] Dynamic wave sizing: 1~3 early, growing to 3~5 cap
+    let min = Math.min(3, 1 + Math.floor(stage / 15));
+    let max = Math.min(5, 3 + Math.floor(stage / 15));
+    
+    if (isBossStage) { min = 1; max = 3; } 
+    
     let count = Math.floor(Math.random() * (max - min + 1)) + min;
     if (!isBossStage && count > totalStageEnemies - currentStageSpawned) count = totalStageEnemies - currentStageSpawned;
+    
     for(let i=0; i<count; i++) {
-        setTimeout(() => { if (!isPaused) spawnEnemy(); }, i * 350);
+        // [User Request] 0.25s sequential spawn interval within wave
+        setTimeout(() => { if (!isPaused) spawnEnemy(); }, i * 250);
     }
 }
 
