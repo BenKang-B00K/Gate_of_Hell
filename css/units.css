@@ -283,37 +283,77 @@
     cursor: default;
 }
 
-/* Unit Info Panel */
+/* Unit Info Panel (Sacred Artifact Style) */
 #unit-info {
-    background: linear-gradient(145deg, #1a1a00, #000);
-    border: 3px solid #ffd700;
-    border-radius: 12px;
-    padding: 12px 18px;
+    background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+    border: 4px solid #ffd700;
+    /* Arched top shape for a more monumental look */
+    border-radius: 40px 40px 15px 15px;
+    padding: 20px 25px;
     font-size: 27px;
-    color: #fff;
+    color: #eee;
     text-align: center;
     flex: 1;
     overflow-y: auto;
-    box-shadow: inset 0 0 30px rgba(255, 215, 0, 0.2), 0 0 30px rgba(255, 215, 0, 0.1);
+    box-shadow: 
+        0 0 40px rgba(0, 0, 0, 0.8),
+        inset 0 0 25px rgba(255, 215, 0, 0.15),
+        0 0 15px rgba(255, 215, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     scrollbar-width: none;
+    position: relative;
+    border-top: 6px solid #ffd700; /* Thicker top border */
 }
+
+/* Decorative Corner Runes */
+#unit-info::before, #unit-info::after {
+    content: "⛧";
+    position: absolute;
+    color: rgba(255, 215, 0, 0.4);
+    font-size: 24px;
+    top: 15px;
+}
+#unit-info::before { left: 20px; }
+#unit-info::after { right: 20px; }
 
 #unit-info::-webkit-scrollbar { display: none; }
 
 .info-default-text {
     font-family: 'Cinzel', serif;
     font-weight: bold;
-    font-size: 42px;
+    font-size: 48px;
     color: #ffd700;
-    text-shadow: 0 0 15px #ffd700, 0 0 30px #ff8c00, 0 0 45px #ff0000;
-    letter-spacing: 3px;
-    line-height: 1.2;
+    text-shadow: 
+        0 0 15px #ffd700, 
+        0 0 30px #ff8c00, 
+        2px 2px 5px #000;
+    letter-spacing: 4px;
+    line-height: 1.1;
     animation: divinePulse 3s infinite alternate;
     text-transform: uppercase;
+}
+
+/* Stat Lines Styling */
+.unit-info-title {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 36px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    letter-spacing: 2px;
+}
+
+.unit-info-stats {
+    font-size: 24px;
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    margin-bottom: 15px;
 }
 
 .divine-glow {

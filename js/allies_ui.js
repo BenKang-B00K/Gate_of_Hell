@@ -176,8 +176,8 @@ function showUnitInfo(tower) {
     const data = tower.data;
     const finalDmg = Math.round(data.damage * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
     
-    let th = `<div style="color:#ffd700; font-weight:bold; font-size:32px; margin-bottom:4px;">${data.name}</div>`;
-    let ih = `<div style="font-size:24px; color:#bbb; margin-bottom:8px;">공격력: ${finalDmg} | 사거리: ${data.range} | 쿨다운: ${(tower.cooldown/1000).toFixed(1)}초</div>`;
+    let th = `<div class="unit-info-title">${data.name}</div>`;
+    let ih = `<div class="unit-info-stats">공격력: ${finalDmg} | 사거리: ${data.range} | 쿨다운: ${(tower.cooldown/1000).toFixed(1)}초</div>`;
     
     let ch = ''; 
     if(data.type === 'apprentice') {
@@ -185,17 +185,17 @@ function showUnitInfo(tower) {
             <div class="master-btn-container">
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Attack')">⚔️</button>
-                    <span style="font-size:14px; color:#ff4500;">공격형</span>
+                    <span style="font-size:14px; color:#ff4500; font-weight:bold;">공격형</span>
                     <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Support')">🪄</button>
-                    <span style="font-size:14px; color:#00e5ff;">지원형</span>
+                    <span style="font-size:14px; color:#00e5ff; font-weight:bold;">지원형</span>
                     <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Special')">💠</button>
-                    <span style="font-size:14px; color:#ffd700;">특수형</span>
+                    <span style="font-size:14px; color:#ffd700; font-weight:bold;">특수형</span>
                     <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
             </div>
@@ -209,7 +209,7 @@ function showUnitInfo(tower) {
                 ch += `
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}')">${ud.icon}</button>
-                        <span style="font-size:14px; color:#aaa; max-width:80px; text-align:center;">${ud.name}</span>
+                        <span style="font-size:14px; color:#aaa; max-width:80px; text-align:center; font-weight:bold;">${ud.name}</span>
                         <span style="font-size:11px; color:#888;">(${cost} SE)</span>
                     </div>
                 `;
@@ -218,7 +218,7 @@ function showUnitInfo(tower) {
         ch += `</div>`;
     }
 
-    d.innerHTML = `${th}${ih}${ch}<div style="color:#888; font-size:22px; margin-top:6px; line-height:1.2;">${data.desc}</div>`;
+    d.innerHTML = `${th}${ih}${ch}<div style="color:#aaa; font-size:22px; margin-top:10px; line-height:1.3; font-style:italic; max-width:90%;">"${data.desc}"</div>`;
     
     // Check for Corruption (Tier 3)
     if (data.tier === 3) {
@@ -291,7 +291,14 @@ function startInfoResetTimer() {
     if (infoResetTimer) clearTimeout(infoResetTimer);
     infoResetTimer = setTimeout(() => {
         const d = document.getElementById('unit-info');
-        if (d) d.innerHTML = '<div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 공세</span></div>';
+        if (d) {
+            d.innerHTML = `
+                <div class="info-default-text" style="font-size:36px; opacity:0.6;">GATE OF HELL</div>
+                <div style="color:#555; font-size:24px; margin-top:10px; letter-spacing:8px; font-weight:bold;">SACRED TABLET</div>
+                <div style="width:60%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:15px 0;"></div>
+                <div style="color:#444; font-size:18px; font-style:italic;">"영혼을 정화하는 성스러운 기록이 이곳에 새겨집니다."</div>
+            `;
+        }
         
         // [User Request] Deselect units and clear indicators after 10 seconds
         document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
