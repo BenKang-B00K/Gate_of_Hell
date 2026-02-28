@@ -7,8 +7,6 @@ const ctx = canvas.getContext('2d');
 const LOGICAL_WIDTH = 360; 
 const LOGICAL_HEIGHT = 640; 
 
-let lavaPhase = 0;
-
 function initGraphics() {
     const container = document.getElementById('game-container');
     if (!container) return;
@@ -85,6 +83,3 @@ if (document.readyState === 'loading') {
 
 // Global Exports
 window.ctx = ctx;
-window.lavaPhase = lavaPhase;
-window.LOGICAL_WIDTH = LOGICAL_WIDTH;
-window.LOGICAL_HEIGHT = LOGICAL_HEIGHT;

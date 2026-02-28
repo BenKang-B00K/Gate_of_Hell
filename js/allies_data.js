@@ -28,6 +28,9 @@ let friendlySkeletons = [];
 let friendlyGhosts = [];
 let groundEffects = [];
 let gameContainer, road;
+let slots = [];
+let globalAnimTimer = 0;
+let lavaPhase = 0;
 
 /**
  * Updates Soul Energy and Portal Energy Displays
