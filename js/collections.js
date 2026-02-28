@@ -70,6 +70,23 @@ function renderGhostGrid(category) {
         
         if (isUnlocked) {
             item.onclick = () => showGhostDetail(enemy);
+            item.onmouseenter = () => {
+                if (typeof showEnemyInfo === 'function') {
+                    // Create a temporary object that matches the expected format for showEnemyInfo
+                    const tempEnemy = {
+                        type: enemy.type,
+                        hp: enemy.hp,
+                        maxHp: enemy.hp,
+                        defense: enemy.defense || 0,
+                        desc: enemy.desc,
+                        data: { name: enemy.name, lore: enemy.lore }
+                    };
+                    showEnemyInfo(tempEnemy);
+                }
+            };
+            item.onmouseleave = () => {
+                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+            };
         }
         
         grid.appendChild(item);
@@ -166,6 +183,20 @@ function createExNode(type) {
     `;
     
     node.onclick = () => showExorcistDetail(data);
+    node.onmouseenter = () => {
+        if (isUnlocked && typeof showUnitInfo === 'function') {
+            // Create a temporary tower-like object for showUnitInfo
+            const tempTower = {
+                data: data,
+                cooldown: data.cooldown,
+                damageBonus: 0
+            };
+            showUnitInfo(tempTower);
+        }
+    };
+    node.onmouseleave = () => {
+        if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+    };
     return node;
 }
 
