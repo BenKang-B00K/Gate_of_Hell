@@ -133,7 +133,7 @@ function spawnStageFlash(text) {
 function updateStageFlashes() {
     for (let i = stageFlashes.length - 1; i >= 0; i--) {
         const sf = stageFlashes[i];
-        sf.life -= 0.01; // Slower fade for stage transition
+        sf.life -= 0.02; // Faster fade (was 0.01)
         if (sf.life <= 0) stageFlashes.splice(i, 1);
     }
 }
@@ -143,35 +143,32 @@ function drawStageFlashes() {
         const alpha = sf.life;
         ctx.save();
         
-        // 1. Full Screen Blinding White/Gold Flash
-        // Flash is strongest at life 1.0 to 0.8, then fades
-        const flashAlpha = Math.min(1.0, alpha * 2);
+        // 1. Reduced Full Screen Flash
+        const flashAlpha = Math.min(0.6, alpha * 1.5); // Max opacity 0.6 (was 1.0)
         ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
         ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
         
-        const goldAlpha = Math.min(0.6, alpha);
+        const goldAlpha = Math.min(0.3, alpha); // Max opacity 0.3 (was 0.6)
         ctx.fillStyle = `rgba(255, 215, 0, ${goldAlpha})`;
         ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
 
-        // 2. Large Centered Text
-        if (alpha > 0.2) {
+        // 2. Controlled Text Animation
+        if (alpha > 0.1) {
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             
-            // Text Shadow
-            ctx.shadowBlur = 20;
+            ctx.shadowBlur = 10; // Reduced blur (was 20)
             ctx.shadowColor = '#ff4500';
             
-            // Main Text
-            const fontSize = 48 + (1.0 - alpha) * 40; // Text expands
+            // Subtler text expansion
+            const fontSize = 42 + (1.0 - alpha) * 20; 
             ctx.font = `bold ${fontSize}px Cinzel, serif`;
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
             ctx.fillText(sf.text, LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2);
             
-            // Subtitle
-            ctx.font = `bold 24px Cinzel, serif`;
-            ctx.fillStyle = `rgba(255, 215, 0, ${alpha * 0.8})`;
-            ctx.fillText("ASCENDING TO NEXT DEPTH", LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2 + 60);
+            ctx.font = `bold 20px Cinzel, serif`; // Smaller subtitle
+            ctx.fillStyle = `rgba(255, 215, 0, ${alpha * 0.7})`;
+            ctx.fillText("ASCENDING TO NEXT DEPTH", LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2 + 50);
         }
         
         ctx.restore();

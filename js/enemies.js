@@ -925,8 +925,8 @@ function triggerStageTransition() {
     if (!container) return;
     const containerRect = container.getBoundingClientRect();
     
-    // Pick 8-12 random slots to strike with light
-    const count = 8 + Math.floor(Math.random() * 5);
+    // Pick 4-6 random slots to strike with light (Reduced from 8-12)
+    const count = 4 + Math.floor(Math.random() * 3);
     const shuffled = Array.from(cardSlots).sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, count);
     
@@ -936,7 +936,7 @@ function triggerStageTransition() {
             const lx = ((rect.left + rect.width / 2) - containerRect.left) * (LOGICAL_WIDTH / containerRect.width);
             const ly = ((rect.top + rect.height / 2) - containerRect.top) * (LOGICAL_HEIGHT / containerRect.height);
             spawnLightPillar(lx, ly);
-        }, i * 150); // Sequential strikes
+        }, i * 300); // Slower sequence (was 150ms)
     });
 }
 
