@@ -190,6 +190,10 @@ function handleEnemyDeath(target, killer = null) {
     if (target.hp > 0) return;
     const idx = enemies.indexOf(target);
     if (idx > -1) {
+        // Increment global kill count for this enemy type
+        if (!window.killCounts) window.killCounts = {};
+        window.killCounts[target.type] = (window.killCounts[target.type] || 0) + 1;
+
         if (target.isCursedMark) spawnDeathExplosion(target, '#2e003e', 100, 0.5);
         if (target.isHellfireBurn) spawnDeathExplosion(target, '#ff4500', 80, 30, true);
         if (target.type === 'ember_hatred') spawnDeathExplosion(target, 'rgba(255, 69, 0, 0.6)', 100, 0, false, (e) => { e.speed *= 1.5; setTimeout(() => { e.speed = e.baseSpeed; }, 3000); });
@@ -215,6 +219,10 @@ function handleEnemyDeath(target, killer = null) {
         const relicBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('se_gain') : 0;
         reward = Math.floor(reward * (1.0 + relicBonus));
         money = Math.min(1000, money + reward); updateGauges();
+        
+        // Save progress (including killCounts)
+        if (typeof saveGameData === 'function') saveGameData();
+
         if (typeof createSEGainEffect === 'function' && target.element) {
             const r = target.element.getBoundingClientRect(); const gr = gameContainer.getBoundingClientRect();
             createSEGainEffect((r.left + r.width / 2) - gr.left, (r.top + r.height / 2) - gr.top, reward, gameContainer);

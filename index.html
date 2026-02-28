@@ -135,15 +135,51 @@
                     <div class="tower-card placeholder">
                         <div style="font-size: 30px; color: #444;">준비중</div>
                     </div>
-                    <!-- 6. TBD Card -->
-                    <div class="tower-card placeholder">
-                        <div style="font-size: 30px; color: #444;">준비중</div>
+                    <!-- 6. Collections Card -->
+                    <div id="collections-btn" class="tower-card" style="border-color: #ffd700; color: #ffd700;">
+                        <div style="font-size: 42px;">📖</div>
+                        <div style="font-size: 24px;">도감</div>
                     </div>
                 </div>
 
                 <div id="unit-info">
                     <div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 귀환</span></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Collections (도감) Overlay -->
+    <div id="collections-overlay" style="display: none;">
+        <div id="collections-content">
+            <div id="collections-header">
+                <div id="collections-tabs">
+                    <button class="col-tab-btn active" data-tab="ghosts">유령 도감</button>
+                    <button class="col-tab-btn" data-tab="exorcists">퇴마사 도감</button>
+                </div>
+                <button id="close-collections">X</button>
+            </div>
+            
+            <div id="ghosts-section" class="collections-section active">
+                <div class="col-category-nav">
+                    <button class="col-cat-btn active" data-cat="normal">일반 유령</button>
+                    <button class="col-cat-btn" data-cat="enhanced">악마</button>
+                    <button class="col-cat-btn" data-cat="armoured">상위 악마</button>
+                    <button class="col-cat-btn" data-cat="boss">마신</button>
+                </div>
+                <div id="ghost-grid" class="collections-grid">
+                    <!-- 10 columns grid dynamically populated -->
+                </div>
+            </div>
+
+            <div id="exorcists-section" class="collections-section">
+                <div id="exorcist-tree-container">
+                    <!-- Tree view dynamically populated -->
+                </div>
+            </div>
+
+            <div id="collection-details">
+                <div class="info-default-text">항목을 선택하여 상세 정보를 확인하세요.</div>
             </div>
         </div>
     </div>
@@ -227,6 +263,7 @@
     <script src="js/attackeffect.js"></script>
     <script src="js/soundeffect.js"></script>
     <script src="js/relics.js"></script>
+    <script src="js/collections.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
