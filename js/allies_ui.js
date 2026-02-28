@@ -161,32 +161,56 @@ function showUnitInfo(tower) {
     const data = tower.data;
     const finalDmg = Math.round(data.damage * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
     
-    let th = `<div class="unit-info-title">${data.name}</div>`;
-    let ih = `<div class="unit-info-stats">공격력: ${finalDmg} | 사거리: ${data.range} | 쿨다운: ${(tower.cooldown/1000).toFixed(1)}초</div>`;
+    // [UI Enhancement] Using wider space with better hierarchy
+    let th = `<div class="unit-info-title" style="font-size:42px; margin-bottom:15px;">${data.name}</div>`;
+    
+    let ih = `
+        <div style="display:flex; justify-content:center; gap:30px; margin-bottom:20px; width:100%;">
+            <div class="unit-info-stats" style="flex:1; border-color:#ff4500;">
+                <span style="color:#ff4500; font-size:20px; display:block;">ATTACK</span>
+                <span style="font-size:32px; font-weight:bold;">${finalDmg}</span>
+            </div>
+            <div class="unit-info-stats" style="flex:1; border-color:#00e5ff;">
+                <span style="color:#00e5ff; font-size:20px; display:block;">RANGE</span>
+                <span style="font-size:32px; font-weight:bold;">${data.range}</span>
+            </div>
+            <div class="unit-info-stats" style="flex:1; border-color:#ffd700;">
+                <span style="color:#ffd700; font-size:20px; display:block;">COOLDOWN</span>
+                <span style="font-size:32px; font-weight:bold;">${(tower.cooldown/1000).toFixed(1)}s</span>
+            </div>
+        </div>
+    `;
+
+    // Divider
+    let divider = `<div style="width:80%; height:2px; background:linear-gradient(90deg, transparent, #ffd70066, transparent); margin:15px 0;"></div>`;
     
     let ch = ''; 
     if(data.type === 'apprentice') {
         ch = `
-            <div class="master-btn-container">
+            <div style="color:#aaa; font-size:20px; margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">직업 전직 가능</div>
+            <div class="master-btn-container" style="margin-top:5px;">
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Attack', true)">⚔️</button>
-                    <span style="font-size:14px; color:#ff4500; font-weight:bold;">공격형</span>
-                    <span style="font-size:11px; color:#888;">(200 SE)</span>
+                    <span style="font-size:18px; color:#ff4500; font-weight:bold;">공격형</span>
+                    <span style="font-size:14px; color:#888;">(200 SE)</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Support', true)">🪄</button>
-                    <span style="font-size:14px; color:#00e5ff; font-weight:bold;">지원형</span>
-                    <span style="font-size:11px; color:#888;">(200 SE)</span>
+                    <span style="font-size:18px; color:#00e5ff; font-weight:bold;">지원형</span>
+                    <span style="font-size:14px; color:#888;">(200 SE)</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Special', true)">💠</button>
                     <span style="font-size:14px; color:#ffd700; font-weight:bold;">특수형</span>
-                    <span style="font-size:11px; color:#888;">(200 SE)</span>
+                    <span style="font-size:14px; color:#888;">(200 SE)</span>
                 </div>
             </div>
         `;
     } else if(data.upgrades) {
-        ch = `<div class="master-btn-container">`;
+        ch = `
+            <div style="color:#aaa; font-size:20px; margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">마스터 승급 가능</div>
+            <div class="master-btn-container" style="margin-top:5px;">
+        `;
         data.upgrades.forEach((u, i) => {
             const ud = unitTypes.find(x => x.type === u);
             if(ud) {
@@ -194,8 +218,8 @@ function showUnitInfo(tower) {
                 ch += `
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)">${ud.icon}</button>
-                        <span style="font-size:14px; color:#aaa; max-width:80px; text-align:center; font-weight:bold;">${ud.name}</span>
-                        <span style="font-size:11px; color:#888;">(${cost} SE)</span>
+                        <span style="font-size:18px; color:#aaa; max-width:120px; text-align:center; font-weight:bold;">${ud.name}</span>
+                        <span style="font-size:14px; color:#888;">(${cost} SE)</span>
                     </div>
                 `;
             }
@@ -203,7 +227,9 @@ function showUnitInfo(tower) {
         ch += `</div>`;
     }
 
-    d.innerHTML = `${th}${ih}${ch}<div style="color:#aaa; font-size:22px; margin-top:10px; line-height:1.3; font-style:italic; max-width:90%;">"${data.desc}"</div>`;
+    let desc = `<div style="color:#eee; font-size:26px; margin-top:20px; line-height:1.4; padding: 0 40px;">"${data.desc}"</div>`;
+
+    d.innerHTML = `${th}${ih}${divider}${ch}${desc}`;
     
     // Check for Corruption (Tier 3)
     if (data.tier === 3) {
@@ -300,27 +326,31 @@ function showResourceInfo(type) {
     const d = document.getElementById('unit-info');
     if (!d) return;
 
+    let divider = `<div style="width:80%; height:2px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); margin:25px 0;"></div>`;
+
     if (type === 'se') {
         d.innerHTML = `
-            <div style="color:#00e5ff; font-weight:bold; font-size:39px; margin-bottom:6px;">Soul Energy (SE)</div>
-            <div style="display:inline-block; background:#008ba3; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">소울 에너지</div>
-            <div style="font-size:27px; color:#bbb; line-height:1.2;">퇴마사를 소환하고 진화시키는 데 사용됩니다. 악령을 처치하여 획득합니다.</div>
-            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"정화된 미련의 결정체로, 산 자의 세계를 지키는 성스러운 기술의 원동력입니다."</div>
+            <div style="color:#00e5ff; font-weight:bold; font-size:48px; margin-bottom:10px; text-shadow:0 0 20px #00e5ff;">SOUL ENERGY</div>
+            <div style="display:inline-block; background:#008ba3; color:#fff; padding:6px 20px; border-radius:15px; font-size:28px; font-weight:bold; margin-bottom:20px; border:2px solid #00e5ff;">✨ 성스러운 결정체</div>
+            <div style="font-size:30px; color:#ccc; line-height:1.4; padding: 0 50px;">퇴마사를 소환하고 진화시키는 데 필요한 본질적인 에너지입니다. 악령을 정화(처치)하여 획득할 수 있습니다.</div>
+            ${divider}
+            <div style="color:#666; font-size:26px; font-style:italic; line-height:1.3; padding: 0 60px;">"정화된 미련의 결정체로, 산 자의 세계를 지키는 성스러운 기술의 원동력입니다."</div>
         `;
     } else if (type === 'pe') {
         d.innerHTML = `
-            <div style="color:#ff00ff; font-weight:bold; font-size:39px; margin-bottom:6px;">Portal Energy (PE)</div>
-            <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">포탈 오염도</div>
-            <div style="font-size:27px; color:#bbb; line-height:1.2;">문의 불안정성을 나타냅니다. 악령이 통과할 때마다 증가하며, 100%에 도달하면 게임 오버됩니다.</div>
-            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"두 세계 사이의 가교는 연약합니다. 반대편의 슬픔이 너무 많이 유입되면 완전히 산산조각날 것입니다."</div>
+            <div style="color:#ff00ff; font-weight:bold; font-size:48px; margin-bottom:10px; text-shadow:0 0 20px #ff00ff;">PORTAL CORRUPTION</div>
+            <div style="display:inline-block; background:#4b0082; color:#fff; padding:6px 20px; border-radius:15px; font-size:28px; font-weight:bold; margin-bottom:20px; border:2px solid #ff00ff;">👿 문의 오염도</div>
+            <div style="font-size:30px; color:#ccc; line-height:1.4; padding: 0 50px;">심연과 이승 사이 문의 불안정성을 나타냅니다. 악령이 통과할 때마다 증가하며, <strong>100%</strong>에 도달하면 문이 붕괴되어 세계가 멸망합니다.</div>
+            ${divider}
+            <div style="color:#666; font-size:26px; font-style:italic; line-height:1.3; padding: 0 60px;">"두 세계 사이의 가교는 연약합니다. 반대편의 슬픔이 너무 많이 유입되면 완전히 산산조각날 것입니다."</div>
         `;
     } else if (type === 'rs') {
         d.innerHTML = `
-            <div style="color:#ff1744; font-weight:bold; font-size:39px; margin-bottom:6px;">Remaining Specters (RS)</div>
-            <div style="display:inline-block; background:#b71c1c; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">남은 악령</div>
-            <div style="font-size:27px; color:#bbb; line-height:1.2;">현재 Depth에서 아직 소멸시키지 못한 악령들의 수입니다.</div>
-            <div style="color:#00ff00; font-size:24px; margin-top:12px;">* 모든 악령을 처치하면 더 깊은 심연으로 내려갑니다.</div>
-            <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"그들은 그림자의 파도처럼 몰려옵니다. 마지막 하나가 쓰러질 때까지 굳건히 버티십시오."</div>
+            <div style="color:#ff1744; font-weight:bold; font-size:48px; margin-bottom:10px; text-shadow:0 0 20px #ff1744;">REMAINING SPECTERS</div>
+            <div style="display:inline-block; background:#b71c1c; color:#fff; padding:6px 20px; border-radius:15px; font-size:28px; font-weight:bold; margin-bottom:20px; border:2px solid #ff1744;">💀 잔존 악령 수</div>
+            <div style="font-size:30px; color:#ccc; line-height:1.4; padding: 0 50px;">현재 구역(Depth)에 잔류하고 있는 악령의 총량입니다. 모든 악령을 정화하면 심연의 더 깊은 곳으로 진입할 수 있습니다.</div>
+            ${divider}
+            <div style="color:#666; font-size:26px; font-style:italic; line-height:1.3; padding: 0 60px;">"그들은 그림자의 파도처럼 몰려옵니다. 마지막 하나가 쓰러질 때까지 굳건히 버티십시오."</div>
         `;
     }
     startInfoResetTimer();
@@ -337,14 +367,28 @@ function showEnemyInfo(enemy) {
     const maxHp = Math.floor(enemy.maxHp || hp);
     const def = enemy.defense || 0;
 
-    let th = `<div style="color:#ff4500; font-weight:bold; font-size:32px; margin-bottom:4px;">${dispName}</div>`;
-    let ih = `<div style="font-size:24px; color:#bbb; margin-bottom:8px;">체력: ${hp} / ${maxHp} | 방어력: ${def}</div>`;
+    let divider = `<div style="width:80%; height:2px; background:linear-gradient(90deg, transparent, #ff450066, transparent); margin:15px 0;"></div>`;
+
+    let th = `<div style="color:#ff4500; font-weight:bold; font-size:42px; margin-bottom:10px; text-shadow:0 0 15px #ff4500;">${dispName}</div>`;
+    
+    let ih = `
+        <div style="display:flex; justify-content:center; gap:20px; margin-bottom:15px; width:100%; padding: 0 40px;">
+            <div class="unit-info-stats" style="flex:2; border-color:#ff1744; background:rgba(183,28,28,0.1);">
+                <span style="color:#ff1744; font-size:18px; display:block;">HEALTH</span>
+                <span style="font-size:28px; font-weight:bold;">${hp} / ${maxHp}</span>
+            </div>
+            <div class="unit-info-stats" style="flex:1; border-color:#888; background:rgba(255,255,255,0.05);">
+                <span style="color:#aaa; font-size:18px; display:block;">DEFENSE</span>
+                <span style="font-size:28px; font-weight:bold;">${def}</span>
+            </div>
+        </div>
+    `;
     
     // Effectiveness & Lore
-    let eh = `<div style="color:#ff8a80; font-size:22px; margin-bottom:4px;">특징: ${enemy.desc || "심연의 존재입니다."}</div>`;
-    let lh = `<div style="color:#555; font-size:20px; font-style:italic; line-height:1.2;">"${enemy.data?.lore || "이 영혼에 대한 기록이 없습니다."}"</div>`;
+    let eh = `<div style="color:#ff8a80; font-size:26px; margin-bottom:10px; padding: 0 50px;"><strong>특성:</strong> ${enemy.desc || "심연의 존재입니다."}</div>`;
+    let lh = `<div style="color:#666; font-size:24px; font-style:italic; line-height:1.4; padding: 0 60px;">"${enemy.data?.lore || "이 영혼에 대한 기록이 없습니다."}"</div>`;
 
-    d.innerHTML = `${th}${ih}${eh}${lh}`;
+    d.innerHTML = `${th}${ih}${divider}${eh}${lh}`;
     startInfoResetTimer();
 }
 

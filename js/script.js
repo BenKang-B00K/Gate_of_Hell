@@ -1,7 +1,7 @@
 /* script.js */
 let thunderInterval;
 
-let spawnInterval = 2150; 
+let spawnInterval = 4800; 
 let isPaused = false;
 let gameWidth = 360; 
 
