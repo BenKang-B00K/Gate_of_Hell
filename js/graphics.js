@@ -51,17 +51,67 @@ function disableSmoothing() {
     ctx.imageSmoothingEnabled = false;
 }
 
+// --- Advanced VFX State ---
+const particles = []; 
+let globalAnimTimer = 0;
+
+function spawnParticles(x, y, color, count = 12) {
+    for (let i = 0; i < count; i++) {
+        particles.push({
+            x: x, y: y,
+            vx: (Math.random() - 0.5) * 3,
+            vy: (Math.random() - 0.5) * 3 - 1, 
+            color: color,
+            size: Math.random() * 2 + 1,
+            life: 1.0,
+            decay: 0.015 + Math.random() * 0.02
+        });
+    }
+}
+
+function updateParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        p.life -= p.decay;
+        if (p.life <= 0) particles.splice(i, 1);
+    }
+}
+
+function drawShadow(lx, ly, size = 10) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+    ctx.beginPath();
+    ctx.ellipse(lx, ly + 12, size, size * 0.35, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+}
+
 function renderGraphics() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     lavaPhase += 0.02;
+    globalAnimTimer += 0.06; // Drive animations
+    
+    updateParticles();
     
     drawLavaRoad();
     drawSlots();
     drawUnits();
-    drawEnemies(); // Render enemies on canvas
+    drawEnemies(); 
+    drawParticles(); 
     drawSelectionHalo();
 }
+
+function drawParticles() {
+    particles.forEach(p => {
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(Math.floor(p.x), Math.floor(p.y), Math.floor(p.size), Math.floor(p.size));
+    });
+    ctx.globalAlpha = 1.0;
+}
+
 
 function drawLavaRoad() {
     const time = lavaPhase;
@@ -147,9 +197,15 @@ function drawUnits() {
 
     towers.forEach(tower => {
         const rect = tower.element.getBoundingClientRect();
-        const cx = Math.floor(((rect.left + rect.width / 2) - containerRect.left) * scaleX);
-        const cy = Math.floor(((rect.top + rect.height / 2) - containerRect.top) * scaleY);
+        let cx = Math.floor(((rect.left + rect.width / 2) - containerRect.left) * scaleX);
+        let cy = Math.floor(((rect.top + rect.height / 2) - containerRect.top) * scaleY);
 
+        // Shadows
+        drawShadow(cx, cy, 14);
+
+        // Idle Bobbing
+        const bob = Math.sin(globalAnimTimer + (cx * 0.05)) * 2;
+        cy += Math.floor(bob);
 
         switch(tower.data.type) {
             case 'apprentice': drawApprentice(cx, cy, tower); break;
@@ -5338,32 +5394,37 @@ function drawEnemies() {
     const container = document.getElementById('game-container');
     if (!container) return;
     const containerRect = container.getBoundingClientRect();
-    
-    // Design is 360x640 logical
     const scaleX = LOGICAL_WIDTH / containerRect.width;
     const scaleY = LOGICAL_HEIGHT / containerRect.height;
 
     enemies.forEach(enemy => {
         if (enemy.hp <= 0) return;
         
-        // Convert screen % / px to logical coordinates
-        // enemy.x is in %, enemy.y is in px (relative to road)
         const road = document.getElementById('road');
         const roadRect = road.getBoundingClientRect();
-        
         const worldX = (enemy.x / 100) * roadRect.width + roadRect.left - containerRect.left;
         const worldY = enemy.y + roadRect.top - containerRect.top;
         
-        // Apply Math.floor to logical coordinates to prevent blurring
-        const lx = Math.floor(worldX * scaleX);
-        const ly = Math.floor(worldY * scaleY);
+        let lx = Math.floor(worldX * scaleX);
+        let ly = Math.floor(worldY * scaleY);
         
+        // --- 2. Shadows ---
+        drawShadow(lx, ly, enemy.isBoss ? 24 : 10);
+
+        // --- 3. Animation: Bobbing ---
+        const bob = Math.sin(globalAnimTimer * 1.5 + (lx * 0.1)) * 3;
+        ly += Math.floor(bob);
+
         ctx.save();
         
-        // [User Request] Force Math.floor() on all drawImage calls
+        // --- 3. Animation: Hit-Flash ---
+        // If enemy was hit recently, apply a white filter
+        const wasHit = (enemy.lastHitTime && Date.now() - enemy.lastHitTime < 100);
+        if (wasHit) {
+            ctx.filter = 'brightness(3) contrast(2) grayscale(1) brightness(5)'; // Force white silhouette
+        }
+
         if (spritesheet.complete && spritesheet.naturalWidth > 0) {
-            // Placeholder: Use a 30x34 slice from the atlas
-            // Coordinates and dimensions are floored
             const sw = 30;
             const sh = 34;
             ctx.drawImage(
@@ -5373,24 +5434,22 @@ function drawEnemies() {
                 sw, sh
             );
         } else {
-            // Fallback to Icon rendering if image not loaded
             ctx.font = '24px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(enemy.icon || '?', lx, ly);
         }
         
-        // HP Bar on Canvas (Logical 360x640 space)
-        const barW = 20;
+        ctx.restore();
+
+        // HP Bar
+        const barW = enemy.isBoss ? 40 : 20;
         const barH = 3;
         const hpRatio = enemy.hp / enemy.maxHp;
-        
         ctx.fillStyle = '#333';
-        ctx.fillRect(Math.floor(lx - barW/2), Math.floor(ly - 20), barW, barH);
+        ctx.fillRect(Math.floor(lx - barW/2), Math.floor(ly - (enemy.isBoss ? 30 : 20)), barW, barH);
         ctx.fillStyle = enemy.isBoss ? '#f00' : '#0f0';
-        ctx.fillRect(Math.floor(lx - barW/2), Math.floor(ly - 20), Math.floor(barW * hpRatio), barH);
-        
-        ctx.restore();
+        ctx.fillRect(Math.floor(lx - barW/2), Math.floor(ly - (enemy.isBoss ? 30 : 20)), Math.floor(barW * hpRatio), barH);
     });
 }
 

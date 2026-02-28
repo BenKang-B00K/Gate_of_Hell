@@ -7,6 +7,18 @@ let gameWidth = 360;
 
 function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze = false) {
     if (!target || target.hp <= 0) return;
+    
+    // [Hit-Flash] Track when enemy was hit for visual feedback
+    target.lastHitTime = Date.now();
+
+    // [Particles] Spark particles on hit
+    if (typeof spawnParticles === 'function') {
+        const rect = target.element.getBoundingClientRect();
+        const containerRect = document.getElementById('game-container').getBoundingClientRect();
+        const lx = ((rect.left + rect.width / 2) - containerRect.left) * (360 / containerRect.width);
+        const ly = ((rect.top + rect.height / 2) - containerRect.top) * (640 / containerRect.height);
+        spawnParticles(lx, ly, target.isBoss ? '#f00' : '#fff', 4);
+    }
     if (isTimeFrozen && !ignoreFreeze && !target.isBoss) {
         target.accumulatedDamage = (target.accumulatedDamage || 0) + amount;
         return;
