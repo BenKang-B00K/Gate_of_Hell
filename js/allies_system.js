@@ -109,11 +109,7 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     const nt = unitTypes.find(x=>x.type===ntStr);
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
-    recordUnlock(nt.type); t.data = { ...nt }; // Clone to apply unique bonuses
-    const tierMult = 1.0 + (nt.tier * 0.15); // Tier based damage multiplier
-    t.data.damage = Math.floor(t.data.damage * tierMult);
-    
-    t.range = nt.range; t.cooldown = nt.cooldown; t.spentSE += jobChangeCost;
+    recordUnlock(nt.type); t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
     updateUnitOverlayButtons(t); updateSummonButtonState();
     if (fromInfo) showUnitInfo(t);
     startInfoResetTimer();
@@ -148,13 +144,7 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     const el = tower.element;
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
-    recordUnlock(nt.type); 
-    
-    tower.data = { ...nt }; // Clone for unique stats
-    const tierMult = 1.0 + (nt.tier * 0.2); // Higher multiplier for Master/Abyss tiers
-    tower.data.damage = Math.floor(tower.data.damage * tierMult);
-
-    tower.range=nt.range; tower.cooldown=nt.cooldown; 
+    recordUnlock(nt.type); tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; 
     
     if(nt.type==='rampart') tower.charges=5;
     updateUnitOverlayButtons(tower); updateSummonButtonState();

@@ -99,21 +99,21 @@ function showUnitInfo(tower) {
     if(data.type==='apprentice') {
         ch = `
             <div style="font-size:24px; color:#ffd700; margin-bottom:12px; font-weight:bold;">Promotion Paths (200 SE):</div>
-            <div style="font-size:30px; display:flex; gap:12px; justify-content:center; margin-bottom:18px;">
+            <div style="font-size:30px; display:flex; gap:36px; justify-content:center; margin-bottom:18px;">
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;">
-                    <button class="info-promo-btn attack" onclick="if(money>=200) performJobChange(null, 'Attack', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Attack Path">⚔️</button>
-                    <div class="card-warning">NOT ENOUGH SE</div>
-                    <div style="font-size:21px; color:#ff4500; font-weight:bold;">Attack</div>
+                    <button class="info-promo-btn" onclick="if(money>=200) performJobChange(null, 'Attack', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Attack Path" style="background:#442222; border:3px solid #ff4500; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">⚔️</button>
+                    <div class="card-warning" style="font-size:12px; top:-40px; pointer-events:none;">NOT ENOUGH SE</div>
+                    <div style="font-size:21px; color:#ff4500;">Attack</div>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;">
-                    <button class="info-promo-btn support" onclick="if(money>=200) performJobChange(null, 'Support', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Support Path">🪄</button>
-                    <div class="card-warning">NOT ENOUGH SE</div>
-                    <div style="font-size:21px; color:#00e5ff; font-weight:bold;">Support</div>
+                    <button class="info-promo-btn" onclick="if(money>=200) performJobChange(null, 'Support', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Support Path" style="background:#224444; border:3px solid #00e5ff; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">🪄</button>
+                    <div class="card-warning" style="font-size:12px; top:-40px; pointer-events:none;">NOT ENOUGH SE</div>
+                    <div style="font-size:21px; color:#00e5ff;">Support</div>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;">
-                    <button class="info-promo-btn special" onclick="if(money>=200) performJobChange(null, 'Special', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Special Path">💠</button>
-                    <div class="card-warning">NOT ENOUGH SE</div>
-                    <div style="font-size:21px; color:#ffd700; font-weight:bold;">Special</div>
+                    <button class="info-promo-btn" onclick="if(money>=200) performJobChange(null, 'Special', true)" onmouseenter="if(money<200) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Ascend to Special Path" style="background:#444422; border:3px solid #ffd700; color:#fff; border-radius:12px; cursor:pointer; padding:6px 18px;">💠</button>
+                    <div class="card-warning" style="font-size:12px; top:-40px; pointer-events:none;">NOT ENOUGH SE</div>
+                    <div style="font-size:21px; color:#ffd700;">Special</div>
                 </div>
             </div>
         `;
@@ -121,17 +121,17 @@ function showUnitInfo(tower) {
     else if(data.upgrades) { 
         const isToAbyssal = unitTypes.find(x=>x.type===data.upgrades[0]).tier === 4;
         const costLabel = isToAbyssal ? "Unleash Master (800 SE):" : "Unleash Master (400 SE):";
-        ch=`<div style="font-size:24px; color:#ffd700; margin-bottom:12px; font-weight:bold;">${costLabel}</div>
-           <div style="display:flex; gap:12px; justify-content:center; margin-bottom:18px;">`; 
+        ch=`<div style="font-size:24px; color:#ffd700; margin-bottom:12px;">${costLabel}</div>
+           <div style="display:flex; gap:30px; justify-content:center; margin-bottom:18px;">`; 
         data.upgrades.forEach((u,i)=>{
             const ud=unitTypes.find(x=>x.type===u); 
             const seCost = ud.tier === 4 ? 800 : 400;
             const costTip = ud.tier === 4 ? "800 SE" : "400 SE";
             ch+=`
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px; position:relative;">
-                    <button class="info-promo-btn" onclick="if(money>=${seCost}) performMasterJobChange(null, '${u}', true)" onmouseenter="if(money<${seCost}) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Unleash ${ud.name} (${costTip})">${i===0?'↖️':'↗️'}</button>
-                    <div class="card-warning">NOT ENOUGH SE</div>
-                    <div style="font-size:21px; color:#aaa; max-width:150px; text-align:center; line-height:1; font-weight:bold;">${ud.name}</div>
+                    <button class="info-promo-btn" onclick="if(money>=${seCost}) performMasterJobChange(null, '${u}', true)" onmouseenter="if(money<${seCost}) this.nextElementSibling.style.display='block'" onmouseleave="this.nextElementSibling.style.display='none'" title="Unleash ${ud.name} (${costTip})" style="background:#222; border:3px solid #aaa; color:#fff; border-radius:12px; cursor:pointer; padding:6px 24px; font-size:30px;">${i===0?'↖️':'↗️'}</button>
+                    <div class="card-warning" style="font-size:12px; top:-40px; pointer-events:none;">NOT ENOUGH SE</div>
+                    <div style="font-size:21px; color:#aaa; max-width:150px; text-align:center; line-height:1;">${ud.name}</div>
                 </div>
             `;
         }); 

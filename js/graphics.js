@@ -49,32 +49,7 @@ function renderGraphics() {
     drawLavaRoad();
     drawSlots();
     drawUnits();
-    drawEnemies();
-    drawSpecters();
     drawSelectionHalo();
-}
-
-function drawEnemies() {
-    if (!window.gameInstance) return;
-    const scene = window.gameInstance.scene.getScene('MainScene');
-    if (!scene || !scene.enemies) return;
-
-    scene.enemies.getChildren().forEach(enemy => {
-        if (!enemy.active) return;
-        // 기본 적 렌더링 (필요 시 구현)
-    });
-}
-
-function drawSpecters() {
-    if (!window.gameInstance) return;
-    const scene = window.gameInstance.scene.getScene('MainScene');
-    if (!scene || !scene.specters) return;
-
-    const frame = Math.floor(lavaPhase * 60);
-    scene.specters.getChildren().forEach(specter => {
-        if (!specter.active) return;
-        drawSpecter(ctx, specter.x, specter.y, frame, specter.isBoss);
-    });
 }
 
 function drawLavaRoad() {
@@ -5346,57 +5321,3 @@ if (document.readyState === 'loading') {
 } else {
     initGraphics();
 }
-
-/**
- * drawSpecter: 반투명하고 흐물거리는 유령 렌더링
- * @param {CanvasRenderingContext2D} ctx 
- * @param {number} x 
- * @param {number} y 
- * @param {number} frame 
- * @param {boolean} isBoss 
- */
-function drawSpecter(ctx, x, y, frame, isBoss) {
-    const lavaPhaseLocal = (frame % 60) / 60;
-    const floatY = Math.sin(lavaPhaseLocal * Math.PI * 2) * 5;
-    const size = isBoss ? 45 : 30;
-    const color = isBoss ? '#800080' : '#00FFFF';
-    
-    ctx.save();
-    ctx.translate(x, y + floatY);
-    ctx.globalAlpha = 0.6;
-    
-    // Body (Pixelated Ghost Shape)
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(0, 0, size / 2, Math.PI, 0);
-    ctx.lineTo(size / 2, size * 0.8);
-    
-    // Wavy Tail (Wiggling effect)
-    for (let i = 0; i <= 3; i++) {
-        const waveX = Math.sin((lavaPhaseLocal + i/3) * Math.PI * 2) * 8;
-        ctx.lineTo((size / 2) - (i * (size / 3)) + waveX, size + (i * 5));
-    }
-    
-    ctx.lineTo(-size / 2, size * 0.8);
-    ctx.fill();
-
-    if (isBoss) {
-        // Red Eyes for Boss
-        ctx.globalAlpha = 1.0;
-        ctx.fillStyle = '#FF0000';
-        ctx.beginPath();
-        ctx.arc(-size/4, -size/10, 4, 0, Math.PI * 2);
-        ctx.arc(size/4, -size/10, 4, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Aura glow
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = '#FF0000';
-        ctx.strokeStyle = '#800080';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }
-    
-    ctx.restore();
-}
-window.drawSpecter = drawSpecter;
