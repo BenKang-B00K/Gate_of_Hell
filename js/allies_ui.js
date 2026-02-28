@@ -72,7 +72,22 @@ function initAllies() {
 
     // 3. Purge Logic
     const pc = document.getElementById('purge-card'); 
-    if(pc) pc.addEventListener('click', () => { if(typeof purgePortal === 'function') purgePortal(); });
+    if(pc) {
+        pc.addEventListener('click', () => { if(typeof purgePortal === 'function') purgePortal(); });
+        pc.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div style="color:#9400d3; font-weight:bold; font-size:39px; margin-bottom:6px;">영혼 정화</div>
+                    <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">기술</div>
+                    <div style="font-size:27px; color:#bbb; line-height:1.2;">소울 에너지를 사용하여 포탈 오염도를 즉시 50% 제거합니다.</div>
+                    <div style="color:#ff4500; font-size:24px; margin-top:12px;">비용: 800 SE</div>
+                    <div style="color:#555; font-size:25.5px; margin-top:18px; font-style:italic; line-height:1.2;">"강력한 의지로 문의 균열을 억지로 닫습니다. 하지만 심연은 결코 멈추지 않을 것입니다."</div>
+                `;
+                startInfoResetTimer();
+            }
+        });
+    }
 
     // 4. Resource Hover Info
     setupResourceTooltips();
@@ -292,10 +307,33 @@ function showResourceInfo(type) {
     startInfoResetTimer();
 }
 
+function showEnemyInfo(enemy) {
+    if (Date.now() < infoPanelLockedUntil) return;
+    const d = document.getElementById('unit-info');
+    if (!d) return;
+
+    const names = { 'cerberus': '케르베로스', 'charon': '카론', 'beelzebub': '바알세불', 'lucifer': '루시퍼' };
+    const dispName = enemy.data?.name || names[enemy.type] || enemy.type;
+    const hp = Math.floor(enemy.hp);
+    const maxHp = Math.floor(enemy.maxHp || hp);
+    const def = enemy.defense || 0;
+
+    let th = `<div style="color:#ff4500; font-weight:bold; font-size:32px; margin-bottom:4px;">${dispName}</div>`;
+    let ih = `<div style="font-size:24px; color:#bbb; margin-bottom:8px;">체력: ${hp} / ${maxHp} | 방어력: ${def}</div>`;
+    
+    // Effectiveness & Lore
+    let eh = `<div style="color:#ff8a80; font-size:22px; margin-bottom:4px;">특징: ${enemy.desc || "심연의 존재입니다."}</div>`;
+    let lh = `<div style="color:#555; font-size:20px; font-style:italic; line-height:1.2;">"${enemy.data?.lore || "이 영혼에 대한 기록이 없습니다."}"</div>`;
+
+    d.innerHTML = `${th}${ih}${eh}${lh}`;
+    startInfoResetTimer();
+}
+
 // Global Exports
 window.initAllies = initAllies;
 window.updateGauges = updateGauges;
 window.updateSummonButtonState = updateSummonButtonState;
 window.showUnitInfo = showUnitInfo;
+window.showEnemyInfo = showEnemyInfo;
 window.showResourceInfo = showResourceInfo;
 window.startInfoResetTimer = startInfoResetTimer;

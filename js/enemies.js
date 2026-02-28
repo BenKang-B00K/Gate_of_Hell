@@ -787,7 +787,6 @@ function handleEnemyDeath(target, killer = null) {
 
     const idx = enemies.indexOf(target);
     if (idx > -1) {
-        if (target.type) recordKill(target.type);
         target.element.remove();
         enemies.splice(idx, 1);
         if (typeof checkRelicDrop === 'function') checkRelicDrop(target);
