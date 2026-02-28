@@ -571,9 +571,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const tutorialToggle = document.getElementById('tutorial-toggle');
                 const tutorialStatus = document.getElementById('tutorial-status');
+                const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
+                const gameTutorialStatus = document.getElementById('game-tutorial-status');
+
                 if (tutorialToggle) {
                     tutorialToggle.checked = false;
                     if (tutorialStatus) tutorialStatus.innerText = 'OFF';
+                }
+                if (gameTutorialToggle) {
+                    gameTutorialToggle.checked = false;
+                    if (gameTutorialStatus) gameTutorialStatus.innerText = 'OFF';
                 }
             }
             resetGameState();
@@ -606,12 +613,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2000);
 
     if (startBtn && startScreen) {
-        // [User Request] Tutorial Toggle Listener
+        // [User Request] Tutorial Toggle Listener (Start and Game sync)
         const tutorialToggle = document.getElementById('tutorial-toggle');
         const tutorialStatus = document.getElementById('tutorial-status');
-        if (tutorialToggle && tutorialStatus) {
+        const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
+        const gameTutorialStatus = document.getElementById('game-tutorial-status');
+
+        if (tutorialToggle && tutorialStatus && gameTutorialToggle && gameTutorialStatus) {
             tutorialToggle.addEventListener('change', () => {
-                tutorialStatus.innerText = tutorialToggle.checked ? 'ON' : 'OFF';
+                const state = tutorialToggle.checked;
+                gameTutorialToggle.checked = state;
+                tutorialStatus.innerText = state ? 'ON' : 'OFF';
+                gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
+            });
+            gameTutorialToggle.addEventListener('change', () => {
+                const state = gameTutorialToggle.checked;
+                tutorialToggle.checked = state;
+                tutorialStatus.innerText = state ? 'ON' : 'OFF';
+                gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
             });
         }
 
