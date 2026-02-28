@@ -81,6 +81,34 @@
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* --- Unit Info Promotion Buttons (Enlarged) --- */
+.info-promo-btn {
+    padding: 15px 25px !important; 
+    font-size: 64px !important;    /* Increased for better interaction */
+    min-width: 100px;              /* Increased for better interaction */
+    min-height: 100px;             /* Increased for better interaction */
+    border: 4px solid #fff !important; 
+    border-radius: 12px;           
+    cursor: pointer;
+    image-rendering: pixelated;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+}
+
+.info-promo-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #fff;
+    background: #333;
+}
+
+.info-promo-btn:active {
+    transform: scale(0.9);
+}
+
 .unit.apprentice { color: transparent !important; text-shadow: none !important; font-size: 0; }
 
 /* Unit Overlay Buttons */

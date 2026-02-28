@@ -87,6 +87,63 @@ function showAuraIndicator(tower) {
     document.getElementById('game-container').appendChild(indicator);
 }
 
+/**
+ * Updates or creates the context buttons (Promotion/Sell) that appear over a unit.
+ */
+function updateUnitOverlayButtons(tower) {
+    const el = tower.element;
+    if (!el) return;
+
+    // Remove existing overlay buttons
+    el.querySelectorAll('.unit-overlay-btn').forEach(b => b.remove());
+
+    const data = tower.data;
+
+    // 1. Promotion Buttons (10, 12, 2 o'clock)
+    if (data.type === 'apprentice') {
+        const btn10 = document.createElement('div');
+        btn10.className = 'unit-overlay-btn promote-10';
+        btn10.innerHTML = '⚔️';
+        btn10.title = '전직: 공격형 (200 SE)';
+        btn10.onclick = (e) => { e.stopPropagation(); performJobChange(el, 'Attack'); };
+        el.appendChild(btn10);
+
+        const btn12 = document.createElement('div');
+        btn12.className = 'unit-overlay-btn promote-12';
+        btn12.innerHTML = '🪄';
+        btn12.title = '전직: 지원형 (200 SE)';
+        btn12.onclick = (e) => { e.stopPropagation(); performJobChange(el, 'Support'); };
+        el.appendChild(btn12);
+
+        const btn2 = document.createElement('div');
+        btn2.className = 'unit-overlay-btn promote-2';
+        btn2.innerHTML = '💠';
+        btn2.title = '전직: 특수형 (200 SE)';
+        btn2.onclick = (e) => { e.stopPropagation(); performJobChange(el, 'Special'); };
+        el.appendChild(btn2);
+    } else if (data.upgrades && data.upgrades.length > 0) {
+        // Multi-path for Masters
+        data.upgrades.forEach((u, i) => {
+            const ud = unitTypes.find(x => x.type === u);
+            if (!ud) return;
+            const btn = document.createElement('div');
+            btn.className = `unit-overlay-btn ${i === 0 ? 'promote-10' : 'promote-2'}`;
+            btn.innerHTML = ud.icon;
+            btn.title = `진화: ${ud.name} (${ud.tier === 4 ? 800 : 400} SE)`;
+            btn.onclick = (e) => { e.stopPropagation(); performMasterJobChange(tower, u); };
+            el.appendChild(btn);
+        });
+    }
+
+    // 2. Sell Button (6 o'clock)
+    const sellBtn = document.createElement('div');
+    sellBtn.className = 'unit-overlay-btn sell-btn';
+    sellBtn.innerHTML = '💰';
+    sellBtn.title = '해임 (SE 환급)';
+    sellBtn.onclick = (e) => { e.stopPropagation(); sellTower(tower); };
+    el.appendChild(sellBtn);
+}
+
 function summonTower(targetSlot) {
     // 1. targetSlot validation
     if (!targetSlot || targetSlot.classList.contains('occupied')) return;
@@ -168,6 +225,7 @@ function summonTower(targetSlot) {
 
     // 8. Post-summon updates & synchronization
     window.towerCost += 5;
+    updateUnitOverlayButtons(tower);
     updateSummonButtonState();
 }
 
@@ -206,6 +264,7 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
+    updateUnitOverlayButtons(t);
     updateSummonButtonState();
     if (fromInfo) showUnitInfo(t);
     startInfoResetTimer();
@@ -243,6 +302,7 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; 
     
     if(nt.type==='rampart') tower.charges=5;
+    updateUnitOverlayButtons(tower);
     updateSummonButtonState();
     if (fromInfo) showUnitInfo(tower);
     startInfoResetTimer();
