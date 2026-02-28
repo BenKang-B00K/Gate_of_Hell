@@ -1,14 +1,16 @@
 /* Panels */
 #bottom-panel {
     position: relative; 
-    height: 35%;
-    background: linear-gradient(to bottom, #1a0505, #000000);
-    padding: 15px 30px;
+    height: calc(35% - 24px);
+    background: linear-gradient(to bottom, #100000, #000000);
+    padding: 12px 30px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     z-index: 50;
-    gap: 15px;
+    gap: 12px;
+    border-top: 3px solid #441111;
+    box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.8), 0 -2px 10px rgba(139, 0, 0, 0.3);
 }
 
 #control-panel {
@@ -200,9 +202,7 @@
 .master-btn-container .job-btn { flex: 1; margin: 0 6px; padding: 9px 3px; font-size: 24px; line-height: 1.1; }
 
 #tutorial-toggle-container { 
-    position: absolute; 
-    top: 30px; 
-    right: 30px; 
+    align-self: flex-end;
     z-index: 1000; 
     display: flex; 
     align-items: center; 
@@ -211,6 +211,7 @@
     padding: 8px 20px; 
     border-radius: 30px; 
     border: 2px solid #444; 
+    margin-top: 15px;
 }
 #tutorial-label { font-size: 20px; color: #ffd700; font-weight: bold; letter-spacing: 1px; }
 #tutorial-status { font-size: 20px; color: #ffd700; font-weight: bold; min-width: 45px; text-align: center; }
