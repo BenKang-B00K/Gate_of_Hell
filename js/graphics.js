@@ -93,18 +93,17 @@ const sideMist = [];   // {x, y, vx, vy, size, opacity}
 
 function initAtmosphere() {
     if (sideClouds.length > 0) return;
-    for(let i=0; i<12; i++) {
-        const isLeft = i < 6;
+    for(let i=0; i<15; i++) {
         sideClouds.push({
-            x: isLeft ? Math.random() * 80 : 280 + Math.random() * 80,
-            y: Math.random() * 200,
-            vx: (Math.random() - 0.5) * 0.2,
+            // Start anywhere across the width, including far off-screen
+            x: Math.random() * (LOGICAL_WIDTH + 400) - 200, 
+            y: Math.random() * 250,
+            vx: (Math.random() - 0.5) * 0.4, // Faster drift
             vy: (Math.random() - 0.5) * 0.1,
-            size: 40 + Math.random() * 60,
+            size: 60 + Math.random() * 100, // Larger clouds
             opacity: Math.random(),
             targetOpacity: Math.random(),
-            flash: 0,
-            isLeft: isLeft
+            flash: 0
         });
     }
 }
@@ -118,25 +117,29 @@ function drawAtmosphericEffects() {
     sideClouds.forEach(c => {
         // Move
         c.x += c.vx; c.y += c.vy;
+        
         // Fade logic
         if (Math.abs(c.opacity - c.targetOpacity) < 0.01) {
             c.targetOpacity = Math.random();
         } else {
             c.opacity += (c.targetOpacity > c.opacity ? 0.002 : -0.002);
         }
-        // Boundaries (drifting back)
-        if (c.isLeft && c.x > 110) c.vx = -Math.abs(c.vx);
-        if (c.isLeft && c.x < -20) c.vx = Math.abs(c.vx);
-        if (!c.isLeft && c.x < 250) c.vx = Math.abs(c.vx);
-        if (!c.isLeft && c.x > 380) c.vx = -Math.abs(c.vx);
+
+        // [User Request] Dynamic Boundaries: Allow drifting far off-screen and crossing sides
+        // Loop back from the other side if too far out
+        if (c.x > LOGICAL_WIDTH + 300) c.x = -300;
+        if (c.x < -300) c.x = LOGICAL_WIDTH + 300;
+        
+        // Occasional direction change for randomness
+        if (Math.random() < 0.001) c.vx *= -1;
 
         // Lightning Flash Logic
-        if (c.flash > 0) c.flash -= 0.1;
-        else if (Math.random() < 0.002) c.flash = 1.0;
+        if (c.flash > 0) c.flash -= 0.08;
+        else if (Math.random() < 0.0015) c.flash = 1.0;
 
         // Draw Cloud
         const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.size);
-        const baseColor = c.flash > 0 ? `rgba(255, 255, 200, ${c.opacity * c.flash})` : `rgba(20, 20, 30, ${c.opacity * 0.6})`;
+        const baseColor = c.flash > 0 ? `rgba(255, 255, 200, ${c.opacity * c.flash * 0.8})` : `rgba(15, 15, 25, ${c.opacity * 0.5})`;
         grad.addColorStop(0, baseColor);
         grad.addColorStop(1, 'transparent');
         
@@ -145,25 +148,27 @@ function drawAtmosphericEffects() {
         ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
         ctx.fill();
 
-        // Sub-cloud details
-        if (c.flash > 0.5) {
-            ctx.strokeStyle = `rgba(255, 215, 0, ${c.flash * 0.3})`;
+        // Sub-cloud bolt details
+        if (c.flash > 0.6) {
+            ctx.strokeStyle = `rgba(255, 215, 0, ${c.flash * 0.4})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(c.x - 10, c.y);
-            ctx.lineTo(c.x + 5, c.y + 10);
-            ctx.lineTo(c.x - 5, c.y + 20);
+            ctx.moveTo(c.x - 15, c.y);
+            ctx.lineTo(c.x + 5, c.y + 15);
+            ctx.lineTo(c.x - 10, c.y + 30);
             ctx.stroke();
         }
     });
 
-    // Draw Mist/Fog layers
-    ctx.globalAlpha = 0.2;
-    for(let m=0; m<3; m++) {
-        const offset = Math.sin(time * 0.5 + m) * 20;
+    // [User Request] Expansive Mist/Fog layers
+    ctx.globalAlpha = 0.15;
+    for(let m=0; m<4; m++) {
+        const drift = Math.sin(time * 0.3 + m) * 100;
+        const fade = (Math.sin(time * 0.5 + m) + 1) / 2;
         ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(-20 + offset, 0, 140, 250);
-        ctx.fillRect(240 - offset, 0, 140, 250);
+        // Large fog banks that cross the center randomly
+        ctx.fillRect(-200 + drift, 0, 400, 300);
+        ctx.fillRect(LOGICAL_WIDTH - 200 - drift, 0, 400, 300);
     }
     ctx.globalAlpha = 1.0;
 
@@ -191,44 +196,51 @@ function renderGraphics() {
 
 function drawSpawningGate() {
     const cx = LOGICAL_WIDTH / 2;
-    const cy = -10; 
+    const cy = -30; // [User Request] Moved higher
     const time = globalAnimTimer;
     const roadWidth = 114;
 
     ctx.save();
 
     // 1. Raging Hellfire (Background Glow)
-    // [User Request] Set diameter to 1.5x road width (114 * 1.5 = 171)
+    // [User Request] Set radius to 105.5px
     const firePulse = (Math.sin(time * 3) + 1) / 2;
-    const hellfireRadius = (roadWidth * 1.5) / 2; // 85.5px
+    const hellfireRadius = 105.5; 
     
-    const fireGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, hellfireRadius * 1.2);
+    const fireGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, hellfireRadius * 1.3);
     fireGrad.addColorStop(0, `rgba(255, 69, 0, ${0.7 + firePulse * 0.3})`); 
     fireGrad.addColorStop(0.6, `rgba(255, 140, 0, ${0.4 + firePulse * 0.2})`); 
     fireGrad.addColorStop(1, 'transparent');
     
     ctx.fillStyle = fireGrad;
-    // Cover the area matching the 1.5x width
-    ctx.fillRect(cx - hellfireRadius * 1.5, cy - 50, hellfireRadius * 3, 150);
+    ctx.fillRect(cx - hellfireRadius * 2, cy - 50, hellfireRadius * 4, 200);
 
-    // 2. Occult Runes (Floating around the fire)
-    const runeAlpha = (Math.sin(time * 2) + 1) / 2;
-    ctx.fillStyle = `rgba(255, 0, 0, ${0.3 + runeAlpha * 0.5})`;
-    ctx.shadowBlur = 15 * runeAlpha;
-    ctx.shadowColor = '#f00';
+    // 2. Occult Runes (Floating/Orbiting)
+    // [User Request] Slower, more transparent, and bobbing up/down
+    const runeAlpha = (Math.sin(time * 1.5) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 0, 0, ${0.15 + runeAlpha * 0.2})`; // Increased transparency
+    ctx.shadowBlur = 10 * runeAlpha;
+    ctx.shadowColor = 'rgba(255, 0, 0, 0.5)';
     
     for(let r=0; r<8; r++) {
-        const angle = (time * 0.5) + (r * Math.PI * 0.25);
-        const rx = cx + Math.cos(angle) * 70;
-        const ry = cy + 30 + Math.sin(angle) * 20;
-        ctx.font = 'bold 14px serif';
+        const orbitSpeed = 0.2; // Slower rotation
+        const angle = (time * orbitSpeed) + (r * Math.PI * 0.25);
+        
+        // Horizontal orbit
+        const rx = cx + Math.cos(angle) * 90;
+        
+        // Vertical Orbit + [User Request] Bobbing up/down
+        const bobY = Math.sin(time * 2 + r) * 8; // Individual bobbing
+        const ry = cy + 50 + Math.sin(angle) * 30 + bobY;
+        
+        ctx.font = 'bold 16px serif';
         ctx.fillText('⛧', rx, ry);
     }
     ctx.shadowBlur = 0;
 
     // 3. Upward Fire Particles
     if (Math.random() < 0.5) {
-        spawnParticles(cx + (Math.random() - 0.5) * 120, cy + 20, '#ff4500', 1);
+        spawnParticles(cx + (Math.random() - 0.5) * 150, cy + 40, '#ff4500', 1);
     }
 
     ctx.restore();
@@ -244,9 +256,9 @@ function drawPortal() {
     const scaleX = LOGICAL_WIDTH / containerRect.width;
     const scaleY = LOGICAL_HEIGHT / containerRect.height;
 
-    // Position at the bottom center of the road
+    // Position at the bottom center of the road (moved 20px lower per user request)
     const cx = LOGICAL_WIDTH / 2;
-    const cy = (roadRect.bottom - containerRect.top) * scaleY;
+    const cy = ((roadRect.bottom - containerRect.top) * scaleY) + 20;
     const time = globalAnimTimer;
 
     ctx.save();
