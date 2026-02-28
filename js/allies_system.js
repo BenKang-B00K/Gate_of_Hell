@@ -427,10 +427,22 @@ function sellTower(t) {
  * Internal logic to actually remove the tower and refund SE
  */
 function executeSacrifice(t) {
-    const s = t.slotElement; 
-    s.classList.remove('occupied'); 
+    const s = t.slotElement;
+    s.classList.remove('occupied');
+
+    // [User Request] Trigger Banish Effect
+    if (typeof spawnBanishEffect === 'function') {
+        const rect = s.getBoundingClientRect();
+        const container = document.getElementById('game-container');
+        if (container) {
+            const containerRect = container.getBoundingClientRect();
+            const lx = ((rect.left + rect.width / 2) - containerRect.left) * (LOGICAL_WIDTH / containerRect.width);
+            const ly = ((rect.top + rect.height / 2) - containerRect.top) * (LOGICAL_HEIGHT / containerRect.height);
+            spawnBanishEffect(lx, ly);
+        }
+    }
+
     if (t.element) t.element.remove();
-    
     const baseRefund = t.spentSE || 0;
     const relicRefundBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('sell_refund') : 0;
     const finalRefund = Math.floor(baseRefund * (0.5 + relicRefundBonus)); // 50% base refund
