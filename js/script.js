@@ -101,6 +101,41 @@ function handleSpecialAblities(tower, target) {
     }
 }
 
+function resetGameState() {
+    // Clear Enemies
+    enemies.forEach(e => { if (e.element) e.element.remove(); });
+    enemies = [];
+    
+    // Clear Towers
+    towers.forEach(t => { if (t.element) t.element.remove(); });
+    towers = [];
+    
+    // Clear Summons
+    friendlySkeletons.forEach(s => { if (s.element) s.element.remove(); });
+    friendlySkeletons = [];
+    friendlyGhosts.forEach(g => { if (g.element) g.element.remove(); });
+    friendlyGhosts = [];
+    
+    // Clear Ground Effects
+    groundEffects.forEach(ge => { if (ge.element) ge.element.remove(); });
+    groundEffects = [];
+    
+    // Reset Globals
+    stage = 1;
+    money = 150;
+    portalEnergy = 0;
+    currentStageSpawned = 0;
+    isBossStage = false;
+    bossSpawned = false;
+    bossInstance = null;
+    lastSpawnTime = 0;
+    
+    // UI Reset
+    updateGauges();
+    updateStageInfo();
+    const fo = document.getElementById('frozen-overlay'); if (fo) fo.style.opacity = 0;
+}
+
 let gameStarted = false;
 
 function gameLoop() {
@@ -528,7 +563,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const unlockModal = document.getElementById('unlock-modal');
 
     if (retryBtn) {
-        retryBtn.onclick = () => window.location.reload();
+        retryBtn.onclick = () => {
+            const gameOverOverlay = document.getElementById('game-over-overlay');
+            if (gameOverOverlay) gameOverOverlay.style.display = 'none';
+            
+            // [User Request] Reset game state and start directly
+            resetGameState();
+            
+            gameStarted = true;
+            isPaused = false;
+            initStage(); 
+            initAllies();
+            updateSummonButtonState();
+            if (typeof updateGauges === 'function') updateGauges();
+        };
     }
     if (restartBtnTop) {
         restartBtnTop.onclick = () => {

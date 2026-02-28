@@ -161,55 +161,54 @@ function showUnitInfo(tower) {
     const data = tower.data;
     const finalDmg = Math.round(data.damage * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
     
-    // [UI Enhancement] Using wider space with better hierarchy
-    let th = `<div class="unit-info-title" style="font-size:42px; margin-bottom:15px;">${data.name}</div>`;
+    // [User Request] Calculate Attack Speed (AS) = Attacks per second
+    const attackSpeed = (1000 / tower.cooldown).toFixed(1);
+    
+    let th = `<div class="unit-info-title" style="font-size:42px; margin-bottom:10px;">${data.name}</div>`;
     
     let ih = `
-        <div style="display:flex; justify-content:center; gap:30px; margin-bottom:20px; width:100%;">
-            <div class="unit-info-stats" style="flex:1; border-color:#ff4500;">
-                <span style="color:#ff4500; font-size:20px; display:block;">ATTACK</span>
-                <span style="font-size:32px; font-weight:bold;">${finalDmg}</span>
+        <div style="display:flex; justify-content:center; gap:20px; margin-bottom:10px; width:100%;">
+            <div class="unit-info-stats" style="flex:1; border-color:#ff4500; padding:5px 10px;">
+                <span style="color:#ff4500; font-size:18px; display:block; font-weight:bold;">ATTACK</span>
+                <span style="font-size:30px; font-weight:900;">${finalDmg}</span>
             </div>
-            <div class="unit-info-stats" style="flex:1; border-color:#00e5ff;">
-                <span style="color:#00e5ff; font-size:20px; display:block;">RANGE</span>
-                <span style="font-size:32px; font-weight:bold;">${data.range}</span>
+            <div class="unit-info-stats" style="flex:1; border-color:#00e5ff; padding:5px 10px;">
+                <span style="color:#00e5ff; font-size:18px; display:block; font-weight:bold;">RANGE</span>
+                <span style="font-size:30px; font-weight:900;">${data.range}</span>
             </div>
-            <div class="unit-info-stats" style="flex:1; border-color:#ffd700;">
-                <span style="color:#ffd700; font-size:20px; display:block;">COOLDOWN</span>
-                <span style="font-size:32px; font-weight:bold;">${(tower.cooldown/1000).toFixed(1)}s</span>
+            <div class="unit-info-stats" style="flex:1; border-color:#ffd700; padding:5px 10px;">
+                <span style="color:#ffd700; font-size:18px; display:block; font-weight:bold;">AS (Spd)</span>
+                <span style="font-size:30px; font-weight:900;">${attackSpeed}</span>
             </div>
         </div>
     `;
 
-    // Divider
-    let divider = `<div style="width:80%; height:2px; background:linear-gradient(90deg, transparent, #ffd70066, transparent); margin:15px 0;"></div>`;
+    // Minimized Divider
+    let divider = `<div style="width:90%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:8px 0;"></div>`;
     
     let ch = ''; 
     if(data.type === 'apprentice') {
         ch = `
-            <div style="color:#aaa; font-size:20px; margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">직업 전직 가능</div>
-            <div class="master-btn-container" style="margin-top:5px;">
+            <div style="color:#888; font-size:18px; margin-bottom:5px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">전직 경로 선택</div>
+            <div class="master-btn-container" style="margin-top:0; gap:10px;">
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Attack', true)">⚔️</button>
-                    <span style="font-size:18px; color:#ff4500; font-weight:bold;">공격형</span>
-                    <span style="font-size:14px; color:#888;">(200 SE)</span>
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Attack', true)" style="width:70px; height:70px; font-size:40px !important;">⚔️</button>
+                    <span style="font-size:16px; color:#ff4500; font-weight:bold;">공격형</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Support', true)">🪄</button>
-                    <span style="font-size:18px; color:#00e5ff; font-weight:bold;">지원형</span>
-                    <span style="font-size:14px; color:#888;">(200 SE)</span>
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Support', true)" style="width:70px; height:70px; font-size:40px !important;">🪄</button>
+                    <span style="font-size:16px; color:#00e5ff; font-weight:bold;">지원형</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(null, 'Special', true)">💠</button>
-                    <span style="font-size:14px; color:#ffd700; font-weight:bold;">특수형</span>
-                    <span style="font-size:14px; color:#888;">(200 SE)</span>
+                    <button class="info-promo-btn" onclick="performJobChange(null, 'Special', true)" style="width:70px; height:70px; font-size:40px !important;">💠</button>
+                    <span style="font-size:16px; color:#ffd700; font-weight:bold;">특수형</span>
                 </div>
             </div>
         `;
     } else if(data.upgrades) {
         ch = `
-            <div style="color:#aaa; font-size:20px; margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">마스터 승급 가능</div>
-            <div class="master-btn-container" style="margin-top:5px;">
+            <div style="color:#888; font-size:18px; margin-bottom:5px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">마스터 승급</div>
+            <div class="master-btn-container" style="margin-top:0; gap:10px;">
         `;
         data.upgrades.forEach((u, i) => {
             const ud = unitTypes.find(x => x.type === u);
@@ -217,9 +216,8 @@ function showUnitInfo(tower) {
                 const cost = (ud.tier === 4) ? 800 : 400;
                 ch += `
                     <div style="display:flex; flex-direction:column; align-items:center;">
-                        <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)">${ud.icon}</button>
-                        <span style="font-size:18px; color:#aaa; max-width:120px; text-align:center; font-weight:bold;">${ud.name}</span>
-                        <span style="font-size:14px; color:#888;">(${cost} SE)</span>
+                        <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}', true)" style="width:70px; height:70px; font-size:40px !important;">${ud.icon}</button>
+                        <span style="font-size:16px; color:#aaa; font-weight:bold;">${ud.name}</span>
                     </div>
                 `;
             }
@@ -227,7 +225,15 @@ function showUnitInfo(tower) {
         ch += `</div>`;
     }
 
-    let desc = `<div style="color:#eee; font-size:26px; margin-top:20px; line-height:1.4; padding: 0 40px;">"${data.desc}"</div>`;
+    // [User Request] Enhanced Description Styling
+    let desc = `
+        <div style="margin-top:12px; padding:12px 25px; background:rgba(255,215,0,0.05); border-radius:15px; border-left:4px solid #ffd700; width:90%; box-sizing:border-box; position:relative;">
+            <div style="position:absolute; top:5px; left:10px; font-size:14px; color:#ffd700; opacity:0.5; font-family:serif;">SCROLL OF DESTINY</div>
+            <div style="color:#ccc; font-size:24px; line-height:1.4; font-style:italic; text-shadow:1px 1px 2px #000;">
+                "${data.desc}"
+            </div>
+        </div>
+    `;
 
     d.innerHTML = `${th}${ih}${divider}${ch}${desc}`;
     
