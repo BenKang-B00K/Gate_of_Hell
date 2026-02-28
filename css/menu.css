@@ -54,6 +54,7 @@
     text-shadow: 0 0 20px #ffd700, 0 0 40px #ffffff, 0 0 60px #ffd700;
     opacity: 0.9;
     animation: divineGlow 2s infinite alternate ease-in-out;
+    text-align: center;
 }
 
 @keyframes divineGlow {
@@ -62,6 +63,8 @@
 }
 
 #start-game-btn {
+    display: block;
+    margin: 0 auto;
     background: transparent;
     color: #ffd700;
     border: 4px solid #ffd700;
@@ -77,6 +80,8 @@
     text-transform: uppercase;
     overflow: hidden;
     position: relative;
+    width: 500px;
+    box-sizing: border-box;
 }
 
 #start-game-btn:hover {

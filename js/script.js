@@ -658,6 +658,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 800); // Match animation duration
         });
     }
+
+    const pauseBtn = document.getElementById('game-pause-btn');
+    if (pauseBtn) {
+        pauseBtn.addEventListener('click', () => {
+            if (!gameStarted) return;
+            isPaused = !isPaused;
+            pauseBtn.innerText = isPaused ? "재개" : "일시정지";
+            pauseBtn.classList.toggle('active', isPaused);
+            
+            // If pausing, clear indicators
+            if (isPaused) {
+                const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
+                const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
+            }
+        });
+    }
     
     gameLoop();
 
