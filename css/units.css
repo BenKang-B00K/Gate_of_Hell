@@ -91,7 +91,8 @@
 .info-default-text {
     font-family: 'Cinzel', serif; font-weight: bold; font-size: 48px; color: #ffd700;
     text-shadow: 0 0 15px #ffd700, 0 0 30px #ff8c00, 2px 2px 5px #000;
-    letter-spacing: 4px; line-height: 1.1; animation: divinePulse 3s infinite alternate; text-transform: uppercase;
+    letter-spacing: 4px; line-height: 1.1; animation: divinePulse 3s infinite alternate; 
+    text-transform: uppercase; text-align: center;
 }
 
 .unit-info-title { color: #ffd700; font-weight: bold; font-size: 36px; margin-bottom: 10px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); letter-spacing: 2px; }

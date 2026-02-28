@@ -75,7 +75,7 @@ function drawLavaRoad() {
 }
 
 function drawSpawningGate() {
-    const cx = 180; const cy = -55; const time = globalAnimTimer;
+    const cx = 180; const cy = 10; const time = globalAnimTimer;
     ctx.save();
     const firePulse = (Math.sin(time * 3) + 1) / 2;
     const hellfireRadius = 95.5 + (firePulse * 7);
@@ -90,7 +90,7 @@ function drawSpawningGate() {
  * Enhanced Portal Rendering with high-fidelity swirling and status-based effects
  */
 function drawPortal() {
-    const cx = 180; const cy = 620; const time = globalAnimTimer;
+    const cx = 180; const cy = 580; const time = globalAnimTimer;
     const energyRatio = (typeof portalEnergy !== 'undefined') ? portalEnergy / maxPortalEnergy : 0;
     
     ctx.save();

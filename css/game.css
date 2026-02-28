@@ -2,7 +2,7 @@
     position: relative;
     width: 1080px;
     height: 1920px;
-    background: radial-gradient(circle at center, #2a0505, #000000);
+    background: radial-gradient(circle at center, #100505 0%, #000000 100%);
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
     overflow: hidden;
 }
@@ -12,22 +12,18 @@
     display: flex;
     width: 100%;
     position: relative;
-    border-bottom: 1px solid #4a0000;
+    border-bottom: 1px solid #300000;
     padding-top: 0;
     box-sizing: border-box;
+    background: transparent;
 }
 
 #road {
     width: 340px;
-    background-color: #050505;
-    box-shadow: 
-        inset 20px 0 40px rgba(0,0,0,0.9),
-        inset -20px 0 40px rgba(0,0,0,0.9);
+    background-color: transparent;
     position: relative;
     display: flex;
     justify-content: center;
-    border-left: 2px solid #221100;
-    border-right: 2px solid #221100;
     overflow: hidden;
 }
 

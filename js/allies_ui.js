@@ -68,6 +68,39 @@ function initAllies() {
                 summonTower(vs[Math.floor(Math.random()*vs.length)]);
             }
         });
+        tc.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
+                const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
+                d.innerHTML = `
+                    <div style="color:#ffd700; font-weight:bold; font-size:36px; margin-bottom:6px;">퇴마사 소환</div>
+                    <div style="display:inline-block; background:#8b6508; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">기본 소환</div>
+                    <div style="font-size:24px; color:#bbb; line-height:1.2;">심연에 맞설 새로운 퇴마사를 무작위 빈 슬롯에 소환합니다.</div>
+                    <div style="color:#ffd700; font-size:22px; margin-top:10px;">현재 비용: ${finalTowerCost} SE</div>
+                    <div style="color:#555; font-size:22px; margin-top:15px; font-style:italic; line-height:1.2;">"부름에 응한 영혼들이 문의 수호자가 될 것입니다. 소환할수록 더 많은 에너지가 필요합니다."</div>
+                `;
+                startInfoResetTimer();
+            }
+        });
+    }
+
+    // 2.5 Collections Card Hover Logic
+    const colBtn = document.getElementById('collections-btn');
+    if (colBtn) {
+        colBtn.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div style="color:#ffd700; font-weight:bold; font-size:36px; margin-bottom:6px;">도감 확인</div>
+                    <div style="display:inline-block; background:#8b6508; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">기록소</div>
+                    <div style="font-size:24px; color:#bbb; line-height:1.2;">지금까지 조우한 악령들의 정보와 수호자들의 전직 계보를 확인합니다.</div>
+                    <div style="color:#ffd700; font-size:22px; margin-top:10px;">상태: 영구 기록됨</div>
+                    <div style="color:#555; font-size:22px; margin-top:15px; font-style:italic; line-height:1.2;">"지식은 심연에 대항하는 가장 강력한 무기입니다. 과거의 승리를 기록하고 미래를 준비하십시오."</div>
+                `;
+                startInfoResetTimer();
+            }
+        });
     }
 
     // 3. Purge Logic
@@ -331,31 +364,31 @@ function showResourceInfo(type) {
     const d = document.getElementById('unit-info');
     if (!d) return;
 
-    let divider = `<div style="width:80%; height:2px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); margin:25px 0;"></div>`;
+    let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); margin:15px 0;"></div>`;
 
     if (type === 'se') {
         d.innerHTML = `
-            <div style="color:#00e5ff; font-weight:bold; font-size:48px; margin-bottom:10px; text-shadow:0 0 20px #00e5ff;">SOUL ENERGY</div>
-            <div style="display:inline-block; background:#008ba3; color:#fff; padding:6px 20px; border-radius:15px; font-size:28px; font-weight:bold; margin-bottom:20px; border:2px solid #00e5ff;">✨ 성스러운 결정체</div>
-            <div style="font-size:30px; color:#ccc; line-height:1.4; padding: 0 50px;">퇴마사를 소환하고 진화시키는 데 필요한 본질적인 에너지입니다. 악령을 정화(처치)하여 획득할 수 있습니다.</div>
+            <div style="color:#00e5ff; font-weight:bold; font-size:36px; margin-bottom:8px; text-shadow:0 0 15px #00e5ff;">SOUL ENERGY</div>
+            <div style="display:inline-block; background:#008ba3; color:#fff; padding:4px 15px; border-radius:12px; font-size:22px; font-weight:bold; margin-bottom:12px; border:1px solid #00e5ff;">✨ 성스러운 결정체</div>
+            <div style="font-size:24px; color:#ccc; line-height:1.2; padding: 0 30px;">퇴마사를 소환하고 진화시키는 데 필요한 본질적인 에너지입니다. 악령을 정화(처치)하여 획득할 수 있습니다.</div>
             ${divider}
-            <div style="color:#666; font-size:26px; font-style:italic; line-height:1.3; padding: 0 60px;">"정화된 미련의 결정체로, 산 자의 세계를 지키는 성스러운 기술의 원동력입니다."</div>
+            <div style="color:#666; font-size:22px; font-style:italic; line-height:1.2; padding: 0 40px;">"정화된 미련의 결정체로, 산 자의 세계를 지키는 성스러운 기술의 원동력입니다."</div>
         `;
     } else if (type === 'pe') {
         d.innerHTML = `
-            <div style="color:#ff00ff; font-weight:bold; font-size:48px; margin-bottom:10px; text-shadow:0 0 20px #ff00ff;">PORTAL CORRUPTION</div>
-            <div style="display:inline-block; background:#4b0082; color:#fff; padding:6px 20px; border-radius:15px; font-size:28px; font-weight:bold; margin-bottom:20px; border:2px solid #ff00ff;">👿 문의 오염도</div>
-            <div style="font-size:30px; color:#ccc; line-height:1.4; padding: 0 50px;">심연과 이승 사이 문의 불안정성을 나타냅니다. 악령이 통과할 때마다 증가하며, <strong>100%</strong>에 도달하면 문이 붕괴되어 세계가 멸망합니다.</div>
+            <div style="color:#ff00ff; font-weight:bold; font-size:36px; margin-bottom:8px; text-shadow:0 0 15px #ff00ff;">PORTAL CORRUPTION</div>
+            <div style="display:inline-block; background:#4b0082; color:#fff; padding:4px 15px; border-radius:12px; font-size:22px; font-weight:bold; margin-bottom:12px; border:1px solid #ff00ff;">👿 문의 오염도</div>
+            <div style="font-size:24px; color:#ccc; line-height:1.2; padding: 0 30px;">심연과 이승 사이 문의 불안정성을 나타냅니다. 악령이 통과할 때마다 증가하며, <strong>100%</strong>에 도달하면 문이 붕괴되어 세계가 멸망합니다.</div>
             ${divider}
-            <div style="color:#666; font-size:26px; font-style:italic; line-height:1.3; padding: 0 60px;">"두 세계 사이의 가교는 연약합니다. 반대편의 슬픔이 너무 많이 유입되면 완전히 산산조각날 것입니다."</div>
+            <div style="color:#666; font-size:22px; font-style:italic; line-height:1.2; padding: 0 40px;">"두 세계 사이의 가교는 연약합니다. 반대편의 슬픔이 너무 많이 유입되면 완전히 산산조각날 것입니다."</div>
         `;
     } else if (type === 'rs') {
         d.innerHTML = `
-            <div style="color:#ff1744; font-weight:bold; font-size:48px; margin-bottom:10px; text-shadow:0 0 20px #ff1744;">REMAINING SPECTERS</div>
-            <div style="display:inline-block; background:#b71c1c; color:#fff; padding:6px 20px; border-radius:15px; font-size:28px; font-weight:bold; margin-bottom:20px; border:2px solid #ff1744;">💀 잔존 악령 수</div>
-            <div style="font-size:30px; color:#ccc; line-height:1.4; padding: 0 50px;">현재 구역(Depth)에 잔류하고 있는 악령의 총량입니다. 모든 악령을 정화하면 심연의 더 깊은 곳으로 진입할 수 있습니다.</div>
+            <div style="color:#ff1744; font-weight:bold; font-size:36px; margin-bottom:8px; text-shadow:0 0 15px #ff1744;">REMAINING SPECTERS</div>
+            <div style="display:inline-block; background:#b71c1c; color:#fff; padding:4px 15px; border-radius:12px; font-size:22px; font-weight:bold; margin-bottom:12px; border:1px solid #ff1744;">💀 잔존 악령 수</div>
+            <div style="font-size:24px; color:#ccc; line-height:1.2; padding: 0 30px;">현재 구역(Depth)에 잔류하고 있는 악령의 총량입니다. 모든 악령을 정화하면 심연의 더 깊은 곳으로 진입할 수 있습니다.</div>
             ${divider}
-            <div style="color:#666; font-size:26px; font-style:italic; line-height:1.3; padding: 0 60px;">"그들은 그림자의 파도처럼 몰려옵니다. 마지막 하나가 쓰러질 때까지 굳건히 버티십시오."</div>
+            <div style="color:#666; font-size:22px; font-style:italic; line-height:1.2; padding: 0 40px;">"그들은 그림자의 파도처럼 몰려옵니다. 마지막 하나가 쓰러질 때까지 굳건히 버티십시오."</div>
         `;
     }
     startInfoResetTimer();
@@ -372,26 +405,26 @@ function showEnemyInfo(enemy) {
     const maxHp = Math.floor(enemy.maxHp || hp);
     const def = enemy.defense || 0;
 
-    let divider = `<div style="width:80%; height:2px; background:linear-gradient(90deg, transparent, #ff450066, transparent); margin:15px 0;"></div>`;
+    let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, #ff450066, transparent); margin:12px 0;"></div>`;
 
-    let th = `<div style="color:#ff4500; font-weight:bold; font-size:42px; margin-bottom:10px; text-shadow:0 0 15px #ff4500;">${dispName}</div>`;
+    let th = `<div style="color:#ff4500; font-weight:bold; font-size:36px; margin-bottom:8px; text-shadow:0 0 15px #ff4500;">${dispName}</div>`;
     
     let ih = `
-        <div style="display:flex; justify-content:center; gap:20px; margin-bottom:15px; width:100%; padding: 0 40px;">
-            <div class="unit-info-stats" style="flex:2; border-color:#ff1744; background:rgba(183,28,28,0.1);">
-                <span style="color:#ff1744; font-size:18px; display:block;">HEALTH</span>
-                <span style="font-size:28px; font-weight:bold;">${hp} / ${maxHp}</span>
+        <div style="display:flex; justify-content:center; gap:15px; margin-bottom:12px; width:100%; padding: 0 30px;">
+            <div class="unit-info-stats" style="flex:2; border-color:#ff1744; background:rgba(183,28,28,0.1); padding: 4px 10px;">
+                <span style="color:#ff1744; font-size:16px; display:block; font-weight:bold;">HEALTH</span>
+                <span style="font-size:24px; font-weight:bold;">${hp} / ${maxHp}</span>
             </div>
-            <div class="unit-info-stats" style="flex:1; border-color:#888; background:rgba(255,255,255,0.05);">
-                <span style="color:#aaa; font-size:18px; display:block;">DEFENSE</span>
-                <span style="font-size:28px; font-weight:bold;">${def}</span>
+            <div class="unit-info-stats" style="flex:1; border-color:#888; background:rgba(255,255,255,0.05); padding: 4px 10px;">
+                <span style="color:#aaa; font-size:16px; display:block; font-weight:bold;">DEFENSE</span>
+                <span style="font-size:24px; font-weight:bold;">${def}</span>
             </div>
         </div>
     `;
     
     // Effectiveness & Lore
-    let eh = `<div style="color:#ff8a80; font-size:26px; margin-bottom:10px; padding: 0 50px;"><strong>특성:</strong> ${enemy.desc || "심연의 존재입니다."}</div>`;
-    let lh = `<div style="color:#666; font-size:24px; font-style:italic; line-height:1.4; padding: 0 60px;">"${enemy.data?.lore || "이 영혼에 대한 기록이 없습니다."}"</div>`;
+    let eh = `<div style="color:#ff8a80; font-size:22px; margin-bottom:8px; padding: 0 40px;"><strong>특성:</strong> ${enemy.desc || "심연의 존재입니다."}</div>`;
+    let lh = `<div style="color:#666; font-size:20px; font-style:italic; line-height:1.2; padding: 0 50px;">"${enemy.data?.lore || "이 영혼에 대한 기록이 없습니다."}"</div>`;
 
     d.innerHTML = `${th}${ih}${divider}${eh}${lh}`;
     startInfoResetTimer();

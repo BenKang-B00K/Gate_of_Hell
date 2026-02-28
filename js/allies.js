@@ -1,11 +1,11 @@
 /* allies.js - Entry Point & Persistence */
 
-// Track unlocked classes for Records
-const unlockedUnits = new Set(['apprentice']);
+// Track unlocked classes for Records - Global for Collections access
+window.unlockedUnits = new Set(['apprentice']);
 
 function saveGameData() {
     const data = {
-        unlockedUnits: Array.from(unlockedUnits),
+        unlockedUnits: Array.from(window.unlockedUnits),
         encounteredEnemies: Array.from(window.encounteredEnemies || []),
         killCounts: window.killCounts || {}
     };
@@ -18,8 +18,11 @@ function loadGameData() {
         try {
             const data = JSON.parse(saved);
             if (data.unlockedUnits) {
-                data.unlockedUnits.forEach(u => unlockedUnits.add(u));
+                data.unlockedUnits.forEach(u => window.unlockedUnits.add(u));
             }
+            // Always ensure apprentice is there
+            window.unlockedUnits.add('apprentice');
+
             if (data.encounteredEnemies) {
                 if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
                 data.encounteredEnemies.forEach(e => window.encounteredEnemies.add(e));
@@ -43,6 +46,7 @@ function recordUnlock(type, isEnemy = false) {
     const isTutorialEnabled = tutorialToggle ? tutorialToggle.checked : true;
     
     if (isEnemy) {
+        // ... (rest of enemy unlock logic same)
         if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
         if (window.encounteredEnemies.has(type)) return;
         window.encounteredEnemies.add(type);
@@ -95,8 +99,8 @@ function recordUnlock(type, isEnemy = false) {
         return;
     }
 
-    if (!unlockedUnits.has(type)) {
-        unlockedUnits.add(type);
+    if (!window.unlockedUnits.has(type)) {
+        window.unlockedUnits.add(type);
         saveGameData();
 
         if (!isTutorialEnabled) return;
