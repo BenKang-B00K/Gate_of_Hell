@@ -87,6 +87,89 @@ function drawShadow(lx, ly, size = 10) {
     ctx.restore();
 }
 
+// --- Atmospheric Side State ---
+const sideClouds = []; // {x, y, vx, vy, size, opacity, targetOpacity, flash}
+const sideMist = [];   // {x, y, vx, vy, size, opacity}
+
+function initAtmosphere() {
+    if (sideClouds.length > 0) return;
+    for(let i=0; i<12; i++) {
+        const isLeft = i < 6;
+        sideClouds.push({
+            x: isLeft ? Math.random() * 80 : 280 + Math.random() * 80,
+            y: Math.random() * 200,
+            vx: (Math.random() - 0.5) * 0.2,
+            vy: (Math.random() - 0.5) * 0.1,
+            size: 40 + Math.random() * 60,
+            opacity: Math.random(),
+            targetOpacity: Math.random(),
+            flash: 0,
+            isLeft: isLeft
+        });
+    }
+}
+
+function drawAtmosphericEffects() {
+    initAtmosphere();
+    const time = globalAnimTimer;
+    ctx.save();
+
+    // Update and Draw Clouds
+    sideClouds.forEach(c => {
+        // Move
+        c.x += c.vx; c.y += c.vy;
+        // Fade logic
+        if (Math.abs(c.opacity - c.targetOpacity) < 0.01) {
+            c.targetOpacity = Math.random();
+        } else {
+            c.opacity += (c.targetOpacity > c.opacity ? 0.002 : -0.002);
+        }
+        // Boundaries (drifting back)
+        if (c.isLeft && c.x > 110) c.vx = -Math.abs(c.vx);
+        if (c.isLeft && c.x < -20) c.vx = Math.abs(c.vx);
+        if (!c.isLeft && c.x < 250) c.vx = Math.abs(c.vx);
+        if (!c.isLeft && c.x > 380) c.vx = -Math.abs(c.vx);
+
+        // Lightning Flash Logic
+        if (c.flash > 0) c.flash -= 0.1;
+        else if (Math.random() < 0.002) c.flash = 1.0;
+
+        // Draw Cloud
+        const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.size);
+        const baseColor = c.flash > 0 ? `rgba(255, 255, 200, ${c.opacity * c.flash})` : `rgba(20, 20, 30, ${c.opacity * 0.6})`;
+        grad.addColorStop(0, baseColor);
+        grad.addColorStop(1, 'transparent');
+        
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sub-cloud details
+        if (c.flash > 0.5) {
+            ctx.strokeStyle = `rgba(255, 215, 0, ${c.flash * 0.3})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(c.x - 10, c.y);
+            ctx.lineTo(c.x + 5, c.y + 10);
+            ctx.lineTo(c.x - 5, c.y + 20);
+            ctx.stroke();
+        }
+    });
+
+    // Draw Mist/Fog layers
+    ctx.globalAlpha = 0.2;
+    for(let m=0; m<3; m++) {
+        const offset = Math.sin(time * 0.5 + m) * 20;
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(-20 + offset, 0, 140, 250);
+        ctx.fillRect(240 - offset, 0, 140, 250);
+    }
+    ctx.globalAlpha = 1.0;
+
+    ctx.restore();
+}
+
 function renderGraphics() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
@@ -96,8 +179,9 @@ function renderGraphics() {
     updateParticles();
     
     drawLavaRoad();
-    drawSpawningGate(); // New: Rusty Gate and Hellfire
-    drawPortal(); // New Vortex Portal
+    drawAtmosphericEffects(); // New: Drifting Clouds & Mist
+    drawSpawningGate(); 
+    drawPortal(); 
     drawSlots();
     drawUnits();
     drawEnemies(); 
@@ -106,67 +190,45 @@ function renderGraphics() {
 }
 
 function drawSpawningGate() {
-    const roadWidth = 114;
     const cx = LOGICAL_WIDTH / 2;
-    const cy = 40; // Top of the road
+    const cy = -10; 
     const time = globalAnimTimer;
+    const roadWidth = 114;
 
     ctx.save();
 
     // 1. Raging Hellfire (Background Glow)
+    // [User Request] Set diameter to 1.5x road width (114 * 1.5 = 171)
     const firePulse = (Math.sin(time * 3) + 1) / 2;
-    const fireGrad = ctx.createRadialGradient(cx, cy - 20, 0, cx, cy - 20, 80);
-    fireGrad.addColorStop(0, `rgba(255, 69, 0, ${0.6 + firePulse * 0.4})`); // Orange-Red
-    fireGrad.addColorStop(0.5, `rgba(255, 165, 0, ${0.3 + firePulse * 0.2})`); // Orange
-    fireGrad.addColorStop(1, 'transparent');
-    ctx.fillStyle = fireGrad;
-    ctx.fillRect(cx - 100, cy - 60, 200, 120);
-
-    // 2. Rusty Iron Gates
-    const gateW = 50;
-    const gateH = 70;
-    const rustColor = '#3e2723'; // Dark brown base
-    const ironColor = '#212121'; // Dark metal
+    const hellfireRadius = (roadWidth * 1.5) / 2; // 85.5px
     
-    // Left Gate
-    ctx.fillStyle = ironColor;
-    ctx.fillRect(cx - gateW - 2, cy - 30, gateW, gateH);
-    // Rust Texture
-    ctx.fillStyle = rustColor;
-    for(let i=0; i<10; i++) {
-        const rx = cx - gateW + (Math.sin(i * 99) * 0.5 + 0.5) * gateW;
-        const ry = cy - 30 + (Math.cos(i * 88) * 0.5 + 0.5) * gateH;
-        ctx.fillRect(Math.floor(rx), Math.floor(ry), 4, 4);
-    }
+    const fireGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, hellfireRadius * 1.2);
+    fireGrad.addColorStop(0, `rgba(255, 69, 0, ${0.7 + firePulse * 0.3})`); 
+    fireGrad.addColorStop(0.6, `rgba(255, 140, 0, ${0.4 + firePulse * 0.2})`); 
+    fireGrad.addColorStop(1, 'transparent');
+    
+    ctx.fillStyle = fireGrad;
+    // Cover the area matching the 1.5x width
+    ctx.fillRect(cx - hellfireRadius * 1.5, cy - 50, hellfireRadius * 3, 150);
 
-    // Right Gate
-    ctx.fillStyle = ironColor;
-    ctx.fillRect(cx + 2, cy - 30, gateW, gateH);
-    // Rust Texture
-    for(let i=0; i<10; i++) {
-        const rx = cx + 2 + (Math.sin(i * 77) * 0.5 + 0.5) * gateW;
-        const ry = cy - 30 + (Math.cos(i * 66) * 0.5 + 0.5) * gateH;
-        ctx.fillRect(Math.floor(rx), Math.floor(ry), 4, 4);
-    }
-
-    // 3. Occult Runes (Glowing Symbols on Frame)
+    // 2. Occult Runes (Floating around the fire)
     const runeAlpha = (Math.sin(time * 2) + 1) / 2;
-    ctx.fillStyle = `rgba(255, 0, 0, ${0.4 + runeAlpha * 0.6})`;
-    ctx.shadowBlur = 10 * runeAlpha;
+    ctx.fillStyle = `rgba(255, 0, 0, ${0.3 + runeAlpha * 0.5})`;
+    ctx.shadowBlur = 15 * runeAlpha;
     ctx.shadowColor = '#f00';
     
-    // Simple Runes around the gate
-    for(let r=0; r<6; r++) {
-        const rx = cx + (r % 2 === 0 ? -60 : 60);
-        const ry = cy - 20 + (Math.floor(r/2) * 25);
-        ctx.font = 'bold 12px serif';
+    for(let r=0; r<8; r++) {
+        const angle = (time * 0.5) + (r * Math.PI * 0.25);
+        const rx = cx + Math.cos(angle) * 70;
+        const ry = cy + 30 + Math.sin(angle) * 20;
+        ctx.font = 'bold 14px serif';
         ctx.fillText('⛧', rx, ry);
     }
     ctx.shadowBlur = 0;
 
-    // 4. Fire Licks (Moving upwards)
-    if (Math.random() < 0.4) {
-        spawnParticles(cx + (Math.random() - 0.5) * 100, cy - 10, '#ff4500', 1);
+    // 3. Upward Fire Particles
+    if (Math.random() < 0.5) {
+        spawnParticles(cx + (Math.random() - 0.5) * 120, cy + 20, '#ff4500', 1);
     }
 
     ctx.restore();
@@ -291,32 +353,35 @@ function drawLavaRoad() {
         ctx.fillRect(Math.floor(gx), Math.floor(gy), 2, 2);
     }
 
-    // 2. Guideposts for Souls (Downward Arrows, No Tail)
-    const arrowColor = '#4a0e00'; // Hardened lava base
-    const guideGlow = (Math.sin(time * 1.5) + 1) / 2;
+    // 2. Guideposts for Souls (Downward Arrows, No Tail) - Subtle/Transparent
+    const guideGlow = (Math.sin(time * 1.2) + 1) / 2;
     
     for (let j = 0; j < 4; j++) {
-        const ay = (j * 160 + time * 20) % LOGICAL_HEIGHT; // Moving downward slowly
+        const ay = (j * 160 + time * 15) % LOGICAL_HEIGHT; // Moving downward slowly
         const ax = LOGICAL_WIDTH / 2;
-        const size = 15;
+        const size = 12;
 
         ctx.save();
         ctx.beginPath();
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 2;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
-        // Base Dark Arrow
-        ctx.strokeStyle = arrowColor;
+        // [User Request] Add transparency to make it less distracting
+        const baseAlpha = 0.15; // Very subtle base
+        const finalAlpha = baseAlpha + (guideGlow * 0.1);
+        
+        // Draw Shadow/Dark Outline
+        ctx.strokeStyle = `rgba(0, 0, 0, ${finalAlpha})`;
         ctx.moveTo(ax - size, ay - size);
         ctx.lineTo(ax, ay);
         ctx.lineTo(ax + size, ay - size);
         ctx.stroke();
 
-        // Glowing Core
-        ctx.strokeStyle = `rgba(255, 69, 0, ${0.3 + guideGlow * 0.4})`;
-        ctx.shadowBlur = 8 * guideGlow;
-        ctx.shadowColor = '#ff4500';
+        // Draw Glowing Core
+        ctx.strokeStyle = `rgba(255, 69, 0, ${finalAlpha * 1.5})`;
+        ctx.shadowBlur = 5 * guideGlow;
+        ctx.shadowColor = 'rgba(255, 69, 0, 0.5)';
         ctx.stroke();
         
         ctx.restore();
