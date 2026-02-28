@@ -481,25 +481,71 @@ function drawSlots() {
         const sw = rect.width * scaleX;
         const sh = rect.height * scaleY;
         
-        const inset = 2; 
-        ctx.fillStyle = '#0a0a0a';
-        ctx.fillRect(sx + inset, sy + inset, sw - inset * 2, sh - inset * 2);
+        const inset = 1;
+        const w = sw - inset * 2;
+        const h = sh - inset * 2;
+        const x = sx + inset;
+        const y = sy + inset;
+
+        // 1. Holy White Halo / Shadow
+        ctx.save();
+        ctx.shadowBlur = 12 + 6 * pulse;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
         
-        ctx.strokeStyle = `rgb(${Math.floor(180 + 75 * pulse)}, ${Math.floor(140 + 60 * pulse)}, 0)`;
-        ctx.lineWidth = 1; 
-        ctx.strokeRect(sx + inset + 1, sy + inset + 1, sw - inset * 2 - 2, sh - inset * 2 - 2);
-        
+        // 2. Hexagon Path (Pointy Top)
+        const drawHex = (ctx, x, y, w, h) => {
+            ctx.beginPath();
+            ctx.moveTo(x + w / 2, y);
+            ctx.lineTo(x + w, y + h / 4);
+            ctx.lineTo(x + w, y + 3 * h / 4);
+            ctx.lineTo(x + w / 2, y + h);
+            ctx.lineTo(x, y + 3 * h / 4);
+            ctx.lineTo(x, y + h / 4);
+            ctx.closePath();
+        };
+
+        // 3. Stone Tablet Base
+        const stoneGrad = ctx.createLinearGradient(x, y, x + w, y + h);
+        stoneGrad.addColorStop(0, '#444');
+        stoneGrad.addColorStop(0.5, '#666');
+        stoneGrad.addColorStop(1, '#333');
+        ctx.fillStyle = stoneGrad;
+        drawHex(ctx, x, y, w, h);
+        ctx.fill();
+
+        // 4. Golden Border
+        ctx.strokeStyle = `rgba(255, 215, 0, ${0.8 + 0.2 * pulse})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 5. Divine Inner Glow for stone
+        ctx.shadowBlur = 0; // Reset shadow for inner details
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x + w/2, y + 4);
+        ctx.lineTo(x + w - 4, y + h/4 + 2);
+        ctx.stroke();
+
+        // 6. Corner Decorative Dots
         ctx.fillStyle = '#ffd700';
-        const cs = 2; 
-        ctx.fillRect(sx + inset, sy + inset, cs, cs);
-        ctx.fillRect(sx + sw - inset - cs, sy + inset, cs, cs);
-        ctx.fillRect(sx + inset, sy + sh - inset - cs, cs, cs);
-        ctx.fillRect(sx + sw - inset - cs, sy + sh - inset - cs, cs, cs);
+        const dots = [
+            {dx: w/2, dy: 0}, {dx: w, dy: h/4}, {dx: w, dy: 3*h/4},
+            {dx: w/2, dy: h}, {dx: 0, dy: 3*h/4}, {dx: 0, dy: h/4}
+        ];
+        dots.forEach(d => {
+            ctx.beginPath();
+            ctx.arc(x + d.dx, y + d.dy, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        });
 
         if (slot.classList.contains('occupied')) {
-            ctx.fillStyle = `rgba(255, 215, 0, ${0.1 + 0.1 * pulse})`;
-            ctx.fillRect(sx + inset + 2, sy + inset + 2, sw - inset * 2 - 4, sh - inset * 2 - 4);
+            ctx.fillStyle = `rgba(255, 215, 0, ${0.15 + 0.1 * pulse})`;
+            drawHex(ctx, x + 3, y + 3, w - 6, h - 6);
+            ctx.fill();
         }
+        
+        ctx.restore();
     });
 }
 

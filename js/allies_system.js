@@ -181,10 +181,15 @@ function summonTower(targetSlot) {
     if (!apprenticeData) return;
 
     const unit = document.createElement('div');
-    unit.classList.add('unit', 'apprentice');
+    unit.classList.add('unit', 'apprentice', 'summoning');
     unit.title = apprenticeData.name;
     unit.innerText = ''; 
     unit.draggable = true;
+
+    // Remove summoning class after animation
+    setTimeout(() => {
+        unit.classList.remove('summoning');
+    }, 800);
 
     const cdOverlay = document.createElement('div');
     cdOverlay.className = 'cooldown-overlay';
