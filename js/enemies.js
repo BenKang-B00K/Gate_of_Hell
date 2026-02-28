@@ -138,6 +138,11 @@ function initStage() {
     isBossStage = (stage % 10 === 0); // Boss stage every 10 levels
     bossSpawned = false;
     bossInstance = null;
+
+    // [User Request] Divine Ascension Transition
+    if (typeof spawnStageFlash === 'function') {
+        spawnStageFlash(`DEPTH ${stage}`);
+    }
     
     // Check for difficulty increase message
     const diffMsgContainer = document.getElementById('difficulty-msg-container');
@@ -785,6 +790,11 @@ function handleEnemyDeath(target, killer = null) {
         });
     }
 
+// Handle enemy death
+function handleEnemyDeath(target, killer = null) {
+    if (target.hp > 0) return;
+
+    // ... (rest of the function logic remains same until death processing)
     const idx = enemies.indexOf(target);
     if (idx > -1) {
         target.element.remove();
@@ -792,7 +802,15 @@ function handleEnemyDeath(target, killer = null) {
         if (typeof checkRelicDrop === 'function') checkRelicDrop(target);
         updateStageInfo(); 
         
+        // Check if stage is cleared (no enemies left and all spawned)
+        if (enemies.length === 0 && currentStageSpawned >= totalStageEnemies && !isBossStage) {
+            triggerStageTransition();
+        }
+
         if (target.isBoss) {
+            // ... boss death logic ...
+            // After boss victory is clicked, it will eventually call next stage
+        }
             let rewardMsg = "";
             let bonusDetail = "";
             let relicId = "";
@@ -895,3 +913,31 @@ function createSEGainEffect(x, y, amount, container) {
     container.appendChild(effect);
     setTimeout(() => effect.remove(), 600);
 }
+
+/**
+ * Majestic sequence of light pillars on slots when a stage clears
+ */
+function triggerStageTransition() {
+    if (typeof spawnLightPillar !== 'function') return;
+    
+    const cardSlots = document.querySelectorAll('.card-slot');
+    const container = document.getElementById('game-container');
+    if (!container) return;
+    const containerRect = container.getBoundingClientRect();
+    
+    // Pick 8-12 random slots to strike with light
+    const count = 8 + Math.floor(Math.random() * 5);
+    const shuffled = Array.from(cardSlots).sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, count);
+    
+    selected.forEach((slot, i) => {
+        setTimeout(() => {
+            const rect = slot.getBoundingClientRect();
+            const lx = ((rect.left + rect.width / 2) - containerRect.left) * (LOGICAL_WIDTH / containerRect.width);
+            const ly = ((rect.top + rect.height / 2) - containerRect.top) * (LOGICAL_HEIGHT / containerRect.height);
+            spawnLightPillar(lx, ly);
+        }, i * 150); // Sequential strikes
+    });
+}
+
+window.triggerStageTransition = triggerStageTransition;

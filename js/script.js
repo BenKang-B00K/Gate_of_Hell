@@ -227,9 +227,11 @@ function gameLoop() {
         // Global Stage Progression Check
         const allSpawned = isBossStage ? (currentStageSpawned >= totalStageEnemies || (bossSpawned && !bossInstance)) : (currentStageSpawned >= totalStageEnemies);
         if (allSpawned && enemies.length === 0) {
-            stage++; 
-            initStage(); 
+            if (typeof triggerStageTransition === 'function') triggerStageTransition();
+            stage++;
+            initStage();
         }
+
     }
 
     for (let i = enemies.length - 1; i >= 0; i--) {

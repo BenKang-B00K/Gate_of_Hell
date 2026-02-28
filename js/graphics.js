@@ -55,7 +55,63 @@ function disableSmoothing() {
 const particles = []; 
 const lightPillars = []; // {x, y, life, maxLife}
 const promotionBursts = []; // {x, y, life, tier}
+const stageFlashes = []; // {life, text}
 let globalAnimTimer = 0;
+
+function spawnStageFlash(text) {
+    stageFlashes.push({
+        life: 1.0,
+        text: text
+    });
+}
+
+function updateStageFlashes() {
+    for (let i = stageFlashes.length - 1; i >= 0; i--) {
+        const sf = stageFlashes[i];
+        sf.life -= 0.01; // Slower fade for stage transition
+        if (sf.life <= 0) stageFlashes.splice(i, 1);
+    }
+}
+
+function drawStageFlashes() {
+    stageFlashes.forEach(sf => {
+        const alpha = sf.life;
+        ctx.save();
+        
+        // 1. Full Screen Blinding White/Gold Flash
+        // Flash is strongest at life 1.0 to 0.8, then fades
+        const flashAlpha = Math.min(1.0, alpha * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+        ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+        
+        const goldAlpha = Math.min(0.6, alpha);
+        ctx.fillStyle = `rgba(255, 215, 0, ${goldAlpha})`;
+        ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+
+        // 2. Large Centered Text
+        if (alpha > 0.2) {
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // Text Shadow
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ff4500';
+            
+            // Main Text
+            const fontSize = 48 + (1.0 - alpha) * 40; // Text expands
+            ctx.font = `bold ${fontSize}px Cinzel, serif`;
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.fillText(sf.text, LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2);
+            
+            // Subtitle
+            ctx.font = `bold 24px Cinzel, serif`;
+            ctx.fillStyle = `rgba(255, 215, 0, ${alpha * 0.8})`;
+            ctx.fillText("ASCENDING TO NEXT DEPTH", LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2 + 60);
+        }
+        
+        ctx.restore();
+    });
+}
 
 function spawnPromotionBurst(lx, ly, tier) {
     promotionBursts.push({
@@ -318,9 +374,10 @@ function renderGraphics() {
     updateParticles();
     updateLightPillars();
     updatePromotionBursts();
+    updateStageFlashes();
     
     drawLavaRoad();
-    drawAtmosphericEffects(); // New: Drifting Clouds & Mist
+    drawAtmosphericEffects(); 
     drawSpawningGate(); 
     drawPortal(); 
     drawSlots();
@@ -329,6 +386,7 @@ function renderGraphics() {
     drawParticles(); 
     drawLightPillars();
     drawPromotionBursts();
+    drawStageFlashes();
     drawSelectionHalo();
 }
 
