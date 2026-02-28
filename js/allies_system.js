@@ -22,6 +22,13 @@ function executeMove(unit, targetSlot) {
         const ud = towers.find(t => t.element === unit);
         if (ud) ud.slotElement = targetSlot;
     }
+
+    // [User Request] Update range indicator to follow the unit to the new slot
+    const t = towers.find(x => x.element === unit);
+    if (t && unit.classList.contains('selected')) {
+        showRangeIndicator(t);
+    }
+
     cancelMovement();
 }
 

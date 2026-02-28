@@ -167,7 +167,9 @@ function updateSummonButtonState() {
  * Displays detailed unit info in the bottom panel
  */
 function showUnitInfo(tower) {
-    if (Date.now() < infoPanelLockedUntil) return;
+    // [User Request] Lock info panel for 3 seconds when showing unit info
+    window.infoPanelLockedUntil = Date.now() + 3000;
+    
     const d = document.getElementById('unit-info');
     if (!d) return;
 
@@ -271,6 +273,12 @@ function startInfoResetTimer() {
     infoResetTimer = setTimeout(() => {
         const d = document.getElementById('unit-info');
         if (d) d.innerHTML = '<div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 공세</span></div>';
+        
+        // [User Request] Deselect units and clear indicators after 10 seconds
+        document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
+        const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
+        const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
+        
         if(corruptBtnElement) { corruptBtnElement.remove(); corruptBtnElement = null; }
     }, 10000);
 }

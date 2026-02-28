@@ -284,7 +284,13 @@ function drawApprentice(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 250) : 0;
@@ -390,7 +396,13 @@ function drawIce(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -492,7 +504,13 @@ function drawFire(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -596,7 +614,13 @@ function drawTracker(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -701,7 +725,13 @@ function drawNecromancer(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -800,7 +830,13 @@ function drawChainer(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -903,7 +939,13 @@ function drawMonk(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -1020,7 +1062,13 @@ function drawTalisman(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -1118,7 +1166,13 @@ function drawArcher(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
@@ -1229,7 +1283,13 @@ function drawAssassin(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 150) : 0;
@@ -1330,7 +1390,13 @@ function drawKnight(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 250) : 0;
@@ -1434,7 +1500,13 @@ function drawGuardian(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -1529,7 +1601,13 @@ function drawAlchemist(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
@@ -1618,7 +1696,13 @@ function drawMirror(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -1737,7 +1821,13 @@ function drawPaladin(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -1830,7 +1920,13 @@ function drawCrusader(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 250) : 0;
@@ -1921,7 +2017,13 @@ function drawMidas(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -2015,7 +2117,13 @@ function drawIllusion(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
@@ -2111,7 +2219,13 @@ function drawPhilosopher(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
@@ -2211,7 +2325,13 @@ function drawReflection(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -2305,7 +2425,13 @@ function drawFlameMaster(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -2400,7 +2526,13 @@ function drawVoidSniper(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -2499,7 +2631,13 @@ function drawVajrapani(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -2603,7 +2741,13 @@ function drawAbsoluteZero(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -2701,7 +2845,13 @@ function drawHellfireAlchemist(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
@@ -2794,7 +2944,13 @@ function drawPhoenixSummoner(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 500) : 0;
@@ -2896,7 +3052,13 @@ function drawExecutor(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -3002,7 +3164,13 @@ function drawBinder(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
@@ -3100,7 +3268,13 @@ function drawGrandSealer(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -3201,7 +3375,13 @@ function drawSaint(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 500) : 0;
@@ -3289,7 +3469,13 @@ function drawThousandHand(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -3384,7 +3570,13 @@ function drawPermafrost(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -3475,7 +3667,13 @@ function drawAbyssalKiller(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -3563,7 +3761,13 @@ function drawSpatialSlasher(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 200) : 0;
@@ -3636,7 +3840,13 @@ function drawSeer(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -3719,7 +3929,13 @@ function drawCommander(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -3801,7 +4017,13 @@ function drawWraithLord(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -3887,7 +4109,13 @@ function drawCursedShaman(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -3974,7 +4202,13 @@ function drawRampart(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -4050,7 +4284,13 @@ function drawJudgment(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -4129,7 +4369,13 @@ function drawTransmuter(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 300) : 0;
@@ -4225,7 +4471,13 @@ function drawOracle(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -4318,7 +4570,13 @@ function drawWarden(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 800) : 0;
@@ -4416,7 +4674,13 @@ function drawCursedTalisman(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 350) : 0;
@@ -4504,7 +4768,13 @@ function drawAsura(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 200) : 0;
@@ -4596,7 +4866,13 @@ function drawPiercingShadow(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 600) : 0;
@@ -4680,7 +4956,13 @@ function drawCocytus(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 1000) : 0;
@@ -4770,7 +5052,13 @@ function drawPurgatory(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 500) : 0;
@@ -4858,7 +5146,13 @@ function drawReaper(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -4933,7 +5227,13 @@ function drawDoomGuide(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -5019,7 +5319,13 @@ function drawForsakenKing(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 400) : 0;
@@ -5101,7 +5407,13 @@ function drawVoidGatekeeper(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     // --- 1. BODY & THE GATE ITSELF (Stone / Void Palette) ---
@@ -5155,7 +5467,13 @@ function drawEternalWall(cx, cy, tower) {
     const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color;
         const finalOx = isLeft ? ox : -ox - w;
-        ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S)), Math.floor(w * S), Math.floor(h * S));
+        const verticalScale = 1.13; // User requested 13% vertical increase
+        ctx.fillRect(
+            Math.floor(cx + (finalOx * S)), 
+            Math.floor(cy + (oy * S * verticalScale)), 
+            Math.floor(w * S), 
+            Math.floor(h * S * verticalScale)
+        );
     };
 
     // --- 1. BODY & EARTHEN BEHEMOTH (Granite / Amber / Moss Palette) ---
