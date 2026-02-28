@@ -167,6 +167,7 @@ function summonTower(targetSlot) {
 
     // 3. Pre-summon validation (Resources & Limits)
     if (money < finalTowerCost || towers.length >= maxTowers) {
+        if (money < finalTowerCost && typeof flashResourceError === 'function') flashResourceError('se');
         if (typeof updateSummonButtonState === 'function') updateSummonButtonState();
         return;
     }
@@ -245,6 +246,7 @@ function summonTower(targetSlot) {
 function purgePortal() {
     const pc = 800; const pa = portalEnergy * 0.5;
     if(money>=pc && portalEnergy>0) { money-=pc; portalEnergy=Math.max(0,portalEnergy-pa); if(typeof updateGauges==='function')updateGauges(); }
+    else if(money < pc && typeof flashResourceError === 'function') flashResourceError('se');
 }
 
 function performJobChange(el, targetRole = null, fromInfo = false) {
@@ -269,7 +271,10 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
         return;
     }
 
-    if(money<jobChangeCost) return; 
+    if(money<jobChangeCost) {
+        if (typeof flashResourceError === 'function') flashResourceError('se');
+        return; 
+    }
     money-=jobChangeCost; if(typeof updateGauges==='function')updateGauges();
     
     const ntStr = availablePaths[Math.floor(Math.random()*availablePaths.length)]; 
@@ -302,6 +307,7 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     // Cost logic based on target tier
     const seCost = (nt.tier === 4) ? 800 : 400;
     if(money < seCost) {
+        if (typeof flashResourceError === 'function') flashResourceError('se');
         return;
     }
     money -= seCost;
@@ -323,15 +329,40 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
 }
 
 function sellTower(t) {
-    // [User Request] Highly themed and ominous warning message
-    const warningTitle = "⚠️ [절대 금기: 영혼의 파기]";
-    const warningBody = "수호자와의 성스러운 계약을 강제로 끊으려 합니까?\n\n" +
-                        "영혼을 심연으로 돌려보내는 대가는 결코 가볍지 않으며, " +
-                        "한번 흩어진 본질은 결코 다시 불러올 수 없습니다.\n\n" +
-                        "정말로 이 수호자를 영원한 어둠 속으로 추방하시겠습니까?";
+    const modal = document.getElementById('sacrifice-modal');
+    const confirmBtn = document.getElementById('sacrifice-confirm-btn');
+    const cancelBtn = document.getElementById('sacrifice-cancel-btn');
+    
+    if (!modal || !confirmBtn || !cancelBtn) {
+        // Fallback if elements not found
+        if (confirm("수호자를 추방하시겠습니까?")) executeSacrifice(t);
+        return;
+    }
 
-    if (!confirm(`${warningTitle}\n\n${warningBody}`)) return;
+    // Show modal and pause game
+    modal.style.display = 'flex';
+    isPaused = true;
 
+    // Remove old listeners to avoid stacking
+    confirmBtn.onclick = null;
+    cancelBtn.onclick = null;
+
+    confirmBtn.onclick = () => {
+        modal.style.display = 'none';
+        isPaused = false;
+        executeSacrifice(t);
+    };
+
+    cancelBtn.onclick = () => {
+        modal.style.display = 'none';
+        isPaused = false;
+    };
+}
+
+/**
+ * Internal logic to actually remove the tower and refund SE
+ */
+function executeSacrifice(t) {
     const s = t.slotElement; 
     s.classList.remove('occupied'); 
     if (t.element) t.element.remove();
@@ -349,7 +380,7 @@ function sellTower(t) {
     
     // Clear info panel and indicators
     const d = document.getElementById('unit-info');
-    if (d) d.innerHTML = '<div class="info-default-text">GUARDIANS<br><span style="font-size:30px; opacity:0.8;">of the</span><br>UNDERWORLD</div>';
+    if (d) d.innerHTML = '<div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 공세</span></div>';
     const ri = document.getElementById('range-indicator');
     if (ri) ri.remove();
     const ai = document.getElementById('aura-indicator');

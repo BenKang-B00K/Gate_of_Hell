@@ -112,8 +112,24 @@
 }
 
 /* SE Specific */
-.gauge-bar.se { border-color: rgba(0, 229, 255, 0.3); }
-#se-gauge-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #008ba3, #00e5ff); box-shadow: 0 0 20px rgba(0, 229, 255, 0.6); transition: width 0.3s ease; }
+.gauge-bar.se { border-color: rgba(0, 229, 255, 0.3); transition: border-color 0.2s, box-shadow 0.2s; }
+#se-gauge-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #008ba3, #00e5ff); box-shadow: 0 0 20px rgba(0, 229, 255, 0.6); transition: width 0.3s ease, background 0.2s; }
+
+/* [User Request] Shake and Red effect for insufficient SE */
+.gauge-wrapper.shake-error .gauge-bar.se {
+    border-color: #ff0000 !important;
+    box-shadow: 0 0 15px #ff0000 !important;
+    animation: resourceShake 0.4s ease-in-out;
+}
+.gauge-wrapper.shake-error #se-gauge-fill {
+    background: linear-gradient(90deg, #b71c1c, #ff1744) !important;
+}
+
+@keyframes resourceShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
 
 /* PE Specific */
 .gauge-bar.pe { border-color: rgba(148, 0, 211, 0.3); }

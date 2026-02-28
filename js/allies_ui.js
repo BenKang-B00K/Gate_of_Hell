@@ -272,6 +272,20 @@ function showCorruptWarning(message) {
     setTimeout(() => { cw.style.display = 'none'; }, 3000);
 }
 
+/**
+ * Visual feedback for insufficient resources
+ */
+function flashResourceError(type) {
+    let el;
+    if (type === 'se') el = document.getElementById('se-label');
+    else if (type === 'pe') el = document.getElementById('pe-label');
+    
+    if (el) {
+        el.classList.add('shake-error');
+        setTimeout(() => el.classList.remove('shake-error'), 500);
+    }
+}
+
 function startInfoResetTimer() {
     if (infoResetTimer) clearTimeout(infoResetTimer);
     infoResetTimer = setTimeout(() => {
@@ -348,4 +362,5 @@ window.updateSummonButtonState = updateSummonButtonState;
 window.showUnitInfo = showUnitInfo;
 window.showEnemyInfo = showEnemyInfo;
 window.showResourceInfo = showResourceInfo;
+window.flashResourceError = flashResourceError;
 window.startInfoResetTimer = startInfoResetTimer;
