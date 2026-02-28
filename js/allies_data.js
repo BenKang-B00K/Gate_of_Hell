@@ -9,6 +9,26 @@ let stage = 1;
 let isTimeFrozen = false;
 let timeFreezeEndTime = 0;
 
+let enemies = [];
+let towers = [];
+let money = 100; // SE
+let portalEnergy = 0;
+let maxPortalEnergy = 1500;
+let isBossStage = false;
+let bossSpawned = false;
+let bossInstance = null;
+let currentStageSpawned = 0;
+let totalStageEnemies = 15;
+let isStageStarting = false;
+let lastSpawnTime = 0;
+let damageMultiplier = 1.0;
+let critChance = 0.05;
+let critMultiplier = 2.0;
+let friendlySkeletons = [];
+let friendlyGhosts = [];
+let groundEffects = [];
+let gameContainer, road;
+
 /**
  * Updates Soul Energy and Portal Energy Displays
  */
@@ -23,6 +43,20 @@ function updateGauges() {
     
     if (peFill) peFill.style.width = `${(portalEnergy / maxPortalEnergy) * 100}%`;
     if (seFill) seFill.style.width = `${Math.min((money / 1000) * 100, 100)}%`;
+}
+
+/**
+ * Updates Stage Info and Enemies Left Display
+ */
+function updateStageInfo() {
+    const stageDisplay = document.getElementById('stage-display');
+    if (stageDisplay) stageDisplay.innerText = stage;
+    
+    const enemiesLeft = document.getElementById('enemies-left');
+    if (enemiesLeft) {
+        const remaining = Math.max(0, (totalStageEnemies - currentStageSpawned) + enemies.length);
+        enemiesLeft.innerText = remaining;
+    }
 }
 
 const unitTypes = [

@@ -5,7 +5,7 @@ let spawnInterval = 1200;
 let isPaused = false;
 let gameWidth = 360; 
 
-function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze = false) {
+function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze = false, isCrit = false) {
     if (!target || target.hp <= 0) return;
     
     // [Hit-Flash] Track when enemy was hit for visual feedback
@@ -443,7 +443,9 @@ function shoot(tower, target) {
         // Critical Hit Logic
         const relicCritChance = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_chance') : 0;
         const totalCritChance = critChance + relicCritChance + (tower.data.type === 'vajra' ? 0.2 : 0); // Vajra has 20% innate crit
+        let isCritShot = false;
         if (Math.random() < totalCritChance) {
+            isCritShot = true;
             const relicCritBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_damage') : 0;
             const totalCritMultiplier = critMultiplier + relicCritBonus;
             finalDamageMultiplier *= totalCritMultiplier;
@@ -471,7 +473,7 @@ function shoot(tower, target) {
             }
         }
 
-        applyDamage(target, tower.data.damage * finalDamageMultiplier, tower);
+        applyDamage(target, tower.data.damage * finalDamageMultiplier, tower, false, false, isCritShot);
     }, 200);
 }
 
