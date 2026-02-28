@@ -52,7 +52,7 @@ function renderGraphics() {
     if(typeof updatePurgeEffects === 'function') updatePurgeEffects();
     
     // Environment from graphics_env.js
-    if(typeof drawLavaRoad === 'function') drawLavaRoad();
+    if(typeof drawLRoad === 'function') drawLRoad();
     if(typeof drawAtmosphericEffects === 'function') drawAtmosphericEffects(); 
     if(typeof drawSpawningGate === 'function') drawSpawningGate(); 
     if(typeof drawPortal === 'function') drawPortal(); 

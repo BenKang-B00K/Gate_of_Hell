@@ -5,6 +5,7 @@ const sideMist = [];
 let lightningTimer = 0;
 let lightningIntensity = 0;
 const roadSouls = []; 
+const portalSouls = []; // Souls escaping from the portal
 
 function initAtmosphere() {
     if (sideClouds.length > 0) return;
@@ -85,13 +86,102 @@ function drawSpawningGate() {
     ctx.restore();
 }
 
+/**
+ * Enhanced Portal Rendering with high-fidelity swirling and status-based effects
+ */
 function drawPortal() {
     const cx = 180; const cy = 580; const time = globalAnimTimer;
+    const energyRatio = (typeof portalEnergy !== 'undefined') ? portalEnergy / maxPortalEnergy : 0;
+    
     ctx.save();
-    const baseRadius = 75;
-    const outerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.8);
-    outerGrad.addColorStop(0, 'rgba(106, 27, 154, 0.5)'); outerGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-    ctx.fillStyle = outerGrad; ctx.fillRect(cx - baseRadius * 2.5, cy - baseRadius * 1.5, baseRadius * 5, baseRadius * 3);
+    
+    // 1. Bottom Shadow / Glow
+    const baseRadius = 75 + Math.sin(time * 2) * 5;
+    const shadowGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 2);
+    shadowGrad.addColorStop(0, `rgba(0, 0, 0, ${0.4 + energyRatio * 0.4})`);
+    shadowGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = shadowGrad;
+    ctx.fillRect(cx - baseRadius * 2, cy - baseRadius, baseRadius * 4, baseRadius * 2);
+
+    // 2. Swirling Layers
+    const layers = 3;
+    const colors = [
+        `rgba(106, 27, 154, ${0.6 + energyRatio * 0.4})`, // Deep Purple
+        `rgba(148, 0, 211, ${0.4 + energyRatio * 0.4})`,  // Dark Violet
+        `rgba(75, 0, 130, ${0.3 + energyRatio * 0.2})`    // Indigo
+    ];
+
+    for(let i = 0; i < layers; i++) {
+        const layerTime = time * (1 + i * 0.5);
+        const radiusX = baseRadius * (1 - i * 0.2);
+        const radiusY = radiusX * 0.4;
+        
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(layerTime * (i % 2 === 0 ? 1 : -1));
+        
+        ctx.beginPath();
+        ctx.ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = colors[i];
+        ctx.lineWidth = 3 + (1 - i);
+        if (energyRatio > 0.8) {
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = '#ff00ff';
+        }
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // 3. Central Core
+    const corePulse = (Math.sin(time * 4) + 1) / 2;
+    const coreRadius = 20 + corePulse * 10 + energyRatio * 20;
+    const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+    
+    // Core color shifts to red as energy increases
+    const r = Math.floor(106 + energyRatio * 149);
+    const g = Math.floor(27 * (1 - energyRatio));
+    const b = Math.floor(154 * (1 - energyRatio));
+    
+    coreGrad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.9)`);
+    coreGrad.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, 0.4)`);
+    coreGrad.addColorStop(1, 'transparent');
+    
+    ctx.fillStyle = coreGrad;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, coreRadius * 1.5, coreRadius * 0.6, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 4. Escaping Souls (Portal Particles)
+    if (Math.random() < 0.15 + energyRatio * 0.2) {
+        portalSouls.push({
+            x: cx + (Math.random() - 0.5) * 100,
+            y: cy,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: -1 - Math.random() * 2,
+            life: 1.0,
+            size: 2 + Math.random() * 3
+        });
+    }
+
+    for (let i = portalSouls.length - 1; i >= 0; i--) {
+        const s = portalSouls[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.life -= 0.02;
+        
+        if (s.life <= 0) {
+            portalSouls.splice(i, 1);
+            continue;
+        }
+        
+        ctx.fillStyle = `rgba(200, 100, 255, ${s.life * 0.8})`;
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = '#fff';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size * s.life, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
     ctx.restore();
 }
 
@@ -127,7 +217,7 @@ function drawShadow(lx, ly, size = 10) {
 }
 
 window.drawAtmosphericEffects = drawAtmosphericEffects;
-window.drawLavaRoad = drawLavaRoad;
+window.drawLRoad = drawLavaRoad;
 window.drawSpawningGate = drawSpawningGate;
 window.drawPortal = drawPortal;
 window.drawSlots = drawSlots;
