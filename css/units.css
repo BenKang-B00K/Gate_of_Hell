@@ -22,14 +22,21 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* Pointy-top Hexagon Shape */
+    /* Remove clip-path from parent to allow overlay buttons to show outside */
+    overflow: visible; 
+}
+
+.card-slot:hover::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 80%);
     clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    z-index: -1;
 }
 
 .card-slot:hover {
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 80%);
     transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
 }
 
 .card-slot.occupied {
@@ -58,6 +65,7 @@
     pointer-events: auto; 
     background: transparent;
     border: none;
+    overflow: visible; /* CRITICAL: Allow overlay buttons to show */
     text-shadow: 
         -1px -1px 0 #000,  
          1px -1px 0 #000,
@@ -207,15 +215,13 @@
     pointer-events: auto; 
     width: 100%;
     height: 100%;
-    background: linear-gradient(145deg, #333, #1a1a1a);
-    border: 3px solid #ffd700;
-    clip-path: polygon(50% 0%, 100% 15%, 100% 85%, 50% 100%, 0% 85%, 0% 15%);
+    background: transparent; /* Background moved to pseudo-element */
+    border: none; /* Border moved to pseudo-element */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     cursor: pointer; 
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.05);
     color: #ffd700;
     font-size: 30px;
     user-select: none;
@@ -225,19 +231,33 @@
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    overflow: visible; /* CRITICAL: Allow warning/overlays to show outside if needed */
 }
 
 .tower-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(145deg, #333, #1a1a1a);
+    border: 3px solid #ffd700;
+    clip-path: polygon(50% 0%, 100% 15%, 100% 85%, 50% 100%, 0% 85%, 0% 15%);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.05);
+    z-index: -1;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.tower-card::after {
     content: "";
     position: absolute;
     top: 5%; left: 5%; width: 90%; height: 90%;
     border: 1px solid rgba(255, 215, 0, 0.1);
     clip-path: polygon(50% 0%, 100% 15%, 100% 85%, 50% 100%, 0% 85%, 0% 15%);
     pointer-events: none;
+    z-index: 0;
 }
 
-.tower-card:hover {
-    transform: translateY(-5px) scale(1.05);
+.tower-card:hover::before {
     box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
     filter: brightness(1.2);
 }
@@ -250,28 +270,32 @@
     filter: grayscale(100%) brightness(0.4);
     opacity: 0.6;
     cursor: not-allowed;
-    border-color: #444;
-    box-shadow: none;
 }
 
 #purge-card {
-    border-color: #9400d3 !important;
     color: #9400d3 !important;
     text-shadow: 0 0 10px rgba(148, 0, 211, 0.5);
 }
 
-#purge-card:hover {
+#purge-card::before {
+    border-color: #9400d3 !important;
+}
+
+#purge-card:hover::before {
     box-shadow: 0 10px 30px rgba(148, 0, 211, 0.4);
     background: linear-gradient(145deg, #2a0052, #000);
 }
 
 #relics-btn {
-    border-color: #ff4500 !important;
     color: #ff4500 !important;
     text-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
 }
 
-#relics-btn:hover {
+#relics-btn::before {
+    border-color: #ff4500 !important;
+}
+
+#relics-btn:hover::before {
     box-shadow: 0 10px 30px rgba(255, 69, 0, 0.4);
     background: linear-gradient(145deg, #3e1000, #000);
 }
