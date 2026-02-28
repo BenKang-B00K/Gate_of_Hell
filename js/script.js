@@ -340,15 +340,14 @@ function gameLoop() {
         }
 
         if(enemy.element) {
-            enemy.element.style.top = `${enemy.y}px`;
+            // [User Request] Fixed Y-axis pathing: Scale logical coordinates (360x640) to physical container (1080x1920)
+            // Logic: 360 * 3 = 1080. We apply a 3x multiplier to the top position.
+            enemy.element.style.top = `${enemy.y * 3}px`;
             enemy.element.style.left = `${enemy.x}%`;
-            const ap = Math.max(0, (enemy.y - (targetY - 60)) / 60);
-            if (ap > 0) {
-                // [User Request] Ensure minimum opacity of 0.5 so they don't disappear too early
-                const baseOpacity = enemy.isStealthed ? 0.6 : 1.0;
-                enemy.element.style.opacity = Math.max(0.5, (1 - ap) * baseOpacity);
-                enemy.element.style.transform = `translate(-50%, -50%) scale(${1 - ap * 0.5})`;
-            }
+            
+            // [User Request] Perspective Effects Removed (No scale/opacity reduction near portal)
+            enemy.element.style.opacity = enemy.isStealthed ? 0.6 : 1.0;
+            enemy.element.style.transform = `translate(-50%, -50%) scale(1)`; 
         }
 
         if (enemy.y >= targetY) {
