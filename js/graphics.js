@@ -171,10 +171,6 @@ function drawPromotionBursts() {
         const rays = isAbyss ? 12 : 8;
         ctx.strokeStyle = isAbyss ? `rgba(255, 0, 0, ${alpha * 0.5})` : `rgba(255, 255, 255, ${alpha * 0.6})`;
         ctx.lineWidth = 2 * alpha;
-        for (let r = 0; i < rays; i++) { // Fixed: using internal loop counter
-            // Wait, I used 'i' which is the outer loop index. Correcting to 'r'.
-        }
-        // Let's rewrite the loop correctly in the tool call.
         for (let r = 0; r < rays; r++) {
             const ang = (r / rays) * Math.PI * 2 + (1.0 - alpha) * 2;
             const len = (isAbyss ? 100 : 70) * alpha;
