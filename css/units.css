@@ -1,130 +1,129 @@
-/* Optimized for 360x640 Logical Resolution */
+/* units.css - Optimized for 360x640 Logical Resolution */
 
-/* --- Core Exorcist Unit Styling (Merged) --- */
+/* --- Core Exorcist Unit Styling --- */
 .unit {
     width: 32px; height: 32px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
     position: absolute;
     cursor: grab;
-    transform: translateZ(0); /* Logical pixel placement */
     image-rendering: pixelated;
-    transition: transform 0.1s ease-out;
+    z-index: 10;
 }
-.unit.apprentice { color: #aaa; text-shadow: 0 1px 0 #000; }
-.unit.t2 { color: #fdf; text-shadow: 0 1px 2px #f0f; }
-.unit.t3 { color: #aff; text-shadow: 0 0 4px #0ff; }
-.unit.forbidden { color: #f55; text-shadow: 0 0 6px #f00; animation: curruptPulsate 1.5s infinite; }
+
+.unit.selected {
+    outline: 2px solid #ffd700;
+    box-shadow: 0 0 10px #ffd700;
+}
+
+/* --- Unit Info Promotion Buttons --- */
+.info-promo-btn {
+    padding: 10px 20px !important;
+    font-size: 36px !important;
+    min-width: 60px;
+    min-height: 60px;
+    border: 3px solid #fff !important;
+    border-radius: 8px;
+    cursor: pointer;
+    image-rendering: pixelated;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-promo-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px #fff;
+}
+
+.info-promo-btn:active {
+    transform: scale(0.9);
+}
 
 /* --- Exorcist Fusion/Evolution UI --- */
 #fusion-tree {
     position: absolute;
-    left: 20px; top: 80px; width: 320px; height: 380px;
-    background: rgba(0,0,0,0.85);
-    border: 2px solid #fff;
+    left: 20px; top: 60px; 
+    width: 320px; height: 340px;
+    background: rgba(0,0,0,0.9);
+    border: 2px solid #4a0000;
     padding: 10px;
     display: flex; flex-direction: column; gap: 8px;
     overflow-y: auto;
+    z-index: 500;
     image-rendering: pixelated;
 }
 
 .fusion-slot {
-    width: 300px; height: 40px;
-    background: #222;
-    border: 1px solid #444;
+    width: 100%; height: 44px;
+    background: #1a1a1a;
+    border: 1px solid #333;
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 10px;
+    box-sizing: border-box;
     cursor: pointer;
 }
-.fusion-slot:hover { background: #333; }
-.fusion-slot.selected { border-color: #0ff; box-shadow: 0 0 5px #0ff; }
 
-/* --- Resized & Repositioned Corrupt Button --- */
+.fusion-slot:hover { background: #2a2a2a; border-color: #555; }
+.fusion-slot.selected { border-color: #f00; box-shadow: 0 0 8px #f00; }
+
+/* --- Corruption Button Variant --- */
 #corrupt-btn-variant {
     position: absolute;
-    /* Logical Coords: x=100 (centered), y=540 (bottom safe zone) */
-    left: 80px;  /* Slightly wider adjustment */
-    top: 540px; 
-    /* Increased Size for better interaction: w=200, h=36 */
-    width: 200px; 
-    height: 36px;
+    left: 80px; top: 540px; 
+    width: 200px; height: 32px;
     background: #000;
-    border: 3px solid #500;
-    color: #f55;
-    font-size: 18px; /* Slightly larger for easier reading */
+    border: 2px solid #800;
+    color: #f00;
+    font-size: 16px;
     text-align: center;
-    line-height: 30px;
+    line-height: 28px;
     cursor: pointer;
-    text-shadow: 0 0 2px #f00;
     font-weight: bold;
     image-rendering: pixelated;
-    animation: curruptPulsate 1s infinite alternate;
+    animation: curruptPulsate 1.5s infinite alternate;
+    z-index: 600;
     border-radius: 4px;
-    transition: all 0.2s;
 }
-#corrupt-btn-variant:hover {
-    background: #300;
-    border-color: #f00;
-    text-shadow: 0 0 8px #f00;
-    transform: scale(1.05);
-}
-#corrupt-btn-variant:active {
-    transform: scale(0.95);
-}
+
 #corrupt-btn-variant.locked {
-    opacity: 0.4;
-    cursor: default;
+    opacity: 0.3;
     pointer-events: none;
     border-color: #333;
-    color: #777;
+    color: #555;
     animation: none;
 }
 
 /* --- [타락] Themed Warning Message --- */
 #corrupt-warning {
     position: absolute;
-    left: 20px; top: 120px;
+    left: 20px; top: 100px;
     width: 320px;
-    padding: 15px;
-    background: rgba(10, 0, 0, 0.95);
-    border: 3px double #f00;
-    color: #fdd;
-    font-size: 16px;
+    padding: 12px;
+    background: rgba(20, 0, 0, 0.95);
+    border: 2px solid #f00;
+    color: #fff;
+    font-size: 14px;
     text-align: center;
-    line-height: 1.4;
     image-rendering: pixelated;
-    box-shadow: 0 0 15px #f00;
-    display: none; /* Initially hidden */
+    box-shadow: 0 0 20px #f00;
+    z-index: 1000;
+    display: none;
 }
+
 #corrupt-warning strong {
     color: #f00;
-    text-shadow: 0 0 5px #f00, 0 0 10px #f00;
     animation: corruptShake 0.1s infinite;
+    display: inline-block;
 }
 
-/* --- Promotion Button Enhancement (Unit Info Panel) --- */
-.info-promo-btn {
-    padding: 15px 30px !important;
-    font-size: 45px !important;
-    min-width: 80px;
-    min-height: 80px;
-    border-width: 4px !important;
-    image-rendering: pixelated;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-}
-.info-promo-btn:hover {
-    transform: scale(1.15) !important;
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
-}
-.info-promo-btn:active {
-    transform: scale(0.9) !important;
-}
-
-/* --- Corruption Animations --- */
+/* --- Animations --- */
 @keyframes curruptPulsate {
-    0% { box-shadow: 0 0 0px #500; }
-    100% { box-shadow: 0 0 15px #f00, 0 0 30px #500; }
+    0% { box-shadow: 0 0 2px #800; border-color: #800; }
+    100% { box-shadow: 0 0 12px #f00; border-color: #f00; }
 }
+
 @keyframes corruptShake {
     0% { transform: translate(1px, 1px); }
     50% { transform: translate(-1px, -1px); }
