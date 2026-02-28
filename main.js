@@ -1,6 +1,6 @@
-import { Guardian, Specter, Projectile } from './entities.js';
-import { DataManager } from './data_manager.js';
-import { VFXManager } from './VFXManager.js';
+import { Guardian, Specter, Projectile } from './js/entities.js';
+import { DataManager } from './js/data_manager.js';
+import { VFXManager } from './js/VFXManager.js';
 
 class PreloadScene extends Phaser.Scene {
     constructor() { super('PreloadScene'); }
@@ -116,22 +116,8 @@ class MainScene extends Phaser.Scene {
         this.setupInteractions();
         this.initWaveState();
 
-        // [QA Fix] Start Screen Logic
-        const startBtn = document.getElementById('start-game-btn');
-        const startScreen = document.getElementById('start-screen');
-        
         // Ensure registry has money for UI sync if needed
         if (!this.registry.has('money')) this.registry.set('money', 150);
-
-        this.scene.pause(); // Initial Pause
-        
-        if (startBtn) {
-            startBtn.onclick = () => {
-                if (startScreen) startScreen.style.display = 'none';
-                this.scene.resume();
-                console.log("Game Started via Button");
-            };
-        }
 
         this.time.addEvent({
             delay: 2000,
@@ -430,16 +416,14 @@ window.addEventListener('load', () => {
 
     if (startBtn) {
         startBtn.onclick = () => {
-            // 버튼 클릭 시 전환 애니메이션 시작
-            startScreen.classList.add('shrink-to-info');
+            console.log("Starting Game...");
+            // 즉시 화면 숨김 (애니메이션 부재로 인한 지연 방지)
+            if (startScreen) startScreen.style.display = 'none';
             
-            // 애니메이션 완료 후 게임 인스턴스 생성
-            setTimeout(() => {
-                startScreen.style.display = 'none';
-                
-                // Phaser 게임 시작
+            // Phaser 게임 시작
+            if (!window.gameInstance) {
                 window.gameInstance = new Phaser.Game(config);
-            }, 800);
+            }
         };
     }
 });
