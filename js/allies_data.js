@@ -24,6 +24,7 @@ let lastSpawnTime = 0;
 let damageMultiplier = 1.0;
 let critChance = 0.05;
 let critMultiplier = 2.0;
+let treasureChance = 0.01;
 let friendlySkeletons = [];
 let friendlyGhosts = [];
 let groundEffects = [];
