@@ -60,6 +60,30 @@ const banishEffects = []; // {x, y, life}
 const purgeEffects = []; // {x, y, life}
 let globalAnimTimer = 0;
 
+window.updateBanishEffects = function() {
+    for (let i = banishEffects.length - 1; i >= 0; i--) {
+        const be = banishEffects[i];
+        be.life -= 0.02;
+        if (be.life <= 0) banishEffects.splice(i, 1);
+    }
+};
+
+window.spawnBanishEffect = function(lx, ly) {
+    banishEffects.push({ x: lx, y: ly, life: 1.0 });
+    if (typeof spawnParticles === 'function') spawnParticles(lx, ly, '#4A148C', 20);
+};
+
+window.drawBanishEffects = function() {
+    banishEffects.forEach(be => {
+        const alpha = be.life;
+        ctx.save();
+        ctx.translate(be.x, be.y);
+        ctx.strokeStyle = `rgba(106, 27, 154, ${alpha})`;
+        ctx.beginPath(); ctx.arc(0, 0, (1.0 - alpha) * 80, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+    });
+};
+
 function spawnPurgeEffect(lx, ly) {
     purgeEffects.push({
         x: lx,
@@ -433,7 +457,7 @@ function renderGraphics() {
     updateLightPillars();
     updatePromotionBursts();
     updateStageFlashes();
-    updateBanishEffects();
+    if (typeof window.updateBanishEffects === 'function') window.updateBanishEffects();
     updatePurgeEffects();
     
     drawLavaRoad();
@@ -446,7 +470,7 @@ function renderGraphics() {
     drawParticles(); 
     drawLightPillars();
     drawPromotionBursts();
-    drawBanishEffects();
+    if (typeof window.drawBanishEffects === 'function') window.drawBanishEffects();
     drawPurgeEffects();
     drawStageFlashes();
     drawSelectionHalo();
