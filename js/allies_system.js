@@ -262,7 +262,15 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     // Filter paths by role and map limit (Limit 2 for Tier 2)
     const availablePaths = p.to.filter(type => {
         const ud = unitTypes.find(x => x.type === type);
-        if (targetRole && ud.role !== targetRole) return false;
+        
+        // [User Request Fix] Map English internal role keys to new Korean role names
+        if (targetRole) {
+            const roleMap = { 'Attack': '공격형', 'Support': '지원형', 'Special': '특수형' };
+            const targetKoRole = roleMap[targetRole] || targetRole;
+            // Use includes to match '숙련된 공격형', '숙련된 지원형', etc.
+            if (!ud.role.includes(targetKoRole)) return false;
+        }
+        
         const count = towers.filter(tw => tw.data.type === type).length;
         return count < 2;
     });
