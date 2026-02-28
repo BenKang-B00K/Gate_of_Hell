@@ -77,10 +77,6 @@ function renderGraphics() {
     drawSelectionHalo();
 }
 
-// Load Spritesheet
-const spritesheet = new Image();
-spritesheet.src = ''; // Invalid JS path removed. Emoji fallback used.
-
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGraphics);
 } else {

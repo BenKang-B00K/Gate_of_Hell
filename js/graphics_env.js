@@ -4,8 +4,6 @@ const sideClouds = [];
 const sideMist = [];   
 let lightningTimer = 0;
 let lightningIntensity = 0;
-const roadSouls = []; 
-const portalSouls = []; // Souls escaping from the portal
 
 function initAtmosphere() {
     if (sideClouds.length > 0) return;

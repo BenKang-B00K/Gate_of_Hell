@@ -38,11 +38,6 @@
     to { transform: translateY(400px); }
 }
 
-@keyframes lavaPulse {
-    0% { opacity: 0.4; filter: blur(1px) brightness(1); }
-    100% { opacity: 0.8; filter: blur(2px) brightness(1.5); }
-}
-
 #spawning-pool {
     position: absolute;
     top: -5px; /* Precise logical Y center */
@@ -85,19 +80,6 @@
 @keyframes portalSwirl {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
-}
-
-@keyframes portalShake {
-    0% { transform: translateX(-50%) translateX(-2px); }
-    25% { transform: translateX(-50%) translateX(2px); }
-    50% { transform: translateX(-50%) translateY(-1px); }
-    75% { transform: translateX(-50%) translateX(-2px); }
-    100% { transform: translateX(-50%) translateX(2px); }
-}
-
-@keyframes flowFill {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 200% 50%; }
 }
 
 #start-timer {
