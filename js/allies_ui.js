@@ -113,24 +113,9 @@ function setupResourceTooltips() {
 }
 
 /**
- * Updates Soul Energy and Portal Energy Displays
- */
-function updateGauges() {
-    const moneyDisplay = document.getElementById('se-display-text');
-    const peDisplay = document.getElementById('portal-energy-label');
-    const peFill = document.getElementById('portal-gauge-fill');
-    const seFill = document.getElementById('se-gauge-fill');
-
-    if (moneyDisplay) moneyDisplay.innerText = Math.floor(money);
-    if (peDisplay) peDisplay.innerText = `${Math.floor(portalEnergy)} / ${maxPortalEnergy}`;
-    
-    if (peFill) peFill.style.width = `${(portalEnergy / maxPortalEnergy) * 100}%`;
-    if (seFill) seFill.style.width = `${Math.min((money / 1000) * 100, 100)}%`;
-}
-
-/**
  * Syncs Summon Card visual state
  */
+
 function updateSummonButtonState() {
     const tc = document.getElementById('tower-card'); 
     if (!tc) return;

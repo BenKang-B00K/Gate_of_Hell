@@ -4,6 +4,27 @@ window.towerCost = 30;
 const jobChangeCost = 200; 
 const maxTowers = 16; 
 
+/* allies_data.js - Global State and Shared Functions */
+let stage = 1;
+let isTimeFrozen = false;
+let timeFreezeEndTime = 0;
+
+/**
+ * Updates Soul Energy and Portal Energy Displays
+ */
+function updateGauges() {
+    const moneyDisplay = document.getElementById('se-display-text');
+    const peDisplay = document.getElementById('portal-energy-label');
+    const peFill = document.getElementById('portal-gauge-fill');
+    const seFill = document.getElementById('se-gauge-fill');
+
+    if (moneyDisplay) moneyDisplay.innerText = Math.floor(money);
+    if (peDisplay) peDisplay.innerText = `${Math.floor(portalEnergy)} / ${maxPortalEnergy}`;
+    
+    if (peFill) peFill.style.width = `${(portalEnergy / maxPortalEnergy) * 100}%`;
+    if (seFill) seFill.style.width = `${Math.min((money / 1000) * 100, 100)}%`;
+}
+
 const unitTypes = [
     { type: 'apprentice', name: '견습 퇴마사', role: '기본', tier: 1, icon: '🧙', damage: 40, range: 360, cooldown: 833, desc: "정화된 에너지 볼트를 발사하여 단일 대상을 공격합니다." },
     
