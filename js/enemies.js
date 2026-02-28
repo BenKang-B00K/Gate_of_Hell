@@ -32,29 +32,6 @@ let sealedGhostCount = 0;
 let portalEnergy = 0;
 const maxPortalEnergy = 1500;
 let draggedUnit = null; // Currently dragged unit
-window.encounteredEnemies = new Set();
-
-// --- Exorcism Records Data ---
-window.killCounts = window.killCounts || {}; // Track kills by type
-
-function recordKill(type) {
-    window.killCounts[type] = (window.killCounts[type] || 0) + 1;
-    if (typeof saveGameData === 'function') saveGameData();
-}
-
-function getBestiaryBonus(type) {
-    const kills = window.killCounts[type] || 0;
-    const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank', 'runner'];
-    const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'lightspeed', 'heavy', 'lava', 'burning'];
-    
-    if (basicSpecters.includes(type)) {
-        return 1 + (Math.floor(kills / 20) * 0.05); // +5% per 20 kills
-    } else if (specializedWraiths.includes(type)) {
-        return 1 + (Math.floor(kills / 10) * 0.08); // +8% per 10 kills
-    }
-
-    return 1;
-}
 
 // Calculate gradual stage-based multipliers
 function getStageMultipliers(isBoss = false) {
@@ -408,7 +385,7 @@ function spawnBoss() {
 
     const enemyDiv = document.createElement('div');
     enemyDiv.classList.add('enemy', 'boss', 'spawning', data.type);
-    enemyDiv.innerText = data.icon; 
+    enemyDiv.innerText = ''; // Clear icon for Canvas rendering
     
     // Remove spawning class after animation
     setTimeout(() => {
@@ -561,7 +538,7 @@ function spawnEnemy() {
     const enemyDiv = document.createElement('div');
     enemyDiv.classList.add('enemy', 'spawning');
     enemyDiv.classList.add(selectedType.type);
-    enemyDiv.innerText = selectedType.icon;
+    enemyDiv.innerText = ''; // Clear for Canvas
     
     // Remove spawning class after animation
     setTimeout(() => {

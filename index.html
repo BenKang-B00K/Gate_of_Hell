@@ -113,10 +113,9 @@
                         <div style="font-size: 24px; font-weight: bold;">SUMMON</div>
                         <div id="summon-cost-display" style="font-size: 24px; opacity: 0.8; margin-top: 6px;">40 SE</div>
                     </div>
-                    <!-- 2. Records Button -->
-                    <div id="records-btn" class="tower-card" style="border-color: #ffd700; color: #ffd700;">
-                        <div style="font-size: 42px;">📜</div>
-                        <div style="font-size: 24px;">RECORDS</div>
+                    <!-- 2. TBD Card (Formerly Records) -->
+                    <div class="tower-card placeholder">
+                        <div style="font-size: 30px; color: #444;">TBD</div>
                     </div>
                     <!-- 3. Purge Card -->
                     <div id="purge-card" class="tower-card" style="border-color: #9400d3; color: #9400d3;" title="Remove 50% of Portal Energy">
@@ -161,71 +160,7 @@
         </div>
     </div>
 
-    <!-- Exorcism Records Overlay -->
-    <div id="records-overlay" style="display: none;">
-        <div id="records-content">
-            <div id="records-header">
-                <h2>Exorcism Records</h2>
-                <button id="close-records">X</button>
-            </div>
-            <div id="records-tabs">
-                <button class="tab-btn active" data-tab="specters">Specters</button>
-                <button class="tab-btn" data-tab="exorcists">Exorcists</button>
-                <button class="tab-btn" data-tab="tree">Ascendency</button>
-                <button class="tab-btn" data-tab="achievements">TBD</button>
-                <button class="tab-btn" data-tab="settings">TBD</button>
-            </div>
-            <div id="tab-content">
-                <div id="specters-tab" class="tab-pane active"></div>
-                <div id="exorcists-tab" class="tab-pane"></div>
-                <div id="tree-tab" class="tab-pane"></div>
-                <div id="achievements-tab" class="tab-pane">TBD</div>
-                <div id="settings-tab" class="tab-pane">TBD</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Relics Collection Overlay -->
-    <div id="relics-overlay" style="display: none;">
-        <div id="relics-content">
-            <div id="relics-header">
-                <h2>Abyssal Relics</h2>
-                <button id="close-relics">X</button>
-            </div>
-            <div id="relics-grid">
-                <!-- Relics will be dynamically populated here -->
-            </div>
-            <div id="relic-details">
-                <div class="info-default-text">Select a relic to view its power.</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- New Class Unlock Modal -->
-    <div id="unlock-modal" style="display: none;">
-        <div id="unlock-content">
-            <div id="unlock-header">🆕 NEW CLASS UNLOCKED!</div>
-            <div id="unlock-icon"></div>
-            <div id="unlock-name"></div>
-            <div id="unlock-desc"></div>
-            <div id="unlock-resume-hint">(Click anywhere to Resume)</div>
-        </div>
-    </div>
-
-    <div id="max-units-warning" style="display: none;">
-        <div class="warning-main">???: No More Exorcists!</div>
-        <div class="warning-sub">(Maximum Exorcists: 16)</div>
-    </div>
-
-    <script src="js/allies_data.js"></script>
-    <script src="js/enemies.js"></script>
-    <script src="js/graphics.js"></script>
-    <script src="js/allies_system.js"></script>
-    <script src="js/allies_ui.js"></script>
-    <script src="js/attackeffect.js"></script>
-    <script src="js/soundeffect.js"></script>
     <script src="js/relics.js"></script>
-    <script src="js/records.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

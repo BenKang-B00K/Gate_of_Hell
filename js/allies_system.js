@@ -110,7 +110,6 @@ function summonTower(targetSlot) {
     towerCost += 5;
     updateUnitOverlayButtons(tower);
     updateSummonButtonState();
-    if (typeof recordUnlock === 'function') recordUnlock('apprentice');
 }
 
 function purgePortal() {
