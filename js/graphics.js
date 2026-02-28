@@ -6,6 +6,7 @@ const ctx = canvas.getContext('2d');
 
 const LOGICAL_WIDTH = 360; 
 const LOGICAL_HEIGHT = 640; 
+let scaleFactor = 1.0;
 
 function initGraphics() {
     const container = document.getElementById('game-container');
@@ -23,6 +24,10 @@ function resizeCanvas() {
     canvas.height = LOGICAL_HEIGHT;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
+    
+    const cr = container.getBoundingClientRect();
+    scaleFactor = cr.width / LOGICAL_WIDTH;
+    
     disableSmoothing();
 }
 
@@ -73,7 +78,7 @@ function renderGraphics() {
 
 // Load Spritesheet
 const spritesheet = new Image();
-spritesheet.src = 'js/allies.js';
+spritesheet.src = ''; // Invalid JS path removed. Emoji fallback used.
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGraphics);
@@ -83,3 +88,4 @@ if (document.readyState === 'loading') {
 
 // Global Exports
 window.ctx = ctx;
+window.scaleFactor = scaleFactor;

@@ -212,9 +212,27 @@ input:checked + .slider:before { transform: translateX(18px); }
 .slider.round { border-radius: 36px; }
 .slider.round:before { border-radius: 50%; }
 
-#restart-btn-top { position: absolute; top: 15px; left: 15px; z-index: 1000; background: linear-gradient(135deg, #2a0505, #000000); color: #ff4500; border: 2px solid #8b0000; border-radius: 8px; font-size: 18px; padding: 8px 16px; cursor: pointer; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px rgba(139, 0, 0, 0.5); transform-origin: left top; }
-#restart-btn-top:hover { background: linear-gradient(135deg, #4a0000, #1a0000); color: #fff; border-color: #ff0000; box-shadow: 0 0 45px rgba(255, 0, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.1); text-shadow: 0 0 15px #fff; transform: scale(1.05); }
-#restart-btn-top:active { transform: scale(0.95); box-shadow: 0 0 6px rgba(255, 0, 0, 0.8); }
+#restart-btn-top { 
+    position: absolute; 
+    top: 30px; 
+    left: 30px; 
+    z-index: 1000; 
+    background: linear-gradient(135deg, #2a0505, #000000); 
+    color: #ff4500; 
+    border: 3px solid #8b0000; 
+    border-radius: 12px; 
+    font-size: 36px; 
+    padding: 12px 24px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.5); 
+    transform-origin: left top; 
+}
+#restart-btn-top:hover { background: linear-gradient(135deg, #4a0000, #1a0000); color: #fff; border-color: #ff0000; box-shadow: 0 0 60px rgba(255, 0, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.1); text-shadow: 0 0 20px #fff; transform: scale(1.05); }
+#restart-btn-top:active { transform: scale(0.95); box-shadow: 0 0 10px rgba(255, 0, 0, 0.8); }
 
 /* Warnings */
 .card-warning { position: absolute; top: -66px; left: 50%; transform: translateX(-50%); background: #ff0000; color: #fff; font-size: 21px; padding: 6px 15px; border-radius: 12px; white-space: nowrap; font-weight: bold; box-shadow: 0 0 30px #ff0000; z-index: 100; pointer-events: none; display: none; }
