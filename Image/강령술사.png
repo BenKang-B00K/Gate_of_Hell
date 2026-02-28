@@ -1,0 +1,120 @@
+/* ui.css - Bottom Panel & Controls */
+
+#bottom-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 360px;
+    height: 224px; /* 35% of 640px */
+    background: #0a0a0a;
+    border-top: 2px solid #222;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    z-index: 110;
+}
+
+#stage-header {
+    text-align: center;
+    color: #ffd700;
+    font-size: 11px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+/* Vertical Gauges List */
+#gauges-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 12px;
+}
+
+.gauge-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gauge-item .label {
+    font-size: 8px;
+    color: #888;
+    width: 55px;
+}
+
+.gauge-item .bar {
+    flex: 1;
+    height: 8px;
+    background: #111;
+    border: 1px solid #333;
+    position: relative;
+    overflow: hidden;
+}
+
+.gauge-item .fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.gauge-item .value {
+    font-size: 8px;
+    color: #fff;
+    width: 65px;
+    text-align: right;
+}
+
+.fill.se { background: #ffd700; box-shadow: 0 0 5px #ffd700; }
+.fill.pe { background: #8b0000; box-shadow: 0 0 5px #8b0000; }
+.fill.rs { background: #4b0082; box-shadow: 0 0 5px #4b0082; }
+
+/* Interaction Layout */
+#interaction-area {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    flex: 1;
+}
+
+/* 3x2 Grid for Cards */
+#control-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4px;
+    width: 190px;
+}
+
+.tower-card {
+    background: #111;
+    border: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tower-card:hover { border-color: #ffd700; background: #1a1a1a; }
+.tower-card .icon { font-size: 18px; }
+.tower-card .name { font-size: 8px; font-weight: bold; color: #fff; margin-top: 2px; }
+.tower-card .cost { font-size: 7px; color: #ffd700; }
+
+.tower-card.placeholder { opacity: 0.3; cursor: default; }
+
+/* Unit Information Panel */
+#unit-info {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid #8b0000;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-shadow: inset 0 0 10px rgba(139, 0, 0, 0.2);
+}
+
+.info-default-text { font-size: 10px; color: #444; line-height: 1.2; }

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';">
+    <title>Gate of Hell: Rebuilt</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/ui.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+</head>
+<body>
+    <div id="game-container">
+        <!-- New Start Screen Overlay -->
+        <div id="start-screen">
+            <div id="start-content">
+                <div class="title-group">
+                    <h1 class="main-title">GATE<span class="of">OF</span>HELL</h1>
+                    <h2 class="sub-title">Guardians of the Underworld</h2>
+                </div>
+                
+                <button id="start-game-btn">
+                    CAST OUT SPECTERS
+                    <div class="btn-glow"></div>
+                </button>
+            </div>
+            <div class="bottom-mist"></div>
+        </div>
+
+        <!-- Top Fixed Controls -->
+        <button id="restart-btn-top">RESTART</button>
+        <div id="tutorial-toggle-container">
+            <span>TUTORIAL</span>
+            <input type="checkbox" id="tutorial-toggle" checked>
+        </div>
+        <div id="corrupt-toggle-container">
+            <span>CORRUPT</span>
+            <input type="checkbox" id="corrupt-toggle">
+        </div>
+
+        <!-- Battlefield (65% Height) -->
+        <div id="game-layout">
+            <div id="left-slots" class="slot-area"></div>
+            <div id="road">
+                <div id="corruption-layer"></div>
+                <div id="corruption-vignette"></div>
+            </div>
+            <div id="right-slots" class="slot-area"></div>
+        </div>
+
+        <!-- Bottom Panel (35% Height) -->
+        <div id="bottom-panel">
+            <div id="stage-header">
+                <span id="stage-name">WHISPERING GATES</span> [DEPTH: <span id="stage-display">1</span>]
+            </div>
+
+            <div id="gauges-grid">
+                <div class="gauge-item">
+                    <span class="label">✨ SOUL</span>
+                    <div class="bar"><div id="se-gauge-fill" class="fill se"></div></div>
+                    <span id="se-display-text" class="value">150</span>
+                </div>
+                <div class="gauge-item">
+                    <span class="label">👿 PORTAL</span>
+                    <div class="bar"><div id="portal-gauge-fill" class="fill pe"></div></div>
+                    <span id="portal-energy-label" class="value">0 / 1500</span>
+                </div>
+                <div class="gauge-item">
+                    <span class="label">💀 SPECTERS</span>
+                    <div class="bar"><div id="rs-gauge-fill" class="fill rs"></div></div>
+                    <span id="enemies-left" class="value">0</span>
+                </div>
+            </div>
+
+            <div id="interaction-area">
+                <div id="control-panel">
+                    <div class="tower-card" id="tower-card">
+                        <div class="icon">🪄</div>
+                        <div class="name">SUMMON</div>
+                        <div id="summon-cost-display" class="cost">30 SE</div>
+                    </div>
+                    <div class="tower-card" id="records-btn">
+                        <div class="icon">📜</div>
+                        <div class="name">RECORDS</div>
+                    </div>
+                    <div class="tower-card" id="purge-card">
+                        <div class="icon">🧹</div>
+                        <div class="name">PURGE</div>
+                    </div>
+                    <div class="tower-card" id="relics-btn">
+                        <div class="icon">🏺</div>
+                        <div class="name">RELICS</div>
+                    </div>
+                    <div class="tower-card placeholder"><div class="icon">🔒</div></div>
+                    <div class="tower-card placeholder"><div class="icon">🔒</div></div>
+                </div>
+                <div id="unit-info">
+                    <div class="info-default-text">SELECT GUARDIAN</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div id="game-over-overlay" style="display: none;">
+            <div id="game-over-content">
+                <h1>YOU HAVE BEEN CONSUMED</h1>
+                <button onclick="location.reload()">TRY AGAIN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Configuration -->
+    <script src="allies_data.js"></script>
+    <script src="enemies.js"></script>
+    
+    <!-- Phaser Main System -->
+    <script type="module" src="main.js"></script>
+</body>
+</html>

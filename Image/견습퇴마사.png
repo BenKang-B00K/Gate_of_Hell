@@ -1,0 +1,128 @@
+/* css/menu.css - Cinematic Start Screen Layout */
+
+#start-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 360px;
+    height: 640px;
+    background: radial-gradient(circle at center, #1a0505 0%, #000 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+#start-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1010;
+}
+
+/* GATE OF HELL - Lightning Effect */
+.main-title {
+    font-family: 'Cinzel', serif;
+    font-size: 56px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 0.85;
+    background: linear-gradient(to bottom, #ff0000, #4b0000);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    animation: lightning-strike 5s infinite;
+}
+
+.main-title .of {
+    font-size: 24px;
+    display: block;
+    margin: -5px 0;
+}
+
+@keyframes lightning-strike {
+    0%, 92%, 100% { filter: brightness(1) contrast(1); text-shadow: 0 0 10px rgba(139, 0, 0, 0.5); }
+    93% { filter: brightness(5) contrast(2); text-shadow: 0 0 20px #fff, 0 0 40px #3498db; }
+    95% { filter: brightness(1.5) contrast(1.2); text-shadow: 0 0 15px #fff; }
+    96% { filter: brightness(4) contrast(1.8); text-shadow: 0 0 25px #fff, 0 0 50px #3498db; }
+    98% { filter: brightness(1.2) contrast(1.1); }
+}
+
+/* Subtitle - Holy Glow Pulse */
+.sub-title {
+    font-family: 'Cinzel', serif;
+    margin-top: 20px;
+    font-size: 13px;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-align: center;
+    animation: holy-pulse 3s infinite ease-in-out;
+}
+
+@keyframes holy-pulse {
+    0%, 100% { text-shadow: 0 0 5px #ffd700; transform: scale(1); opacity: 0.8; }
+    50% { text-shadow: 0 0 20px #fff700, 0 0 35px #ffaa00; transform: scale(1.03); opacity: 1; }
+}
+
+/* CAST OUT SPECTERS Button - Burning Slab */
+#start-game-btn {
+    margin-top: 80px;
+    width: 260px;
+    height: 60px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    border: 2px solid #8b0000;
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px #000;
+    transition: all 0.3s ease;
+}
+
+#start-game-btn:hover {
+    border-color: #ffd700;
+    color: #ffd700;
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(255, 68, 0, 0.5);
+}
+
+#start-game-btn .btn-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,68,0,0.15) 0%, transparent 70%);
+    animation: flame-rotate 4s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes flame-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Transition Animation */
+.shrink-to-info {
+    transform: scale(0.05);
+    opacity: 0;
+    filter: blur(20px) brightness(0);
+    pointer-events: none;
+}
+
+.bottom-mist {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(to top, rgba(0,0,0,1), transparent);
+    z-index: 1005;
+}
