@@ -223,36 +223,36 @@ function drawLavaRoad() {
         ctx.fillRect(Math.floor(gx), Math.floor(gy), 2, 2);
     }
 
-    // 2. Static Lava Cracks (Fissures)
-    ctx.strokeStyle = '#4a0e00'; // Hardened lava
-    ctx.lineWidth = 2;
-    for (let j = 0; j < 5; j++) {
-        ctx.beginPath();
-        const startY = (j * 150) % LOGICAL_HEIGHT;
-        ctx.moveTo(roadX + 20, startY);
-        ctx.lineTo(roadX + 50, startY + 40);
-        ctx.lineTo(roadX + 30, startY + 80);
-        ctx.lineTo(roadX + 80, startY + 120);
-        ctx.stroke();
-    }
+    // 2. Guideposts for Souls (Downward Arrows, No Tail)
+    const arrowColor = '#4a0e00'; // Hardened lava base
+    const guideGlow = (Math.sin(time * 1.5) + 1) / 2;
+    
+    for (let j = 0; j < 4; j++) {
+        const ay = (j * 160 + time * 20) % LOGICAL_HEIGHT; // Moving downward slowly
+        const ax = LOGICAL_WIDTH / 2;
+        const size = 15;
 
-    // Glowing Lava Core (Pulsing)
-    const lavaGlow = (Math.sin(time * 2) + 1) / 2;
-    ctx.strokeStyle = `rgba(255, 69, 0, ${0.2 + lavaGlow * 0.3})`;
-    ctx.lineWidth = 1;
-    ctx.shadowBlur = 10 * lavaGlow;
-    ctx.shadowColor = '#ff4500';
-    // Re-draw same cracks with glow
-    for (let j = 0; j < 5; j++) {
+        ctx.save();
         ctx.beginPath();
-        const startY = (j * 150) % LOGICAL_HEIGHT;
-        ctx.moveTo(roadX + 20, startY);
-        ctx.lineTo(roadX + 50, startY + 40);
-        ctx.lineTo(roadX + 30, startY + 80);
-        ctx.lineTo(roadX + 80, startY + 120);
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        // Base Dark Arrow
+        ctx.strokeStyle = arrowColor;
+        ctx.moveTo(ax - size, ay - size);
+        ctx.lineTo(ax, ay);
+        ctx.lineTo(ax + size, ay - size);
         ctx.stroke();
+
+        // Glowing Core
+        ctx.strokeStyle = `rgba(255, 69, 0, ${0.3 + guideGlow * 0.4})`;
+        ctx.shadowBlur = 8 * guideGlow;
+        ctx.shadowColor = '#ff4500';
+        ctx.stroke();
+        
+        ctx.restore();
     }
-    ctx.shadowBlur = 0;
 
     // 3. Lightning/Flicker (Dark Yellow + Orange)
     if (lightningTimer <= 0) {
