@@ -53,7 +53,65 @@ function disableSmoothing() {
 
 // --- Advanced VFX State ---
 const particles = []; 
+const lightPillars = []; // {x, y, life, maxLife}
 let globalAnimTimer = 0;
+
+function spawnLightPillar(lx, ly) {
+    lightPillars.push({
+        x: lx,
+        y: ly,
+        life: 1.0,
+        maxLife: 1.0,
+        decay: 0.02
+    });
+}
+
+function updateLightPillars() {
+    for (let i = lightPillars.length - 1; i >= 0; i--) {
+        const lp = lightPillars[i];
+        lp.life -= lp.decay;
+        if (lp.life <= 0) lightPillars.splice(i, 1);
+    }
+}
+
+function drawLightPillars() {
+    lightPillars.forEach(lp => {
+        const alpha = lp.life;
+        const width = 40 * alpha; // Pillar narrows as it fades
+        
+        ctx.save();
+        // 1. Core Beam
+        const grad = ctx.createLinearGradient(lp.x - width/2, 0, lp.x + width/2, 0);
+        grad.addColorStop(0, 'transparent');
+        grad.addColorStop(0.5, `rgba(255, 255, 255, ${alpha * 0.8})`);
+        grad.addColorStop(1, 'transparent');
+        
+        ctx.fillStyle = grad;
+        // Draw from top of screen to the slot
+        ctx.fillRect(lp.x - width/2, 0, width, lp.y);
+        
+        // 2. Base Glow at the slot
+        const baseGrad = ctx.createRadialGradient(lp.x, lp.y, 0, lp.x, lp.y, 50 * alpha);
+        baseGrad.addColorStop(0, `rgba(255, 215, 0, ${alpha * 0.6})`);
+        baseGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = baseGrad;
+        ctx.beginPath();
+        ctx.ellipse(lp.x, lp.y, 50 * alpha, 15 * alpha, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // 3. Vertical Glow
+        ctx.shadowBlur = 30 * alpha;
+        ctx.shadowColor = '#fff';
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.4})`;
+        ctx.lineWidth = 2 * alpha;
+        ctx.beginPath();
+        ctx.moveTo(lp.x, 0);
+        ctx.lineTo(lp.x, lp.y);
+        ctx.stroke();
+        
+        ctx.restore();
+    });
+}
 
 function spawnParticles(x, y, color, count = 12) {
     for (let i = 0; i < count; i++) {
@@ -182,6 +240,7 @@ function renderGraphics() {
     globalAnimTimer += 0.06; // Drive animations
     
     updateParticles();
+    updateLightPillars();
     
     drawLavaRoad();
     drawAtmosphericEffects(); // New: Drifting Clouds & Mist
@@ -191,6 +250,7 @@ function renderGraphics() {
     drawUnits();
     drawEnemies(); 
     drawParticles(); 
+    drawLightPillars();
     drawSelectionHalo();
 }
 

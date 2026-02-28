@@ -230,6 +230,18 @@ function summonTower(targetSlot) {
     targetSlot.appendChild(unit);
     targetSlot.classList.add('occupied');
 
+    // [User Request] Trigger Light Pillar Effect
+    if (typeof spawnLightPillar === 'function') {
+        const rect = targetSlot.getBoundingClientRect();
+        const container = document.getElementById('game-container');
+        if (container) {
+            const containerRect = container.getBoundingClientRect();
+            const lx = ((rect.left + rect.width / 2) - containerRect.left) * (LOGICAL_WIDTH / containerRect.width);
+            const ly = ((rect.top + rect.height / 2) - containerRect.top) * (LOGICAL_HEIGHT / containerRect.height);
+            spawnLightPillar(lx, ly);
+        }
+    }
+
     // 7. Construct Tower object (360x640 logical resolution context)
     const tower = {
         data: apprenticeData,
