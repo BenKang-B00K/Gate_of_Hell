@@ -272,7 +272,9 @@ function gameLoop() {
             enemy.element.style.left = `${enemy.x}%`;
             const ap = Math.max(0, (enemy.y - (targetY - 60)) / 60);
             if (ap > 0) {
-                enemy.element.style.opacity = (1 - ap) * (enemy.isStealthed ? 0.1 : 1);
+                // [User Request] Ensure minimum opacity of 0.5 so they don't disappear too early
+                const baseOpacity = enemy.isStealthed ? 0.6 : 1.0;
+                enemy.element.style.opacity = Math.max(0.5, (1 - ap) * baseOpacity);
                 enemy.element.style.transform = `translate(-50%, -50%) scale(${1 - ap * 0.5})`;
             }
         }

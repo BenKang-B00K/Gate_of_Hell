@@ -96,11 +96,80 @@ function renderGraphics() {
     updateParticles();
     
     drawLavaRoad();
+    drawPortal(); // New Vortex Portal
     drawSlots();
     drawUnits();
     drawEnemies(); 
     drawParticles(); 
     drawSelectionHalo();
+}
+
+function drawPortal() {
+    const roadWidth = 114; 
+    const cx = LOGICAL_WIDTH / 2;
+    const cy = LOGICAL_HEIGHT - 20; // Near bottom
+    const time = globalAnimTimer;
+
+    ctx.save();
+    
+    // Portal Energy Multiplier (Intensify based on danger)
+    const peIntensity = typeof portalEnergy !== 'undefined' ? (portalEnergy / maxPortalEnergy) : 0;
+    const baseRadius = 50 + (peIntensity * 20);
+    
+    // 1. Outer Glow (Subtle Red/Purple)
+    const outerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.5);
+    outerGrad.addColorStop(0, 'rgba(75, 0, 130, 0.4)'); // Purple
+    outerGrad.addColorStop(0.7, 'rgba(183, 28, 28, 0.2)'); // Dark Red
+    outerGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = outerGrad;
+    ctx.fillRect(cx - baseRadius * 2, cy - baseRadius, baseRadius * 4, baseRadius * 2);
+
+    // 2. Swirling Vortex Layers
+    for (let i = 0; i < 3; i++) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(time * (1 + i * 0.5) * (i % 2 === 0 ? 1 : -1));
+        
+        const scaleX = 1.0 + Math.sin(time + i) * 0.1;
+        const scaleY = 0.4 + Math.cos(time + i) * 0.05;
+        ctx.scale(scaleX, scaleY);
+
+        ctx.beginPath();
+        ctx.ellipse(0, 0, baseRadius, baseRadius * 0.8, 0, 0, Math.PI * 2);
+        
+        const layerGrad = ctx.createLinearGradient(-baseRadius, 0, baseRadius, 0);
+        if (i === 0) {
+            layerGrad.addColorStop(0, 'rgba(75, 0, 130, 0.6)'); // Indigo
+            layerGrad.addColorStop(0.5, 'rgba(255, 23, 68, 0.4)'); // Red
+            layerGrad.addColorStop(1, 'rgba(75, 0, 130, 0.6)');
+        } else {
+            layerGrad.addColorStop(0, 'rgba(106, 27, 154, 0.3)'); // Purple
+            layerGrad.addColorStop(0.5, 'rgba(0, 0, 0, 0)');
+            layerGrad.addColorStop(1, 'rgba(106, 27, 154, 0.3)');
+        }
+        
+        ctx.strokeStyle = layerGrad;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // 3. Core (Deep Abyssal Hole)
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, baseRadius * 0.6, baseRadius * 0.25, 0, 0, Math.PI * 2);
+    const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 0.6);
+    coreGrad.addColorStop(0, '#000');
+    coreGrad.addColorStop(0.8, 'rgba(30, 0, 50, 0.8)'); // Deep Purple
+    coreGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = coreGrad;
+    ctx.fill();
+
+    // 4. Floating Particles (Sucked into portal)
+    if (Math.random() < 0.3) {
+        spawnParticles(cx + (Math.random() - 0.5) * 100, cy - 50, '#9400d3', 1);
+    }
+
+    ctx.restore();
 }
 
 function drawParticles() {
@@ -5736,10 +5805,14 @@ function drawEnemies() {
         ctx.save();
         
         // [User Request] Ensure enemies are not too transparent
-        // Use 0.4 alpha for stealthed units instead of nearly invisible 0.1
-        if (enemy.isStealthed) {
-            ctx.globalAlpha = 0.4;
-        }
+        // Calculate approach fade-out but cap at 0.5 minimum
+        const road = document.getElementById('road');
+        const roadRect = road.getBoundingClientRect();
+        const targetY = roadRect.height + 10;
+        const ap = Math.max(0, (enemy.y - (targetY - 60)) / 60);
+        
+        const baseAlpha = enemy.isStealthed ? 0.6 : 1.0;
+        ctx.globalAlpha = Math.max(0.5, (1 - ap) * baseAlpha);
 
         // --- 3. Animation: Hit-Flash ---
         // If enemy was hit recently, apply a white filter
@@ -5766,14 +5839,24 @@ function drawEnemies() {
         
         ctx.restore();
 
-        // HP Bar
+        // HP Bar (Logical 360x640 space)
         const barW = enemy.isBoss ? 40 : 20;
         const barH = 3;
         const hpRatio = enemy.hp / enemy.maxHp;
-        ctx.fillStyle = '#333';
-        ctx.fillRect(Math.floor(lx - barW/2), Math.floor(ly - (enemy.isBoss ? 30 : 20)), barW, barH);
-        ctx.fillStyle = enemy.isBoss ? '#f00' : '#0f0';
-        ctx.fillRect(Math.floor(lx - barW/2), Math.floor(ly - (enemy.isBoss ? 30 : 20)), Math.floor(barW * hpRatio), barH);
+        const bx = Math.floor(lx - barW/2);
+        const by = Math.floor(ly - (enemy.isBoss ? 30 : 20));
+
+        // Background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+        ctx.fillRect(bx, by, barW, barH);
+
+        // [User Request] Red Gradient Fill
+        const grad = ctx.createLinearGradient(bx, 0, bx + barW, 0);
+        grad.addColorStop(0, '#ff1744'); // Vibrant Red
+        grad.addColorStop(1, '#b71c1c'); // Dark Red
+        
+        ctx.fillStyle = grad;
+        ctx.fillRect(bx, by, Math.floor(barW * hpRatio), barH);
     });
 }
 

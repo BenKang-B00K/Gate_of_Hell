@@ -121,31 +121,11 @@
     bottom: 0;
     width: 340px;
     height: 100px;
-    border-radius: 170px 170px 0 0;
-    background: 
-        radial-gradient(ellipse at bottom, #000 20%, #1a0033 50%, transparent 80%),
-        conic-gradient(from 0deg at 50% 100%, transparent, #4b0082, #9400d3, #ff00ff, #9400d3, #4b0082, transparent);
-    box-shadow: 
-        0 -15px 60px rgba(148, 0, 211, 0.7),
-        inset 0 0 40px rgba(0, 0, 0, 0.9);
-    z-index: 1;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    overflow: visible;
-}
-
-#portal::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    border-radius: 170px 170px 0 0;
-    background: repeating-conic-gradient(from 0deg at 50% 100%, transparent 0deg 10deg, rgba(148, 0, 211, 0.1) 10deg 20deg);
-    animation: portalSwirl 15s infinite linear;
+    z-index: 1;
     pointer-events: none;
+    background: transparent; /* Styles moved to Canvas */
 }
 
 @keyframes portalSwirl {
