@@ -105,9 +105,18 @@ function renderGraphics() {
 }
 
 function drawPortal() {
-    const roadWidth = 114; 
+    const container = document.getElementById('game-container');
+    const road = document.getElementById('road');
+    if (!container || !road) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const roadRect = road.getBoundingClientRect();
+    const scaleX = LOGICAL_WIDTH / containerRect.width;
+    const scaleY = LOGICAL_HEIGHT / containerRect.height;
+
+    // Position at the bottom center of the road
     const cx = LOGICAL_WIDTH / 2;
-    const cy = LOGICAL_HEIGHT - 20; // Near bottom
+    const cy = (roadRect.bottom - containerRect.top) * scaleY;
     const time = globalAnimTimer;
 
     ctx.save();
