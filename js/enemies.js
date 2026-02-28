@@ -87,10 +87,10 @@ const enemyCategories = {
         { type: 'void_piercer', icon: '🏹', speed: 3.6, hp: 600, defense: 5, probability: 0.05, reward: 30, desc: "배신한 궁수입니다. 장거리 유닛의 공격에 대해 50% 회피 확률을 얻습니다.", effectiveness: "단거리 유닛.", lore: "빛의 화살들은 이제 순수한 무(無)의 파편으로 변했습니다." }
     ],
     enhanced: [
-        { type: 'boar', icon: '🐗', speed: 1.5, hp: 250, defense: 8, probability: 0.25, reward: 15, desc: "포탈에 가까워질수록 속도가 기하급수적으로 빨라집니다.", effectiveness: "게이트 근처에서의 밀쳐내기와 강력한 기절.", lore: "추격의 전율을 즐기던 폭력적인 사냥꾼으로, 이제 통제할 수 없는 피의 갈증에 사로잡혔습니다." }, 
+        { type: 'boar', icon: '🐗', speed: 1.2, hp: 250, defense: 8, probability: 0.25, reward: 15, desc: "포탈에 가까워질수록 속도가 기하급수적으로 빨라집니다.", effectiveness: "게이트 근처에서의 밀쳐내기와 강력한 기절.", lore: "추격의 전율을 즐기던 폭력적인 사냥꾼으로, 이제 통제할 수 없는 피의 갈증에 사로잡혔습니다." }, 
         { type: 'soul_eater', icon: '🧿', speed: 3.6, hp: 220, defense: 12, probability: 0.1, reward: 15, desc: "피해를 입을 때마다 짧은 시간 동안 이동 속도가 폭발적으로 증가합니다.", effectiveness: "강력한 단발 타격.", lore: "이것이 굶주린 것은 육체가 아니라 퇴마사들의 힘 그 자체입니다." },
         { type: 'frost', icon: '❄️', speed: 3.0, hp: 180, defense: 5, probability: 0.25, reward: 12, desc: "주변 악령들의 속도를 높여주는 빙결 오라를 내뿜습니다.", effectiveness: "우선 타겟 지정 및 화염 에너지.", lore: "눈보라 속에서 홀로 죽었으며, 그들의 심장은 고립과 차가운 원망으로 얼어붙었습니다." }, 
-        { type: 'lightspeed', icon: '✨', speed: 9.6, hp: 60, defense: 0, probability: 0.2, reward: 18, desc: "엄청난 속도로 이동하며 속도 강화 오라를 무시합니다.", effectiveness: "즉사 수호자 또는 공허 저격수.", lore: "생명을 구할 말을 전하지 못한 전령으로, 이제 끝에 도달하기 위해 필사적입니다." },
+        { type: 'lightspeed', icon: '✨', speed: 8.0, hp: 60, defense: 0, probability: 0.2, reward: 18, desc: "엄청난 속도로 이동하며 속도 강화 오라를 무시합니다.", effectiveness: "즉사 수호자 또는 공허 저격수.", lore: "생명을 구할 말을 전하지 못한 전령으로, 이제 끝에 도달하기 위해 필사적입니다." },
         { type: 'frost_outcast', icon: '❄️', speed: 2.1, hp: 800, defense: 10, probability: 0.1, reward: 35, desc: "저주받은 도사입니다. 주변 아군의 공격 속도를 20% 감소시키는 냉기 오라를 발산합니다.", effectiveness: "오라 범위 밖에서 처치.", lore: "그녀의 마음은 심연에 들어오기 훨씬 전부터 이미 얼어붙어 있었습니다." },
         { type: 'ember_hatred', icon: '☄️', speed: 2.4, hp: 700, defense: 0, probability: 0.1, reward: 30, desc: "증오에 찬 마법사입니다. 죽을 때 폭발하여 주변 적들의 속도를 3초간 50% 증가시킵니다.", effectiveness: "고립되었을 때 처치.", lore: "평생을 태웠던 증오로 불꽃을 피우고 있습니다." }
     ],
@@ -99,7 +99,7 @@ const enemyCategories = {
         { type: 'lava', icon: '🌋', speed: 3.9, hp: 200, defense: 15, probability: 0.2, reward: 18, desc: "빙결 효과를 해제하며 냉기 에너지에 맞으면 앞으로 도약합니다.", effectiveness: "빙결 지양; 표준 마법 또는 화염 사용.", lore: "불같은 성격에 삼켜진 영혼으로, 이제 억누를 수 없는 분노로 불타오르고 있습니다." }, 
         { type: 'burning', icon: '💢', speed: 3.0, hp: 350, defense: 10, probability: 0.2, reward: 15, desc: "공격받을 때마다 자신의 원한 에너지를 소모하여 회복합니다.", effectiveness: "회복을 압도하는 강력한 단일 타격.", lore: "희생이 잊혀진 순교자로, 그들의 고통은 이제 끝없는 재생의 원동력이 되었습니다." },
         { type: 'abyssal_acolyte', icon: '🌑', speed: 1.2, hp: 1200, defense: 15, probability: 0.2, reward: 50, desc: "허무의 종복입니다. 타격 시 타격원의 데미지를 감소시킵니다 (최대 3중첩).", effectiveness: "폭발적인 데미지 또는 기절.", lore: "그림자 팔들은 그들을 더 깊이 끌어당기는 심연의 손길입니다." },
-        { type: 'bringer_of_doom', icon: '⛓️‍💥', speed: 0.9, hp: 3000, defense: 30, probability: 0.1, reward: 150, desc: "[희귀 괴수] 무작위 2개 슬롯의 데미지를 영구적으로 감소시킵니다.", effectiveness: "가능한 한 빨리 처치하세요!", lore: "그들이 걷는 곳마다 대지가 비명을 지릅니다. 어떤 신성함도 남지 않습니다." }
+        { type: 'bringer_of_doom', icon: '⛓️‍💥', speed: 0.9, hp: 2200, defense: 20, probability: 0.1, reward: 150, desc: "[희귀 괴수] 무작위 2개 슬롯의 데미지를 영구적으로 감소시킵니다.", effectiveness: "가능한 한 빨리 처치하세요!", lore: "그들이 걷는 곳마다 대지가 비명을 지릅니다. 어떤 신성함도 남지 않습니다." }
     ],
     treasure: [
         { type: 'gold', icon: '💎', speed: 7.5, hp: 80, defense: 50, probability: 1.0, reward: 200, desc: "처치 시 막대한 양의 소울 에너지를 주는 희귀한 영입니다.", effectiveness: "높은 방어력을 우회하기 위한 속사형 암살자.", lore: "과거의 허영심으로 여전히 반짝이는 왕의 보물 잔재입니다." } 
