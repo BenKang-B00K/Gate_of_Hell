@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guardian of the Underworld</title>
+    <title>Gate of Hell : 악령들의 공세</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/game.css">
     <link rel="stylesheet" href="css/ui.css">
@@ -16,8 +16,8 @@
     <!-- Start Screen Overlay -->
     <div id="start-screen">
         <div id="start-content">
-            <h1 class="start-title">지옥의 문</h1>
-            <h2 class="start-subtitle">명계의 수호자들</h2>
+            <h1 class="start-title">Gate of Hell</h1>
+            <h2 class="start-subtitle">악령들의 공세</h2>
             <button id="start-game-btn">악령 추방 시작</button>
         </div>
     </div>
@@ -162,6 +162,46 @@
     </div>
 
 
+    <!-- Relics Collection Overlay -->
+    <div id="relics-overlay" style="display: none;">
+        <div id="relics-content">
+            <div id="relics-header">
+                <h2>심연의 유물</h2>
+                <button id="close-relics">X</button>
+            </div>
+            <div id="relics-grid">
+                <!-- Relics will be dynamically populated here -->
+            </div>
+            <div id="relic-details">
+                <div class="info-default-text">유물을 선택하여 능력을 확인하세요.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Class Unlock Modal / Boss Warning Modal -->
+    <div id="unlock-modal" style="display: none;">
+        <div id="unlock-content">
+            <div id="unlock-header">🆕 새로운 클래스 해금!</div>
+            <div id="unlock-icon"></div>
+            <div id="unlock-name"></div>
+            <div id="unlock-desc"></div>
+            <div id="unlock-resume-hint">(아무 곳이나 클릭하여 재개)</div>
+        </div>
+    </div>
+
+    <div id="max-units-warning" style="display: none;">
+        <div class="warning-main">???: 더 이상 퇴마사를 부를 수 없다!</div>
+        <div class="warning-sub">(최대 퇴마사 인원: 16)</div>
+    </div>
+
+    <script src="js/allies_data.js"></script>
+
+    <script src="js/enemies.js"></script>
+    <script src="js/graphics.js"></script>
+    <script src="js/allies_system.js"></script>
+    <script src="js/allies_ui.js"></script>
+    <script src="js/attackeffect.js"></script>
+    <script src="js/soundeffect.js"></script>
     <script src="js/relics.js"></script>
     <script src="js/script.js"></script>
 </body>

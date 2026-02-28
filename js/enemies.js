@@ -123,7 +123,7 @@ function showBossWarning(bossName) {
     const desc = document.getElementById('unlock-desc');
     
     if (modal && header && icon && name && desc) {
-        header.innerText = "⚠️ 경고! 보스 출현!";
+        header.innerText = "⚠️ 경고! 마왕 출현!";
         header.style.color = "#ff0000";
         icon.innerText = "👿";
         name.innerText = bossName;
@@ -321,7 +321,7 @@ function updateStageInfo() {
 
     if (enemiesLeft) {
         if (isBossStage) {
-            enemiesLeft.innerText = "보스";
+            enemiesLeft.innerText = "마왕";
             const rsFill = document.getElementById('rs-gauge-fill');
             if (rsFill) rsFill.style.width = '100%';
         } else {
@@ -864,11 +864,11 @@ function showBossVictory(bossName, rewardMsg, bonusDetail) {
     
     overlay.innerHTML = `
         <div class="boss-victory-content">
-            <div class="boss-victory-header">ABYSSAL ENTITY BANISHED</div>
-            <div class="boss-victory-name">${bossName} DEFEATED</div>
+            <div class="boss-victory-header">심연의 존재가 추방되었습니다</div>
+            <div class="boss-victory-name">마왕 [${bossName}] 소멸</div>
             <div class="boss-victory-reward">${rewardMsg}</div>
             <div class="boss-victory-bonus">${bonusDetail}</div>
-            <div class="boss-victory-hint">(Click to continue)</div>
+            <div class="boss-victory-hint">(클릭하여 계속)</div>
         </div>
     `;
     
