@@ -248,7 +248,7 @@ function spawnFriendlySkeleton(target) {
 
 function showBossVictory(bossName, rewardMsg, bonusDetail) {
     const container = document.getElementById('game-container'); const overlay = document.createElement('div'); overlay.className = 'boss-victory-overlay';
-    overlay.innerHTML = `<div class="boss-victory-content"><div class="boss-victory-header">심연의 존재가 추방되었습니다</div><div class="boss-victory-name">마왕 [${bossName}] 소멸</div><div class="boss-victory-reward">${rewardMsg}</div><div class="boss-victory-bonus">${bonusDetail}</div><div class="boss-victory-hint">(클릭하여 계속)</div></div>`;
+    overlay.innerHTML = `<div class="boss-victory-content"><div class="boss-victory-header">심연의 존재가 추방되었습니다</div><div class="boss-victory-name">마왕 [${bossName}]<br>소멸</div><div class="boss-victory-reward">${rewardMsg}</div><div class="boss-victory-bonus">${bonusDetail}</div><div class="boss-victory-hint">(클릭하여 계속)</div></div>`;
     container.appendChild(overlay); isPaused = true;
     overlay.addEventListener('click', () => { overlay.classList.add('fade-out'); setTimeout(() => { overlay.remove(); isPaused = false; }, 500); });
 }

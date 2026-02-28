@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gate of Hell : 악령들의 공세</title>
+    <title>Gate of Hell : 악령들의 귀환</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/game.css">
     <link rel="stylesheet" href="css/ui.css">
@@ -17,9 +17,18 @@
 <body>
     <!-- Start Screen Overlay -->
     <div id="start-screen">
+        <!-- Tutorial Toggle -->
+        <div id="tutorial-toggle-container">
+            <span id="tutorial-label">도움말</span>
+            <label class="switch">
+                <input type="checkbox" id="tutorial-toggle" checked>
+                <span class="slider round"></span>
+            </label>
+            <span id="tutorial-status">ON</span>
+        </div>
         <div id="start-content">
             <h1 class="start-title">Gate of Hell</h1>
-            <h2 class="start-subtitle">악령들의 공세</h2>
+            <h2 class="start-subtitle">악령들의 귀환</h2>
             <button id="start-game-btn">퇴마 시작</button>
         </div>
     </div>
@@ -31,16 +40,6 @@
         <!-- Difficulty Message Overlay -->
         <div id="difficulty-msg-container">
             <div id="difficulty-msg"></div>
-        </div>
-
-        <!-- Tutorial Toggle -->
-        <div id="tutorial-toggle-container">
-            <span id="tutorial-label">튜토리얼</span>
-            <label class="switch">
-                <input type="checkbox" id="tutorial-toggle" checked>
-                <span class="slider round"></span>
-            </label>
-            <span id="tutorial-status">켜짐</span>
         </div>
 
 
@@ -143,7 +142,7 @@
                 </div>
 
                 <div id="unit-info">
-                    <div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 공세</span></div>
+                    <div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 귀환</span></div>
                 </div>
             </div>
         </div>

@@ -559,28 +559,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-game-btn');
     const startScreen = document.getElementById('start-screen');
     const retryBtn = document.getElementById('retry-btn');
-    const restartBtnTop = document.getElementById('restart-btn-top');
-    const unlockModal = document.getElementById('unlock-modal');
-
     if (retryBtn) {
         retryBtn.onclick = () => {
             const gameOverOverlay = document.getElementById('game-over-overlay');
+            const startScreen = document.getElementById('start-screen');
             if (gameOverOverlay) gameOverOverlay.style.display = 'none';
-            
-            // [User Request] Reset game state and start directly
+            if (startScreen) {
+                startScreen.style.display = 'flex';
+                startScreen.classList.remove('shrink-to-info'); 
+                
+                const tutorialToggle = document.getElementById('tutorial-toggle');
+                const tutorialStatus = document.getElementById('tutorial-status');
+                if (tutorialToggle) {
+                    tutorialToggle.checked = false;
+                    if (tutorialStatus) tutorialStatus.innerText = 'OFF';
+                }
+            }
             resetGameState();
-            
-            gameStarted = true;
+            gameStarted = false;
             isPaused = false;
-            initStage(); 
-            initAllies();
-            updateSummonButtonState();
-            if (typeof updateGauges === 'function') updateGauges();
         };
     }
+
+    const restartBtnTop = document.getElementById('restart-btn-top');
     if (restartBtnTop) {
+        restartBtnTop.innerText = "퇴마 중단";
         restartBtnTop.onclick = () => {
-            if (confirm("게임을 재시작하시겠습니까? 현재 진행 상황이 초기화됩니다.")) {
+            if (confirm("💀 [경고] 퇴마를 포기하시겠습니까?\n이미 많은 영혼이 길을 잃었으며, 중단 시 모든 정화 기록이 소멸됩니다.")) {
                 window.location.reload();
             }
         };
@@ -600,6 +605,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2000);
 
     if (startBtn && startScreen) {
+        // [User Request] Tutorial Toggle Listener
+        const tutorialToggle = document.getElementById('tutorial-toggle');
+        const tutorialStatus = document.getElementById('tutorial-status');
+        if (tutorialToggle && tutorialStatus) {
+            tutorialToggle.addEventListener('change', () => {
+                tutorialStatus.innerText = tutorialToggle.checked ? 'ON' : 'OFF';
+            });
+        }
+
         startBtn.addEventListener('mouseenter', () => {
             // hover sound removed
         });

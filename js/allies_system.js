@@ -413,25 +413,30 @@ function sellTower(t) {
     const modal = document.getElementById('sacrifice-modal');
     const confirmBtn = document.getElementById('sacrifice-confirm-btn');
     const cancelBtn = document.getElementById('sacrifice-cancel-btn');
-    
+    const bodyText = document.getElementById('sacrifice-body');
+
     if (!modal || !confirmBtn || !cancelBtn) {
-        // Fallback if elements not found
         if (confirm("수호자를 추방하시겠습니까?")) executeSacrifice(t);
         return;
     }
 
-    // Show modal and pause game
+    // [User Request] Update body text with proper styling and message
+    if (bodyText) {
+        bodyText.innerHTML = `
+            수호자와의 성스러운 계약을 강제로 끊으려 합니까?<br><br>
+            영혼을 심연으로 돌려보내는 대가는 결코 가볍지 않으며,<br>
+            한번 흩어진 본질은 결코 다시 불러올 수 없습니다.<br><br>
+            <span style="color:#ff1744; font-weight:bold;">정말로 이 수호자를 영원한 어둠 속으로 추방하시겠습니까?</span>
+        `;
+    }
+
     modal.style.display = 'flex';
     isPaused = true;
 
-    // Remove old listeners to avoid stacking
-    confirmBtn.onclick = null;
-    cancelBtn.onclick = null;
-
     confirmBtn.onclick = () => {
+        executeSacrifice(t);
         modal.style.display = 'none';
         isPaused = false;
-        executeSacrifice(t);
     };
 
     cancelBtn.onclick = () => {
@@ -439,6 +444,7 @@ function sellTower(t) {
         isPaused = false;
     };
 }
+
 
 /**
  * Internal logic to actually remove the tower and refund SE
@@ -473,7 +479,7 @@ function executeSacrifice(t) {
     
     // Clear info panel and indicators
     const d = document.getElementById('unit-info');
-    if (d) d.innerHTML = '<div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 공세</span></div>';
+    if (d) d.innerHTML = '<div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 귀환</span></div>';
     const ri = document.getElementById('range-indicator');
     if (ri) ri.remove();
     const ai = document.getElementById('aura-indicator');
