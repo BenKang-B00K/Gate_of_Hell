@@ -797,6 +797,69 @@ function drawSlots() {
     });
 }
 
+function drawUnitAuras(cx, cy, tower) {
+    const tier = tower.data.tier;
+    if (tier < 2) return;
+
+    const time = globalAnimTimer;
+    const pulse = (Math.sin(time * 2) + 1) / 2;
+    
+    ctx.save();
+    
+    if (tier === 2) {
+        // Tier 2: Subtle White Mist
+        ctx.globalAlpha = 0.2 + pulse * 0.1;
+        ctx.fillStyle = '#fff';
+        for(let i=0; i<3; i++) {
+            const ang = time + (i * Math.PI * 0.6);
+            const ox = Math.cos(ang) * 15;
+            const oy = Math.sin(ang * 0.5) * 5;
+            ctx.beginPath();
+            ctx.arc(cx + ox, cy + 5 + oy, 8, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    } else if (tier === 3) {
+        // Tier 3: Radiant Golden Particle Vortex
+        ctx.strokeStyle = `rgba(255, 215, 0, ${0.4 + pulse * 0.3})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy + 8, 25 + pulse * 5, 8 + pulse * 2, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Golden sparkles
+        for(let i=0; i<4; i++) {
+            const ang = time * 2 + (i * Math.PI * 0.5);
+            const dist = 20 + pulse * 10;
+            const px = cx + Math.cos(ang) * dist;
+            const py = cy + 8 + Math.sin(ang) * dist * 0.3;
+            ctx.fillStyle = '#ffd700';
+            ctx.fillRect(px, py, 2, 2);
+        }
+    } else if (tier === 4) {
+        // Tier 4 (Abyss): Intense Abyssal Aura
+        const glowGrad = ctx.createRadialGradient(cx, cy + 5, 0, cx, cy + 5, 40);
+        glowGrad.addColorStop(0, `rgba(74, 20, 140, ${0.3 + pulse * 0.2})`);
+        glowGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy + 5, 40, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Abyssal sparks/lightning
+        ctx.strokeStyle = `rgba(148, 0, 211, ${0.6 + pulse * 0.4})`;
+        ctx.lineWidth = 1.5;
+        for(let i=0; i<3; i++) {
+            const ang = -time * 3 + (i * Math.PI * 0.6);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + 5);
+            ctx.lineTo(cx + Math.cos(ang) * 35, cy + 5 + Math.sin(ang) * 15);
+            ctx.stroke();
+        }
+    }
+    
+    ctx.restore();
+}
+
 function drawUnits() {
     if (typeof towers === 'undefined') return;
     const container = document.getElementById('game-container');
@@ -811,6 +874,9 @@ function drawUnits() {
 
         // Shadows
         drawShadow(cx, cy, 14);
+
+        // [User Request] Tier-based Auras
+        drawUnitAuras(cx, cy, tower);
 
         // Idle Bobbing
         const bob = Math.sin(globalAnimTimer + (cx * 0.05)) * 2;
