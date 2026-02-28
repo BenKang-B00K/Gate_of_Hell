@@ -121,61 +121,69 @@ function drawPortal() {
 
     ctx.save();
     
-    // Portal Energy Multiplier (Intensify based on danger)
+    // [User Request] Enlarged Portal Dimensions
     const peIntensity = typeof portalEnergy !== 'undefined' ? (portalEnergy / maxPortalEnergy) : 0;
-    const baseRadius = 50 + (peIntensity * 20);
+    const baseRadius = 75 + (peIntensity * 40); // Increased from 50+20
     
-    // 1. Outer Glow (Subtle Red/Purple)
-    const outerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.5);
-    outerGrad.addColorStop(0, 'rgba(75, 0, 130, 0.4)'); // Purple
-    outerGrad.addColorStop(0.7, 'rgba(183, 28, 28, 0.2)'); // Dark Red
+    // 1. Intense Outer Glow
+    const outerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.8);
+    outerGrad.addColorStop(0, 'rgba(106, 27, 154, 0.5)'); // Deeper Purple
+    outerGrad.addColorStop(0.6, 'rgba(183, 28, 28, 0.3)'); // Red
     outerGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = outerGrad;
-    ctx.fillRect(cx - baseRadius * 2, cy - baseRadius, baseRadius * 4, baseRadius * 2);
+    ctx.fillRect(cx - baseRadius * 2.5, cy - baseRadius * 1.5, baseRadius * 5, baseRadius * 3);
 
-    // 2. Swirling Vortex Layers
-    for (let i = 0; i < 3; i++) {
+    // 2. Swirling Vortex Layers (Enlarged and Faster)
+    for (let i = 0; i < 4; i++) { // Added one more layer
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.rotate(time * (1 + i * 0.5) * (i % 2 === 0 ? 1 : -1));
+        ctx.rotate(time * (1.2 + i * 0.6) * (i % 2 === 0 ? 1 : -1));
         
-        const scaleX = 1.0 + Math.sin(time + i) * 0.1;
-        const scaleY = 0.4 + Math.cos(time + i) * 0.05;
+        const scaleX = 1.1 + Math.sin(time * 1.5 + i) * 0.15;
+        const scaleY = 0.5 + Math.cos(time * 1.2 + i) * 0.1;
         ctx.scale(scaleX, scaleY);
 
         ctx.beginPath();
-        ctx.ellipse(0, 0, baseRadius, baseRadius * 0.8, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, baseRadius, baseRadius * 0.85, 0, 0, Math.PI * 2);
         
         const layerGrad = ctx.createLinearGradient(-baseRadius, 0, baseRadius, 0);
-        if (i === 0) {
-            layerGrad.addColorStop(0, 'rgba(75, 0, 130, 0.6)'); // Indigo
-            layerGrad.addColorStop(0.5, 'rgba(255, 23, 68, 0.4)'); // Red
-            layerGrad.addColorStop(1, 'rgba(75, 0, 130, 0.6)');
+        if (i % 2 === 0) {
+            layerGrad.addColorStop(0, 'rgba(75, 0, 130, 0.7)'); 
+            layerGrad.addColorStop(0.5, 'rgba(255, 23, 68, 0.5)'); 
+            layerGrad.addColorStop(1, 'rgba(75, 0, 130, 0.7)');
         } else {
-            layerGrad.addColorStop(0, 'rgba(106, 27, 154, 0.3)'); // Purple
+            layerGrad.addColorStop(0, 'rgba(156, 39, 176, 0.4)'); 
             layerGrad.addColorStop(0.5, 'rgba(0, 0, 0, 0)');
-            layerGrad.addColorStop(1, 'rgba(106, 27, 154, 0.3)');
+            layerGrad.addColorStop(1, 'rgba(156, 39, 176, 0.4)');
         }
         
         ctx.strokeStyle = layerGrad;
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 4; // Thicker lines
         ctx.stroke();
         ctx.restore();
     }
 
-    // 3. Core (Deep Abyssal Hole)
+    // 3. Enlarged Core (Eye of the Storm)
     ctx.beginPath();
-    ctx.ellipse(cx, cy, baseRadius * 0.6, baseRadius * 0.25, 0, 0, Math.PI * 2);
-    const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 0.6);
+    // Core size increased from 0.6/0.25 to 0.85/0.45
+    ctx.ellipse(cx, cy, baseRadius * 0.85, baseRadius * 0.45, 0, 0, Math.PI * 2);
+    const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 0.85);
     coreGrad.addColorStop(0, '#000');
-    coreGrad.addColorStop(0.8, 'rgba(30, 0, 50, 0.8)'); // Deep Purple
+    coreGrad.addColorStop(0.5, 'rgba(20, 0, 40, 0.9)'); 
+    coreGrad.addColorStop(0.9, 'rgba(255, 0, 0, 0.4)'); // Glowing red edge for the eye
     coreGrad.addColorStop(1, 'transparent');
     ctx.fillStyle = coreGrad;
     ctx.fill();
 
-    // 4. Floating Particles (Sucked into portal)
-    if (Math.random() < 0.3) {
-        spawnParticles(cx + (Math.random() - 0.5) * 100, cy - 50, '#9400d3', 1);
+    // 4. [User Request] Boosted Soul Absorption Particles
+    // Increased frequency from 0.3 to 0.8 and spawn 2-3 at once
+    if (Math.random() < 0.8) {
+        const pCount = Math.floor(Math.random() * 3) + 1;
+        for(let p=0; p<pCount; p++) {
+            const rx = cx + (Math.random() - 0.5) * 180;
+            const ry = cy - 80 - Math.random() * 40;
+            spawnParticles(rx, ry, Math.random() > 0.5 ? '#9400d3' : '#ff1744', 1);
+        }
     }
 
     ctx.restore();
