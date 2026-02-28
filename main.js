@@ -89,7 +89,8 @@ class MainScene extends Phaser.Scene {
         if (window.syncUIWithRegistry) window.syncUIWithRegistry();
 
         this.allies = this.add.group({ runChildUpdate: true });
-        this.enemies = this.physics.add.group({ classType: Specter, runChildUpdate: true });
+        this.enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
+        this.specters = this.physics.add.group({ classType: Specter, runChildUpdate: true });
         this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
         
         this.slots = this.add.group();
@@ -132,33 +133,56 @@ class MainScene extends Phaser.Scene {
     }
 
     setupCombat() {
-        this.physics.add.overlap(this.projectiles, this.enemies, (projectile, enemy) => {
+        const onOverlap = (projectile, enemy) => {
             if (this.registry.get('isTimeFrozen') || !enemy.active) return;
             const isCrit = Math.random() < this.registry.get('critChance');
             const damage = projectile.source.damage * (isCrit ? 2 : 1);
             enemy.takeDamage(damage, isCrit);
             this.vfx.triggerHitEffect(enemy.x, enemy.y, projectile.source.type);
             projectile.disableBody(true, true);
-        }, null, this);
+        };
+
+        this.physics.add.overlap(this.projectiles, this.enemies, onOverlap, null, this);
+        this.physics.add.overlap(this.projectiles, this.specters, onOverlap, null, this);
     }
 
     spawnWave() {
         if (this.waveSpawnedCount >= this.totalWaveEnemies) return;
 
         const stage = this.registry.get('stage');
-        const categories = ['basic', 'pattern', 'enhanced'];
-        const cat = stage < 3 ? 'basic' : categories[Phaser.Math.Between(0, categories.length - 1)];
-        const types = window.enemyCategories[cat] || window.enemyCategories.basic;
-        const data = types[Phaser.Math.Between(0, types.length - 1)];
+        const isSpecter = Math.random() < 0.3; // 30% 확률로 유령 스폰
+        
+        if (isSpecter) {
+            const specterData = { 
+                type: 'specter', 
+                hp: 50 + stage * 15, 
+                speed: 2.2 + (stage * 0.1), 
+                isBoss: (stage % 5 === 0),
+                reward: 20
+            };
+            const specter = this.specters.get();
+            if (specter) {
+                const x = Phaser.Math.Between(140, 220);
+                specter.spawn(x, -50, specterData, 'enemy_placeholder');
+                this.waveSpawnedCount++;
+                const currentLeft = this.registry.get('enemiesLeft');
+                this.registry.set('enemiesLeft', Math.max(0, currentLeft - 1));
+            }
+        } else {
+            const categories = ['basic', 'pattern', 'enhanced'];
+            const cat = stage < 3 ? 'basic' : categories[Phaser.Math.Between(0, categories.length - 1)];
+            const types = window.enemyCategories[cat] || window.enemyCategories.basic;
+            const data = types[Phaser.Math.Between(0, types.length - 1)];
 
-        const enemy = this.enemies.get();
-        if (enemy) {
-            const x = Phaser.Math.Between(140, 220);
-            enemy.spawn(x, -50, data, 'ghost_basic');
-            this.waveSpawnedCount++;
-            const currentLeft = this.registry.get('enemiesLeft');
-            this.registry.set('enemiesLeft', Math.max(0, currentLeft - 1));
-            this.dataManager.recordEncounter(data.type);
+            const enemy = this.enemies.get();
+            if (enemy) {
+                const x = Phaser.Math.Between(140, 220);
+                enemy.spawn(x, -50, data, 'ghost_basic');
+                this.waveSpawnedCount++;
+                const currentLeft = this.registry.get('enemiesLeft');
+                this.registry.set('enemiesLeft', Math.max(0, currentLeft - 1));
+                this.dataManager.recordEncounter(data.type);
+            }
         }
     }
 
@@ -263,11 +287,18 @@ class MainScene extends Phaser.Scene {
     getNearestEnemy(source) {
         let nearest = null;
         let minDist = Infinity;
-        this.enemies.getChildren().forEach(e => {
-            if (!e.active) return;
-            const d = Phaser.Math.Distance.Between(source.x, source.y, e.x, e.y);
-            if (d < minDist) { minDist = d; nearest = e; }
-        });
+        
+        const checkGroup = (group) => {
+            group.getChildren().forEach(e => {
+                if (!e.active) return;
+                const d = Phaser.Math.Distance.Between(source.x, source.y, e.x, e.y);
+                if (d < minDist) { minDist = d; nearest = e; }
+            });
+        };
+
+        checkGroup(this.enemies);
+        checkGroup(this.specters);
+        
         return nearest;
     }
 
@@ -291,6 +322,8 @@ class MainScene extends Phaser.Scene {
     }
 
     update(time, delta) {
+        if (typeof renderGraphics === 'function') renderGraphics();
+
         const pe = this.registry.get('portalEnergy');
         if (pe >= this.registry.get('maxPortalEnergy')) {
             this.scene.pause();
@@ -299,7 +332,7 @@ class MainScene extends Phaser.Scene {
             return;
         }
 
-        const activeEnemies = this.enemies.countActive(true);
+        const activeEnemies = this.enemies.countActive(true) + this.specters.countActive(true);
         if (this.waveSpawnedCount >= this.totalWaveEnemies && activeEnemies === 0) {
             this.startNextStage();
         }

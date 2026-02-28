@@ -142,9 +142,9 @@ export class Guardian extends Phaser.GameObjects.Sprite {
 }
 
 /**
- * Specter: 적 유령 클래스
+ * Enemy: 기본 적 클래스
  */
-export class Specter extends Phaser.Physics.Arcade.Sprite {
+export class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, texture) {
         super(scene, x, y, 'enemy_placeholder');
     }
@@ -156,7 +156,6 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.setTint(0xffffff); 
         this.setAlpha(1.0);
         
-        // 텍스처 검수
         const finalKey = this.scene.textures.exists(textureKey) ? textureKey : 'enemy_placeholder';
         this.setTexture(finalKey);
 
@@ -173,7 +172,6 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.vxSign = Math.random() < 0.5 ? -1 : 1;
         this.hasBackstepped = false;
 
-        // [수정] 스케일 및 깊이 설정
         this.setScale(1.1);
         this.setDepth(15); 
         this.setOrigin(0.5, 0.5);
@@ -315,6 +313,80 @@ export class Specter extends Phaser.Physics.Arcade.Sprite {
         this.setActive(false);
         this.setVisible(false);
         this.disableBody(true, true);
+    }
+}
+
+/**
+ * Specter: 신규 유령 클래스 (Enemy 상속)
+ */
+export class Specter extends Enemy {
+    constructor(scene, x, y) {
+        super(scene, x, y);
+        this.wigglePhase = Math.random() * Math.PI * 2;
+    }
+
+    spawn(x, y, enemyData, textureKey) {
+        super.spawn(x, y, enemyData, textureKey);
+        this.isBoss = enemyData.isBoss || false;
+        if (this.isBoss) {
+            this.setScale(1.5);
+            this.fearTimer = this.scene.time.addEvent({
+                delay: 5000,
+                callback: this.emitFearAura,
+                callbackScope: this,
+                loop: true
+            });
+        }
+    }
+
+    update(time, delta) {
+        if (!this.active) return;
+        if (this.scene.registry.get('isTimeFrozen')) {
+            this.body.setVelocity(0, 0);
+            return;
+        }
+
+        const frameAdjust = delta / 16.66;
+        const globalSpeed = this.scene.registry.get('globalSpeedMult') || 1.0;
+        const currentSpeed = this.speed * globalSpeed * frameAdjust;
+        
+        this.y_px += currentSpeed;
+        this.wigglePhase += 0.05 * frameAdjust;
+        
+        // Wiggle movement (Sin 곡선 좌우 흔들림)
+        const wiggleX = Math.sin(this.wigglePhase) * 25;
+        this.x = (this.baseX_pct / 100) * 360 + wiggleX;
+        this.y = this.y_px;
+
+        if (this.y >= 650) this.reachPortal();
+    }
+
+    emitFearAura() {
+        if (!this.active) return;
+        // 시각 효과 호출 (VFXManager에 triggerFearRipple이 있다고 가정)
+        if (this.scene.vfx && this.scene.vfx.triggerFearRipple) {
+            this.scene.vfx.triggerFearRipple(this.x, this.y);
+        }
+
+        this.scene.allies.getChildren().forEach(unit => {
+            const dist = Phaser.Math.Distance.Between(this.x, this.y, unit.x, unit.y);
+            if (dist < 150) {
+                // 공격 속도 20% 감소 효과 (Stun/Slow 로직 활용)
+                unit.isStunned = true; 
+                unit.setTint(0x555555);
+                this.scene.time.delayedCall(2000, () => {
+                    if (unit.active) {
+                        unit.isStunned = false;
+                        unit.clearTint();
+                    }
+                });
+            }
+        });
+    }
+
+    kill() {
+        if (this.fearTimer) this.fearTimer.remove();
+        super.kill();
     }
 }
 

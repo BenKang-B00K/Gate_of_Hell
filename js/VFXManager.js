@@ -71,6 +71,21 @@ export class VFXManager {
         this.shake('medium');
     }
 
+    triggerFearRipple(x, y) {
+        const ring = this.scene.add.graphics();
+        ring.lineStyle(2, 0x800080, 0.8);
+        ring.strokeCircle(0, 0, 10);
+        
+        this.scene.tweens.add({
+            targets: ring,
+            x: x, y: y,
+            scale: 15,
+            alpha: 0,
+            duration: 800,
+            onComplete: () => ring.destroy()
+        });
+    }
+
     shake(intensity = 'light') {
         const config = {
             light: { duration: 100, intensity: 0.005 },
