@@ -468,7 +468,6 @@ function drawSlots() {
     const container = document.getElementById('game-container');
     const containerRect = container.getBoundingClientRect();
     
-    // Map browser DOM coords to logical space
     const scaleX = LOGICAL_WIDTH / containerRect.width;
     const scaleY = LOGICAL_HEIGHT / containerRect.height;
     
@@ -476,23 +475,24 @@ function drawSlots() {
 
     cardSlots.forEach(slot => {
         const rect = slot.getBoundingClientRect();
+        // Calculate logical center to avoid alignment issues with overlapping DOM rects
         const sx = (rect.left - containerRect.left) * scaleX;
         const sy = (rect.top - containerRect.top) * scaleY;
         const sw = rect.width * scaleX;
         const sh = rect.height * scaleY;
         
-        const inset = 1;
-        const w = sw - inset * 2;
-        const h = sh - inset * 2;
-        const x = sx + inset;
-        const y = sy + inset;
+        // Use a slightly smaller drawing area to show the gaps between interlocking hexagons
+        const padding = 1.5; 
+        const x = sx + padding;
+        const y = sy + padding;
+        const w = sw - padding * 2;
+        const h = sh - padding * 2;
 
-        // 1. Holy White Halo / Shadow
         ctx.save();
-        ctx.shadowBlur = 12 + 6 * pulse;
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.6)';
+        // 1. Holy White Halo / Shadow
+        ctx.shadowBlur = 15 + 8 * pulse;
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.55)';
         
-        // 2. Hexagon Path (Pointy Top)
         const drawHex = (ctx, x, y, w, h) => {
             ctx.beginPath();
             ctx.moveTo(x + w / 2, y);
@@ -504,44 +504,34 @@ function drawSlots() {
             ctx.closePath();
         };
 
-        // 3. Stone Tablet Base
+        // 2. Stone Tablet Base (High contrast for better interlocking look)
         const stoneGrad = ctx.createLinearGradient(x, y, x + w, y + h);
-        stoneGrad.addColorStop(0, '#444');
-        stoneGrad.addColorStop(0.5, '#666');
-        stoneGrad.addColorStop(1, '#333');
+        stoneGrad.addColorStop(0, '#333');
+        stoneGrad.addColorStop(0.5, '#555');
+        stoneGrad.addColorStop(1, '#222');
         ctx.fillStyle = stoneGrad;
         drawHex(ctx, x, y, w, h);
         ctx.fill();
 
-        // 4. Golden Border
-        ctx.strokeStyle = `rgba(255, 215, 0, ${0.8 + 0.2 * pulse})`;
-        ctx.lineWidth = 2;
+        // 3. Golden Border
+        ctx.strokeStyle = `rgba(255, 215, 0, ${0.7 + 0.3 * pulse})`;
+        ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // 5. Divine Inner Glow for stone
-        ctx.shadowBlur = 0; // Reset shadow for inner details
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.lineWidth = 1;
+        // 4. Divine Inner Detailing (Add a cross or rune look to the stone)
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.15)';
         ctx.beginPath();
-        ctx.moveTo(x + w/2, y + 4);
-        ctx.lineTo(x + w - 4, y + h/4 + 2);
+        ctx.moveTo(x + w/2, y + h/4);
+        ctx.lineTo(x + w/2, y + 3*h/4);
+        ctx.moveTo(x + w/4, y + h/2);
+        ctx.lineTo(x + 3*w/4, y + h/2);
         ctx.stroke();
-
-        // 6. Corner Decorative Dots
-        ctx.fillStyle = '#ffd700';
-        const dots = [
-            {dx: w/2, dy: 0}, {dx: w, dy: h/4}, {dx: w, dy: 3*h/4},
-            {dx: w/2, dy: h}, {dx: 0, dy: 3*h/4}, {dx: 0, dy: h/4}
-        ];
-        dots.forEach(d => {
-            ctx.beginPath();
-            ctx.arc(x + d.dx, y + d.dy, 1.5, 0, Math.PI * 2);
-            ctx.fill();
-        });
 
         if (slot.classList.contains('occupied')) {
-            ctx.fillStyle = `rgba(255, 215, 0, ${0.15 + 0.1 * pulse})`;
-            drawHex(ctx, x + 3, y + 3, w - 6, h - 6);
+            // Sacred pulse for occupied slots
+            ctx.fillStyle = `rgba(255, 215, 0, ${0.12 + 0.08 * pulse})`;
+            drawHex(ctx, x + 4, y + 4, w - 8, h - 8);
             ctx.fill();
         }
         
