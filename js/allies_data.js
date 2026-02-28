@@ -11,7 +11,7 @@ let timeFreezeEndTime = 0;
 
 let enemies = [];
 let towers = [];
-let money = 100; // SE
+let money = 150; // SE
 let portalEnergy = 0;
 let maxPortalEnergy = 1500;
 let isBossStage = false;
