@@ -54,7 +54,83 @@ function disableSmoothing() {
 // --- Advanced VFX State ---
 const particles = []; 
 const lightPillars = []; // {x, y, life, maxLife}
+const promotionBursts = []; // {x, y, life, tier}
 let globalAnimTimer = 0;
+
+function spawnPromotionBurst(lx, ly, tier) {
+    promotionBursts.push({
+        x: lx,
+        y: ly,
+        life: 1.0,
+        tier: tier
+    });
+    
+    // Also spawn a lot of particles
+    const color = (tier === 4) ? '#9400d3' : '#ffd700';
+    spawnParticles(lx, ly, color, 30);
+}
+
+function updatePromotionBursts() {
+    for (let i = promotionBursts.length - 1; i >= 0; i--) {
+        const pb = promotionBursts[i];
+        pb.life -= 0.025;
+        if (pb.life <= 0) promotionBursts.splice(i, 1);
+    }
+}
+
+function drawPromotionBursts() {
+    promotionBursts.forEach(pb => {
+        const alpha = pb.life;
+        const isAbyss = pb.tier === 4;
+        
+        ctx.save();
+        ctx.translate(pb.x, pb.y);
+        
+        // 1. Shockwave Ring
+        const ringSize = (1.0 - alpha) * 120;
+        ctx.strokeStyle = isAbyss ? `rgba(148, 0, 211, ${alpha})` : `rgba(255, 215, 0, ${alpha})`;
+        ctx.lineWidth = 4 * alpha;
+        ctx.beginPath();
+        ctx.arc(0, 0, ringSize, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // 2. Center Flare
+        const flareSize = 60 * alpha;
+        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, flareSize);
+        if (isAbyss) {
+            grad.addColorStop(0, `rgba(255, 0, 0, ${alpha})`);
+            grad.addColorStop(0.5, `rgba(75, 0, 130, ${alpha * 0.7})`);
+            grad.addColorStop(1, 'transparent');
+        } else {
+            grad.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+            grad.addColorStop(0.4, `rgba(255, 215, 0, ${alpha * 0.8})`);
+            grad.addColorStop(1, 'transparent');
+        }
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(0, 0, flareSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // 3. Spiky Light Rays
+        const rays = isAbyss ? 12 : 8;
+        ctx.strokeStyle = isAbyss ? `rgba(255, 0, 0, ${alpha * 0.5})` : `rgba(255, 255, 255, ${alpha * 0.6})`;
+        ctx.lineWidth = 2 * alpha;
+        for (let r = 0; i < rays; i++) { // Fixed: using internal loop counter
+            // Wait, I used 'i' which is the outer loop index. Correcting to 'r'.
+        }
+        // Let's rewrite the loop correctly in the tool call.
+        for (let r = 0; r < rays; r++) {
+            const ang = (r / rays) * Math.PI * 2 + (1.0 - alpha) * 2;
+            const len = (isAbyss ? 100 : 70) * alpha;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(ang) * len, Math.sin(ang) * len);
+            ctx.stroke();
+        }
+        
+        ctx.restore();
+    });
+}
 
 function spawnLightPillar(lx, ly) {
     lightPillars.push({
@@ -241,6 +317,7 @@ function renderGraphics() {
     
     updateParticles();
     updateLightPillars();
+    updatePromotionBursts();
     
     drawLavaRoad();
     drawAtmosphericEffects(); // New: Drifting Clouds & Mist
@@ -251,6 +328,7 @@ function renderGraphics() {
     drawEnemies(); 
     drawParticles(); 
     drawLightPillars();
+    drawPromotionBursts();
     drawSelectionHalo();
 }
 

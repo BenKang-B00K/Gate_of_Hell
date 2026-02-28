@@ -318,6 +318,18 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     money -= jobChangeCost; 
     if(typeof updateGauges === 'function') updateGauges();
 
+    // [User Request] Trigger Promotion Burst Effect
+    if (typeof spawnPromotionBurst === 'function') {
+        const rect = el.getBoundingClientRect();
+        const container = document.getElementById('game-container');
+        if (container) {
+            const containerRect = container.getBoundingClientRect();
+            const lx = ((rect.left + rect.width / 2) - containerRect.left) * (LOGICAL_WIDTH / containerRect.width);
+            const ly = ((rect.top + rect.height / 2) - containerRect.top) * (LOGICAL_HEIGHT / containerRect.height);
+            spawnPromotionBurst(lx, ly, nt.tier);
+        }
+    }
+
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
@@ -355,6 +367,19 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     if(typeof updateGauges==='function') updateGauges();
     
     const el = tower.element;
+
+    // [User Request] Trigger Promotion Burst Effect
+    if (typeof spawnPromotionBurst === 'function') {
+        const rect = el.getBoundingClientRect();
+        const container = document.getElementById('game-container');
+        if (container) {
+            const containerRect = container.getBoundingClientRect();
+            const lx = ((rect.left + rect.width / 2) - containerRect.left) * (LOGICAL_WIDTH / containerRect.width);
+            const ly = ((rect.top + rect.height / 2) - containerRect.top) * (LOGICAL_HEIGHT / containerRect.height);
+            spawnPromotionBurst(lx, ly, nt.tier);
+        }
+    }
+
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; 
