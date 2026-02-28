@@ -131,7 +131,7 @@ function gameLoop() {
             });
             
             e.isStealthed = shouldBeStealthed && !revealed;
-            if (e.element) e.element.style.opacity = e.isStealthed ? 0.1 : 1;
+            if (e.element) e.element.style.opacity = e.isStealthed ? 0.4 : 1;
         }
     });
 
@@ -281,7 +281,17 @@ function gameLoop() {
             // [Defensive] Ensure portalEnergy does not become negative
             portalEnergy = Math.max(0, portalEnergy + (enemy.hp + (enemy.isBoss ? 200 : 0)));
             if (enemy.isBoss) bossInstance = null;
-            if (portalEnergy >= maxPortalEnergy) { portalEnergy = maxPortalEnergy; isPaused = true; document.getElementById('game-over-overlay').style.display = 'flex'; return; }
+            
+            if (portalEnergy >= maxPortalEnergy) { 
+                portalEnergy = maxPortalEnergy; 
+                isPaused = true; 
+                
+                const gameOverOverlay = document.getElementById('game-over-overlay');
+                const finalStageText = document.getElementById('final-stage');
+                if (finalStageText) finalStageText.innerText = stage;
+                if (gameOverOverlay) gameOverOverlay.style.display = 'flex'; 
+                return; 
+            }
             updateGauges(); 
             enemy.element.remove(); 
             enemies.splice(i, 1); 
@@ -465,10 +475,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // but some browsers/bundlers might behave differently.
     window.gameContainer = gameContainer;
     window.road = road;
+    
     const startBtn = document.getElementById('start-game-btn');
     const startScreen = document.getElementById('start-screen');
+    const retryBtn = document.getElementById('retry-btn');
+    const restartBtnTop = document.getElementById('restart-btn-top');
+    const unlockModal = document.getElementById('unlock-modal');
+
+    if (retryBtn) {
+        retryBtn.onclick = () => window.location.reload();
+    }
+    if (restartBtnTop) {
+        restartBtnTop.onclick = () => {
+            if (confirm("게임을 재시작하시겠습니까? 현재 진행 상황이 초기화됩니다.")) {
+                window.location.reload();
+            }
+        };
+    }
     
-    // Start thunder sound loop (will be blocked by browser until first click anywhere)
+    // [User Request] Re-enable 'click anywhere to resume' for Boss/Unlock modal
+    if (unlockModal) {
+        unlockModal.addEventListener('click', () => {
+            unlockModal.style.display = 'none';
+            isPaused = false;
+        });
+    }
+    
+    // Start thunder sound loop
     thunderInterval = setInterval(() => {
         if (gameStarted) clearInterval(thunderInterval);
     }, 2000);

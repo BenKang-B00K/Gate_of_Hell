@@ -5735,6 +5735,12 @@ function drawEnemies() {
 
         ctx.save();
         
+        // [User Request] Ensure enemies are not too transparent
+        // Use 0.4 alpha for stealthed units instead of nearly invisible 0.1
+        if (enemy.isStealthed) {
+            ctx.globalAlpha = 0.4;
+        }
+
         // --- 3. Animation: Hit-Flash ---
         // If enemy was hit recently, apply a white filter
         const wasHit = (enemy.lastHitTime && Date.now() - enemy.lastHitTime < 100);

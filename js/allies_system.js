@@ -112,7 +112,14 @@ function updateUnitOverlayButtons(tower) {
             tooltip.className = 'unit-btn-tooltip';
             tooltip.innerText = label;
             tooltip.style.position = 'absolute';
-            tooltip.style.top = '-25px';
+            
+            // [User Request] If it's the sell button (Corrupt), show tooltip BELOW (6 o'clock)
+            if (className === 'sell-btn') {
+                tooltip.style.top = '40px'; 
+            } else {
+                tooltip.style.top = '-25px';
+            }
+            
             tooltip.style.left = '50%';
             tooltip.style.transform = 'translateX(-50%)';
             tooltip.style.backgroundColor = 'rgba(0,0,0,0.8)';
@@ -316,8 +323,14 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
 }
 
 function sellTower(t) {
-    const confirmMsg = `Are you sure you want to dismiss this guardian? You will receive a partial refund of Soul Energy.`;
-    if (!confirm(confirmMsg)) return;
+    // [User Request] Highly themed and ominous warning message
+    const warningTitle = "⚠️ [절대 금기: 영혼의 파기]";
+    const warningBody = "수호자와의 성스러운 계약을 강제로 끊으려 합니까?\n\n" +
+                        "영혼을 심연으로 돌려보내는 대가는 결코 가볍지 않으며, " +
+                        "한번 흩어진 본질은 결코 다시 불러올 수 없습니다.\n\n" +
+                        "정말로 이 수호자를 영원한 어둠 속으로 추방하시겠습니까?";
+
+    if (!confirm(`${warningTitle}\n\n${warningBody}`)) return;
 
     const s = t.slotElement; 
     s.classList.remove('occupied'); 
