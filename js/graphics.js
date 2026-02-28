@@ -6050,63 +6050,75 @@ function drawSelectionHalo() {
     const scaleY = LOGICAL_HEIGHT / containerRect.height;
 
     const rect = selectedUnit.getBoundingClientRect();
+    // Use the actual slot logic center for perfect alignment
     const cx = ((rect.left + rect.width / 2) - containerRect.left) * scaleX;
     const cy = ((rect.top + rect.height / 2) - containerRect.top) * scaleY;
     
+    // Hexagon dimensions slightly larger than the slot
+    const sw = rect.width * scaleX;
+    const sh = rect.height * scaleY;
+    const w = sw + 4;
+    const h = sh + 4;
+    const x = cx - w/2;
+    const y = cy - h/2;
+
     const pulse = (Math.sin(lavaPhase * 4) + 1) / 2; 
-    const size = (rect.width * scaleX) * 0.6; // Adjusted for 360 logical width
     
     ctx.save();
     ctx.imageSmoothingEnabled = true; 
     
+    const drawHexPath = (ctx, x, y, w, h) => {
+        ctx.beginPath();
+        ctx.moveTo(x + w / 2, y);
+        ctx.lineTo(x + w, y + h / 4);
+        ctx.lineTo(x + w, y + 3 * h / 4);
+        ctx.lineTo(x + w / 2, y + h);
+        ctx.lineTo(x, y + 3 * h / 4);
+        ctx.lineTo(x, y + h / 4);
+        ctx.closePath();
+    };
+
     // 1. Divine Outer Glow
-    const gradient = ctx.createRadialGradient(cx, cy, size * 0.8, cx, cy, size * 1.5);
-    gradient.addColorStop(0, `rgba(255, 215, 0, ${0.2 * pulse})`);
-    gradient.addColorStop(1, 'transparent');
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(cx, cy, size * 1.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    // 2. Corner Brackets (Crosshair style)
-    ctx.strokeStyle = '#ffd700';
-    ctx.lineWidth = 2; // Thinner for 360 width
-    const bSize = 8 + pulse * 2; // Smaller for 360 width
-    const offset = size + 2;
-
-    // Top-Left
-    ctx.beginPath();
-    ctx.moveTo(cx - offset, cy - offset + bSize);
-    ctx.lineTo(cx - offset, cy - offset);
-    ctx.lineTo(cx - offset + bSize, cy - offset);
+    ctx.shadowBlur = 20 + 10 * pulse;
+    ctx.shadowColor = '#ffd700';
+    
+    // 2. Main Hexagonal Border
+    ctx.strokeStyle = `rgba(255, 215, 0, ${0.8 + 0.2 * pulse})`;
+    ctx.lineWidth = 3;
+    drawHexPath(ctx, x, y, w, h);
     ctx.stroke();
 
-    // Top-Right
-    ctx.beginPath();
-    ctx.moveTo(cx + offset, cy - offset + bSize);
-    ctx.lineTo(cx + offset, cy - offset);
-    ctx.lineTo(cx + offset - bSize, cy - offset);
-    ctx.stroke();
+    // 3. Rotating Rune/Points at vertices
+    const time = globalAnimTimer;
+    const vertices = [
+        {dx: w/2, dy: 0}, {dx: w, dy: h/4}, {dx: w, dy: 3*h/4},
+        {dx: w/2, dy: h}, {dx: 0, dy: 3*h/4}, {dx: 0, dy: h/4}
+    ];
 
-    // Bottom-Left
-    ctx.beginPath();
-    ctx.moveTo(cx - offset, cy + offset - bSize);
-    ctx.lineTo(cx - offset, cy + offset);
-    ctx.lineTo(cx - offset + bSize, cy + offset);
-    ctx.stroke();
+    vertices.forEach((v, i) => {
+        const ang = time + (i * Math.PI / 3);
+        const vPulse = (Math.sin(time * 2 + i) + 1) / 2;
+        
+        ctx.save();
+        ctx.translate(x + v.dx, y + v.dy);
+        ctx.rotate(ang);
+        
+        // Glowing Diamond/Rune at each vertex
+        ctx.fillStyle = '#fff';
+        ctx.shadowBlur = 15 * vPulse;
+        ctx.shadowColor = '#ffd700';
+        const size = 3 + 2 * vPulse;
+        ctx.fillRect(-size/2, -size/2, size, size);
+        
+        ctx.restore();
+    });
 
-    // Bottom-Right
-    ctx.beginPath();
-    ctx.moveTo(cx + offset, cy + offset - bSize);
-    ctx.lineTo(cx + offset, cy + offset);
-    ctx.lineTo(cx + offset - bSize, cy + offset);
-    ctx.stroke();
-
-    // 3. Central Target Ring
-    ctx.strokeStyle = `rgba(255, 215, 0, ${0.5 + 0.5 * pulse})`;
-    ctx.setLineDash([2, 4]);
-    ctx.beginPath();
-    ctx.arc(cx, cy, size, 0, Math.PI * 2);
+    // 4. Internal Secondary Ring (Dashed)
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 + 0.2 * pulse})`;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    drawHexPath(ctx, x + 6, y + 6, w - 12, h - 12);
     ctx.stroke();
 
     ctx.restore();
