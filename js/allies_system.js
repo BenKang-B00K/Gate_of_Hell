@@ -283,10 +283,24 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
         if (typeof flashResourceError === 'function') flashResourceError('se');
         return; 
     }
-    money-=jobChangeCost; if(typeof updateGauges==='function')updateGauges();
-    
-    const ntStr = availablePaths[Math.floor(Math.random()*availablePaths.length)]; 
+
+    // [User Request] Weighted Random Selection
+    // If a unit already exists (count 1), give it a lower weight.
+    let weightedPool = [];
+    availablePaths.forEach(type => {
+        const count = towers.filter(tw => tw.data.type === type).length;
+        const weight = (count === 0) ? 10 : 2; // 5x higher chance for new types
+        for (let i = 0; i < weight; i++) {
+            weightedPool.push(type);
+        }
+    });
+
+    const ntStr = weightedPool[Math.floor(Math.random() * weightedPool.length)]; 
     const nt = unitTypes.find(x=>x.type===ntStr);
+
+    money -= jobChangeCost; 
+    if(typeof updateGauges === 'function') updateGauges();
+
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;

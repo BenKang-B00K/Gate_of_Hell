@@ -176,11 +176,7 @@ function showUnitInfo(tower) {
     const data = tower.data;
     const finalDmg = Math.round(data.damage * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
     
-    // Tier Naming Convention
-    const tierNames = { 1: '견습', 2: '숙련된', 3: '마스터', 4: '심연' };
-    const tierName = tierNames[data.tier] || '알 수 없음';
-
-    let th = `<div style="color:#ffd700; font-weight:bold; font-size:32px; margin-bottom:4px;">[${tierName}] ${data.name}</div>`;
+    let th = `<div style="color:#ffd700; font-weight:bold; font-size:32px; margin-bottom:4px;">${data.name}</div>`;
     let ih = `<div style="font-size:24px; color:#bbb; margin-bottom:8px;">공격력: ${finalDmg} | 사거리: ${data.range} | 쿨다운: ${(tower.cooldown/1000).toFixed(1)}초</div>`;
     
     let ch = ''; 
