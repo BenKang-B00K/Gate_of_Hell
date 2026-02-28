@@ -53,15 +53,6 @@ function drawLavaRoad() {
         ctx.fillStyle = `rgba(255, 215, 0, ${lightningIntensity * flicker * 0.15})`; ctx.fillRect(roadX, 0, roadWidth, 640);
         lightningIntensity *= 0.95;
     }
-    if (roadSouls.length < 15 && Math.random() < 0.1) {
-        roadSouls.push({ x: roadX + Math.random() * roadWidth, y: 640 + 10, speed: 0.5 + Math.random() * 1.5, opacity: 0.2 + Math.random() * 0.5 });
-    }
-    ctx.fillStyle = '#ffffff';
-    for (let s = roadSouls.length - 1; s >= 0; s--) {
-        const soul = roadSouls[s]; soul.y -= soul.speed; soul.opacity -= 0.001;
-        ctx.globalAlpha = Math.max(0, soul.opacity); ctx.fillRect(Math.floor(soul.x), Math.floor(soul.y), 1, 2);
-        if (soul.y < -10 || soul.opacity <= 0) roadSouls.splice(s, 1);
-    }
     ctx.globalAlpha = 1.0; ctx.restore();
 }
 
