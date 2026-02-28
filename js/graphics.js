@@ -96,12 +96,80 @@ function renderGraphics() {
     updateParticles();
     
     drawLavaRoad();
+    drawSpawningGate(); // New: Rusty Gate and Hellfire
     drawPortal(); // New Vortex Portal
     drawSlots();
     drawUnits();
     drawEnemies(); 
     drawParticles(); 
     drawSelectionHalo();
+}
+
+function drawSpawningGate() {
+    const roadWidth = 114;
+    const cx = LOGICAL_WIDTH / 2;
+    const cy = 40; // Top of the road
+    const time = globalAnimTimer;
+
+    ctx.save();
+
+    // 1. Raging Hellfire (Background Glow)
+    const firePulse = (Math.sin(time * 3) + 1) / 2;
+    const fireGrad = ctx.createRadialGradient(cx, cy - 20, 0, cx, cy - 20, 80);
+    fireGrad.addColorStop(0, `rgba(255, 69, 0, ${0.6 + firePulse * 0.4})`); // Orange-Red
+    fireGrad.addColorStop(0.5, `rgba(255, 165, 0, ${0.3 + firePulse * 0.2})`); // Orange
+    fireGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = fireGrad;
+    ctx.fillRect(cx - 100, cy - 60, 200, 120);
+
+    // 2. Rusty Iron Gates
+    const gateW = 50;
+    const gateH = 70;
+    const rustColor = '#3e2723'; // Dark brown base
+    const ironColor = '#212121'; // Dark metal
+    
+    // Left Gate
+    ctx.fillStyle = ironColor;
+    ctx.fillRect(cx - gateW - 2, cy - 30, gateW, gateH);
+    // Rust Texture
+    ctx.fillStyle = rustColor;
+    for(let i=0; i<10; i++) {
+        const rx = cx - gateW + (Math.sin(i * 99) * 0.5 + 0.5) * gateW;
+        const ry = cy - 30 + (Math.cos(i * 88) * 0.5 + 0.5) * gateH;
+        ctx.fillRect(Math.floor(rx), Math.floor(ry), 4, 4);
+    }
+
+    // Right Gate
+    ctx.fillStyle = ironColor;
+    ctx.fillRect(cx + 2, cy - 30, gateW, gateH);
+    // Rust Texture
+    for(let i=0; i<10; i++) {
+        const rx = cx + 2 + (Math.sin(i * 77) * 0.5 + 0.5) * gateW;
+        const ry = cy - 30 + (Math.cos(i * 66) * 0.5 + 0.5) * gateH;
+        ctx.fillRect(Math.floor(rx), Math.floor(ry), 4, 4);
+    }
+
+    // 3. Occult Runes (Glowing Symbols on Frame)
+    const runeAlpha = (Math.sin(time * 2) + 1) / 2;
+    ctx.fillStyle = `rgba(255, 0, 0, ${0.4 + runeAlpha * 0.6})`;
+    ctx.shadowBlur = 10 * runeAlpha;
+    ctx.shadowColor = '#f00';
+    
+    // Simple Runes around the gate
+    for(let r=0; r<6; r++) {
+        const rx = cx + (r % 2 === 0 ? -60 : 60);
+        const ry = cy - 20 + (Math.floor(r/2) * 25);
+        ctx.font = 'bold 12px serif';
+        ctx.fillText('⛧', rx, ry);
+    }
+    ctx.shadowBlur = 0;
+
+    // 4. Fire Licks (Moving upwards)
+    if (Math.random() < 0.4) {
+        spawnParticles(cx + (Math.random() - 0.5) * 100, cy - 10, '#ff4500', 1);
+    }
+
+    ctx.restore();
 }
 
 function drawPortal() {
