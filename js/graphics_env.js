@@ -54,7 +54,7 @@ function drawLavaRoad() {
     const time = globalAnimTimer;
     const roadWidth = 114; const roadX = (360 - roadWidth) / 2;
     ctx.save();
-    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(roadX, 0, roadWidth, 640);
+    // Removed opaque black background to unify with the global background image
     if (lightningTimer <= 0) {
         if (Math.random() < 0.01) { lightningTimer = 10 + Math.random() * 20; lightningIntensity = 0.3 + Math.random() * 0.4; }
     } else {
@@ -90,7 +90,7 @@ function drawSpawningGate() {
  * Enhanced Portal Rendering with high-fidelity swirling and status-based effects
  */
 function drawPortal() {
-    const cx = 180; const cy = 450; const time = globalAnimTimer;
+    const cx = 180; const cy = 410; const time = globalAnimTimer;
     const energyRatio = (typeof portalEnergy !== 'undefined') ? portalEnergy / maxPortalEnergy : 0;
     
     ctx.save();
@@ -205,7 +205,7 @@ function drawSlots() {
         ctx.shadowBlur = 15 + 8 * pulse; ctx.shadowColor = 'rgba(255, 255, 255, 0.55)';
         ctx.beginPath(); ctx.moveTo(x + w / 2, y); ctx.lineTo(x + w, y + h / 4); ctx.lineTo(x + w, y + 3 * h / 4);
         ctx.lineTo(x + w / 2, y + h); ctx.lineTo(x, y + 3 * h / 4); ctx.lineTo(x, y + h / 4); ctx.closePath();
-        ctx.fillStyle = '#333'; ctx.fill();
+        ctx.fillStyle = 'rgba(255, 215, 0, 0.05)'; ctx.fill();
         ctx.strokeStyle = `rgba(255, 215, 0, ${0.7 + 0.3 * pulse})`; ctx.lineWidth = 1.5; ctx.stroke();
         ctx.restore();
     });

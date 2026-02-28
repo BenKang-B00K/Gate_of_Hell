@@ -129,17 +129,45 @@ function resetGameState() {
     bossSpawned = false;
     bossInstance = null;
     lastSpawnTime = 0;
+    isStageStarting = false;
+    
+    // Reset Stats & Costs
+    window.towerCost = 30;
+    damageMultiplier = 1.0;
+    critChance = 0.05;
+    critMultiplier = 2.0;
+    treasureChance = 0.01;
+    
+    // Reset Time Effects
+    isTimeFrozen = false;
+    timeFreezeEndTime = 0;
     
     // UI Reset
     updateGauges();
     updateStageInfo();
     const fo = document.getElementById('frozen-overlay'); if (fo) fo.style.opacity = 0;
+    
+    // Reset Sacred Tablet (Unit Info)
+    const d = document.getElementById('unit-info');
+    if (d && typeof startInfoResetTimer === 'function') {
+        // Force immediate reset of the info panel
+        d.innerHTML = `
+            <div class="info-default-text" style="font-size:36px; opacity:0.6;">GATE OF HELL</div>
+            <div style="color:#555; font-size:24px; margin-top:10px; letter-spacing:8px; font-weight:bold;">SACRED TABLET</div>
+            <div style="width:60%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:15px 0;"></div>
+            <div style="color:#444; font-size:18px; font-style:italic;">"영혼을 정화하는 성스러운 기록이 이곳에 새겨집니다."</div>
+        `;
+    }
 }
 
 let gameStarted = false;
 
 function gameLoop() {
+    // Render custom canvas graphics (Road effects, etc.) - ALWAYS render for atmosphere
+    if (typeof renderGraphics === 'function') renderGraphics();
+
     if (!gameStarted || isPaused) { requestAnimationFrame(gameLoop); return; }
+    
     const roadRect = road.getBoundingClientRect();
     const targetY = roadRect.height + 10; 
     gameWidth = gameContainer.offsetWidth;

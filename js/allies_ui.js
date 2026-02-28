@@ -37,14 +37,26 @@ function createSlots(containerId, count) {
     }
 }
 
+let listenersAttached = false;
+
 /**
  * Main Initialization for Ally System UI
  */
 function initAllies() {
     // 1. Setup Slots (7x3 grid = 21 slots per side)
+    // Clear old slots from DOM if they exist to prevent memory leaks/ID clashes
+    document.getElementById('left-slots').innerHTML = '';
+    document.getElementById('right-slots').innerHTML = '';
+    
     slots.length = 0; 
     createSlots('left-slots', 21); 
     createSlots('right-slots', 21);
+
+    if (listenersAttached) {
+        updateGauges();
+        updateSummonButtonState();
+        return;
+    }
 
     // 2. Summon Button Logic
     const tc = document.getElementById('tower-card');
@@ -62,7 +74,6 @@ function initAllies() {
             const finalTowerCost = Math.max(5, towerCost - reduction);
             if(money < finalTowerCost) return; 
             
-            // Random placement logic
             const vs = slots.filter(c => !c.classList.contains('occupied'));
             if(vs.length > 0) {
                 summonTower(vs[Math.floor(Math.random()*vs.length)]);
@@ -132,6 +143,7 @@ function initAllies() {
         document.body.appendChild(warning);
     }
 
+    listenersAttached = true;
     updateGauges();
     updateSummonButtonState();
 }

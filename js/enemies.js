@@ -76,17 +76,25 @@ function initStage() {
     isStageStarting = true;
     let countdown = (stage === 1) ? 5 : 3;
     const timerElement = document.getElementById('start-timer');
-    timerElement.style.display = 'block'; timerElement.innerText = countdown;
+    if (timerElement) {
+        timerElement.style.display = 'block'; 
+        timerElement.innerText = countdown;
+    }
     const timerInterval = setInterval(() => {
         countdown--;
-        if (countdown > 0) timerElement.innerText = countdown;
-        else {
-            clearInterval(timerInterval); timerElement.innerText = "악령들이 몰려옵니다!";
-            if (typeof towers !== 'undefined') {
-                const kings = towers.filter(t => t.data.type === 'forsaken_king');
-                if (kings.length > 0) { for(let i=0; i<3; i++) spawnFriendlyGhost(); }
+        if (timerElement) {
+            if (countdown > 0) timerElement.innerText = countdown;
+            else {
+                clearInterval(timerInterval); timerElement.innerText = "악령들이 몰려옵니다!";
+                if (typeof towers !== 'undefined') {
+                    const kings = towers.filter(t => t.data.type === 'forsaken_king');
+                    if (kings.length > 0) { for(let i=0; i<3; i++) spawnFriendlyGhost(); }
+                }
+                setTimeout(() => { timerElement.style.display = 'none'; isStageStarting = false; }, 1000);
             }
-            setTimeout(() => { timerElement.style.display = 'none'; isStageStarting = false; }, 1000);
+        } else {
+            clearInterval(timerInterval);
+            isStageStarting = false;
         }
     }, 1000);
 }
