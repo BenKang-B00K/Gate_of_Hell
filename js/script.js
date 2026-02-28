@@ -558,6 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const startBtn = document.getElementById('start-game-btn');
     const startScreen = document.getElementById('start-screen');
+    const unlockModal = document.getElementById('unlock-modal');
     const retryBtn = document.getElementById('retry-btn');
     if (retryBtn) {
         retryBtn.onclick = () => {
