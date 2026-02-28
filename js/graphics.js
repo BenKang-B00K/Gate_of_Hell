@@ -196,16 +196,16 @@ function renderGraphics() {
 
 function drawSpawningGate() {
     const cx = LOGICAL_WIDTH / 2;
-    const cy = -30; // [User Request] Moved higher
+    const cy = -55; // [User Request] Moved 25px higher from -30
     const time = globalAnimTimer;
     const roadWidth = 114;
 
     ctx.save();
 
     // 1. Raging Hellfire (Background Glow)
-    // [User Request] Set radius to 105.5px
+    // [User Request] Pulsing radius between 95.5px and 102.5px
     const firePulse = (Math.sin(time * 3) + 1) / 2;
-    const hellfireRadius = 105.5; 
+    const hellfireRadius = 95.5 + (firePulse * 7); // 95.5 to 102.5
     
     const fireGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, hellfireRadius * 1.3);
     fireGrad.addColorStop(0, `rgba(255, 69, 0, ${0.7 + firePulse * 0.3})`); 
