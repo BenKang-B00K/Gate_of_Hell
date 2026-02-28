@@ -40,6 +40,10 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
         const hpPercent = Math.max(0, (target.hp / target.maxHp) * 100);
         target.hpFill.style.width = `${hpPercent}%`;
     }
+
+    // [User Request] Enhanced Damage Text
+    createDamageText(target, amount, isCrit);
+
     if (!isShared && target.linkId && target.linkEndTime > Date.now()) {
         const linkedEnemies = enemies.filter(e => e !== target && e.linkId === target.linkId && e.hp > 0);
         const sharedAmount = amount * 0.5;
@@ -469,6 +473,37 @@ function shoot(tower, target) {
 
         applyDamage(target, tower.data.damage * finalDamageMultiplier, tower);
     }, 200);
+}
+
+function createDamageText(target, amount, isCrit) {
+    if (!target || !target.element) return;
+    const rect = target.element.getBoundingClientRect();
+    const gameRect = gameContainer.getBoundingClientRect();
+    
+    const x = (rect.left + rect.width / 2) - gameRect.left;
+    const y = (rect.top + rect.height / 2) - gameRect.top;
+    
+    const div = document.createElement('div');
+    div.className = `damage-text${isCrit ? ' crit' : ''}`;
+    div.style.left = `${x + (Math.random() * 20 - 10)}px`;
+    div.style.top = `${y}px`;
+    div.innerText = Math.round(amount);
+    
+    gameContainer.appendChild(div);
+    setTimeout(() => div.remove(), 800);
+    
+    if (isCrit) createStatusEffectText(x, y, "CRITICAL");
+}
+
+function createStatusEffectText(x, y, text, type = '') {
+    const div = document.createElement('div');
+    div.className = `status-effect-text ${type.toLowerCase()}`;
+    div.style.left = `${x}px`;
+    div.style.top = `${y - 30}px`;
+    div.innerText = text;
+    
+    gameContainer.appendChild(div);
+    setTimeout(() => div.remove(), 1000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

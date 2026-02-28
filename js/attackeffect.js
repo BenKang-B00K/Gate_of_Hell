@@ -82,6 +82,7 @@ function createTransmuterEffect(x, y, container) {
     effect.innerText = '⚛️';
     container.appendChild(effect);
     setTimeout(() => effect.remove(), 800);
+    if (typeof createStatusEffectText === 'function') createStatusEffectText(x, y, "TRANS-MUTED", "purified");
 }
 
 function createOracleEffect(x, y, container) {
@@ -290,6 +291,7 @@ function createVajraEffect(x, y, container) {
     effect.innerText = '🔱';
     container.appendChild(effect);
     setTimeout(() => effect.remove(), 400);
+    if (typeof createStatusEffectText === 'function') createStatusEffectText(x, y, "STUN", "stun");
 }
 
 function createSaintEffect(x, y, container) {
@@ -299,6 +301,7 @@ function createSaintEffect(x, y, container) {
     effect.innerText = '🔔';
     container.appendChild(effect);
     setTimeout(() => effect.remove(), 800);
+    if (typeof createStatusEffectText === 'function') createStatusEffectText(x, y, "PURIFIED", "purified");
 }
 
 function createSniperEffect(x, y, container) {
