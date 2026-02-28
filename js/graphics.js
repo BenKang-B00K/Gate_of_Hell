@@ -619,8 +619,8 @@ function drawSlots() {
         const sw = rect.width * scaleX;
         const sh = rect.height * scaleY;
         
-        // Use a slightly smaller drawing area to show the gaps between interlocking hexagons
-        const padding = 1.5; 
+        // Minor padding adjustment for straight grid
+        const padding = 1.0; 
         const x = sx + padding;
         const y = sy + padding;
         const w = sw - padding * 2;
