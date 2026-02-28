@@ -116,6 +116,23 @@ class MainScene extends Phaser.Scene {
         this.setupInteractions();
         this.initWaveState();
 
+        // [QA Fix] Start Screen Logic
+        const startBtn = document.getElementById('start-game-btn');
+        const startScreen = document.getElementById('start-screen');
+        
+        // Ensure registry has money for UI sync if needed
+        if (!this.registry.has('money')) this.registry.set('money', 150);
+
+        this.scene.pause(); // Initial Pause
+        
+        if (startBtn) {
+            startBtn.onclick = () => {
+                if (startScreen) startScreen.style.display = 'none';
+                this.scene.resume();
+                console.log("Game Started via Button");
+            };
+        }
+
         this.time.addEvent({
             delay: 2000,
             callback: this.spawnWave,
@@ -194,8 +211,8 @@ class MainScene extends Phaser.Scene {
 
         this.input.on('drag', (ptr, obj, dragX, dragY) => { 
             obj.x = dragX; 
-            obj.y = dy; 
-            if (obj.altarEffect) obj.altarEffect.setPosition(dx, dy);
+            obj.y = dragY; 
+            if (obj.altarEffect) obj.altarEffect.setPosition(dragX, dragY);
         });
         
         this.input.on('drop', (ptr, obj, zone) => {
