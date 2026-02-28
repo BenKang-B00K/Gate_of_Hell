@@ -57,69 +57,66 @@ const lightPillars = []; // {x, y, life, maxLife}
 const promotionBursts = []; // {x, y, life, tier}
 const stageFlashes = []; // {life, text}
 const banishEffects = []; // {x, y, life}
+const purgeEffects = []; // {x, y, life}
 let globalAnimTimer = 0;
 
-function spawnBanishEffect(lx, ly) {
-    banishEffects.push({
+function spawnPurgeEffect(lx, ly) {
+    purgeEffects.push({
         x: lx,
         y: ly,
         life: 1.0
     });
     
-    // Spawn dark particles
-    spawnParticles(lx, ly, '#4A148C', 20);
-    spawnParticles(lx, ly, '#000', 10);
+    // Spawn holy white particles
+    spawnParticles(lx, ly, '#fff', 40);
+    spawnParticles(lx, ly, '#ffd700', 20);
 }
 
-function updateBanishEffects() {
-    for (let i = banishEffects.length - 1; i >= 0; i--) {
-        const be = banishEffects[i];
-        be.life -= 0.02;
-        if (be.life <= 0) banishEffects.splice(i, 1);
+function updatePurgeEffects() {
+    for (let i = purgeEffects.length - 1; i >= 0; i--) {
+        const pe = purgeEffects[i];
+        pe.life -= 0.015; // Slow majestic expansion
+        if (pe.life <= 0) purgeEffects.splice(i, 1);
     }
 }
 
-function drawBanishEffects() {
-    banishEffects.forEach(be => {
-        const alpha = be.life;
-        ctx.save();
-        ctx.translate(be.x, be.y);
+function drawPurgeEffects() {
+    purgeEffects.forEach(pe => {
+        const alpha = pe.life;
+        const radius = (1.0 - alpha) * 800; // Expands to cover most of the screen
         
-        // 1. Spreading Abyssal Cracks
-        const crackSize = (1.0 - alpha) * 80;
-        ctx.strokeStyle = `rgba(106, 27, 154, ${alpha})`;
-        ctx.lineWidth = 2;
-        for(let i=0; i<6; i++) {
-            const ang = (i / 6) * Math.PI * 2;
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(Math.cos(ang) * crackSize, Math.sin(ang) * crackSize);
-            // Zigzag crack
-            ctx.lineTo(Math.cos(ang + 0.2) * crackSize * 1.2, Math.sin(ang + 0.2) * crackSize * 1.2);
-            ctx.stroke();
-        }
-
-        // 2. Void Core (The Pit)
-        const coreSize = 40 * (1.0 - alpha);
-        const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, coreSize);
-        grad.addColorStop(0, '#000');
-        grad.addColorStop(0.7, `rgba(49, 27, 146, ${alpha})`);
+        ctx.save();
+        ctx.translate(pe.x, pe.y);
+        
+        // 1. Massive Primary Shockwave
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+        ctx.lineWidth = 15 * alpha;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // 2. Secondary Golden Edge
+        ctx.strokeStyle = `rgba(255, 215, 0, ${alpha * 0.5})`;
+        ctx.lineWidth = 5 * alpha;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius - 10, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // 3. Inner Divine Glow
+        const grad = ctx.createRadialGradient(0, 0, radius * 0.8, 0, 0, radius);
+        grad.addColorStop(0, 'transparent');
+        grad.addColorStop(0.5, `rgba(255, 255, 255, ${alpha * 0.2})`);
         grad.addColorStop(1, 'transparent');
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(0, 0, coreSize, 0, Math.PI * 2);
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
         ctx.fill();
-
-        // 3. Rising Dark Smoke
-        ctx.globalAlpha = alpha * 0.5;
-        for(let j=0; j<3; j++) {
-            const sPhase = (globalAnimTimer * 5 + j) % 40;
-            const sx = Math.sin(globalAnimTimer + j) * 10;
-            const sy = -sPhase;
-            ctx.fillStyle = '#1a1a1a';
-            ctx.beginPath();
-            ctx.arc(sx, sy, 10 * (1 - sPhase/40), 0, Math.PI * 2);
-            ctx.fill();
+        
+        // 4. Screen-wide flash at the start
+        if (alpha > 0.9) {
+            const flashAlpha = (alpha - 0.9) * 10;
+            ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha * 0.5})`;
+            ctx.fillRect(-pe.x, -pe.y, LOGICAL_WIDTH, LOGICAL_HEIGHT);
         }
         
         ctx.restore();
@@ -440,6 +437,7 @@ function renderGraphics() {
     updatePromotionBursts();
     updateStageFlashes();
     updateBanishEffects();
+    updatePurgeEffects();
     
     drawLavaRoad();
     drawAtmosphericEffects(); 
@@ -452,6 +450,7 @@ function renderGraphics() {
     drawLightPillars();
     drawPromotionBursts();
     drawBanishEffects();
+    drawPurgeEffects();
     drawStageFlashes();
     drawSelectionHalo();
 }

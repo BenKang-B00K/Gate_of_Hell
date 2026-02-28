@@ -262,7 +262,24 @@ function summonTower(targetSlot) {
 
 function purgePortal() {
     const pc = 800; const pa = portalEnergy * 0.5;
-    if(money>=pc && portalEnergy>0) { money-=pc; portalEnergy=Math.max(0,portalEnergy-pa); if(typeof updateGauges==='function')updateGauges(); }
+    if(money>=pc && portalEnergy>0) { 
+        money-=pc; 
+        portalEnergy=Math.max(0,portalEnergy-pa); 
+        if(typeof updateGauges==='function')updateGauges(); 
+
+        // [User Request] Trigger Purge Effect
+        if (typeof spawnPurgeEffect === 'function') {
+            const container = document.getElementById('game-container');
+            const portal = document.getElementById('portal');
+            if (container && portal) {
+                const containerRect = container.getBoundingClientRect();
+                const portalRect = portal.getBoundingClientRect();
+                const lx = ((portalRect.left + portalRect.width / 2) - containerRect.left) * (LOGICAL_WIDTH / containerRect.width);
+                const ly = ((portalRect.top + portalRect.height / 2) - containerRect.top) * (LOGICAL_HEIGHT / containerRect.height);
+                spawnPurgeEffect(lx, ly);
+            }
+        }
+    }
     else if(money < pc && typeof flashResourceError === 'function') flashResourceError('se');
 }
 
