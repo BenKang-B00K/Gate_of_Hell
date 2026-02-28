@@ -43,27 +43,33 @@
 #corrupt-btn-variant {
     position: absolute;
     /* Logical Coords: x=100 (centered), y=540 (bottom safe zone) */
-    left: 100px; 
+    left: 80px;  /* Slightly wider adjustment */
     top: 540px; 
-    /* Reduced Size: w=160 (half), h=24 */
-    width: 160px; 
-    height: 24px;
+    /* Increased Size for better interaction: w=200, h=36 */
+    width: 200px; 
+    height: 36px;
     background: #000;
-    border: 2px solid #500;
+    border: 3px solid #500;
     color: #f55;
-    font-size: 14px; /* Smaller pixel font */
+    font-size: 18px; /* Slightly larger for easier reading */
     text-align: center;
-    line-height: 20px;
+    line-height: 30px;
     cursor: pointer;
     text-shadow: 0 0 2px #f00;
     font-weight: bold;
     image-rendering: pixelated;
     animation: curruptPulsate 1s infinite alternate;
+    border-radius: 4px;
+    transition: all 0.2s;
 }
 #corrupt-btn-variant:hover {
     background: #300;
     border-color: #f00;
-    text-shadow: 0 0 5px #f00;
+    text-shadow: 0 0 8px #f00;
+    transform: scale(1.05);
+}
+#corrupt-btn-variant:active {
+    transform: scale(0.95);
 }
 #corrupt-btn-variant.locked {
     opacity: 0.4;
@@ -96,10 +102,28 @@
     animation: corruptShake 0.1s infinite;
 }
 
+/* --- Promotion Button Enhancement (Unit Info Panel) --- */
+.info-promo-btn {
+    padding: 15px 30px !important;
+    font-size: 45px !important;
+    min-width: 80px;
+    min-height: 80px;
+    border-width: 4px !important;
+    image-rendering: pixelated;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+.info-promo-btn:hover {
+    transform: scale(1.15) !important;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+}
+.info-promo-btn:active {
+    transform: scale(0.9) !important;
+}
+
 /* --- Corruption Animations --- */
 @keyframes curruptPulsate {
     0% { box-shadow: 0 0 0px #500; }
-    100% { box-shadow: 0 0 10px #f00, 0 0 20px #500; }
+    100% { box-shadow: 0 0 15px #f00, 0 0 30px #500; }
 }
 @keyframes corruptShake {
     0% { transform: translate(1px, 1px); }
