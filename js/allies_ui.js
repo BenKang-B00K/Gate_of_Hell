@@ -190,14 +190,17 @@ function showUnitInfo(tower) {
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Attack')">⚔️</button>
                     <span style="font-size:14px; color:#ff4500;">공격형</span>
+                    <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Support')">🪄</button>
                     <span style="font-size:14px; color:#00e5ff;">지원형</span>
+                    <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange(null, 'Special')">💠</button>
                     <span style="font-size:14px; color:#ffd700;">특수형</span>
+                    <span style="font-size:11px; color:#888;">(200 SE)</span>
                 </div>
             </div>
         `;
@@ -206,10 +209,12 @@ function showUnitInfo(tower) {
         data.upgrades.forEach((u, i) => {
             const ud = unitTypes.find(x => x.type === u);
             if(ud) {
+                const cost = (ud.tier === 4) ? 800 : 400;
                 ch += `
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <button class="info-promo-btn" onclick="performMasterJobChange(null, '${u}')">${ud.icon}</button>
                         <span style="font-size:14px; color:#aaa; max-width:80px; text-align:center;">${ud.name}</span>
+                        <span style="font-size:11px; color:#888;">(${cost} SE)</span>
                     </div>
                 `;
             }
