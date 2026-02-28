@@ -99,49 +99,55 @@ function updateUnitOverlayButtons(tower) {
 
     const data = tower.data;
 
+    // Helper to create buttons with hover labels
+    const createBtn = (className, icon, label, onClick) => {
+        const btn = document.createElement('div');
+        btn.className = `unit-overlay-btn ${className}`;
+        btn.innerHTML = icon;
+        btn.onclick = onClick;
+
+        // Hover Label logic
+        btn.addEventListener('mouseenter', (e) => {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'unit-btn-tooltip';
+            tooltip.innerText = label;
+            tooltip.style.position = 'absolute';
+            tooltip.style.top = '-25px';
+            tooltip.style.left = '50%';
+            tooltip.style.transform = 'translateX(-50%)';
+            tooltip.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            tooltip.style.color = '#fff';
+            tooltip.style.padding = '2px 8px';
+            tooltip.style.borderRadius = '4px';
+            tooltip.style.fontSize = '12px';
+            tooltip.style.whiteSpace = 'nowrap';
+            tooltip.style.zIndex = '100';
+            tooltip.id = 'btn-tooltip-temp';
+            btn.appendChild(tooltip);
+        });
+        btn.addEventListener('mouseleave', () => {
+            const t = btn.querySelector('#btn-tooltip-temp');
+            if (t) t.remove();
+        });
+
+        return btn;
+    };
+
     // 1. Promotion Buttons (10, 12, 2 o'clock)
     if (data.type === 'apprentice') {
-        const btn10 = document.createElement('div');
-        btn10.className = 'unit-overlay-btn promote-10';
-        btn10.innerHTML = '⚔️';
-        btn10.title = '전직: 공격형 (200 SE)';
-        btn10.onclick = (e) => { e.stopPropagation(); performJobChange(el, 'Attack'); };
-        el.appendChild(btn10);
-
-        const btn12 = document.createElement('div');
-        btn12.className = 'unit-overlay-btn promote-12';
-        btn12.innerHTML = '🪄';
-        btn12.title = '전직: 지원형 (200 SE)';
-        btn12.onclick = (e) => { e.stopPropagation(); performJobChange(el, 'Support'); };
-        el.appendChild(btn12);
-
-        const btn2 = document.createElement('div');
-        btn2.className = 'unit-overlay-btn promote-2';
-        btn2.innerHTML = '💠';
-        btn2.title = '전직: 특수형 (200 SE)';
-        btn2.onclick = (e) => { e.stopPropagation(); performJobChange(el, 'Special'); };
-        el.appendChild(btn2);
+        el.appendChild(createBtn('promote-10', '⚔️', 'Attack', (e) => { e.stopPropagation(); performJobChange(el, 'Attack'); }));
+        el.appendChild(createBtn('promote-12', '🪄', 'Support', (e) => { e.stopPropagation(); performJobChange(el, 'Support'); }));
+        el.appendChild(createBtn('promote-2', '💠', 'Special', (e) => { e.stopPropagation(); performJobChange(el, 'Special'); }));
     } else if (data.upgrades && data.upgrades.length > 0) {
-        // Multi-path for Masters
         data.upgrades.forEach((u, i) => {
             const ud = unitTypes.find(x => x.type === u);
             if (!ud) return;
-            const btn = document.createElement('div');
-            btn.className = `unit-overlay-btn ${i === 0 ? 'promote-10' : 'promote-2'}`;
-            btn.innerHTML = ud.icon;
-            btn.title = `진화: ${ud.name} (${ud.tier === 4 ? 800 : 400} SE)`;
-            btn.onclick = (e) => { e.stopPropagation(); performMasterJobChange(tower, u); };
-            el.appendChild(btn);
+            el.appendChild(createBtn(i === 0 ? 'promote-10' : 'promote-2', ud.icon, ud.name, (e) => { e.stopPropagation(); performMasterJobChange(tower, u); }));
         });
     }
 
     // 2. Sell Button (6 o'clock)
-    const sellBtn = document.createElement('div');
-    sellBtn.className = 'unit-overlay-btn sell-btn';
-    sellBtn.innerHTML = '💰';
-    sellBtn.title = '해임 (SE 환급)';
-    sellBtn.onclick = (e) => { e.stopPropagation(); sellTower(tower); };
-    el.appendChild(sellBtn);
+    el.appendChild(createBtn('sell-btn', '💀', 'Corrupt', (e) => { e.stopPropagation(); sellTower(tower); }));
 }
 
 function summonTower(targetSlot) {
@@ -336,3 +342,13 @@ function sellTower(t) {
     const ai = document.getElementById('aura-indicator');
     if (ai) ai.remove();
 }
+
+// Global Exports for UI interaction
+window.performJobChange = performJobChange;
+window.performMasterJobChange = performMasterJobChange;
+window.sellTower = sellTower;
+window.summonTower = summonTower;
+window.executeMove = executeMove;
+window.showRangeIndicator = showRangeIndicator;
+window.showAuraIndicator = showAuraIndicator;
+

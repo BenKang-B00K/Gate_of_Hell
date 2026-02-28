@@ -237,7 +237,7 @@ function updateEvolutionTree(exorcistType) {
         if(!corruptBtnElement) {
             corruptBtnElement = document.createElement('div');
             corruptBtnElement.id = 'corrupt-btn-variant';
-            corruptBtnElement.innerText = '타락 의식 시작';
+            corruptBtnElement.innerHTML = '💀 타락 의식 시작 💀';
             corruptBtnElement.addEventListener('click', () => attemptCorruption(exorcistType, targetResult));
             document.body.appendChild(corruptBtnElement);
         }

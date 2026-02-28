@@ -81,14 +81,14 @@
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* --- Unit Info Promotion Buttons (Enlarged) --- */
+/* --- Unit Info Promotion Buttons (Balanced Size) --- */
 .info-promo-btn {
-    padding: 15px 25px !important; 
-    font-size: 64px !important;    /* Increased for better interaction */
-    min-width: 100px;              /* Increased for better interaction */
-    min-height: 100px;             /* Increased for better interaction */
-    border: 4px solid #fff !important; 
-    border-radius: 12px;           
+    padding: 10px 20px !important; 
+    font-size: 52px !important;    /* Slightly reduced from 64px */
+    min-width: 80px;               /* Slightly reduced from 100px */
+    min-height: 80px;              /* Slightly reduced from 100px */
+    border: 3px solid #fff !important; 
+    border-radius: 10px;           
     cursor: pointer;
     image-rendering: pixelated;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -96,7 +96,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 5px;
+    margin: 4px;
 }
 
 .info-promo-btn:hover {
@@ -145,9 +145,22 @@
 .promote-12 { top: -32px; left: calc(50% - 18px); border-color: #00e5ff; color: #00e5ff; }
 .promote-2 { top: -20px; right: -20px; border-color: #ffd700; color: #ffd700; }
 .promote-btn-right { top: -24px; right: -24px; border-color: #ffd700; color: #ffd700; }
-.sell-btn { bottom: -24px; left: calc(50% - 18px); border-color: #ff0000; color: #ff0000; background: rgba(139, 0, 0, 0.9); box-shadow: 0 0 10px #ff0000; }
+.sell-btn { 
+    bottom: -24px; 
+    left: calc(50% - 18px); 
+    border-color: #ff0000; 
+    color: #ff0000; /* Make the skull red */
+    background: rgba(20, 0, 0, 0.95); 
+    box-shadow: 0 0 10px #ff0000; 
+    font-weight: bold;
+}
 
-.sell-btn:hover { background: #ff0000; color: #fff; box-shadow: 0 0 20px #ff0000, 0 0 40px #ff4500; transform: scale(1.2); }
+.sell-btn:hover { 
+    background: #ff0000; 
+    color: #000; /* Black skull on red background on hover */
+    box-shadow: 0 0 20px #ff0000, 0 0 40px #ff4500; 
+    transform: scale(1.2); 
+}
 
 /* Cooldown */
 .cooldown-overlay {
