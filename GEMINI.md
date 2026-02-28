@@ -33,3 +33,6 @@
 
 - **Safe Zone Adherence:**
     - Keep all critical interactive elements within a **10px horizontal / 20px vertical** safe zone to ensure compatibility across various mobile aspect ratios.
+
+
+너는 오랜 경험을 가진 시니어 개발자야. 그래서 미리 계획을 하고 굉장히 효율적으로 일할수 있지.

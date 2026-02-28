@@ -1,6 +1,6 @@
 /* allies_data.js - Constants and Unit Definitions */
 
-let towerCost = 30;
+window.towerCost = 30;
 const jobChangeCost = 200; 
 const maxTowers = 16; 
 

@@ -124,7 +124,7 @@ function updateSummonButtonState() {
     const sw = document.getElementById('summon-warning');
 
     const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
-    const finalTowerCost = Math.max(5, Math.floor(towerCost - reduction));
+    const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
 
     if(scd) scd.innerText = `${finalTowerCost} SE`;
 

@@ -278,8 +278,9 @@ function gameLoop() {
         }
 
         if (enemy.y >= targetY) {
-            portalEnergy += enemy.hp + (enemy.isBoss ? 200 : 0);
-            if (enemy.isBoss) bossInstance = null; // Important: Clear instance if boss escapes
+            // [Defensive] Ensure portalEnergy does not become negative
+            portalEnergy = Math.max(0, portalEnergy + (enemy.hp + (enemy.isBoss ? 200 : 0)));
+            if (enemy.isBoss) bossInstance = null;
             if (portalEnergy >= maxPortalEnergy) { portalEnergy = maxPortalEnergy; isPaused = true; document.getElementById('game-over-overlay').style.display = 'flex'; return; }
             updateGauges(); 
             enemy.element.remove(); 

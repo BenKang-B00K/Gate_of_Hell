@@ -33,7 +33,7 @@ function summonTower(targetSlot) {
 
     // 2. Defensive Relic Bonus check & Cost calculation
     const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
-    const finalTowerCost = Math.max(5, Math.floor(towerCost - reduction));
+    const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
 
     // 3. Pre-summon validation (Resources & Limits)
     if (money < finalTowerCost || towers.length >= maxTowers) {
@@ -107,7 +107,7 @@ function summonTower(targetSlot) {
     towers.push(tower);
 
     // 8. Post-summon updates & synchronization
-    towerCost += 5;
+    window.towerCost += 5;
     updateUnitOverlayButtons(tower);
     updateSummonButtonState();
 }
