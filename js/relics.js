@@ -6,7 +6,7 @@ const relicsData = {
         effect: "모든 아군의 피해량이 중첩당 +1% 증가합니다.", 
         lore: "수천 명의 잊혀진 영혼들의 비명으로 진동하는 가면입니다.", 
         bonus: { type: 'damage', value: 0.01 },
-        maxStack: 20, dropSource: 'basic'
+        maxStack: 20, dropSource: 'specter'
     },
     'spectral_lantern': { 
         name: "망령 등불", icon: '🏮', 
@@ -106,28 +106,28 @@ const relicsData = {
         effect: "모든 유닛의 공격 속도가 15% 증가합니다.", 
         lore: "심연의 심장에서 떨어져 나온 조각입니다. 주변의 시간을 가속시키는 힘이 있습니다.", 
         bonus: { type: 'cooldown', value: 0.15 },
-        maxStack: 1, dropSource: 'armoured'
+        maxStack: 1, dropSource: 'demon'
     },
     'pitch_black_gem': { 
         name: "칠흑의 보석", icon: '💎', 
         effect: "치명타 피해량이 50% 증가합니다.", 
         lore: "모든 빛을 흡수하는 보석입니다. 적의 가장 깊은 어둠을 꿰뚫어 치명적인 타격을 입힙니다.", 
         bonus: { type: 'crit_damage', value: 0.5 },
-        maxStack: 1, dropSource: 'armoured'
+        maxStack: 1, dropSource: 'demon'
     },
     'soul_link': { 
         name: "영혼의 고리", icon: '🔗', 
         effect: "소환 비용이 10 SE 추가로 감소합니다.", 
         lore: "퇴마사와 수호자 사이의 보이지 않는 연결입니다. 영적 소모를 최소화합니다.", 
         bonus: { type: 'summon_cost_reduction', value: 10 },
-        maxStack: 1, dropSource: 'armoured'
+        maxStack: 1, dropSource: 'demon'
     },
     'immortal_remains': { 
         name: "불멸의 유해", icon: '💀', 
         effect: "포탈 오염도 증가량이 10% 감소합니다.", 
         lore: "죽음을 거부하는 자의 유골입니다. 성스러운 결계를 강화하여 오염에 저항합니다.", 
         bonus: { type: 'portal_dmg_reduction', value: 0.1 },
-        maxStack: 1, dropSource: 'armoured'
+        maxStack: 1, dropSource: 'demon'
     },
     // Balanced Normal Relics
     'soul_candle': { 
@@ -135,7 +135,7 @@ const relicsData = {
         effect: "견습 퇴마사 소환 비용이 중첩당 2 SE 감소합니다.", 
         lore: "방황하는 영혼들을 더 싼 가격에 인도하는 희미한 빛입니다.", 
         bonus: { type: 'summon_cost_reduction', value: 2 },
-        maxStack: 10, dropSource: 'basic'
+        maxStack: 10, dropSource: 'specter'
     },
     'blood_ring': { 
         name: "혈석 반지", icon: '🩸', 
@@ -251,10 +251,10 @@ function renderRelicsGrid() {
     grid.innerHTML = '';
 
     const allRelicIds = Object.keys(relicsData);
-    // Normal: excluding boss and armoured
-    const normalRelics = allRelicIds.filter(id => !['boss', 'armoured'].includes(relicsData[id].dropSource));
-    // Supreme: boss and armoured
-    const supremeRelics = allRelicIds.filter(id => ['boss', 'armoured'].includes(relicsData[id].dropSource));
+    // Normal: excluding boss and demon
+    const normalRelics = allRelicIds.filter(id => !['boss', 'demon'].includes(relicsData[id].dropSource));
+    // Supreme: boss and demon
+    const supremeRelics = allRelicIds.filter(id => ['boss', 'demon'].includes(relicsData[id].dropSource));
 
     // Helper to create slots
     const createSlot = (id) => {
@@ -453,7 +453,7 @@ function checkRelicDrop(enemy) {
         if (currentCount >= data.maxStack) return;
 
         let canDrop = false;
-        const isNormalRelic = !['boss', 'armoured'].includes(data.dropSource);
+        const isNormalRelic = !['boss', 'demon'].includes(data.dropSource);
 
         if (enemy.isBoss) {
             canDrop = true; // Bosses can drop anything
@@ -467,7 +467,7 @@ function checkRelicDrop(enemy) {
             }
         } else {
             // Supreme relics only drop from Armoured or Bosses (handled above)
-            if (data.dropSource === 'armoured' && armouredDemons.includes(enemy.type)) {
+            if (data.dropSource === 'demon' && armouredDemons.includes(enemy.type)) {
                 canDrop = true;
             }
         }

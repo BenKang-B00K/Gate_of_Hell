@@ -86,15 +86,15 @@ function recordUnlock(type, isEnemy = false) {
             const content = document.getElementById('unlock-content');
             
             const categoryTitles = {
-                'basic': 'SPECTER ENCOUNTER',
-                'pattern': 'WRAITH ENCOUNTER',
-                'enhanced': 'SPIRIT ENCOUNTER',
-                'armoured': 'DEMON ENCOUNTER',
+                'specter': 'SPECTER ENCOUNTER',
+                'wraith': 'WRAITH ENCOUNTER',
+                'spirit': 'SPIRIT ENCOUNTER',
+                'demon': 'DEMON ENCOUNTER',
                 'boss': 'ABYSSAL BOSS ENCOUNTER'
             };
 
             // Find category
-            let catKey = 'basic';
+            let catKey = 'specter';
             if (bossData[stage] && bossData[stage].type === type) {
                 catKey = 'boss';
             } else {
