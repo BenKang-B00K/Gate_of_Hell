@@ -50,11 +50,11 @@
 
 #spawning-pool {
     position: absolute;
-    top: -5px; /* Precise logical Y center */
+    top: -15px; /* Scaled: -5 logical * 3 */
     left: 50%;
     transform: translate(-50%, -50%);
     width: 340px;
-    height: 10px; /* Reduced height for tighter center alignment */
+    height: 30px; 
     background: transparent;
     z-index: 3;
     pointer-events: none;
@@ -77,9 +77,9 @@
 
 #portal {
     position: absolute;
-    top: 416px; /* Precise logical boundary Y center */
+    top: 1248px; /* Scaled: 416 logical * 3 */
     width: 340px;
-    height: 10px;
+    height: 30px;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 3;

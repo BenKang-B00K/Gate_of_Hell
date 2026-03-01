@@ -43,9 +43,12 @@ function drawAtmosphericEffects() {
 
 function drawLavaRoad() {
     const time = globalAnimTimer;
-    const roadWidth = 340; const roadX = (360 - roadWidth) / 2;
+    // Road is 340px wide in a 1080px container.
+    // 340 / 3 = 113.33 logical pixels.
+    // Centered: (360 - 113.33) / 2 = 123.33
+    const roadWidth = 114; 
+    const roadX = 123;
     ctx.save();
-    // Removed opaque black background to unify with the global background image
     if (lightningTimer <= 0) {
         if (Math.random() < 0.01) { lightningTimer = 10 + Math.random() * 20; lightningIntensity = 0.3 + Math.random() * 0.4; }
     } else {

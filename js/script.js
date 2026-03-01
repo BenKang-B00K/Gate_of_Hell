@@ -382,7 +382,8 @@ function gameLoop() {
         // Move Up
         summon.y -= summon.speed || 1.0;
         if (summon.element) {
-            summon.element.style.top = `${summon.y}px`;
+            // [Bug Fix] Scale logical Y to physical top (3x)
+            summon.element.style.top = `${summon.y * 3}px`;
             summon.element.style.left = `${summon.x}%`;
         }
 

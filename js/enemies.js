@@ -227,8 +227,12 @@ function handleEnemyDeath(target, killer = null) {
         if (typeof saveGameData === 'function') saveGameData();
 
         if (typeof createSEGainEffect === 'function' && target.element) {
-            const r = target.element.getBoundingClientRect(); const gr = gameContainer.getBoundingClientRect();
-            createSEGainEffect((r.left + r.width / 2) - gr.left, (r.top + r.height / 2) - gr.top, reward, gameContainer);
+            const r = target.element.getBoundingClientRect(); 
+            const gr = gameContainer.getBoundingClientRect();
+            // Centering the effect on the target element
+            const centerX = (r.left + r.width / 2) - gr.left;
+            const centerY = (r.top + r.height / 2) - gr.top;
+            createSEGainEffect(centerX, centerY, reward, gameContainer);
         }
         if (typeof window.updateSummonButtonState === 'function') window.updateSummonButtonState();
     }
