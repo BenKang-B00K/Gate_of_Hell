@@ -218,7 +218,7 @@ const unitTypes = [
     { type: 'purgatory', name: '영원한 연옥의 불길', role: '공격', tier: 4, icon: '🕯️', damage: 1200, range: 420, cooldown: 800, desc: "지면 한 줄을 통째로 태워, 그 위를 지나는 모든 적에게 영구적인 화상 피해를 줍니다." },
     { type: 'reaper', name: '나이트메어 리퍼', role: '특수', tier: 4, icon: '☠️', damage: 99999, range: 0, cooldown: 3000, desc: "현재 맵에서 체력이 가장 높은 적의 영혼을 즉시 거두어갑니다. (절대 즉사)" },
     { type: 'doom_guide', name: '파멸의 인도자', role: '특수', tier: 4, icon: '🛶', damage: 1800, range: 420, cooldown: 800, desc: "포탈을 정화합니다. 포탈에 도달한 적은 피해 대신 포탈 오염도를 5% 회복시킵니다." },
-    { type: 'forsaken_king', name: '버림받은 자들의 왕', role: '지원', tier: 4, icon: '👑', damage: 2200, range: 420, cooldown: 1000, desc: "매 스테이지 시작 시 아군을 위해 싸워줄 우호적인 유령들을 소환합니다." },
+    { type: 'forsaken_king', name: '버림받은 자들의 왕', role: '지원', tier: 4, icon: '👑', damage: 2200, range: 420, cooldown: 1000, desc: "매 스테이지 시작 시 아군을 위해 싸워줄 우호적인 망령들을 소환합니다." },
     { type: 'void_gatekeeper', name: '공허의 문지기', role: '지원', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "패시브로 문을 봉인하여, 포탈 오염도에 입는 모든 피해를 50% 감소시킵니다." },
     { type: 'eternal_wall', name: '영원의 수호벽', role: '지원', tier: 4, icon: '🗿', damage: 3000, range: 420, cooldown: 2000, desc: "강력한 안정화 오라를 내뿜어 맵 상의 모든 적을 80% 둔화시킵니다." }
 ];

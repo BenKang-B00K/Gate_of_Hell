@@ -9,7 +9,7 @@ const relicsData = {
         maxStack: 20, dropSource: 'basic'
     },
     'spectral_lantern': { 
-        name: "유령 등불", icon: '🏮', 
+        name: "망령 등불", icon: '🏮', 
         effect: "모든 유닛의 공격 사거리가 10 증가합니다.", 
         lore: "이 등불의 빛은 길을 비추는 것이 아니라, 사냥감을 드러냅니다.", 
         bonus: { type: 'range', value: 10 },
