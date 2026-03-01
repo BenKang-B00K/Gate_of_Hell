@@ -216,25 +216,31 @@ function showUnitInfo(tower) {
     const finalAS = (baseAS * sm).toFixed(1);
     const bonusAS = (finalAS - baseAS).toFixed(1);
     
+    // Helper to format bonus text
+    const formatBonus = (val) => {
+        if (val > 0) return `<span style="color:#00ff00; font-size:14px;">(+${val})</span>`;
+        if (val < 0) return `<span style="color:#ff1744; font-size:14px;">(${val})</span>`;
+        return "";
+    };
+
     let th = `<div class="unit-info-title" style="font-size:32px; margin-bottom:4px;">${data.name}</div>`;
-    
+
     let ih = `
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:4px; width:100%;">
             <div class="unit-info-stats" style="flex:1; border-color:#ff4500; padding:2px 6px; min-width:70px;">
                 <span style="color:#ff4500; font-size:14px; display:block; font-weight:bold;">ATTACK</span>
-                <span style="font-size:20px; font-weight:900;">${baseDmg} <span style="color:#00ff00; font-size:14px;">(+${bonusDmg})</span></span>
+                <span style="font-size:20px; font-weight:900;">${baseDmg} ${formatBonus(bonusDmg)}</span>
             </div>
             <div class="unit-info-stats" style="flex:1; border-color:#00e5ff; padding:2px 6px; min-width:70px;">
                 <span style="color:#00e5ff; font-size:14px; display:block; font-weight:bold;">RANGE</span>
-                <span style="font-size:20px; font-weight:900;">${baseRange} <span style="color:#00ff00; font-size:14px;">(+${bonusRange})</span></span>
+                <span style="font-size:20px; font-weight:900;">${baseRange} ${formatBonus(bonusRange)}</span>
             </div>
             <div class="unit-info-stats" style="flex:1; border-color:#ffd700; padding:2px 6px; min-width:70px;">
                 <span style="color:#ffd700; font-size:14px; display:block; font-weight:bold;">ATTACK SPEED</span>
-                <span style="font-size:20px; font-weight:900;">${baseAS} <span style="color:#00ff00; font-size:14px;">(+${bonusAS})</span></span>
+                <span style="font-size:20px; font-weight:900;">${baseAS} ${formatBonus(bonusAS)}</span>
             </div>
         </div>
     `;
-
     let divider = `<div style="width:90%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:4px 0;"></div>`;
     
     let ch = ''; 
