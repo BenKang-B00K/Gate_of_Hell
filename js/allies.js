@@ -107,14 +107,18 @@ function recordUnlock(type, isEnemy = false) {
                     <div id="unlock-icon">${enemyData.icon}</div>
                     <div id="unlock-name">${dispName}</div>
                     
-                    <div style="display:flex; justify-content:center; gap:15px; margin:15px 0; width:100%;">
-                        <div style="border:1px solid #ff1744; background:rgba(183,28,28,0.2); padding:5px 15px; border-radius:5px;">
-                            <span style="color:#ff1744; font-size:14px; display:block; font-weight:bold;">HEALTH</span>
-                            <span style="font-size:22px; font-weight:bold; color:#fff;">${Math.floor(enemyData.hp)}</span>
+                    <div style="display:flex; justify-content:center; gap:10px; margin:15px 0; width:100%;">
+                        <div style="flex:1; border:1px solid #ff1744; background:rgba(183,28,28,0.2); padding:5px 5px; border-radius:5px; min-width:80px;">
+                            <span style="color:#ff1744; font-size:12px; display:block; font-weight:bold;">HEALTH</span>
+                            <span style="font-size:20px; font-weight:bold; color:#fff;">${Math.floor(enemyData.hp)}</span>
                         </div>
-                        <div style="border:1px solid #aaa; background:rgba(255,255,255,0.1); padding:5px 15px; border-radius:5px;">
-                            <span style="color:#aaa; font-size:14px; display:block; font-weight:bold;">DEFENSE</span>
-                            <span style="font-size:22px; font-weight:bold; color:#fff;">${enemyData.defense || 0}</span>
+                        <div style="flex:1; border:1px solid #aaa; background:rgba(255,255,255,0.1); padding:5px 5px; border-radius:5px; min-width:80px;">
+                            <span style="color:#aaa; font-size:12px; display:block; font-weight:bold;">DEFENSE</span>
+                            <span style="font-size:20px; font-weight:bold; color:#fff;">${enemyData.defense || 0}</span>
+                        </div>
+                        <div style="flex:1; border:1px solid #00e5ff; background:rgba(0,229,255,0.1); padding:5px 5px; border-radius:5px; min-width:80px;">
+                            <span style="color:#00e5ff; font-size:12px; display:block; font-weight:bold;">SPEED</span>
+                            <span style="font-size:20px; font-weight:bold; color:#fff;">${(enemyData.speed || 0).toFixed(1)}</span>
                         </div>
                     </div>
 
