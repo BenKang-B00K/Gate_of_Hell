@@ -121,6 +121,9 @@
     width: 100%;
     margin-bottom: 15px;
     align-items: end;
+    padding: 0 5px;
+    border: 10px solid rgba(0,0,0,0.4);
+    box-sizing: border-box;
 }
 
 .gauge-wrapper {
