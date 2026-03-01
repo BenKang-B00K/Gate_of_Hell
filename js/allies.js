@@ -85,6 +85,29 @@ function recordUnlock(type, isEnemy = false) {
             const modal = document.getElementById('unlock-modal');
             const content = document.getElementById('unlock-content');
             
+            const categoryTitles = {
+                'basic': 'SPECTER ENCOUNTER',
+                'pattern': 'WRAITH ENCOUNTER',
+                'enhanced': 'SPIRIT ENCOUNTER',
+                'armoured': 'DEMON ENCOUNTER',
+                'boss': 'ABYSSAL BOSS ENCOUNTER'
+            };
+
+            // Find category
+            let catKey = 'basic';
+            if (bossData[stage] && bossData[stage].type === type) {
+                catKey = 'boss';
+            } else {
+                for (const ck in enemyCategories) {
+                    if (enemyCategories[ck].some(e => e.type === type)) {
+                        catKey = ck;
+                        break;
+                    }
+                }
+            }
+
+            const dispTitle = categoryTitles[catKey] || 'ABYSSAL WHISPER';
+            
             const enemyNames = {
                 'normal': '속삭이는 영혼', 'mist': '방랑하는 안개', 'memory': '빛바랜 기억',
                 'shade': '깜빡이는 그림자', 'tank': '철갑 망령', 'runner': '가속된 그림자',
@@ -103,7 +126,7 @@ function recordUnlock(type, isEnemy = false) {
             if (modal && content) {
                 content.className = 'unlock-content enemy-theme'; // Evil theme
                 content.innerHTML = `
-                    <div class="unlock-title evil">ABYSSAL WHISPER</div>
+                    <div class="unlock-title evil">${dispTitle}</div>
                     <div id="unlock-icon">${enemyData.icon}</div>
                     <div id="unlock-name">${dispName}</div>
                     
