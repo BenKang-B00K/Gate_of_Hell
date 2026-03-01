@@ -107,7 +107,7 @@ function createCursedTalismanEffect(x, y, container) {
     const effect = document.createElement('div');
     effect.className = 'attack-effect abyss-effect cursed-talisman-effect';
     effect.style.left = `${x}px`; effect.style.top = `${y}px`;
-    effect.innerText = '⛩️';
+    effect.innerText = '🕍';
     container.appendChild(effect);
     setTimeout(() => effect.remove(), 800);
 }

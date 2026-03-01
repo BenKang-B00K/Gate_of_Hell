@@ -133,7 +133,7 @@ function summonShrine() {
     const randomSlot = emptySlots[Math.floor(Math.random() * emptySlots.length)];
     const data = shrineTypes[0]; // might
 
-    if (typeof GameLogger !== 'undefined') GameLogger.success(`⛩️ Shrine Created: ${data.name}`);
+    if (typeof GameLogger !== 'undefined') GameLogger.success(`🕍 Shrine Created: ${data.name}`);
 
     const unit = document.createElement('div');
     unit.classList.add('unit', 'shrine', data.type, 'summoning');

@@ -133,7 +133,7 @@ function attachGlobalListeners() {
             if (d) {
                 const cost = window.shrineCost || 100;
                 d.innerHTML = `
-                    <div style="color:#00e5ff; font-weight:bold; font-size:36px; margin-bottom:6px;">⛩️ 성소 건립 (Shrine)</div>
+                    <div style="color:#00e5ff; font-weight:bold; font-size:36px; margin-bottom:6px;">🕍 성소 건립 (Shrine)</div>
                     <div style="display:inline-block; background:#002a32; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">건립 비용: ${cost} SE</div>
                     <div style="font-size:24px; color:#bbb; line-height:1.2;">퇴마사를 보조하는 성스러운 건축물을 세웁니다.</div>
                     <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #00e5ff44, transparent); margin:15px 0;"></div>
