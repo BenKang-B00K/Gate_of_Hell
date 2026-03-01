@@ -205,6 +205,7 @@ function handleEnemyDeath(target, killer = null) {
 
         target.element.remove(); enemies.splice(idx, 1);
         if (typeof checkRelicDrop === 'function') checkRelicDrop(target);
+        if (typeof checkEquipmentDrop === 'function') checkEquipmentDrop(target);
         updateStageInfo(); 
         if (enemies.length === 0 && currentStageSpawned >= totalStageEnemies && !isBossStage) triggerStageTransition();
 

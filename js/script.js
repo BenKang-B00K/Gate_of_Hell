@@ -202,9 +202,9 @@ function gameLoop() {
     });
 
     towers.forEach(t => {
-        t.speedBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('cooldown') : 0;
-        t.rangeBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('range') : 0;
-        t.damageBonus = 0;
+        t.speedBonus = (typeof getRelicBonus === 'function' ? getRelicBonus('cooldown') : 0) + (typeof getEquipBonus === 'function' ? getEquipBonus('cooldown') : 0);
+        t.rangeBonus = (typeof getRelicBonus === 'function' ? getRelicBonus('range') : 0) + (typeof getEquipBonus === 'function' ? getEquipBonus('aura_range') : 0);
+        t.damageBonus = (typeof getEquipBonus === 'function' ? getEquipBonus('damage') : 0);
 
         // Apply Cursed SPD Penalty (Portal Energy based)
         const peRatio = portalEnergy / maxPortalEnergy;
@@ -234,7 +234,7 @@ function gameLoop() {
             const oY = oRect.top + oRect.height / 2;
             const dist = Math.sqrt(Math.pow(oX - tX, 2) + Math.pow(oY - tY, 2));
 
-            const relicAuraBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('aura_range') : 0;
+            const relicAuraBonus = (typeof getRelicBonus === 'function' ? getRelicBonus('aura_range') : 0) + (typeof getEquipBonus === 'function' ? getEquipBonus('aura_range') : 0);
             if (dist < (195 + relicAuraBonus)) { // Base range 195px covers ~1 tile cardinal in 1080p
                 if (other.data.type === 'tracker') {
                     t.rangeBonus += 90; // +90 range (scaled from 30)

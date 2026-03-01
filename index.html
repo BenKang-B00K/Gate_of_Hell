@@ -151,9 +151,10 @@
                         <div style="font-size: 42px;">🏺</div>
                         <div style="font-size: 24px;">유물</div>
                     </div>
-                    <!-- 5. TBD Card -->
-                    <div class="tower-card placeholder">
-                        <div style="font-size: 30px; color: #444;">준비중</div>
+                    <!-- 5. Equipment Card -->
+                    <div id="equip-btn" class="tower-card" style="border-color: #00e5ff; color: #00e5ff;">
+                        <div style="font-size: 42px;">⚔️</div>
+                        <div style="font-size: 24px;">장비</div>
                     </div>
                     <!-- 6. Collections Card -->
                     <div id="collections-btn" class="tower-card" style="border-color: #ffd700; color: #ffd700;">
@@ -275,6 +276,28 @@
         <div class="warning-sub">(최대 퇴마사 인원: 16)</div>
     </div>
 
+    <!-- Equipment (장비) Overlay -->
+    <div id="equip-overlay" style="display: none;">
+        <div id="equip-content">
+            <div id="equip-header">
+                <h2>신성한 장비고</h2>
+                <button id="close-equip">X</button>
+            </div>
+            <div id="equip-grid">
+                <!-- 8 Equipment Slots will be here -->
+            </div>
+            <div id="equip-details">
+                <div id="equip-info-pane">
+                    <div class="info-default-text">Gate of Hell<br>장비 정보</div>
+                </div>
+                <div id="equip-bonus-pane">
+                    <div class="equip-bonus-title">총 장비 효과</div>
+                    <!-- Total equipment bonuses populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Core Game Scripts -->
     <script src="js/allies_data.js"></script>
     <script src="js/allies.js"></script>
@@ -291,6 +314,7 @@
     <script src="js/soundeffect.js"></script>
     <script src="js/relics.js"></script>
     <script src="js/collections.js"></script>
+    <script src="js/equipment.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

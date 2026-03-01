@@ -270,6 +270,94 @@
     padding: 15px 25px; border-radius: 0 15px 15px 0;
 }
 
+/* Equipment (장비) Overlay */
+#equip-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000; backdrop-filter: blur(15px);
+}
+
+#equip-content {
+    width: 1000px; max-height: 90%; padding: 50px;
+    background: linear-gradient(145deg, #051015, #000000);
+    border: 5px solid #00e5ff; border-radius: 50px 50px 20px 20px;
+    display: flex; flex-direction: column; gap: 20px;
+    box-shadow: 0 0 100px rgba(0, 229, 255, 0.2), inset 0 0 40px rgba(0, 0, 0, 0.8);
+    position: relative;
+    border-top: 8px solid #00e5ff;
+}
+
+#equip-header {
+    display: flex; justify-content: center; align-items: center;
+    border-bottom: 2px solid rgba(0, 229, 255, 0.3);
+    padding-bottom: 25px; margin-bottom: 40px;
+    position: relative;
+}
+
+#equip-header h2 {
+    color: #00e5ff; margin: 0; font-size: 72px; text-transform: uppercase;
+    letter-spacing: 12px; text-shadow: 0 0 30px rgba(0, 229, 255, 0.8); text-align: center;
+}
+
+#close-equip {
+    background: none; border: none; color: #888; font-size: 54px;
+    cursor: pointer; position: absolute; right: 0; transition: color 0.2s;
+}
+#close-equip:hover { color: #fff; text-shadow: 0 0 15px #fff; }
+
+#equip-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+    padding: 20px; flex: 1; overflow-y: auto; scrollbar-width: none;
+}
+#equip-grid::-webkit-scrollbar { display: none; }
+
+.equip-slot {
+    aspect-ratio: 1; background: rgba(0, 229, 255, 0.05);
+    border: 2px solid #333; border-radius: 15px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    font-size: 54px; cursor: pointer; transition: all 0.3s;
+    position: relative; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+}
+.equip-slot:hover { transform: scale(1.05); border-color: #00e5ff; background: rgba(0, 229, 255, 0.1); }
+.equip-slot.selected { border-color: #fff; box-shadow: 0 0 30px rgba(0, 229, 255, 0.5); transform: scale(1.08); }
+
+.equip-tier-label {
+    position: absolute; bottom: 8px; font-size: 16px; font-weight: bold;
+    padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
+}
+.tier-1 { color: #aaa; } /* Normal */
+.tier-2 { color: #00ff00; text-shadow: 0 0 5px #00ff00; } /* Holy */
+.tier-3 { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; } /* Legendary */
+.tier-4 { color: #ffd700; text-shadow: 0 0 15px #ffd700; animation: gearGlow 2s infinite alternate; } /* Ancient */
+
+@keyframes gearGlow { from { opacity: 0.7; } to { opacity: 1; filter: brightness(1.5); } }
+
+#equip-details {
+    margin-top: 40px; padding: 0; min-height: 320px;
+    display: flex; gap: 25px; background: transparent;
+}
+
+#equip-info-pane {
+    flex: 0 0 58%; padding: 35px; background: rgba(0, 0, 0, 0.8);
+    border: 3px solid rgba(0, 229, 255, 0.4); border-radius: 20px;
+    display: flex; flex-direction: column; justify-content: center;
+    box-shadow: inset 0 0 30px #000; box-sizing: border-box;
+}
+
+#equip-bonus-pane {
+    flex: 1; padding: 30px; background: rgba(0, 15, 20, 0.85);
+    border: 3px solid rgba(0, 229, 255, 0.3); border-radius: 20px;
+    display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: none;
+    box-shadow: inset 0 0 30px #000; box-sizing: border-box;
+}
+
+.equip-bonus-title {
+    color: #00e5ff; font-size: 34px; font-weight: 900; text-align: center;
+    margin-bottom: 25px; text-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+    letter-spacing: 2px; border-bottom: 2px solid rgba(0, 229, 255, 0.2); padding-bottom: 10px;
+}
+
 /* Animations */
 @keyframes modalOminousPulse {
     0% { transform: scale(1); box-shadow: 0 0 30px #f00; }

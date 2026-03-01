@@ -7,7 +7,8 @@ function saveGameData() {
     const data = {
         unlockedUnits: Array.from(window.unlockedUnits),
         encounteredEnemies: Array.from(window.encounteredEnemies || []),
-        killCounts: window.killCounts || {}
+        killCounts: window.killCounts || {},
+        ownedEquipment: window.ownedEquipment || {}
     };
     localStorage.setItem('gateOfHell_saveData', JSON.stringify(data));
 }
@@ -31,6 +32,9 @@ function loadGameData() {
                 window.killCounts = data.killCounts;
             } else {
                 window.killCounts = {};
+            }
+            if (data.ownedEquipment) {
+                window.ownedEquipment = data.ownedEquipment;
             }
         } catch (e) {
             console.error("Failed to load save data:", e);
