@@ -5,7 +5,7 @@
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.95);
     display: flex; justify-content: center; align-items: center;
-    z-index: 1001; /* [User Request] Top Overlay z=1001 */
+    z-index: 1100; /* [User Request] Critical Modal z=1100 */
     backdrop-filter: blur(10px);
 }
 
@@ -74,7 +74,7 @@
 #unlock-modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.95); 
-    z-index: 1001; /* [User Request] Top Overlay z=1001 */
+    z-index: 1100; /* [User Request] Critical Modal z=1100 */
     display: flex; justify-content: center; align-items: center;
 }
 
@@ -89,7 +89,7 @@
 #game-over-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: radial-gradient(circle, rgba(40, 0, 0, 0.95) 0%, rgba(0, 0, 0, 1) 100%);
-    z-index: 1001; /* [User Request] Top Overlay z=1001 */
+    z-index: 1100; /* [User Request] Critical Modal z=1100 */
     display: flex; justify-content: center; align-items: center;
 }
 
@@ -100,7 +100,7 @@
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: radial-gradient(circle at center, rgba(40, 0, 0, 0.9) 0%, #000 90%);
     display: flex; justify-content: center; align-items: center;
-    z-index: 1001; /* [User Request] Top Overlay z=1001 */
+    z-index: 1100; /* [User Request] Critical Modal z=1100 */
     backdrop-filter: blur(15px);
 }
 

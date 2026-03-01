@@ -2,7 +2,7 @@
 .attack-effect {
     position: absolute;
     pointer-events: none;
-    z-index: 30;
+    z-index: 60; /* Above units and road, below UI */
     transform: translate(-50%, -50%);
 }
 
@@ -11,10 +11,35 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    z-index: 100;
+    z-index: 70; /* Above attack effects, below UI */
     transition: left 0.2s linear, top 0.2s linear;
     background: #fff;
     pointer-events: none;
+}
+
+#frozen-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.1) 0%, rgba(0, 150, 255, 0.4) 100%);
+    z-index: 80; /* Above projectiles, below UI */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1s ease;
+    mix-blend-mode: screen;
+}
+
+#frozen-overlay::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path d="M50 0 L50 100 M0 50 L100 50 M25 25 L75 75 M75 25 L25 75" stroke="rgba(255,255,255,0.2)" stroke-width="2"/></svg>');
+    opacity: 0.3;
+    animation: snowFall 10s linear infinite;
+}
+
+@keyframes snowFall {
+    from { background-position: 0 0; }
+    to { background-position: 100px 200px; }
 }
 
 .range-indicator {

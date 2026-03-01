@@ -224,103 +224,106 @@
 .master-btn-container { margin-top: 12px; width: 100%; display: flex; justify-content: center; gap: 6px; }
 .master-btn-container .job-btn { flex: 1; margin: 0 2px; padding: 8px 2px; font-size: 22px; line-height: 1.1; }
 
-#tutorial-toggle-container { 
-    margin: 15px auto 0 auto;
-    z-index: 100; /* [User Request] Menu z=100 */
+/* Top HUD Elements (Z-index 150) */
+#restart-btn-top { 
+    position: absolute; 
+    top: 30px; 
+    left: 30px; 
+    z-index: 150; 
     display: flex; 
     align-items: center; 
     justify-content: center;
-    gap: 15px; 
-    background: rgba(0, 0, 0, 0.6); 
-    padding: 12px 20px; 
-    border-radius: 0; 
-    border: 4px solid #444; 
-    width: 500px;
-    box-sizing: border-box;
+    background: linear-gradient(135deg, rgba(20, 0, 0, 0.8) 0%, rgba(60, 0, 0, 0.9) 100%); 
+    color: #ff4500; 
+    border: 2px solid #8b0000; 
+    border-radius: 12px; 
+    font-family: 'Cinzel', serif;
+    font-size: 22px; 
+    padding: 10px 28px; 
+    cursor: pointer; 
+    font-weight: 900; 
+    letter-spacing: 2px; 
+    text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(139, 0, 0, 0.4), inset 0 0 10px rgba(0,0,0,0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    white-space: nowrap;
+    animation: divinePulse 3s infinite alternate;
 }
+
+#restart-btn-top:hover { 
+    background: linear-gradient(135deg, #441111 0%, #8b0000 100%); 
+    color: #fff; 
+    border-color: #ff4500; 
+    box-shadow: 0 0 25px rgba(255, 69, 0, 0.6), inset 0 0 15px rgba(0,0,0,0.2); 
+    transform: scale(1.05) translateY(-2px); 
+}
+
+#restart-btn-top:active { transform: scale(0.95) translateY(0); }
 
 #game-tutorial-toggle-container {
     position: absolute;
     top: 30px;
     right: 30px;
-    z-index: 100; /* [User Request] Menu z=100 */
+    z-index: 150;
     display: flex;
     align-items: center;
-    gap: 10px;
-    background: rgba(0, 0, 0, 0.6);
-    padding: 8px 20px;
-    border-radius: 30px;
+    gap: 12px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(40, 40, 40, 0.8) 100%);
+    padding: 10px 24px;
+    border-radius: 12px;
     border: 2px solid #444;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#game-tutorial-toggle-container:hover {
+    border-color: #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
 }
 
 #pause-btn-container {
     position: absolute;
-    top: 80px; /* 50px below tutorial toggle */
+    top: 90px; 
     right: 30px;
-    z-index: 100;
+    z-index: 150;
 }
 
 #game-pause-btn {
-    background: rgba(0, 0, 0, 0.6);
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.9) 0%, rgba(0, 0, 0, 0.9) 100%);
     color: #ffd700;
-    border: 2px solid #444;
-    border-radius: 30px;
-    padding: 8px 24px;
-    font-size: 20px;
-    font-weight: bold;
+    border: 2px solid #555;
+    border-radius: 12px;
+    padding: 10px 28px;
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 900;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
     width: 100%;
-    min-width: 140px;
+    min-width: 160px;
     box-sizing: border-box;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 #game-pause-btn:hover {
-    background: rgba(40, 40, 40, 0.8);
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
     border-color: #ffd700;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    transform: translateY(-2px);
 }
 
 #game-pause-btn.active {
     background: #ffd700;
     color: #000;
     border-color: #fff;
+    box-shadow: 0 0 30px #ffd700;
 }
 
-#tutorial-label, #game-tutorial-label { font-size: 20px; color: #ffd700; font-weight: bold; letter-spacing: 1px; }
+#tutorial-label, #game-tutorial-label { font-size: 20px; color: #ffd700; font-weight: bold; letter-spacing: 1.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 #tutorial-status, #game-tutorial-status { font-size: 20px; color: #ffd700; font-weight: bold; min-width: 45px; text-align: center; }
-
-.switch { position: relative; display: inline-block; width: 40px; height: 22px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; }
-.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; }
-input:checked + .slider { background-color: #ffd700; }
-input:checked + .slider:before { transform: translateX(18px); }
-.slider.round { border-radius: 36px; }
-.slider.round:before { border-radius: 50%; }
-
-#restart-btn-top { 
-    position: absolute; 
-    top: 30px; 
-    left: 30px; 
-    z-index: 100; /* [User Request] Menu z=100 */
-    display: flex; 
-    align-items: center; 
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.6); 
-    color: #ff4500; 
-    border: 2px solid #444; 
-    border-radius: 30px; 
-    font-size: 20px; 
-    padding: 8px 25px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    letter-spacing: 1px; 
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-    white-space: nowrap;
-}
-#restart-btn-top:hover { background: rgba(40, 0, 0, 0.8); color: #fff; border-color: #ff0000; box-shadow: 0 0 30px rgba(255, 0, 0, 0.4); transform: scale(1.05); }
-#restart-btn-top:active { transform: scale(0.95); }
 
 /* Warnings */
 .card-warning { position: absolute; top: -66px; left: 50%; transform: translateX(-50%); background: #ff0000; color: #fff; font-size: 21px; padding: 6px 15px; border-radius: 12px; white-space: nowrap; font-weight: bold; box-shadow: 0 0 30px #ff0000; z-index: 100; pointer-events: none; display: none; }
