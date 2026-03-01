@@ -219,6 +219,7 @@ function gameLoop() {
         const peRatio = portalEnergy / maxPortalEnergy;
         if (peRatio >= 0.75) t.speedBonus -= 0.2; // -20% speed
         else if (peRatio >= 0.5) t.speedBonus -= 0.1; // -10% speed
+        else if (peRatio >= 0.3) t.speedBonus -= 0.05; // -5% speed
 
         if (!t.slotElement) return;
         const gameW = gameContainer.offsetWidth;

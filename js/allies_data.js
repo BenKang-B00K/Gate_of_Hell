@@ -77,6 +77,9 @@ function updateGauges() {
         } else if (peRatio >= 0.5) {
             peStatus.innerText = "저주: 심연의 그림자 (공격 속도 -10%)";
             peStatus.style.color = "#ff4500";
+        } else if (peRatio >= 0.3) {
+            peStatus.innerText = "저주: 흐릿한 공포 (공격 속도 -5%)";
+            peStatus.style.color = "#ffa500";
         } else {
             peStatus.innerText = "저주: 없음";
             peStatus.style.color = "#ff00ff";
@@ -96,6 +99,7 @@ function updateGauges() {
                     <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ff00ff44, transparent); margin:15px 0;"></div>
                     <div style="color:#ff4500; font-size:20px;">[오염 단계별 저주]</div>
                     <div style="font-size:18px; color:#aaa; margin-top:5px;">
+                        • 30% 이상: 흐릿한 공포 (공격 속도 -5%)<br>
                         • 50% 이상: 심연의 그림자 (공격 속도 -10%)<br>
                         • 75% 이상: 지옥의 숨결 (공격 속도 -20%)<br>
                         • 100% 도달: 성스러운 결계 붕괴 (Game Over)
