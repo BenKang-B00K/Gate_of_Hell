@@ -7,7 +7,7 @@
     grid-template-rows: repeat(7, 1fr);
     gap: 12px;
     padding: 15px;
-    z-index: 2;
+    z-index: 10; /* Above game canvas (z=4) */
     background: transparent;
     margin-top: 148px;
     perspective: 1000px;
@@ -16,8 +16,8 @@
 .card-slot {
     position: relative;
     box-sizing: border-box;
-    border: 2px solid rgba(255, 215, 0, 0.1); 
-    background: 
+    border: 2px solid rgba(255, 215, 0, 0.1);
+    background:
         url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,215,0,0.15)" stroke-width="1.5"/><path d="M50 5 L95 95 L5 95 Z" fill="none" stroke="rgba(255,215,0,0.1)" stroke-width="1"/></svg>') center/80% no-repeat,
         linear-gradient(145deg, #0a0a0a, #1a1510);
     border-radius: 12px;
@@ -26,11 +26,16 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    overflow: visible; 
+    overflow: visible;
     z-index: 2;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
 }
 
+.card-slot.selected-slot {
+    z-index: 1000 !important;
+    border-color: rgba(255, 215, 0, 0.8);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
 .card-slot:hover { 
     transform: scale(1.05) translateZ(30px); 
     background-color: #2a2010;
@@ -83,11 +88,11 @@
     to { opacity: 0.8; transform: translateX(-50%) scaleX(3.0); filter: blur(5px); }
 }
 
-.unit.selected { 
-    transform: scale(1.1); 
+.unit.selected {
+    transform: scale(1.1);
     filter: contrast(1.1) drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+    z-index: 1100;
 }
-
 /* [User Request] Hide Clutter During Drag */
 .unit.dragging::before,
 .unit.dragging::after,

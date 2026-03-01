@@ -263,11 +263,15 @@ function summonTower(targetSlot) {
         if(Date.now() - mousedownTime < 400) { 
             // 1. Clear previous selections
             document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected')); 
+            document.querySelectorAll('.card-slot').forEach(s => s.classList.remove('selected-slot'));
+            
             const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
             
             // 2. Select this unit
             this.classList.add('selected'); 
+            if (this.parentElement) this.parentElement.classList.add('selected-slot');
+            
             window.draggedUnit = this; 
             isMovingUnit = true;      
             
@@ -407,13 +411,18 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     }
 
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
+    
+    // [Fix] Remove existing cooldown-overlay before adding new one
+    el.querySelectorAll('.cooldown-overlay').forEach(o => o.remove());
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
+    
     t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
     
     // [User Request] Record unlock for collections
     if (typeof recordUnlock === 'function') recordUnlock(nt.type);
 
-    updateUnitOverlayButtons(t); // [User Request Fix] Update buttons after promotion
+    if (el.parentElement) el.parentElement.classList.add('selected-slot');
+    updateUnitOverlayButtons(t); 
     updateSummonButtonState();
     if (fromInfo) showUnitInfo(t);
     startInfoResetTimer();
@@ -461,15 +470,19 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     }
 
     el.className=`unit ${nt.type} selected`; el.title=nt.name; el.innerText='';
+
+    // [Fix] Remove existing cooldown-overlay before adding new one
+    el.querySelectorAll('.cooldown-overlay').forEach(o => o.remove());
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
-    tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown; 
-    
+
+    tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown;
+
     // [User Request] Record unlock for collections
     if (typeof recordUnlock === 'function') recordUnlock(nt.type);
 
+    if (el.parentElement) el.parentElement.classList.add('selected-slot');
     if(nt.type==='rampart') tower.charges=5;
-    updateUnitOverlayButtons(tower);
-    updateSummonButtonState();
+    updateUnitOverlayButtons(tower);    updateSummonButtonState();
     if (fromInfo) showUnitInfo(tower);
     startInfoResetTimer();
     showRangeIndicator(tower);
