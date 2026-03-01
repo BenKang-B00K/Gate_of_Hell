@@ -162,7 +162,7 @@ function setupResourceTooltips() {
  */
 
 function updateSummonButtonState() {
-    const tc = document.getElementById('tower-card'); 
+    const tc = document.getElementById('tower-card');
     if (!tc) return;
 
     const scd = document.getElementById('summon-cost-display');
@@ -177,14 +177,34 @@ function updateSummonButtonState() {
     const isBroke = money < finalTowerCost;
 
     if (sw) {
-        if (isMax) { sw.innerText = '인원 초과'; sw.style.display = 'block'; }
-        else if (isBroke) { sw.innerText = 'SE 부족'; sw.style.display = 'block'; }
-        else { sw.style.display = 'none'; }
+        if (isMax) { 
+            sw.innerText = '인원 초과'; 
+            sw.style.display = 'block'; 
+        } else if (isBroke) { 
+            sw.innerText = 'SE 부족'; 
+            sw.style.display = 'block'; 
+        } else { 
+            sw.style.display = 'none'; 
+        }
     }
 
-    if (isMax || isBroke) {
-        tc.classList.add('locked');
-        tc.style.opacity = '0.5';
+    if (isMax || isBroke) tc.classList.add('disabled');
+    else tc.classList.remove('disabled');
+
+    // Also handle Purge Card State
+    const pc = document.getElementById('purge-card');
+    const pw = document.getElementById('purge-warning');
+    if (pc && pw) {
+        if (money < 800) {
+            pc.classList.add('disabled');
+            pw.style.display = 'block';
+        } else {
+            pc.classList.remove('disabled');
+            pw.style.display = 'none';
+        }
+    }
+}
+
         tc.style.pointerEvents = 'none';
     } else {
         tc.classList.remove('locked');

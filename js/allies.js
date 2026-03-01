@@ -2,7 +2,9 @@
 
 // Track unlocked classes for Records - Global for Collections access
 window.unlockedUnits = new Set(['apprentice']);
-window.unseenItems = new Set(); // Track which items (relics, equipment, ghosts, units) are new
+window.encounteredEnemies = new Set();
+window.unseenItems = new Set(); 
+window.killCounts = {};
 
 function saveGameData() {
     const data = {

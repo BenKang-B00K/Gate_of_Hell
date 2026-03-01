@@ -25,12 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ghostSection) ghostSection.classList.add('active');
 
             catBtns.forEach(b => b.classList.remove('active'));
-            const normalCatBtn = Array.from(catBtns).find(b => b.dataset.cat === 'normal');
+            const normalCatBtn = Array.from(catBtns).find(b => b.dataset.cat === 'basic');
             if (normalCatBtn) normalCatBtn.classList.add('active');
 
             colInfoLockedUntil = 0;
             resetColInfo();
-            renderGhostGrid('normal'); 
+            renderGhostGrid('basic'); 
 
             // Hide notification when opened
             const notif = document.getElementById('collections-notif');

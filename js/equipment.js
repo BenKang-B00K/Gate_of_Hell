@@ -83,11 +83,12 @@ function renderEquipGrid() {
         
         if (owned.tier > 0) {
             const tierData = equipmentTiers[owned.tier - 1];
+            slotDiv.classList.add(`tier-${owned.tier}`); // Apply tier class to slot
             slotDiv.innerHTML = `
-                <div style="font-size: 54px;">${slotData.icon}</div>
-                <div style="font-size: 18px; color: #fff; margin-top: 5px;">${slotData.name}</div>
+                <div class="equip-icon">${slotData.icon}</div>
+                <div style="font-size: 18px; color: #fff; margin-top: 5px; z-index:3;">${slotData.name}</div>
                 <div class="equip-tier-label tier-${owned.tier}">${tierData.prefix}</div>
-                ${owned.count > 1 ? `<div style="position:absolute; top:8px; right:12px; font-size:20px; color:#ffd700;">x${owned.count}</div>` : ''}
+                ${owned.count > 1 ? `<div style="position:absolute; top:8px; right:12px; font-size:20px; color:#ffd700; z-index:3; font-weight:bold;">x${owned.count}</div>` : ''}
             `;
 
             // New Badge if unseen
