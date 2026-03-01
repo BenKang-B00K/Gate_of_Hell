@@ -37,19 +37,22 @@
         <!-- Restart Button -->
         <button id="restart-btn-top">재시작</button>
 
-        <!-- In-game Tutorial Toggle (Top Right) -->
-        <div id="game-tutorial-toggle-container">
-            <span id="game-tutorial-label">도움말</span>
-            <label class="switch">
-                <input type="checkbox" id="game-tutorial-toggle" checked>
-                <span class="slider round"></span>
-            </label>
-            <span id="game-tutorial-status">ON</span>
-        </div>
+        <!-- Top Right HUD (Tutorial & Pause) -->
+        <div id="top-right-hud">
+            <!-- In-game Tutorial Toggle -->
+            <div id="game-tutorial-toggle-container">
+                <span id="game-tutorial-label">HELP</span>
+                <label class="switch">
+                    <input type="checkbox" id="game-tutorial-toggle" checked>
+                    <span class="slider round"></span>
+                </label>
+                <span id="game-tutorial-status">ON</span>
+            </div>
 
-        <!-- Pause Button (Below Tutorial) -->
-        <div id="pause-btn-container">
-            <button id="game-pause-btn">일시정지</button>
+            <!-- Pause Button -->
+            <div id="pause-btn-container">
+                <button id="game-pause-btn">PAUSE</button>
+            </div>
         </div>
 
         <!-- Difficulty Message Overlay -->
@@ -181,7 +184,7 @@
                     <button class="col-tab-btn active" data-tab="ghosts">유령</button>
                     <button class="col-tab-btn" data-tab="exorcists">퇴마사</button>
                 </div>
-                <button id="close-collections">X</button>
+                <button id="close-collections">❌</button>
             </div>
             
             <div id="ghosts-section" class="collections-section active">
@@ -246,7 +249,7 @@
         <div id="relics-content">
             <div id="relics-header">
                 <h2>심연의 유물</h2>
-                <button id="close-relics">X</button>
+                <button id="close-relics">❌</button>
             </div>
             <div id="relics-grid">
                 <!-- Relics will be dynamically populated here -->
@@ -284,7 +287,7 @@
         <div id="equip-content">
             <div id="equip-header">
                 <h2>신성한 장비고</h2>
-                <button id="close-equip">X</button>
+                <button id="close-equip">❌</button>
             </div>
             <div id="equip-grid">
                 <!-- 8 Equipment Slots will be here -->
