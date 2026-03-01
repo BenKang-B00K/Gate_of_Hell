@@ -207,13 +207,21 @@ function summonTower(targetSlot) {
     unit.addEventListener('dragstart', function() { 
         window.draggedUnit = this; 
         isMovingUnit = true; 
-        this.classList.add('selected'); 
+        this.classList.add('dragging'); // [User Request] Mark as dragging to hide circles/buttons
+        
+        // Hide clutter
+        const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
+        const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
+
         const t = towers.find(x => x.element === this); 
         if(t){
             showUnitInfo(t); 
-            showRangeIndicator(t);
             startInfoResetTimer();
         } 
+    });
+    unit.addEventListener('dragend', function() {
+        this.classList.remove('dragging');
+        isMovingUnit = false;
     });
     unit.addEventListener('mousedown', function(e) { if(e.button !== 0) return; mousedownTime = Date.now(); });
     unit.addEventListener('click', function(e) { 

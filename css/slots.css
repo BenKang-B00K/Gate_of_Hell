@@ -88,6 +88,14 @@
     filter: contrast(1.1) drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
 }
 
+/* [User Request] Hide Clutter During Drag */
+.unit.dragging::before,
+.unit.dragging::after,
+.unit.dragging .unit-overlay-btn,
+.unit.dragging .cooldown-overlay {
+    display: none !important;
+}
+
 /* Selection Ritual Circle */
 .unit.selected::before {
     content: "";
