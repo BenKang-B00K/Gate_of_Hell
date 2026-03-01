@@ -635,21 +635,41 @@ document.addEventListener('DOMContentLoaded', () => {
         // [User Request] Tutorial Toggle Listener (Start and Game sync)
         const tutorialToggle = document.getElementById('tutorial-toggle');
         const tutorialStatus = document.getElementById('tutorial-status');
+        const tutorialContainer = document.getElementById('tutorial-toggle-container');
+        
         const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
         const gameTutorialStatus = document.getElementById('game-tutorial-status');
+        const gameTutorialContainer = document.getElementById('game-tutorial-toggle-container');
 
-        if (tutorialToggle && tutorialStatus && gameTutorialToggle && gameTutorialStatus) {
-            tutorialToggle.addEventListener('change', () => {
-                const state = tutorialToggle.checked;
-                gameTutorialToggle.checked = state;
-                tutorialStatus.innerText = state ? 'ON' : 'OFF';
-                gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
+        const syncToggles = (state) => {
+            if (tutorialToggle) tutorialToggle.checked = state;
+            if (gameTutorialToggle) gameTutorialToggle.checked = state;
+            if (tutorialStatus) tutorialStatus.innerText = state ? 'ON' : 'OFF';
+            if (gameTutorialStatus) gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
+        };
+
+        if (tutorialToggle) {
+            tutorialToggle.addEventListener('change', () => syncToggles(tutorialToggle.checked));
+        }
+        if (gameTutorialToggle) {
+            gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked));
+        }
+
+        // [User Request] Click anywhere on container to toggle
+        if (tutorialContainer) {
+            tutorialContainer.addEventListener('click', (e) => {
+                if (e.target !== tutorialToggle && !e.target.closest('.slider')) {
+                    const newState = !tutorialToggle.checked;
+                    syncToggles(newState);
+                }
             });
-            gameTutorialToggle.addEventListener('change', () => {
-                const state = gameTutorialToggle.checked;
-                tutorialToggle.checked = state;
-                tutorialStatus.innerText = state ? 'ON' : 'OFF';
-                gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
+        }
+        if (gameTutorialContainer) {
+            gameTutorialContainer.addEventListener('click', (e) => {
+                if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) {
+                    const newState = !gameTutorialToggle.checked;
+                    syncToggles(newState);
+                }
             });
         }
 

@@ -1,6 +1,7 @@
 /* allies_system.js - Core Mechanics */
 
 let isMovingUnit = false;
+window.draggedUnit = null; // Explicitly declare global
 
 function executeMove(unit, targetSlot) {
     const oldSlot = unit.parentElement;
@@ -32,7 +33,12 @@ function executeMove(unit, targetSlot) {
     cancelMovement();
 }
 
-function cancelMovement() { if (draggedUnit) draggedUnit.classList.remove('move-ready'); draggedUnit = null; isMovingUnit = false; }
+function cancelMovement() { 
+    if (window.draggedUnit) window.draggedUnit.classList.remove('move-ready'); 
+    window.draggedUnit = null; 
+    isMovingUnit = false; 
+    console.log("Movement cancelled or finished.");
+}
 
 function showRangeIndicator(tower) {
     const ri = document.getElementById('range-indicator');
@@ -199,7 +205,7 @@ function summonTower(targetSlot) {
     // Attach Event Listeners (Drag & Click)
     let mousedownTime;
     unit.addEventListener('dragstart', function() { 
-        draggedUnit = this; 
+        window.draggedUnit = this; 
         isMovingUnit = true; 
         this.classList.add('selected'); 
         const t = towers.find(x => x.element === this); 
@@ -217,6 +223,8 @@ function summonTower(targetSlot) {
             const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
             this.classList.add('selected'); 
+            window.draggedUnit = this; // Mark as candidate for movement
+            isMovingUnit = true;      // Activate move mode
             const t = towers.find(x => x.element === this); 
             if(t){
                 showUnitInfo(t); 

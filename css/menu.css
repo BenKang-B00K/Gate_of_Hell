@@ -119,6 +119,13 @@
     box-sizing: border-box;
     backdrop-filter: blur(5px);
     border-radius: 0;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+#tutorial-toggle-container:hover {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: #ffd700;
 }
 
 /* Start Screen Exit Animation */

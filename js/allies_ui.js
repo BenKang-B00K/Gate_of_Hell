@@ -41,6 +41,24 @@ function createSlotElement(index, area) {
         if (typeof handleSlotClick === 'function') handleSlotClick(index);
     };
 
+    // Drag and Drop Listeners
+    slot.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        slot.classList.add('drag-over');
+    });
+
+    slot.addEventListener('dragleave', () => {
+        slot.classList.remove('drag-over');
+    });
+
+    slot.addEventListener('drop', (e) => {
+        e.preventDefault();
+        slot.classList.remove('drag-over');
+        if (window.draggedUnit && typeof executeMove === 'function') {
+            executeMove(window.draggedUnit, slot);
+        }
+    });
+
     return slot;
 }
 
