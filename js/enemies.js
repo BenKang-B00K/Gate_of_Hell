@@ -16,36 +16,36 @@ function getStageMultipliers(isBoss = false) {
 
 const enemyCategories = {
     basic: [
+        { type: 'runner', icon: '⚡', speed: 2.2, hp: 35, defense: 0, probability: 0.1, reward: 6, desc: "포탈을 향해 돌진하는 그림자입니다.", effectiveness: "둔화 유닛.", lore: "평생 정의를 피해 도망 다니던 저주받은 도둑입니다." },
+        { type: 'shade', icon: '👤', speed: 2.2, hp: 60, defense: 0, probability: 0.1, reward: 5, desc: "약하지만 빠른 영입니다.", effectiveness: "속사형 유닛.", lore: "존재를 간신히 유지하고 있는 파편입니다." },
+        { type: 'memory', icon: '👣', speed: 1.7, hp: 90, defense: 0, probability: 0.15, reward: 4, desc: "희미한 흔적입니다.", effectiveness: "표준 퇴마 공격.", lore: "살고자 했던 강력한 욕망이 남긴 잔상입니다." },
         { type: 'normal', icon: '👻', speed: 1.5, hp: 110, defense: 0, probability: 0.35, reward: 4, desc: "심연을 떠도는 평범한 영혼입니다.", effectiveness: "표준 퇴마 공격.", lore: "이승의 미련을 버리지 못한 영혼입니다." }, 
         { type: 'mist', icon: '🌫️', speed: 1.3, hp: 140, defense: 0, probability: 0.15, reward: 4, desc: "영적인 안개입니다.", effectiveness: "표준 퇴마 공격.", lore: "잊혀진 작은 슬픔들이 응축되었습니다." },
-        { type: 'memory', icon: '👣', speed: 1.7, hp: 90, defense: 0, probability: 0.15, reward: 4, desc: "희미한 흔적입니다.", effectiveness: "표준 퇴마 공격.", lore: "살고자 했던 강력한 욕망이 남긴 잔상입니다." },
-        { type: 'shade', icon: '👤', speed: 2.2, hp: 60, defense: 0, probability: 0.1, reward: 5, desc: "약하지만 빠른 영입니다.", effectiveness: "속사형 유닛.", lore: "존재를 간신히 유지하고 있는 파편입니다." },
-        { type: 'tank', icon: '💀', speed: 0.75, hp: 160, defense: 8, probability: 0.15, reward: 7, desc: "죄악으로 단단해진 영혼입니다.", effectiveness: "치명타 유닛.", lore: "생전의 무거운 죄가 형상화되었습니다." },  
-        { type: 'runner', icon: '⚡', speed: 2.2, hp: 35, defense: 0, probability: 0.1, reward: 6, desc: "포탈을 향해 돌진하는 그림자입니다.", effectiveness: "둔화 유닛.", lore: "평생 정의를 피해 도망 다니던 저주받은 도둑입니다." }
+        { type: 'tank', icon: '💀', speed: 0.75, hp: 160, defense: 8, probability: 0.15, reward: 7, desc: "죄악으로 단단해진 영혼입니다.", effectiveness: "치명타 유닛.", lore: "생전의 무거운 죄가 형상화되었습니다." }
     ],
     pattern: [
-        { type: 'defiled_apprentice', icon: '🥀', speed: 0.6, hp: 400, defense: 5, probability: 0.1, reward: 15, desc: "타락한 수련생입니다.", effectiveness: "신성 공격.", lore: "금지된 술법에 손을 댄 대가입니다." },
-        { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.2, reward: 12, desc: "공격자를 강제 이동시킵니다.", effectiveness: "장거리 저격수.", lore: "퇴마사들의 땅마저 훔치려 합니다." }, 
-        { type: 'mimic', icon: '📦', speed: 1.1, hp: 180, defense: 15, probability: 0.1, reward: 12, desc: "가끔 앞으로 순간이동합니다.", effectiveness: "범위 공격.", lore: "가장 갈망하는 모습으로 나타납니다." },
         { type: 'dimension', icon: '🌀', speed: 1.8, hp: 80, defense: 0, probability: 0.2, reward: 12, desc: "공격에 면역이 되기도 합니다.", effectiveness: "선지자 또는 속사형.", lore: "차원 사이를 떠도는 은둔자입니다." }, 
         { type: 'deceiver', icon: '🎭', speed: 1.4, hp: 120, defense: 5, probability: 0.2, reward: 12, desc: "공격을 회피하고 물러납니다.", effectiveness: "범위 피해.", lore: "얼굴을 보인 적 없는 거짓말의 명수입니다." },
+        { type: 'greedy', icon: '🧛', speed: 1.2, hp: 150, defense: 5, probability: 0.2, reward: 12, desc: "공격자를 강제 이동시킵니다.", effectiveness: "장거리 저격수.", lore: "퇴마사들의 땅마저 훔치려 합니다." }, 
+        { type: 'mimic', icon: '📦', speed: 1.1, hp: 180, defense: 15, probability: 0.1, reward: 12, desc: "가끔 앞으로 순간이동합니다.", effectiveness: "범위 공격.", lore: "가장 갈망하는 모습으로 나타납니다." },
+        { type: 'defiled_apprentice', icon: '🥀', speed: 0.6, hp: 400, defense: 5, probability: 0.1, reward: 15, desc: "타락한 수련생입니다.", effectiveness: "신성 공격.", lore: "금지된 술법에 손을 댄 대가입니다." },
         { type: 'betrayer_blade', icon: '🗡️', speed: 1.8, hp: 500, defense: 5, probability: 0.15, reward: 25, desc: "그림자 배신자입니다.", effectiveness: "속사형 유닛.", lore: "그림자가 주인이 된 자입니다." },
-        { type: 'cursed_vajra', icon: '🏮', speed: 0.5, hp: 1500, defense: 20, probability: 0.1, reward: 40, desc: "타락한 승려입니다.", effectiveness: "장거리 유닛.", lore: "그의 철퇴는 이제 산 자를 부숩니다." },
         { type: 'void_piercer', icon: '🏹', speed: 1.2, hp: 600, defense: 5, probability: 0.05, reward: 30, desc: "배신한 궁수입니다.", effectiveness: "단거리 유닛.", lore: "화살들이 무(無)의 파편으로 변했습니다." }
     ],
     enhanced: [
-        { type: 'boar', icon: '🐗', speed: 0.4, hp: 250, defense: 8, probability: 0.25, reward: 15, desc: "포탈 근처에서 빨라집니다.", effectiveness: "밀쳐내기.", lore: "폭력적인 사냥꾼의 갈증입니다." }, 
-        { type: 'soul_eater', icon: '🧿', speed: 1.2, hp: 220, defense: 12, probability: 0.1, reward: 15, desc: "피해 시 속도가 증가합니다.", effectiveness: "강력한 단발.", lore: "퇴마사의 힘을 굶주립니다." },
-        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.25, reward: 12, desc: "주변 적의 속도를 높입니다.", effectiveness: "화염 에너지.", lore: "얼어붙은 원망의 심장입니다." }, 
         { type: 'lightspeed', icon: '✨', speed: 2.6, hp: 60, defense: 0, probability: 0.2, reward: 18, desc: "엄청난 속도로 이동합니다.", effectiveness: "즉사 유닛.", lore: "말을 전하지 못한 필사적인 전령입니다." },
-        { type: 'frost_outcast', icon: '❄️', speed: 0.7, hp: 800, defense: 10, probability: 0.1, reward: 35, desc: "공격 속도를 감소시킵니다.", effectiveness: "오라 밖 처치.", lore: "심연에 오기 전 이미 얼어붙은 마음입니다." },
-        { type: 'ember_hatred', icon: '☄️', speed: 0.8, hp: 700, defense: 0, probability: 0.1, reward: 30, desc: "죽을 때 주변 적을 가속합니다.", effectiveness: "고립 처치.", lore: "평생을 태웠던 증오의 불꽃입니다." }
+        { type: 'frost', icon: '❄️', speed: 1.0, hp: 180, defense: 5, probability: 0.25, reward: 12, desc: "주변 적의 속도를 높입니다.", effectiveness: "화염 에너지.", lore: "얼어붙은 원망의 심장입니다." }, 
+        { type: 'soul_eater', icon: '🧿', speed: 1.2, hp: 220, defense: 12, probability: 0.1, reward: 15, desc: "피해 시 속도가 증가합니다.", effectiveness: "강력한 단발.", lore: "퇴마사의 힘을 굶주립니다." },
+        { type: 'boar', icon: '🐗', speed: 0.4, hp: 250, defense: 8, probability: 0.25, reward: 15, desc: "포탈 근처에서 빨라집니다.", effectiveness: "밀쳐내기.", lore: "폭력적인 사냥꾼의 갈증입니다." }, 
+        { type: 'ember_hatred', icon: '☄️', speed: 0.8, hp: 700, defense: 0, probability: 0.1, reward: 30, desc: "죽을 때 주변 적을 가속합니다.", effectiveness: "고립 처치.", lore: "평생을 태웠던 증오의 불꽃입니다." },
+        { type: 'frost_outcast', icon: '❄️', speed: 0.7, hp: 800, defense: 10, probability: 0.1, reward: 35, desc: "공격 속도를 감소시킵니다.", effectiveness: "오라 밖 처치.", lore: "심연에 오기 전 이미 얼어붙은 마음입니다." }
     ],
     armoured: [
-        { type: 'heavy', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.3, knockbackResist: 0.8, reward: 20, desc: "단단한 괴수입니다.", effectiveness: "관통 공격.", lore: "자신이 사용하던 사슬에 묶인 집행자입니다." }, 
         { type: 'lava', icon: '🌋', speed: 1.3, hp: 200, defense: 15, probability: 0.2, reward: 18, desc: "냉기 공격 시 도약합니다.", effectiveness: "화염 공격.", lore: "분노로 불타오르는 영혼입니다." }, 
         { type: 'burning', icon: '💢', speed: 1.0, hp: 350, defense: 10, probability: 0.2, reward: 15, desc: "피해 시 회복합니다.", effectiveness: "강력한 일격.", lore: "재생의 원동력이 된 고통입니다." },
-        { type: 'abyssal_acolyte', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, probability: 0.2, reward: 50, desc: "타격 시 데미지를 깎습니다.", effectiveness: "기절 유닛.", lore: "그림자 팔이 그들을 끌어당깁니다." }
+        { type: 'heavy', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.3, knockbackResist: 0.8, reward: 20, desc: "단단한 괴수입니다.", effectiveness: "관통 공격.", lore: "자신이 사용하던 사슬에 묶인 집행자입니다." }, 
+        { type: 'abyssal_acolyte', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, probability: 0.2, reward: 50, desc: "타격 시 데미지를 깎습니다.", effectiveness: "기절 유닛.", lore: "그림자 팔이 그들을 끌어당깁니다." },
+        { type: 'cursed_vajra', icon: '🏮', speed: 0.5, hp: 1500, defense: 20, probability: 0.1, reward: 40, desc: "타락한 승려입니다.", effectiveness: "장거리 유닛.", lore: "그의 철퇴는 이제 산 자를 부숩니다." }
     ],
     treasure: [
         { type: 'gold', icon: '💎', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 200, desc: "막대한 SE를 줍니다.", effectiveness: "속사형 유닛.", lore: "반짝이는 왕의 보물 잔재입니다." } 
