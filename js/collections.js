@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             colInfoLockedUntil = 0;
             resetColInfo();
-            renderGhostGrid('basic'); 
+            renderGhostGrid('normal'); 
 
             // Hide notification when opened
             const notif = document.getElementById('collections-notif');
@@ -41,22 +41,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeBtn) {
         closeBtn.onclick = () => {
             collectionsOverlay.style.display = 'none';
-            isPaused = false;
+            if (typeof isPaused !== 'undefined') isPaused = false;
         };
     }
 
     tabBtns.forEach(btn => {
         btn.onclick = () => {
+            const tab = btn.dataset.tab;
             tabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const tab = btn.dataset.tab;
+
             document.querySelectorAll('.collections-section').forEach(s => s.classList.remove('active'));
             document.getElementById(`${tab}-section`).classList.add('active');
-            
-            colInfoLockedUntil = 0;
+
+            if (tab === 'ghosts') {
+                renderGhostGrid('normal');
+            } else {
+                renderExorcistTree();
+            }
             resetColInfo();
-            if (tab === 'ghosts') renderGhostGrid('basic');
-            else if (tab === 'exorcists') renderExorcistTree();
         };
     });
 
@@ -64,19 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.onclick = () => {
             catBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const catMap = {
-                'normal': 'basic',
-                'enhanced': 'enhanced',
-                'armoured': 'armoured',
-                'boss': 'boss'
-            };
-            renderGhostGrid(catMap[btn.dataset.cat] || btn.dataset.cat);
+            renderGhostGrid(btn.dataset.cat);
+            resetColInfo();
         };
     });
 });
 
 function resetColInfo() {
-    if (Date.now() < colInfoLockedUntil) return;
     const infoPane = document.getElementById('col-info-pane');
     if (infoPane) {
         infoPane.innerHTML = `
@@ -95,6 +92,7 @@ function startColInfoResetTimer() {
 
 function renderGhostGrid(category) {
     const grid = document.getElementById('ghost-grid');
+    if (!grid) return;
     grid.innerHTML = '';
     
     let pool = [];
@@ -102,6 +100,8 @@ function renderGhostGrid(category) {
         pool = Object.values(bossData);
     } else {
         pool = enemyCategories[category] || [];
+    }
+    
     pool.forEach(enemy => {
         const item = document.createElement('div');
         const isUnlocked = (window.encounteredEnemies && window.encounteredEnemies.has(enemy.type));
@@ -116,7 +116,7 @@ function renderGhostGrid(category) {
             badge.innerText = '!';
             item.appendChild(badge);
         }
-
+        
         if (isUnlocked) {
             const clearUnseen = () => {
                 if (window.unseenItems && window.unseenItems.has(enemy.type)) {
@@ -138,10 +138,9 @@ function renderGhostGrid(category) {
                     showGhostDetail(enemy);
                     clearUnseen();
                 }
-            };
-        }
-        grid.appendChild(item);
-    });
+                // Also show in bottom panel for consistency
+                if (typeof showEnemyInfo === 'function') {
+                    const tempEnemy = { 
                         type: enemy.type, hp: enemy.hp, maxHp: enemy.hp, defense: enemy.defense || 0,
                         desc: enemy.desc, data: { name: enemy.name, lore: enemy.lore }
                     };
@@ -153,7 +152,6 @@ function renderGhostGrid(category) {
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             };
         }
-        
         grid.appendChild(item);
     });
     
@@ -168,16 +166,16 @@ function renderGhostGrid(category) {
 
 function showGhostDetail(enemy) {
     const infoPane = document.getElementById('col-info-pane');
+    if (!infoPane) return;
+
     const killCount = (window.killCounts && window.killCounts[enemy.type]) || 0;
     
     const enemyNames = {
-        'normal': '평범한 원령', 'mist': '떠도는 안개', 'memory': '흐릿한 기억',
-        'shade': '깜빡이는 그림자', 'tank': '죄악의 괴수', 'runner': '저주받은 도둑',
-        'defiled_apprentice': '타락한 수련생', 'greedy': '탐욕스러운 악귀', 'mimic': '갈망의 상자',
-        'dimension': '공허의 은둔자', 'deceiver': '거짓말의 기사', 'betrayer_blade': '그림자 배신자',
-        'cursed_vajra': '타락한 금강', 'void_piercer': '무(無)의 궁수',
-        'boar': '피의 사냥꾼', 'soul_eater': '영혼을 먹는 자', 'frost': '빙결된 원망', 
-        'lightspeed': '필사적인 전령', 'frost_outcast': '얼어붙은 마음', 'ember_hatred': '증오의 불꽃',
+        'normal': '속삭이는 영혼', 'mist': '방랑하는 안개', 'memory': '빛바랜 기억',
+        'shade': '깜빡이는 그림자', 'tank': '철갑 망령', 'runner': '가속된 그림자',
+        'greedy': '탐욕스러운 폴터가이스트', 'mimic': '미믹 영혼', 'dimension': '차원 이동 망령',
+        'deceiver': '절망의 세이렌', 'boar': '야생의 복수자', 'soul_eater': '소울 이터',
+        'frost': '코키토스 방랑자', 'lightspeed': '필사적인 전령', 'frost_outcast': '얼어붙은 마음', 'ember_hatred': '증오의 불꽃',
         'heavy': '쇠사슬 집행자', 'lava': '불타는 분노', 'burning': '고통의 재생자',
         'abyssal_acolyte': '심연의 추종자', 'bringer_of_doom': '파멸의 인도자', 'gold': '황금의 잔상',
         'cerberus': '케르베로스', 'charon': '카론', 'beelzebub': '바알세불', 'lucifer': '루시퍼'
@@ -203,6 +201,7 @@ function showGhostDetail(enemy) {
 
 function renderExorcistTree() {
     const container = document.getElementById('exorcist-tree-container');
+    if (!container) return;
     container.innerHTML = '';
     
     const trees = [
@@ -301,6 +300,7 @@ function createExNode(type) {
 
 function showExorcistDetail(unit) {
     const infoPane = document.getElementById('col-info-pane');
+    if (!infoPane) return;
     infoPane.innerHTML = `
         <div class="col-detail-header">
             <div class="col-detail-icon">${unit.icon}</div>
