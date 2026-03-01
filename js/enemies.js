@@ -281,6 +281,24 @@ function spawnFriendlySkeleton(target) {
     friendlySkeletons.push({ element: div, x: target.x, y: target.y, speed: 0.7 });
 }
 
+function showBossWarning(bossName) {
+    const modal = document.getElementById('unlock-modal');
+    if (!modal) return;
+
+    const header = document.getElementById('unlock-header');
+    const icon = document.getElementById('unlock-icon');
+    const name = document.getElementById('unlock-name');
+    const desc = document.getElementById('unlock-desc');
+
+    if (header) header.innerText = "⚠️ [심연의 징조: 마신 강림]";
+    if (icon) icon.innerText = "👿";
+    if (name) name.innerText = bossName;
+    if (desc) desc.innerText = "강력한 심연의 지배자가 다가오고 있습니다. 모든 퇴마사의 힘을 집중하십시오!";
+
+    modal.style.display = 'flex';
+    if (typeof isPaused !== 'undefined') isPaused = true;
+}
+
 function showBossVictory(bossName, rewardMsg, bonusDetail) {
     const container = document.getElementById('game-container'); const overlay = document.createElement('div'); overlay.className = 'boss-victory-overlay';
     overlay.innerHTML = `<div class="boss-victory-content"><div class="boss-victory-header">심연의 존재가 추방되었습니다</div><div class="boss-victory-name">마왕 [${bossName}]<br>소멸</div><div class="boss-victory-reward">${rewardMsg}</div><div class="boss-victory-bonus">${bonusDetail}</div><div class="boss-victory-hint">(클릭하여 계속)</div></div>`;
