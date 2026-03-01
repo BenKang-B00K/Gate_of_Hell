@@ -55,13 +55,12 @@ function recordUnlock(type, isEnemy = false) {
     const isTutorialEnabled = tutorialToggle ? tutorialToggle.checked : true;
     
     if (isEnemy) {
-        // ... (rest of enemy unlock logic same)
         if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
         if (window.encounteredEnemies.has(type)) return;
         window.encounteredEnemies.add(type);
         window.unseenItems.add(type); // Mark as unseen
 
-        // Show notification badge
+        // Show main notification badge
         const notif = document.getElementById('collections-notif');
         if (notif) notif.style.display = 'flex';
 
@@ -82,31 +81,16 @@ function recordUnlock(type, isEnemy = false) {
 
         if (enemyData) {
             const modal = document.getElementById('unlock-modal');
-            const header = document.getElementById('unlock-header');
-            const icon = document.getElementById('unlock-icon');
-            const name = document.getElementById('unlock-name');
-            const desc = document.getElementById('unlock-desc');
-            
-            const enemyNames = {
-                'normal': 'Whispering Soul', 'mist': 'Wandering Mist', 'memory': 'Faded Memory',
-                'shade': 'Flickering Shade', 'tank': 'Ironclad Wraith', 'runner': 'Haste-Cursed Shadow',
-                'greedy': 'Gluttonous Poltergeist', 'mimic': 'Mimic Soul', 'dimension': 'Void-Step Phantasm',
-                'deceiver': 'Siren of Despair', 'boar': 'Feral Revenant', 'soul_eater': 'Soul Eater',
-                'frost': 'Cocytus Drifter', 'lightspeed': 'Ethereal Streak', 'heavy': 'Grave-Bound Behemoth',
-                'lava': 'Magma-Veined Terror', 'burning': 'Eternal Zealot', 'gold': 'Gilded Apparition',
-                'defiled_apprentice': 'Defiled Apprentice', 'abyssal_acolyte': 'Abyssal Acolyte', 'bringer_of_doom': 'Bringer of Doom',
-                'cursed_vajra': 'Cursed Vajra', 'void_piercer': 'Void-Piercing Shade', 'frost_outcast': 'Frost-Bitten Outcast',
-                'ember_hatred': 'Embers of Hatred', 'betrayer_blade': "Betrayer's Blade"
-            };
-
-            if (modal && header && icon && name && desc) {
-                header.innerText = `${enemyData.icon} NEW SPECTER ENCOUNTERED!`;
-                header.style.color = "#ff4500";
-                icon.innerText = enemyData.icon;
-                const hpVal = Math.floor(enemyData.hp || 110);
-                const fullName = enemyData.name || enemyNames[enemyData.type] || enemyData.type;
-                name.innerHTML = `${fullName}<br><span style="font-size:30px; color:#aaa;">(HP: ${hpVal})</span>`;
-                desc.innerText = enemyData.desc || enemyData.lore;
+            const content = document.getElementById('unlock-content');
+            if (modal && content) {
+                content.className = 'unlock-content enemy-theme'; // Evil theme
+                content.innerHTML = `
+                    <div class="unlock-title evil">ABYSSAL WHISPER</div>
+                    <div id="unlock-icon">${enemyData.icon}</div>
+                    <div id="unlock-name">${enemyData.name || type}</div>
+                    <div id="unlock-desc">${enemyData.desc || enemyData.lore || "심연에서 새로운 기운이 감지되었습니다."}</div>
+                    <div class="unlock-hint">(클릭하여 계속)</div>
+                `;
                 modal.style.display = 'flex';
                 isPaused = true;
             }
@@ -118,7 +102,7 @@ function recordUnlock(type, isEnemy = false) {
         window.unlockedUnits.add(type);
         window.unseenItems.add(type); // Mark as unseen
 
-        // Show notification badge
+        // Show main notification badge
         const notif = document.getElementById('collections-notif');
         if (notif) notif.style.display = 'flex';
 
@@ -129,17 +113,16 @@ function recordUnlock(type, isEnemy = false) {
         const data = unitTypes.find(u => u.type === type);
         if (data && type !== 'apprentice') {
             const modal = document.getElementById('unlock-modal');
-            const header = document.getElementById('unlock-header');
-            const icon = document.getElementById('unlock-icon');
-            const name = document.getElementById('unlock-name');
-            const desc = document.getElementById('unlock-desc');
-            
-            if (modal && header && icon && name && desc) {
-                header.innerText = "🆕 NEW CLASS UNLOCKED!";
-                header.style.color = "#ffd700";
-                icon.innerText = data.icon;
-                name.innerText = data.name;
-                desc.innerText = data.desc;
+            const content = document.getElementById('unlock-content');
+            if (modal && content) {
+                content.className = 'unlock-content'; // Holy theme
+                content.innerHTML = `
+                    <div class="unlock-title holy">DIVINE REVELATION</div>
+                    <div id="unlock-icon">${data.icon}</div>
+                    <div id="unlock-name">${data.name}</div>
+                    <div id="unlock-desc">${data.desc}</div>
+                    <div class="unlock-hint">(클릭하여 계속)</div>
+                `;
                 modal.style.display = 'flex';
                 isPaused = true;
             }

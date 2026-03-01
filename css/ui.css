@@ -344,3 +344,30 @@
     50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); filter: hue-rotate(-20deg) blur(0px); box-shadow: 0 0 45px rgba(148, 0, 211, 0.8); }
     100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1); filter: hue-rotate(0deg) blur(0.5px); }
 }
+
+/* Floating Gauge Numbers VFX */
+.gauge-floating-num {
+    position: absolute;
+    right: -40px; /* Positioned to the right of the gauge */
+    font-size: 24px;
+    font-weight: 900;
+    pointer-events: none;
+    z-index: 200;
+    text-shadow: 2px 2px 4px #000;
+    white-space: nowrap;
+}
+
+.gauge-floating-num.gain { color: #00ff00; animation: gaugePopUp 0.8s ease-out forwards; }
+.gauge-floating-num.loss { color: #ff0000; animation: gaugePopDown 0.8s ease-out forwards; }
+
+@keyframes gaugePopUp {
+    0% { transform: translateY(0); opacity: 0; }
+    20% { transform: translateY(-20px); opacity: 1; }
+    100% { transform: translateY(-60px); opacity: 0; }
+}
+
+@keyframes gaugePopDown {
+    0% { transform: translateY(0); opacity: 0; }
+    20% { transform: translateY(20px); opacity: 1; }
+    100% { transform: translateY(60px); opacity: 0; }
+}

@@ -684,6 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const recordsOverlay = document.getElementById('records-overlay');
                 const relicsOverlay = document.getElementById('relics-overlay');
                 const collectionsOverlay = document.getElementById('collections-overlay');
+                const equipOverlay = document.getElementById('equip-overlay');
                 const unlockModal = document.getElementById('unlock-modal');
                 const gameOverOverlay = document.getElementById('game-over-overlay');
                 
@@ -699,6 +700,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (collectionsOverlay && collectionsOverlay.style.display === 'flex') {
                     collectionsOverlay.style.display = 'none';
+                    closedSomething = true;
+                }
+                if (equipOverlay && equipOverlay.style.display === 'flex') {
+                    equipOverlay.style.display = 'none';
                     closedSomething = true;
                 }
                 if (unlockModal && unlockModal.style.display === 'flex') {

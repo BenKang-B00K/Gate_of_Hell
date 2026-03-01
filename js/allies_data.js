@@ -34,6 +34,9 @@ let slots = [];
 let globalAnimTimer = 0;
 let lavaPhase = 0;
 
+let lastMoney = 150;
+let lastPortalEnergy = 0;
+
 /**
  * Updates Soul Energy and Portal Energy Displays
  */
@@ -43,12 +46,46 @@ function updateGauges() {
     const peFill = document.getElementById('portal-gauge-fill');
     const seFill = document.getElementById('se-gauge-fill');
 
-    if (moneyDisplay) moneyDisplay.innerText = `${Math.floor(money)} / ${maxMoney}`;
-    if (peDisplay) peDisplay.innerText = `${Math.floor(portalEnergy)} / ${maxPortalEnergy}`;
+    // Calculate Deltas for Floating VFX
+    const currentMoney = Math.floor(money);
+    const moneyDelta = currentMoney - lastMoney;
+    if (moneyDelta !== 0) {
+        spawnGaugePop('se-label', moneyDelta);
+        lastMoney = currentMoney;
+    }
+
+    const currentPE = Math.floor(portalEnergy);
+    const peDelta = currentPE - lastPortalEnergy;
+    if (peDelta !== 0) {
+        spawnGaugePop('pe-label', peDelta);
+        lastPortalEnergy = currentPE;
+    }
+
+    if (moneyDisplay) moneyDisplay.innerText = `${currentMoney} / ${maxMoney}`;
+    if (peDisplay) peDisplay.innerText = `${currentPE} / ${maxPortalEnergy}`;
     
     if (peFill) peFill.style.width = `${(portalEnergy / maxPortalEnergy) * 100}%`;
     if (seFill) seFill.style.width = `${Math.min((money / maxMoney) * 100, 100)}%`;
 }
+
+function spawnGaugePop(containerId, amount) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const div = document.createElement('div');
+    const isGain = amount > 0;
+    div.className = `gauge-floating-num ${isGain ? 'gain' : 'loss'}`;
+    div.innerText = (isGain ? '+' : '') + amount;
+    
+    // Append to the gauge-bar inside the wrapper
+    const bar = container.querySelector('.gauge-bar');
+    if (bar) {
+        bar.appendChild(div);
+        setTimeout(() => div.remove(), 800);
+    }
+}
+
+let lastEnemiesLeft = 0;
 
 /**
  * Updates Stage Info and Enemies Left Display
@@ -56,14 +93,24 @@ function updateGauges() {
 function updateStageInfo() {
     const stageDisplay = document.getElementById('stage-display');
     if (stageDisplay) stageDisplay.innerText = stage;
-    
-    const enemiesLeft = document.getElementById('enemies-left');
-    if (enemiesLeft) {
+
+    const enemiesLeftLabel = document.getElementById('rs-display-text');
+    const rsFill = document.getElementById('rs-gauge-fill');
+
+    if (enemiesLeftLabel) {
         const remaining = Math.max(0, (totalStageEnemies - currentStageSpawned) + enemies.length);
-        enemiesLeft.innerText = remaining;
+
+        // Calculate Delta for RS VFX
+        const rsDelta = remaining - lastEnemiesLeft;
+        if (rsDelta !== 0 && lastEnemiesLeft !== 0) {
+            spawnGaugePop('rs-label', rsDelta);
+        }
+        lastEnemiesLeft = remaining;
+
+        enemiesLeftLabel.innerText = remaining;
+        if (rsFill) rsFill.style.width = `${(remaining / totalStageEnemies) * 100}%`;
     }
 }
-
 const unitTypes = [
     { type: 'apprentice', name: '견습 퇴마사', role: '기본', tier: 1, icon: '🧙', damage: 40, range: 360, cooldown: 833, desc: "정화된 에너지 볼트를 발사하여 단일 대상을 공격합니다." },
     
