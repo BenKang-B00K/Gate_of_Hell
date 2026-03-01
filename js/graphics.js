@@ -18,15 +18,15 @@ function initGraphics() {
 }
 
 function resizeCanvas() {
-    const container = document.getElementById('game-container');
-    if (!container) return;
+    const layer = document.getElementById('game-layer');
+    if (!layer) return;
     canvas.width = LOGICAL_WIDTH;
     canvas.height = LOGICAL_HEIGHT;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     
-    const cr = container.getBoundingClientRect();
-    scaleFactor = cr.width / LOGICAL_WIDTH;
+    const rect = layer.getBoundingClientRect();
+    scaleFactor = rect.width / LOGICAL_WIDTH;
     
     disableSmoothing();
 }

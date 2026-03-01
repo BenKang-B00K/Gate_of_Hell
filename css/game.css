@@ -6,29 +6,75 @@
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
     overflow: hidden;
     z-index: 0;
+    /* [User Request] 3-Panel Layout */
+    display: flex;
+    flex-direction: column;
 }
 
-#game-container::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 200px;
-    background: linear-gradient(to bottom, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
-    pointer-events: none;
-    z-index: 140; /* Just below Top HUD elements */
-    opacity: 0.6;
+/* 1. Top Panel (18% height) */
+#top-panel {
+    flex: 0 0 18%;
+    background: linear-gradient(to bottom, #1a0505, #000);
+    border-bottom: 3px solid #441111;
+    display: flex;
+    flex-direction: column;
+    padding: 15px 25px;
+    box-sizing: border-box;
+    z-index: 150;
+    position: relative;
+}
+
+#top-management-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* 2. Game Layer (Battle Zone - Flex remaining space) */
+#game-layer {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    background: transparent;
 }
 
 #game-layout {
-    height: 65%;
+    height: 100%;
     display: flex;
     width: 100%;
     position: relative;
     padding-top: 0;
     box-sizing: border-box;
-    background: transparent;
-    z-index: 1;
 }
 
+/* 3. Bottom Panel (30% height) */
+#bottom-panel {
+    flex: 0 0 30%;
+    background: linear-gradient(to top, #1a0505, #000);
+    border-top: 3px solid #441111;
+    z-index: 150;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 4; 
+    image-rendering: pixelated;
+}
+
+/* Original Elements Adjustment */
 #road {
     width: 340px;
     background-color: transparent;
@@ -39,23 +85,15 @@
     z-index: 1;
     padding: 0 2px;
     box-sizing: border-box;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-#road::before, #road::after {
-    display: none; /* Removed old CSS effects */
-}
-
-@keyframes lavaFlowAnim {
-    from { transform: translateY(0); }
-    to { transform: translateY(400px); }
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 #spawning-pool {
     position: absolute;
-    top: -15px; /* Scaled: -5 logical * 3 */
+    top: 0;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     width: 340px;
     height: 30px; 
     background: transparent;
@@ -63,41 +101,31 @@
     pointer-events: none;
 }
 
-#spawning-pool::after {
-    display: none;
-}
-
-@keyframes eerieMist {
-    0% { transform: translateX(-50%) scale(1); opacity: 0.6; }
-    50% { transform: translateX(-52%) scale(1.15) skewX(5deg); opacity: 0.9; }
-    100% { transform: translateX(-48%) scale(1) skewX(-5deg); opacity: 0.6; }
-}
-
-@keyframes creepingDarkness {
-    from { opacity: 0.2; transform: translate(-50%, -50%) scale(0.8) rotate(0deg); }
-    to { opacity: 0.7; transform: translate(-50%, -50%) scale(1.3) rotate(10deg); }
-}
-
 #portal {
     position: absolute;
-    top: 1248px; /* Scaled: 416 logical * 3 */
+    bottom: 0;
     width: 340px;
     height: 30px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     z-index: 3;
     pointer-events: none;
     background: transparent;
 }
 
-@keyframes portalSwirl {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+#top-right-hud {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#restart-btn-top {
+    position: static; /* Remove absolute */
 }
 
 #start-timer {
     position: absolute;
-    top: 30%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-family: 'Cinzel', serif;
@@ -121,13 +149,13 @@
     to { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
 }
 
-#game-canvas {
+#frozen-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(0, 229, 255, 0.2) 0%, rgba(0, 100, 200, 0.4) 100%);
+    z-index: 140;
+    opacity: 0;
     pointer-events: none;
-    z-index: 4; /* [User Request] Mist z=4 is highest canvas element */
-    image-rendering: pixelated;
+    transition: opacity 2s ease;
+    backdrop-filter: blur(2px);
 }
