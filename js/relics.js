@@ -164,6 +164,13 @@ const relicsData = {
         lore: "배신에는 대가가 따르며, 이 동전은 그 대가를 조금 더 달콤하게 만듭니다.", 
         bonus: { type: 'sell_refund', value: 0.02 },
         maxStack: 5, dropSource: 'all'
+    },
+    'abyssal_compass': { 
+        name: "심연의 나침반", icon: '🧭', 
+        effect: "모든 아군의 공격 사거리가 중첩당 +5 증가합니다.", 
+        lore: "심연의 기운이 흐르는 방향을 가리킵니다. 적의 위치를 더 멀리서 포착할 수 있게 해줍니다.", 
+        bonus: { type: 'range', value: 5 },
+        maxStack: 10, dropSource: 'all'
     }
 };
 
@@ -439,12 +446,24 @@ function checkRelicDrop(enemy) {
         if (currentCount >= data.maxStack) return;
 
         let canDrop = false;
-        if (data.dropSource === 'all') canDrop = true;
-        else if (data.dropSource === 'basic' && basicSpecters.includes(enemy.type)) canDrop = true;
-        else if (data.dropSource === 'specialized' && specializedWraiths.includes(enemy.type)) canDrop = true;
-        else if (data.dropSource === 'fast' && FastSpecters.includes(enemy.type)) canDrop = true;
-        else if (data.dropSource === 'armoured' && armouredDemons.includes(enemy.type)) canDrop = true;
-        else if (enemy.isBoss) canDrop = true; // Bosses can drop anything
+        const isNormalRelic = !['boss', 'armoured'].includes(data.dropSource);
+
+        if (enemy.isBoss) {
+            canDrop = true; // Bosses can drop anything
+        } else if (isNormalRelic) {
+            // [User Request] Normal relics drop from Basic, Specialized, Fast, and Armoured
+            if (basicSpecters.includes(enemy.type) || 
+                specializedWraiths.includes(enemy.type) || 
+                FastSpecters.includes(enemy.type) || 
+                armouredDemons.includes(enemy.type)) {
+                canDrop = true;
+            }
+        } else {
+            // Supreme relics only drop from Armoured or Bosses (handled above)
+            if (data.dropSource === 'armoured' && armouredDemons.includes(enemy.type)) {
+                canDrop = true;
+            }
+        }
 
         if (canDrop) possibleIds.push(id);
     });
