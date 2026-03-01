@@ -597,12 +597,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const restartBtnTop = document.getElementById('restart-btn-top');
-    if (restartBtnTop) {
+    const quitModal = document.getElementById('quit-modal');
+    const quitConfirm = document.getElementById('quit-confirm-btn');
+    const quitCancel = document.getElementById('quit-cancel-btn');
+
+    if (restartBtnTop && quitModal && quitConfirm && quitCancel) {
         restartBtnTop.innerText = "퇴마 중단";
         restartBtnTop.onclick = () => {
-            if (confirm("💀 [경고] 퇴마를 포기하시겠습니까?\n이미 많은 영혼이 길을 잃었으며, 중단 시 모든 정화 기록이 소멸됩니다.")) {
-                window.location.reload();
-            }
+            quitModal.style.display = 'flex';
+            isPaused = true;
+        };
+
+        quitConfirm.onclick = () => {
+            window.location.reload();
+        };
+
+        quitCancel.onclick = () => {
+            quitModal.style.display = 'none';
+            isPaused = false;
         };
     }
     

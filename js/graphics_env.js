@@ -90,15 +90,25 @@ function drawLavaRoad() {
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
         ctx.strokeRect(roadX + 2, y, roadWidth - 4, slabHeight);
         
-        // Cracks with Glowing Energy
-        if ((Math.floor(y / slabHeight)) % 3 === 0) {
+        // Refined Magma Cracks (Only on some slabs to reduce noise)
+        if ((Math.floor(y / slabHeight)) % 5 === 0) {
+            ctx.save();
             ctx.beginPath();
-            ctx.moveTo(roadX + 10, y + 5);
-            ctx.lineTo(roadX + 40, y + 25);
-            ctx.lineTo(roadX + 20, y + 35);
-            ctx.strokeStyle = `rgba(255, 50, 0, ${0.1 + Math.sin(time * 3) * 0.1})`;
-            ctx.lineWidth = 1;
+            const startX = roadX + 20 + Math.random() * 20;
+            const startY = y + 10;
+            ctx.moveTo(startX, startY);
+            // Zig-zag crack pattern
+            ctx.lineTo(startX + 15, startY + 10);
+            ctx.lineTo(startX - 5, startY + 20);
+            ctx.lineTo(startX + 10, startY + 30);
+            
+            // Magma Glow Effect
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#ff4500';
+            ctx.strokeStyle = `rgba(255, 69, 0, ${0.2 + Math.sin(time * 2) * 0.1})`;
+            ctx.lineWidth = 1.5;
             ctx.stroke();
+            ctx.restore();
         }
     }
 
@@ -133,19 +143,22 @@ function drawLavaRoad() {
     // 6. Soul Flow Arrows (Moving Downward)
     ctx.save();
     const arrowSpacing = 120;
-    const arrowOffset = (time * 40) % arrowSpacing; // Movement speed
-    ctx.strokeStyle = 'rgba(255, 50, 50, 0.15)'; // Very subtle red/purple
-    ctx.lineWidth = 2;
+    const arrowOffset = (time * 40) % arrowSpacing; 
+    ctx.strokeStyle = '#ff3366'; // More vibrant pinkish-red for visibility
+    ctx.lineWidth = 2.5;
     ctx.lineJoin = 'round';
+    ctx.shadowBlur = 5;
+    ctx.shadowColor = '#ff0033';
 
     for(let y = -20 + arrowOffset; y < gameScreenHeight; y += arrowSpacing) {
         if (y < 0) continue;
-        const alpha = Math.min(0.15, (y / 100) * 0.15) * (1 - (y / gameScreenHeight)); // Fade in at top, fade out at portal
+        // Adjusted alpha calculation for better visibility
+        const alpha = Math.min(0.4, (y / 100) * 0.4) * (1 - (y / gameScreenHeight)); 
         ctx.globalAlpha = alpha;
 
-        const ax = 180; // Center of the bridge
-        const aw = 15;  // Arrow width
-        const ah = 10;  // Arrow height
+        const ax = 180; 
+        const aw = 18;  // Slightly wider
+        const ah = 12;  
 
         ctx.beginPath();
         ctx.moveTo(ax - aw, y);
@@ -153,9 +166,7 @@ function drawLavaRoad() {
         ctx.lineTo(ax + aw, y);
         ctx.stroke();
     }
-    ctx.globalAlpha = 1.0;
     ctx.restore();
-
     // 7. Lightning Overlay (Inherited)
 
     if (lightningTimer > 0) {
