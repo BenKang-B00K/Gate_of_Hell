@@ -12,6 +12,7 @@ let timeFreezeEndTime = 0;
 let enemies = [];
 let towers = [];
 let money = 150; // SE
+let maxMoney = 1000; // [User Request] Max SE
 let portalEnergy = 0;
 let maxPortalEnergy = 1500;
 let isBossStage = false;
@@ -42,11 +43,11 @@ function updateGauges() {
     const peFill = document.getElementById('portal-gauge-fill');
     const seFill = document.getElementById('se-gauge-fill');
 
-    if (moneyDisplay) moneyDisplay.innerText = Math.floor(money);
+    if (moneyDisplay) moneyDisplay.innerText = `${Math.floor(money)} / ${maxMoney}`;
     if (peDisplay) peDisplay.innerText = `${Math.floor(portalEnergy)} / ${maxPortalEnergy}`;
     
     if (peFill) peFill.style.width = `${(portalEnergy / maxPortalEnergy) * 100}%`;
-    if (seFill) seFill.style.width = `${Math.min((money / 1000) * 100, 100)}%`;
+    if (seFill) seFill.style.width = `${Math.min((money / maxMoney) * 100, 100)}%`;
 }
 
 /**

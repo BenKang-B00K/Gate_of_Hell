@@ -14,6 +14,20 @@ document.addEventListener('DOMContentLoaded', () => {
         collectionsBtn.onclick = () => {
             collectionsOverlay.style.display = 'flex';
             if (typeof isPaused !== 'undefined') isPaused = true;
+            
+            // Reset UI State to default (Ghosts tab, Normal category)
+            tabBtns.forEach(b => b.classList.remove('active'));
+            const ghostTabBtn = Array.from(tabBtns).find(b => b.dataset.tab === 'ghosts');
+            if (ghostTabBtn) ghostTabBtn.classList.add('active');
+
+            document.querySelectorAll('.collections-section').forEach(s => s.classList.remove('active'));
+            const ghostSection = document.getElementById('ghosts-section');
+            if (ghostSection) ghostSection.classList.add('active');
+
+            catBtns.forEach(b => b.classList.remove('active'));
+            const normalCatBtn = Array.from(catBtns).find(b => b.dataset.cat === 'normal');
+            if (normalCatBtn) normalCatBtn.classList.add('active');
+
             colInfoLockedUntil = 0;
             resetColInfo();
             renderGhostGrid('basic'); 
@@ -88,26 +102,46 @@ function renderGhostGrid(category) {
         pool = Object.values(bossData);
     } else {
         pool = enemyCategories[category] || [];
-    }
-    
     pool.forEach(enemy => {
         const item = document.createElement('div');
         const isUnlocked = (window.encounteredEnemies && window.encounteredEnemies.has(enemy.type));
         item.className = `col-item ${isUnlocked ? '' : 'locked'}`;
         item.innerText = isUnlocked ? enemy.icon : '?';
-        
+        item.style.position = 'relative';
+
+        // Add '!' badge if unseen
+        if (isUnlocked && window.unseenItems && window.unseenItems.has(enemy.type)) {
+            const badge = document.createElement('div');
+            badge.className = 'item-new-badge';
+            badge.innerText = '!';
+            item.appendChild(badge);
+        }
+
         if (isUnlocked) {
+            const clearUnseen = () => {
+                if (window.unseenItems && window.unseenItems.has(enemy.type)) {
+                    window.unseenItems.delete(enemy.type);
+                    const badge = item.querySelector('.item-new-badge');
+                    if (badge) badge.remove();
+                    if (typeof saveGameData === 'function') saveGameData();
+                }
+            };
+
             item.onclick = () => {
                 showGhostDetail(enemy);
                 colInfoLockedUntil = Date.now() + 15000;
                 startColInfoResetTimer();
+                clearUnseen();
             };
             item.onmouseenter = () => {
                 if (Date.now() > colInfoLockedUntil) {
                     showGhostDetail(enemy);
+                    clearUnseen();
                 }
-                if (typeof showEnemyInfo === 'function') {
-                    const tempEnemy = {
+            };
+        }
+        grid.appendChild(item);
+    });
                         type: enemy.type, hp: enemy.hp, maxHp: enemy.hp, defense: enemy.defense || 0,
                         desc: enemy.desc, data: { name: enemy.name, lore: enemy.lore }
                     };
@@ -216,21 +250,41 @@ function createExNode(type) {
     if (!data) return node;
     
     const isUnlocked = (window.unlockedUnits && window.unlockedUnits.has(type));
+    node.style.position = 'relative';
+
+    // Add '!' badge if unseen
+    if (isUnlocked && window.unseenItems && window.unseenItems.has(type)) {
+        const badge = document.createElement('div');
+        badge.className = 'item-new-badge';
+        badge.innerText = '!';
+        node.appendChild(badge);
+    }
     
-    node.innerHTML = `
+    node.innerHTML += `
         <div class="icon ${isUnlocked ? '' : 'locked'}">${isUnlocked ? data.icon : '?'}</div>
         <div class="name">${isUnlocked ? data.name : '???'}</div>
     `;
     
     if (isUnlocked) {
+        const clearUnseen = () => {
+            if (window.unseenItems && window.unseenItems.has(type)) {
+                window.unseenItems.delete(type);
+                const badge = node.querySelector('.item-new-badge');
+                if (badge) badge.remove();
+                if (typeof saveGameData === 'function') saveGameData();
+            }
+        };
+
         node.onclick = () => {
             showExorcistDetail(data);
             colInfoLockedUntil = Date.now() + 15000;
             startColInfoResetTimer();
+            clearUnseen();
         };
         node.onmouseenter = () => {
             if (Date.now() > colInfoLockedUntil) {
                 showExorcistDetail(data);
+                clearUnseen();
             }
             if (typeof showUnitInfo === 'function') {
                 const tempTower = { data: data, cooldown: data.cooldown, damageBonus: 0 };

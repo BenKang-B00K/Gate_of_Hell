@@ -217,19 +217,35 @@ function renderRelicsGrid() {
         const count = collectedRelics[id] || 0;
         const isCollected = count > 0;
         slot.className = `relic-slot ${isCollected ? '' : 'empty'}`;
+        slot.style.position = 'relative';
         
+        // Add new badge if unseen
+        if (isCollected && window.unseenItems && window.unseenItems.has(id)) {
+            const badge = document.createElement('div');
+            badge.className = 'item-new-badge';
+            badge.innerText = '!';
+            slot.appendChild(badge);
+        }
+
         let inner = relicsData[id].icon;
         if (count > 1) {
             inner += `<div style="position:absolute; bottom:3px; right:6px; font-size:21px; color:#fff; text-shadow:3px 3px 6px #000;">x${count}</div>`;
         }
-        slot.innerHTML = inner;
-        slot.style.position = 'relative';
+        slot.innerHTML += inner;
         
         if (isCollected) {
             slot.addEventListener('click', () => {
                 document.querySelectorAll('.relic-slot').forEach(s => s.classList.remove('selected'));
                 slot.classList.add('selected');
                 showRelicDetail(id);
+
+                // Clear unseen status
+                if (window.unseenItems && window.unseenItems.has(id)) {
+                    window.unseenItems.delete(id);
+                    const badge = slot.querySelector('.item-new-badge');
+                    if (badge) badge.remove();
+                    if (typeof saveGameData === 'function') saveGameData();
+                }
             });
             slot.addEventListener('mouseenter', () => {
                 showRelicDetail(id);
@@ -323,6 +339,10 @@ function collectRelic(id) {
     const currentCount = collectedRelics[id] || 0;
     
     if (currentCount < data.maxStack) {
+        if (currentCount === 0) {
+            if (!window.unseenItems) window.unseenItems = new Set();
+            window.unseenItems.add(id);
+        }
         collectedRelics[id] = currentCount + 1;
         updateRelicBonuses();
         showRelicInfoInPanel(data);

@@ -89,10 +89,27 @@ function renderEquipGrid() {
                 <div class="equip-tier-label tier-${owned.tier}">${tierData.prefix}</div>
                 ${owned.count > 1 ? `<div style="position:absolute; top:8px; right:12px; font-size:20px; color:#ffd700;">x${owned.count}</div>` : ''}
             `;
+
+            // New Badge if unseen
+            if (window.unseenItems && window.unseenItems.has(slotKey)) {
+                const badge = document.createElement('div');
+                badge.className = 'item-new-badge';
+                badge.innerText = '!';
+                slotDiv.appendChild(badge);
+            }
+
             slotDiv.onclick = () => {
                 document.querySelectorAll('.equip-slot').forEach(s => s.classList.remove('selected'));
                 slotDiv.classList.add('selected');
                 showEquipDetail(slotKey);
+
+                // Clear unseen status
+                if (window.unseenItems && window.unseenItems.has(slotKey)) {
+                    window.unseenItems.delete(slotKey);
+                    const badge = slotDiv.querySelector('.item-new-badge');
+                    if (badge) badge.remove();
+                    if (typeof saveGameData === 'function') saveGameData();
+                }
             };
         } else {
             slotDiv.innerHTML = `<div style="font-size: 54px; opacity: 0.2;">${slotData.icon}</div>`;
@@ -214,6 +231,8 @@ function addEquipment(slot, tier) {
     // Show notification badge
     const notif = document.getElementById('equip-notif');
     if (notif) notif.style.display = 'flex';
+    if (!window.unseenItems) window.unseenItems = new Set();
+    window.unseenItems.add(slot);
 
     showEquipToast(`장비 획득: ${equipmentSlots[slot].name}`, `[${equipmentTiers[owned.tier-1].prefix}] 등급을 발견했습니다.`);
     if (typeof saveGameData === 'function') saveGameData();

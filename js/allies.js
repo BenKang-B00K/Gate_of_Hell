@@ -2,13 +2,15 @@
 
 // Track unlocked classes for Records - Global for Collections access
 window.unlockedUnits = new Set(['apprentice']);
+window.unseenItems = new Set(); // Track which items (relics, equipment, ghosts, units) are new
 
 function saveGameData() {
     const data = {
         unlockedUnits: Array.from(window.unlockedUnits),
         encounteredEnemies: Array.from(window.encounteredEnemies || []),
         killCounts: window.killCounts || {},
-        ownedEquipment: window.ownedEquipment || {}
+        ownedEquipment: window.ownedEquipment || {},
+        unseenItems: Array.from(window.unseenItems)
     };
     localStorage.setItem('gateOfHell_saveData', JSON.stringify(data));
 }
@@ -36,6 +38,9 @@ function loadGameData() {
             if (data.ownedEquipment) {
                 window.ownedEquipment = data.ownedEquipment;
             }
+            if (data.unseenItems) {
+                window.unseenItems = new Set(data.unseenItems);
+            }
         } catch (e) {
             console.error("Failed to load save data:", e);
         }
@@ -54,6 +59,7 @@ function recordUnlock(type, isEnemy = false) {
         if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
         if (window.encounteredEnemies.has(type)) return;
         window.encounteredEnemies.add(type);
+        window.unseenItems.add(type); // Mark as unseen
 
         // Show notification badge
         const notif = document.getElementById('collections-notif');
@@ -110,6 +116,7 @@ function recordUnlock(type, isEnemy = false) {
 
     if (!window.unlockedUnits.has(type)) {
         window.unlockedUnits.add(type);
+        window.unseenItems.add(type); // Mark as unseen
 
         // Show notification badge
         const notif = document.getElementById('collections-notif');

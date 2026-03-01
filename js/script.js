@@ -325,13 +325,15 @@ function gameLoop() {
             const hf = 0.6;
             if (enemy.y < targetY * 0.85) {
                 enemy.x += (enemy.vxSign || 1) * enemy.speed * hf;
-                if (enemy.x <= 10) { enemy.x = 10; enemy.vxSign = 1; }
-                else if (enemy.x >= 90) { enemy.x = 90; enemy.vxSign = -1; }
+                // Road boundaries (approx 35% to 65% of 1080px for a 340px road)
+                if (enemy.x <= 35) { enemy.x = 35; enemy.vxSign = 1; }
+                else if (enemy.x >= 65) { enemy.x = 65; enemy.vxSign = -1; }
             } else { enemy.x += (targetX - enemy.x) * 0.1; }
         } else {
             let baseX = enemy.initialX + (targetX - enemy.initialX) * progress;
             if (enemy.type === 'runner' || enemy.type === 'dimension') {
-                baseX += Math.sin(enemy.y * 0.04) * 8;
+                // Reduced sway from 8 to 5 to stay within the 35-65% road area
+                baseX += Math.sin(enemy.y * 0.04) * 5;
             } else if (['normal', 'mist', 'memory', 'shade', 'tank'].includes(enemy.type)) {
                 enemy.swayPhase = (enemy.swayPhase || 0) + (enemy.swaySpeed || 0.03);
                 baseX += Math.sin(enemy.swayPhase) * 3;
