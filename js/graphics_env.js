@@ -62,79 +62,128 @@ function drawLavaRoad() {
 function drawSpawningGate() {
     const cx = 180; const cy = -5; const time = globalAnimTimer;
     ctx.save();
-    const firePulse = (Math.sin(time * 3) + 1) / 2;
-    const hellfireRadius = 95.5 + (firePulse * 7);
-    const fireGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, hellfireRadius * 1.3);
-    fireGrad.addColorStop(0, `rgba(255, 69, 0, ${0.7 + firePulse * 0.3})`); 
-    fireGrad.addColorStop(1, 'transparent');
-    ctx.fillStyle = fireGrad; ctx.fillRect(cx - hellfireRadius * 2, cy - 50, hellfireRadius * 4, 200);
+    
+    // 1. Infernal Core Glow
+    const pulse = (Math.sin(time * 2) + 1) / 2;
+    const baseRadius = 80 + pulse * 10;
+    
+    const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.5);
+    coreGrad.addColorStop(0, 'rgba(255, 100, 0, 0.8)');
+    coreGrad.addColorStop(0.4, 'rgba(200, 30, 0, 0.4)');
+    coreGrad.addColorStop(1, 'transparent');
+    
+    ctx.fillStyle = coreGrad;
+    ctx.fillRect(cx - 150, cy - 20, 300, 150);
+
+    // 2. Rising Hellfire Embers (Procedural)
+    ctx.globalCompositeOperation = 'lighter';
+    for(let i = 0; i < 8; i++) {
+        const offTime = time + i * 0.5;
+        const ex = cx + Math.sin(offTime * 2) * 60;
+        const ey = cy + (offTime % 5) * 20;
+        const size = 2 + Math.sin(offTime) * 2;
+        
+        ctx.fillStyle = `rgba(255, 200, 50, ${0.6 * (1 - (ey/100))})`;
+        ctx.beginPath();
+        ctx.arc(ex, ey, size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // 3. Spawning Sigil
+    ctx.strokeStyle = `rgba(255, 50, 0, ${0.3 + pulse * 0.2})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + 10, 100 + pulse * 5, 20 + pulse * 2, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
     ctx.restore();
 }
 
 /**
- * Enhanced Portal Rendering with high-fidelity swirling and status-based effects
+ * AA-Grade Void Portal: Dynamic vortex with PE-based corruption evolution
  */
 function drawPortal() {
     const cx = 180; const cy = 416; const time = globalAnimTimer;
-    const energyRatio = (typeof portalEnergy !== 'undefined') ? portalEnergy / maxPortalEnergy : 0;
+    const pe = (typeof portalEnergy !== 'undefined') ? portalEnergy : 0;
+    const energyRatio = pe / maxPortalEnergy;
     
     ctx.save();
     
-    // 1. Bottom Shadow / Glow
-    const baseRadius = 75 + Math.sin(time * 2) * 5;
-    const shadowGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 2);
-    shadowGrad.addColorStop(0, `rgba(0, 0, 0, ${0.4 + energyRatio * 0.4})`);
-    shadowGrad.addColorStop(1, 'transparent');
-    ctx.fillStyle = shadowGrad;
-    ctx.fillRect(cx - baseRadius * 2, cy - baseRadius, baseRadius * 4, baseRadius * 2);
+    // 1. Dimensional Distortion (Outer Ring)
+    const drift = Math.sin(time) * 5;
+    const outerRadius = 90 + energyRatio * 30;
+    
+    const outerGrad = ctx.createRadialGradient(cx, cy + drift, 0, cx, cy + drift, outerRadius * 1.8);
+    // Colors shift from Abyssal Purple to Hellish Red
+    const rOut = Math.floor(50 + energyRatio * 150);
+    const gOut = Math.floor(0);
+    const bOut = Math.floor(100 * (1 - energyRatio));
+    
+    outerGrad.addColorStop(0, `rgba(${rOut}, ${gOut}, ${bOut}, 0.2)`);
+    outerGrad.addColorStop(0.6, `rgba(${rOut}, ${gOut}, ${bOut}, 0.1)`);
+    outerGrad.addColorStop(1, 'transparent');
+    
+    ctx.fillStyle = outerGrad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerRadius * 2, 0, Math.PI * 2);
+    ctx.fill();
 
-    // 2. Swirling Layers
-    const layers = 3;
-    const colors = [
-        `rgba(106, 27, 154, ${0.6 + energyRatio * 0.4})`, // Deep Purple
-        `rgba(148, 0, 211, ${0.4 + energyRatio * 0.4})`,  // Dark Violet
-        `rgba(75, 0, 130, ${0.3 + energyRatio * 0.2})`    // Indigo
-    ];
-
+    // 2. Swirling Void Layers
+    const layers = 4;
+    const rotSpeed = 1 + energyRatio * 2; // Speeds up as corruption rises
+    
     for(let i = 0; i < layers; i++) {
-        const layerTime = time * (1 + i * 0.5);
-        const radiusX = baseRadius * (1 - i * 0.2);
-        const radiusY = radiusX * 0.4;
+        const layerTime = time * rotSpeed * (1 + i * 0.3);
+        const rx = (outerRadius - i * 15) * (0.9 + Math.sin(time * 1.5 + i) * 0.1);
+        const ry = rx * 0.35;
         
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(layerTime * (i % 2 === 0 ? 1 : -1));
         
         ctx.beginPath();
-        ctx.ellipse(0, 0, radiusX, radiusY, 0, 0, Math.PI * 2);
-        ctx.strokeStyle = colors[i];
-        ctx.lineWidth = 3 + (1 - i);
-        if (energyRatio > 0.8) {
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = '#ff00ff';
+        ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+        
+        const alpha = (0.4 + energyRatio * 0.4) / (i + 1);
+        ctx.strokeStyle = `rgba(${rOut + 50}, 50, ${bOut + 100}, ${alpha})`;
+        ctx.lineWidth = 4 - i;
+        
+        if (energyRatio > 0.7) {
+            ctx.shadowBlur = 10 + i * 5;
+            ctx.shadowColor = `rgba(255, 0, 0, ${energyRatio})`;
         }
+        
         ctx.stroke();
         ctx.restore();
     }
 
-    // 3. Central Core
-    const corePulse = (Math.sin(time * 4) + 1) / 2;
-    const coreRadius = 20 + corePulse * 10 + energyRatio * 20;
+    // 3. The Singularity (Event Horizon)
+    const corePulse = (Math.sin(time * 5) + 1) / 2;
+    const coreRadius = 25 + corePulse * 5 + energyRatio * 15;
+    
     const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
-    
-    // Core color shifts to red as energy increases
-    const r = Math.floor(106 + energyRatio * 149);
-    const g = Math.floor(27 * (1 - energyRatio));
-    const b = Math.floor(154 * (1 - energyRatio));
-    
-    coreGrad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.9)`);
-    coreGrad.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, 0.4)`);
+    coreGrad.addColorStop(0, '#000'); // Pure darkness at center
+    coreGrad.addColorStop(0.5, `rgba(${rOut}, 0, ${bOut}, 0.9)`);
     coreGrad.addColorStop(1, 'transparent');
     
     ctx.fillStyle = coreGrad;
     ctx.beginPath();
-    ctx.ellipse(cx, cy, coreRadius * 1.5, coreRadius * 0.6, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy, coreRadius * 1.6, coreRadius * 0.7, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    // 4. Corruption Sparks (at high PE)
+    if (energyRatio > 0.5) {
+        ctx.globalCompositeOperation = 'lighter';
+        for(let i = 0; i < 5; i++) {
+            const ang = (time * 10 + i * Math.PI * 0.4) % (Math.PI * 2);
+            const dist = coreRadius + Math.random() * 20;
+            const sx = cx + Math.cos(ang) * dist * 1.5;
+            const sy = cy + Math.sin(ang) * dist * 0.6;
+            
+            ctx.fillStyle = '#ff00ff';
+            ctx.fillRect(sx, sy, 2, 2);
+        }
+    }
 
     ctx.restore();
 }
