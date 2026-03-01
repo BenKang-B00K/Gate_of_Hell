@@ -308,19 +308,8 @@ function showEnemyInfo(enemy) {
 
     let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin:8px 0;"></div>`;
     
-    // Fallback names for old data structure if needed
-    const enemyNames = {
-        'normal': '속삭이는 영혼', 'mist': '방랑하는 안개', 'memory': '빛바랜 기억',
-        'shade': '깜빡이는 그림자', 'tank': '철갑 망령', 'runner': '가속된 그림자',
-        'greedy': '탐욕스러운 폴터가이스트', 'mimic': '미믹 망령', 'dimension': '차원 이동 망령',
-        'deceiver': '절망의 세이렌', 'boar': '야생의 복수자', 'soul_eater': '소울 이터',
-        'frost': '코키토스 방랑자', 'lightspeed': '필사적인 전령', 'frost_outcast': '얼어붙은 마음', 'ember_hatred': '증오의 불꽃',
-        'heavy': '쇠사슬 집행자', 'lava': '불타는 분노', 'burning': '고통의 재생자',
-        'abyssal_acolyte': '심연의 추종자', 'gold': '황금의 잔상',
-        'cerberus': '케르베로스', 'charon': '카론', 'beelzebub': '바알세불', 'lucifer': '루시퍼'
-    };
-
-    const dispName = enemy.data?.name || enemyNames[enemy.type] || enemy.type;
+    // Priority: 1. enemy.data.name (Full thematic name) 2. enemy.type
+    const dispName = enemy.data?.name || enemy.type;
     const dispLore = enemy.data?.lore || "이 영혼에 대한 기록이 없습니다.";
     const dispDesc = enemy.desc || "심연에서 솟아난 부정한 존재입니다.";
 

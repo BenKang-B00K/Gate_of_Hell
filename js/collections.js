@@ -25,12 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ghostSection) ghostSection.classList.add('active');
 
             catBtns.forEach(b => b.classList.remove('active'));
-            const normalCatBtn = Array.from(catBtns).find(b => b.dataset.cat === 'basic');
+            const normalCatBtn = Array.from(catBtns).find(b => b.dataset.cat === 'specter');
             if (normalCatBtn) normalCatBtn.classList.add('active');
 
             colInfoLockedUntil = 0;
             resetColInfo();
-            renderGhostGrid('basic'); 
+            renderGhostGrid('specter'); 
 
             // Hide notification when opened
             const notif = document.getElementById('collections-notif');
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById(`${tab}-section`).classList.add('active');
 
             if (tab === 'ghosts') {
-                renderGhostGrid('normal');
+                renderGhostGrid('specter');
             } else {
                 renderExorcistTree();
             }
@@ -189,18 +189,8 @@ function showGhostDetail(enemy) {
 
     const killCount = (window.killCounts && window.killCounts[enemy.type]) || 0;
     
-    const enemyNames = {
-        'normal': '속삭이는 영혼', 'mist': '방랑하는 안개', 'memory': '빛바랜 기억',
-        'shade': '깜빡이는 그림자', 'tank': '철갑 망령', 'runner': '가속된 그림자',
-        'greedy': '탐욕스러운 폴터가이스트', 'mimic': '미믹 영혼', 'dimension': '차원 이동 망령',
-        'deceiver': '절망의 세이렌', 'boar': '야생의 복수자', 'soul_eater': '소울 이터',
-        'frost': '코키토스 방랑자', 'lightspeed': '필사적인 전령', 'frost_outcast': '얼어붙은 마음', 'ember_hatred': '증오의 불꽃',
-        'heavy': '쇠사슬 집행자', 'lava': '불타는 분노', 'burning': '고통의 재생자',
-        'abyssal_acolyte': '심연의 추종자', 'bringer_of_doom': '파멸의 인도자', 'gold': '황금의 잔상',
-        'cerberus': '케르베로스', 'charon': '카론', 'beelzebub': '바알세불', 'lucifer': '루시퍼'
-    };
-
-    const dispName = enemyNames[enemy.type] || enemy.name || enemy.type;
+    // Priority: 1. enemy.name 2. enemy.type
+    const dispName = enemy.name || enemy.type;
     
     infoPane.innerHTML = `
         <div class="col-detail-header">
@@ -209,6 +199,7 @@ function showGhostDetail(enemy) {
                 <div class="col-detail-title">${dispName}</div>
                 <div class="col-detail-stats">
                     <span>체력: ${Math.floor(enemy.hp)}</span>
+                    <span>방어: ${enemy.defense || 0}</span>
                     <span>보상: ${enemy.reward} Soul Energy</span>
                     <span>처치 수: ${killCount}</span>
                 </div>
@@ -284,28 +275,21 @@ function renderExorcistTree() {
         const group = document.createElement('div');
         group.className = 'ex-tree-role-group';
         
-        // Use a Set to avoid redundant rows for T1/T2 if they are shared
-        // But for a tree feel, let's group by T3 branches
         role.paths.forEach((path, idx) => {
             const row = document.createElement('div');
             row.className = 'ex-tree-row';
             
-            // Role Label (Only on first path of role)
             const roleLabel = document.createElement('div');
             roleLabel.className = `ex-role-label ${role.id}`;
             roleLabel.innerText = (idx === 0) ? role.name : "";
             row.appendChild(roleLabel);
 
-            // T1
             row.appendChild(createExNode(path.t1));
             row.appendChild(createArrow());
-            // T2
             row.appendChild(createExNode(path.t2));
             row.appendChild(createArrow());
-            // T3
             row.appendChild(createExNode(path.t3));
             row.appendChild(createArrow());
-            // T4
             row.appendChild(createExNode(path.t4));
 
             group.appendChild(row);
@@ -330,7 +314,6 @@ function createExNode(type) {
     const isUnlocked = (window.unlockedUnits && window.unlockedUnits.has(type));
     node.style.position = 'relative';
 
-    // Add '!' badge if unseen
     if (isUnlocked && window.unseenItems && window.unseenItems.has(type)) {
         const badge = document.createElement('div');
         badge.className = 'item-new-badge';
@@ -343,7 +326,6 @@ function createExNode(type) {
         <div class="name">${isUnlocked ? data.name : '???'}</div>
     `;
 
-    // Add 'DEPLOYED' label if unit is on field
     if (isUnlocked && typeof towers !== 'undefined') {
         const isDeployed = towers.some(t => t.data.type === type);
         if (isDeployed) {
@@ -384,8 +366,7 @@ function createExNode(type) {
             resetColInfo();
             if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
         };
-        } else {
-        // [User Request] Show placeholder for locked item
+    } else {
         node.onmouseenter = () => {
             if (Date.now() > colInfoLockedUntil) {
                 const infoPane = document.getElementById('col-info-pane');
@@ -403,9 +384,10 @@ function createExNode(type) {
         node.onmouseleave = () => {
             if (Date.now() > colInfoLockedUntil) resetColInfo();
         };
-        }
-        return node;
-        }
+    }
+    return node;
+}
+
 function showExorcistDetail(unit) {
     const infoPane = document.getElementById('col-info-pane');
     if (!infoPane) return;
