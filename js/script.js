@@ -111,6 +111,7 @@ function handleSpecialAblities(tower, target) {
 }
 
 function resetGameState() {
+    if (typeof GameLogger !== 'undefined') GameLogger.warn("🔄 Game State Reset.");
     // Clear Enemies
     enemies.forEach(e => { if (e.element) e.element.remove(); });
     enemies = [];

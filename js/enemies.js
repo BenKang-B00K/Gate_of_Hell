@@ -61,6 +61,7 @@ const bossData = {
 };
 
 function initStage() {
+    if (typeof GameLogger !== 'undefined') GameLogger.info(`🚀 Starting DEPTH ${stage}`);
     isBossStage = (stage % 10 === 0); bossSpawned = false; bossInstance = null;
     if (typeof spawnStageFlash === 'function') spawnStageFlash(`DEPTH ${stage}`);
     sealedGhostCount = 0; 
@@ -169,6 +170,7 @@ function spawnEnemy() {
     let currentRand = Math.random() * totalSetProb; let selected = types[0];
     for (const et of types) { currentRand -= et.probability; if (currentRand <= 0) { selected = et; break; } }
     if (typeof recordUnlock === 'function') recordUnlock(selected.type, true);
+    if (typeof GameLogger !== 'undefined') GameLogger.debug(`👾 Spawned: ${selected.name || selected.type}`);
     const enemyDiv = document.createElement('div');
     enemyDiv.classList.add('enemy', 'spawning', selected.type); enemyDiv.innerText = '';
     setTimeout(() => { enemyDiv.classList.remove('spawning'); }, 500);
@@ -231,6 +233,7 @@ function handleEnemyDeath(target, killer = null) {
     if (target.hp > 0) return;
     const idx = enemies.indexOf(target);
     if (idx > -1) {
+        if (typeof GameLogger !== 'undefined') GameLogger.success(`💀 Defeated: ${target.data?.name || target.type}`);
         if (!window.killCounts) window.killCounts = {};
         window.killCounts[target.type] = (window.killCounts[target.type] || 0) + 1;
 

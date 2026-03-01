@@ -193,6 +193,7 @@ function updateSummonButtonState() {
  * Displays detailed unit info in the bottom panel
  */
 function showUnitInfo(tower) {
+    if (typeof GameLogger !== 'undefined') GameLogger.debug(`🔍 Inspecting Unit: ${tower.data.name}`);
     window.infoPanelLockedUntil = Date.now() + 5000;
     
     const d = document.getElementById('unit-info');
@@ -296,6 +297,7 @@ function showUnitInfo(tower) {
 
 function showEnemyInfo(enemy) {
     if (!enemy) return;
+    if (typeof GameLogger !== 'undefined') GameLogger.debug(`🔍 Inspecting Enemy: ${enemy.data?.name || enemy.type}`);
     window.infoPanelLockedUntil = Date.now() + 5000;
     const d = document.getElementById('unit-info');
     if (!d) return;

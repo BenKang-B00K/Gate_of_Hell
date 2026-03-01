@@ -173,7 +173,12 @@ function summonTower(targetSlot) {
 
     // 3. Pre-summon validation (Resources & Limits)
     if (money < finalTowerCost || towers.length >= maxTowers) {
-        if (money < finalTowerCost && typeof flashResourceError === 'function') flashResourceError('se');
+        if (money < finalTowerCost) {
+            if (typeof GameLogger !== 'undefined') GameLogger.warn("❌ Summon failed: Insufficient Soul Energy");
+            if (typeof flashResourceError === 'function') flashResourceError('se');
+        } else if (towers.length >= maxTowers) {
+            if (typeof GameLogger !== 'undefined') GameLogger.warn("❌ Summon failed: Maximum unit limit reached (16)");
+        }
         if (typeof updateSummonButtonState === 'function') updateSummonButtonState();
         return;
     }
@@ -185,6 +190,8 @@ function summonTower(targetSlot) {
     // 5. Find 'apprentice' data & create DOM element
     const apprenticeData = unitTypes.find(u => u.type === 'apprentice');
     if (!apprenticeData) return;
+
+    if (typeof GameLogger !== 'undefined') GameLogger.success(`✨ Summoned: ${apprenticeData.name}`);
 
     const unit = document.createElement('div');
     unit.classList.add('unit', 'apprentice', 'summoning');
@@ -416,6 +423,7 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     el.querySelectorAll('.cooldown-overlay').forEach(o => o.remove());
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
     
+    if (typeof GameLogger !== 'undefined') GameLogger.info(`🔝 Job Change: ${t.data.name} -> ${nt.name}`);
     t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
     
     // [User Request] Record unlock for collections
@@ -475,6 +483,7 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
     el.querySelectorAll('.cooldown-overlay').forEach(o => o.remove());
     const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
 
+    if (typeof GameLogger !== 'undefined') GameLogger.info(`👑 Master Promotion: ${tower.data.name} -> ${nt.name}`);
     tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown;
 
     // [User Request] Record unlock for collections
@@ -529,6 +538,7 @@ function sellTower(t) {
  * Internal logic to actually remove the tower and refund SE
  */
 function executeSacrifice(t) {
+    if (typeof GameLogger !== 'undefined') GameLogger.warn(`💀 Sacrificed: ${t.data.name}`);
     const s = t.slotElement;
     s.classList.remove('occupied');
 
