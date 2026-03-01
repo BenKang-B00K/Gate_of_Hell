@@ -229,8 +229,11 @@ function renderExorcistTree() {
     header.innerHTML = `
         <div class="ex-tree-header">ROLE</div>
         <div class="ex-tree-header">TIER 1</div>
+        <div></div>
         <div class="ex-tree-header">TIER 2</div>
+        <div></div>
         <div class="ex-tree-header">TIER 3</div>
+        <div></div>
         <div class="ex-tree-header">TIER 4</div>
     `;
     container.appendChild(header);
@@ -295,10 +298,13 @@ function renderExorcistTree() {
 
             // T1
             row.appendChild(createExNode(path.t1));
+            row.appendChild(createArrow());
             // T2
             row.appendChild(createExNode(path.t2));
+            row.appendChild(createArrow());
             // T3
             row.appendChild(createExNode(path.t3));
+            row.appendChild(createArrow());
             // T4
             row.appendChild(createExNode(path.t4));
 

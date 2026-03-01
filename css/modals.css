@@ -288,7 +288,7 @@
 
 .ex-tree-header-row {
     display: grid;
-    grid-template-columns: 120px repeat(4, 1fr);
+    grid-template-columns: 120px 1fr 40px 1fr 40px 1fr 40px 1fr;
     gap: 10px;
     margin-bottom: 10px;
     border-bottom: 2px solid rgba(255, 215, 0, 0.3);
@@ -313,7 +313,7 @@
 
 .ex-tree-row {
     display: grid;
-    grid-template-columns: 120px repeat(4, 1fr);
+    grid-template-columns: 120px 1fr 40px 1fr 40px 1fr 40px 1fr;
     align-items: center; gap: 10px;
 }
 
