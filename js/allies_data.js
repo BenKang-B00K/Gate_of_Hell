@@ -57,16 +57,17 @@ function updateGauges() {
     const currentPE = Math.floor(portalEnergy);
     const peDelta = currentPE - lastPortalEnergy;
     if (peDelta !== 0) {
-        spawnGaugePop('pe-label', peDelta);
+        // [User Request] PE up: rgba(148, 0, 211, 0.3), down: rgba(0, 229, 255, 0.3)
+        const peColor = peDelta > 0 ? "rgba(148, 0, 211, 0.3)" : "rgba(0, 229, 255, 0.3)";
+        spawnGaugePop('pe-label', peDelta, peColor);
         lastPortalEnergy = currentPE;
     }
 
     if (moneyDisplay) moneyDisplay.innerText = `${currentMoney} / ${maxMoney}`;
     if (peDisplay) peDisplay.innerText = `${currentPE} / ${maxPortalEnergy}`;
-    
+
     if (peFill) peFill.style.width = `${Math.min((portalEnergy / maxPortalEnergy) * 100, 100)}%`;
     if (seFill) seFill.style.width = `${Math.min((money / maxMoney) * 100, 100)}%`;
-
     // [User Request] Portal Energy Cursed Effect
     const peStatus = document.getElementById('cursed-status');
     const peRatio = portalEnergy / maxPortalEnergy;
@@ -111,7 +112,7 @@ function updateGauges() {
     }
 }
 
-function spawnGaugePop(containerId, amount) {
+function spawnGaugePop(containerId, amount, customColor = null) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -119,7 +120,8 @@ function spawnGaugePop(containerId, amount) {
     const isGain = amount > 0;
     div.className = `gauge-floating-num ${isGain ? 'gain' : 'loss'}`;
     div.innerText = (isGain ? '+' : '') + amount;
-    
+    if (customColor) div.style.background = customColor;
+
     // Append to the gauge-bar inside the wrapper
     const bar = container.querySelector('.gauge-bar');
     if (bar) {
@@ -127,7 +129,6 @@ function spawnGaugePop(containerId, amount) {
         setTimeout(() => div.remove(), 800);
     }
 }
-
 let lastEnemiesLeft = 0;
 
 /**
