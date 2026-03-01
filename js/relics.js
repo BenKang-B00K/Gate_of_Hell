@@ -100,6 +100,35 @@ const relicsData = {
         bonus: { type: 'crit_chance', value: 0.1 },
         maxStack: 1, dropSource: 'boss'
     },
+    // [User Request] Supreme Relics (Drop from Armoured)
+    'abyssal_fragment': { 
+        name: "심연의 파편", icon: '💠', 
+        effect: "모든 유닛의 공격 속도가 15% 증가합니다.", 
+        lore: "심연의 심장에서 떨어져 나온 조각입니다. 주변의 시간을 가속시키는 힘이 있습니다.", 
+        bonus: { type: 'cooldown', value: 0.15 },
+        maxStack: 1, dropSource: 'armoured'
+    },
+    'pitch_black_gem': { 
+        name: "칠흑의 보석", icon: '💎', 
+        effect: "치명타 피해량이 50% 증가합니다.", 
+        lore: "모든 빛을 흡수하는 보석입니다. 적의 가장 깊은 어둠을 꿰뚫어 치명적인 타격을 입힙니다.", 
+        bonus: { type: 'crit_damage', value: 0.5 },
+        maxStack: 1, dropSource: 'armoured'
+    },
+    'soul_link': { 
+        name: "영혼의 고리", icon: '🔗', 
+        effect: "소환 비용이 10 SE 추가로 감소합니다.", 
+        lore: "퇴마사와 수호자 사이의 보이지 않는 연결입니다. 영적 소모를 최소화합니다.", 
+        bonus: { type: 'summon_cost_reduction', value: 10 },
+        maxStack: 1, dropSource: 'armoured'
+    },
+    'immortal_remains': { 
+        name: "불멸의 유해", icon: '💀', 
+        effect: "포탈 오염도 증가량이 10% 감소합니다.", 
+        lore: "죽음을 거부하는 자의 유골입니다. 성스러운 결계를 강화하여 오염에 저항합니다.", 
+        bonus: { type: 'portal_dmg_reduction', value: 0.1 },
+        maxStack: 1, dropSource: 'armoured'
+    },
     // Balanced Normal Relics
     'soul_candle': { 
         name: "영혼의 양초", icon: '🕯️', 
@@ -208,8 +237,10 @@ function renderRelicsGrid() {
     grid.innerHTML = '';
 
     const allRelicIds = Object.keys(relicsData);
-    const normalRelics = allRelicIds.filter(id => relicsData[id].dropSource !== 'boss');
-    const bossArtifacts = allRelicIds.filter(id => relicsData[id].dropSource === 'boss');
+    // Normal: excluding boss and armoured
+    const normalRelics = allRelicIds.filter(id => !['boss', 'armoured'].includes(relicsData[id].dropSource));
+    // Supreme: boss and armoured
+    const supremeRelics = allRelicIds.filter(id => ['boss', 'armoured'].includes(relicsData[id].dropSource));
 
     // Helper to create slots
     const createSlot = (id) => {
@@ -261,12 +292,12 @@ function renderRelicsGrid() {
     grid.appendChild(normalHeader);
     normalRelics.forEach(id => grid.appendChild(createSlot(id)));
 
-    // Boss Section
+    // Supreme Section
     const bossHeader = document.createElement('div');
     bossHeader.style.cssText = 'grid-column: 1 / -1; color: #ff4500; font-size: 30px; font-weight: bold; margin-top: 45px; border-bottom: 3px solid #ff4500; padding-bottom: 6px;';
-    bossHeader.innerText = '보스 아티팩트';
+    bossHeader.innerText = '최상위 유물';
     grid.appendChild(bossHeader);
-    bossArtifacts.forEach(id => grid.appendChild(createSlot(id)));
+    supremeRelics.forEach(id => grid.appendChild(createSlot(id)));
 
     renderTotalBonuses();
 }
@@ -395,8 +426,9 @@ function checkRelicDrop(enemy) {
     if (Math.random() > 0.01) return;
 
     const basicSpecters = ['normal', 'mist', 'memory', 'shade', 'tank', 'defiled_apprentice'];
-    const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'heavy', 'lava', 'burning', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra', 'frost_outcast', 'ember_hatred', 'betrayer_blade'];
+    const specializedWraiths = ['greedy', 'mimic', 'dimension', 'deceiver', 'boar', 'soul_eater', 'frost', 'frost_outcast', 'ember_hatred', 'betrayer_blade'];
     const FastSpecters = ['runner', 'lightspeed', 'void_piercer'];
+    const armouredDemons = ['heavy', 'lava', 'burning', 'abyssal_acolyte', 'bringer_of_doom', 'cursed_vajra'];
 
     let possibleIds = [];
     const allIds = Object.keys(relicsData);
@@ -411,6 +443,7 @@ function checkRelicDrop(enemy) {
         else if (data.dropSource === 'basic' && basicSpecters.includes(enemy.type)) canDrop = true;
         else if (data.dropSource === 'specialized' && specializedWraiths.includes(enemy.type)) canDrop = true;
         else if (data.dropSource === 'fast' && FastSpecters.includes(enemy.type)) canDrop = true;
+        else if (data.dropSource === 'armoured' && armouredDemons.includes(enemy.type)) canDrop = true;
         else if (enemy.isBoss) canDrop = true; // Bosses can drop anything
 
         if (canDrop) possibleIds.push(id);
