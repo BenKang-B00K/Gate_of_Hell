@@ -60,7 +60,14 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
             if (typeof updateGauges === 'function') updateGauges();
         }
         if (typeof handleEnemyDeath === 'function') handleEnemyDeath(target, sourceTower);
-        else { const idx = enemies.indexOf(target); if(idx>-1){ target.element.remove(); enemies.splice(idx,1); }}
+        else { 
+            const idx = enemies.indexOf(target); 
+            if(idx>-1){ 
+                target.element.remove(); 
+                enemies.splice(idx,1); 
+                if (typeof updateStageInfo === 'function') updateStageInfo();
+            }
+        }
     }
 }
 

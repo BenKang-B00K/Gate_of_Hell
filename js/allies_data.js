@@ -94,11 +94,13 @@ function updateStageInfo() {
     const stageDisplay = document.getElementById('stage-display');
     if (stageDisplay) stageDisplay.innerText = stage;
 
-    const enemiesLeftLabel = document.getElementById('rs-display-text');
+    const enemiesLeftLabel = document.getElementById('enemies-left');
     const rsFill = document.getElementById('rs-gauge-fill');
 
     if (enemiesLeftLabel) {
+        // [Logic Check] Remaining = (Total to spawn - Already spawned) + (Currently on field)
         const remaining = Math.max(0, (totalStageEnemies - currentStageSpawned) + enemies.length);
+        const total = Math.max(1, totalStageEnemies);
 
         // Calculate Delta for RS VFX
         const rsDelta = remaining - lastEnemiesLeft;
@@ -107,10 +109,10 @@ function updateStageInfo() {
         }
         lastEnemiesLeft = remaining;
 
-        enemiesLeftLabel.innerText = remaining;
+        // Display as "Current / Total" for consistency with other gauges
+        enemiesLeftLabel.innerText = `${remaining} / ${total}`;
         
-        // Ensure totalStageEnemies is at least 1 to avoid division by zero
-        const total = Math.max(1, totalStageEnemies);
+        // Progress: Remaining / Total (Starts full, drains as stage is cleared)
         const progress = Math.min(100, (remaining / total) * 100);
         if (rsFill) rsFill.style.width = `${progress}%`;
     }
