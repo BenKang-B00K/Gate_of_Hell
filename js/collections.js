@@ -151,6 +151,25 @@ function renderGhostGrid(category) {
                 resetColInfo();
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             };
+        } else {
+            // [User Request] Show placeholder for locked item
+            item.onmouseenter = () => {
+                if (Date.now() > colInfoLockedUntil) {
+                    const infoPane = document.getElementById('col-info-pane');
+                    if (infoPane) {
+                        infoPane.innerHTML = `
+                            <div style="color:#666; text-align:center; padding:20px;">
+                                <div style="font-size:48px; margin-bottom:10px;">?</div>
+                                <div style="font-size:24px;">아직 조우하지 않음</div>
+                                <div style="font-size:16px; margin-top:10px; opacity:0.6;">"심연 깊은 곳에 숨어있는 존재입니다."</div>
+                            </div>
+                        `;
+                    }
+                }
+            };
+            item.onmouseleave = () => {
+                if (Date.now() > colInfoLockedUntil) resetColInfo();
+            };
         }
         grid.appendChild(item);
     });
@@ -359,10 +378,28 @@ function createExNode(type) {
             resetColInfo();
             if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
         };
-    }
-    return node;
-}
-
+        } else {
+        // [User Request] Show placeholder for locked item
+        node.onmouseenter = () => {
+            if (Date.now() > colInfoLockedUntil) {
+                const infoPane = document.getElementById('col-info-pane');
+                if (infoPane) {
+                    infoPane.innerHTML = `
+                        <div style="color:#666; text-align:center; padding:20px;">
+                            <div style="font-size:48px; margin-bottom:10px;">?</div>
+                            <div style="font-size:24px;">아직 해금되지 않음</div>
+                            <div style="font-size:16px; margin-top:10px; opacity:0.6;">"성스러운 전직을 통해 부를 수 있는 수호자입니다."</div>
+                        </div>
+                    `;
+                }
+            }
+        };
+        node.onmouseleave = () => {
+            if (Date.now() > colInfoLockedUntil) resetColInfo();
+        };
+        }
+        return node;
+        }
 function showExorcistDetail(unit) {
     const infoPane = document.getElementById('col-info-pane');
     if (!infoPane) return;
