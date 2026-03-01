@@ -306,6 +306,7 @@
 .ex-tree-role-group {
     display: flex; flex-direction: column; gap: 8px;
     background: rgba(255, 255, 255, 0.02);
+    border: 2px solid rgba(255, 215, 0, 0.2);
     border-radius: 12px; padding: 10px;
     margin-bottom: 15px;
 }
