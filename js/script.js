@@ -175,16 +175,11 @@ let gameStarted = false;
 
 function applyShrineBuffs() {
     // Reset all tower bonuses from shrines first
-    towers.forEach(t => {
-        if (!t.isShrine) {
-            t.shrineDmgBonus = 0;
-        }
-    });
+    towers.forEach(t => { if (!t.isShrine) t.shrineDmgBonus = 0; });
 
     const mastery = (typeof getRelicBonus === 'function') ? getRelicBonus('shrine_mastery') : 0;
-    const effectMult = 1.0 + mastery;
-
     const shrines = towers.filter(t => t.isShrine);
+
     shrines.forEach(shrine => {
         const area = shrine.slotElement.dataset.area;
         const idx = parseInt(shrine.slotElement.dataset.index);
@@ -192,27 +187,61 @@ function applyShrineBuffs() {
         const col = idx % 3;
         const row = Math.floor(idx / 3);
 
-        // Targets: Immediately adjacent slots
-        let targets = [];
-        
-        // Basic: Horizontal (adjacent column)
-        if (isLeft && col === 0) targets.push({ a: area, i: idx + 1 });
-        else if (!isLeft && col === 2) targets.push({ a: area, i: idx - 1 });
+        const data = shrine.data;
+        // Default range if not specified
+        const baseRange = data.range || 1; 
+        const isGlobal = data.rangeType === 'all';
 
-        // Mastery: Cross expansion (Vertical)
-        if (mastery > 0) {
-            if (row > 0) targets.push({ a: area, i: idx - 3 }); // Up
-            if (row < 6) targets.push({ a: area, i: idx + 3 }); // Down
+        // [User Request] Power amplification (+50%) ONLY for global shrines
+        const effectMult = isGlobal ? (1.0 + mastery) : 1.0;
+
+        let targetIndices = [];
+
+        if (isGlobal) {
+            // Affects all non-shrine units in the game
+            towers.forEach(t => {
+                if (!t.isShrine) {
+                    const multiplier = shrine.isDemolishing ? -1 : 1;
+                    if (data.bonus.type === 'damage') {
+                        t.shrineDmgBonus = (t.shrineDmgBonus || 0) + (data.bonus.value * effectMult * multiplier);
+                    }
+                }
+            });
+            return;
         }
 
-        targets.forEach(tgt => {
-            const targetSlot = document.querySelector(`.card-slot[data-area="${tgt.a}"][data-index="${tgt.i}"]`);
+        // Directional targeting
+        if (baseRange === 1) {
+            // Target: Side (Col 1)
+            const targetCol = 1;
+            targetIndices.push(row * 3 + targetCol);
+            
+            // [User Request] Mastery Expansion: Diagonals (Side-Up, Side-Down)
+            if (mastery > 0) {
+                if (row > 0) targetIndices.push((row - 1) * 3 + targetCol);
+                if (row < 6) targetIndices.push((row + 1) * 3 + targetCol);
+            }
+        } else if (baseRange === 2) {
+            // Target: Col 1 and Col 2 (or Col 0 for right side)
+            const cols = isLeft ? [1, 2] : [1, 0];
+            cols.forEach(c => {
+                targetIndices.push(row * 3 + c);
+                // [User Request] Mastery Expansion: Diagonals for 2-tile
+                if (mastery > 0) {
+                    if (row > 0) targetIndices.push((row - 1) * 3 + c);
+                    if (row < 6) targetIndices.push((row + 1) * 3 + c);
+                }
+            });
+        }
+
+        targetIndices.forEach(ti => {
+            const targetSlot = document.querySelector(`.card-slot[data-area="${area}"][data-index="${ti}"]`);
             if (targetSlot && targetSlot.classList.contains('occupied')) {
                 const targetUnit = towers.find(t => t.slotElement === targetSlot);
                 if (targetUnit && !targetUnit.isShrine) {
                     const multiplier = shrine.isDemolishing ? -1 : 1;
-                    if (shrine.data.bonus.type === 'damage') {
-                        targetUnit.shrineDmgBonus = (targetUnit.shrineDmgBonus || 0) + (shrine.data.bonus.value * effectMult * multiplier);
+                    if (data.bonus.type === 'damage') {
+                        targetUnit.shrineDmgBonus = (targetUnit.shrineDmgBonus || 0) + (data.bonus.value * effectMult * multiplier);
                     }
                 }
             }
