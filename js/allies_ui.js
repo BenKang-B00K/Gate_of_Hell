@@ -163,7 +163,61 @@ function attachGlobalListeners() {
                     <div style="display:inline-block; background:#1a002a; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">정화 비용: 800 SE</div>
                     <div style="font-size:24px; color:#bbb; line-height:1.2;">모아둔 에너지를 폭발시켜 포탈의 오염도를 50% 제거합니다.</div>
                     <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #9400d344, transparent); margin:15px 0;"></div>
-                    <div style="color:#ff1744; font-size:18px; font-style:italic;">\"불길이 닿는 곳에 부정한 기운은 남지 않을 것입니다.\"</div>
+                    <div style="color:#ff1744; font-size:18px; font-style:italic;">"불길이 닿는 곳에 부정한 기운은 남지 않을 것입니다."</div>
+                `;
+                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+            }
+        });
+    }
+
+    // 4. Relics Button
+    const relicsBtn = document.getElementById('relics-btn');
+    if (relicsBtn) {
+        relicsBtn.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div style="color:#ff4500; font-weight:bold; font-size:36px; margin-bottom:6px;">🏺 심연의 유물 (Relics)</div>
+                    <div style="display:inline-block; background:#2a1005; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">영구적 강화</div>
+                    <div style="font-size:24px; color:#bbb; line-height:1.2;">악의 존재들을 정화하며 얻은 신성한 보물들입니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ff450044, transparent); margin:15px 0;"></div>
+                    <div style="color:#ff8a80; font-size:18px; font-style:italic;">"과거의 승리자들이 남긴 유산이 당신의 길을 밝혀줄 것입니다."</div>
+                `;
+                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+            }
+        });
+    }
+
+    // 5. Equipment Button
+    const equipBtn = document.getElementById('equip-btn');
+    if (equipBtn) {
+        equipBtn.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div style="color:#00e5ff; font-weight:bold; font-size:36px; margin-bottom:6px;">⚔️ 신성한 장비 (Equipment)</div>
+                    <div style="display:inline-block; background:#002a32; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">전투 보조 기구</div>
+                    <div style="font-size:24px; color:#bbb; line-height:1.2;">퇴마사들의 능력을 극대화하는 고대의 무구들을 관리합니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #00e5ff44, transparent); margin:15px 0;"></div>
+                    <div style="color:#80d8ff; font-size:18px; font-style:italic;">"가장 날카로운 칼날조차 정화된 의지 없이는 녹슨 쇠붙이에 불과합니다."</div>
+                `;
+                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+            }
+        });
+    }
+
+    // 6. Collections Button
+    const collsBtn = document.getElementById('collections-btn');
+    if (collsBtn) {
+        collsBtn.addEventListener('mouseenter', () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div style="color:#ffd700; font-weight:bold; font-size:36px; margin-bottom:6px;">📖 성스러운 기록 (Records)</div>
+                    <div style="display:inline-block; background:#2a2010; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">지식의 보관소</div>
+                    <div style="font-size:24px; color:#bbb; line-height:1.2;">지금까지 조우한 악의 존재들과 아군 수호자들의 기록을 확인합니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:15px 0;"></div>
+                    <div style="color:#ffecb3; font-size:18px; font-style:italic;">"적을 아는 것이야말로 심연을 닫는 첫 번째 열쇠입니다."</div>
                 `;
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             }
