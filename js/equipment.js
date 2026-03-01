@@ -224,7 +224,7 @@ function addEquipment(slot, tier) {
             if (owned.tier < 4) {
                 owned.tier++;
                 owned.count = 1;
-                showEquipToast(`${equipmentSlots[slot].name} 등급 상승!`, `[${equipmentTiers[owned.tier-1].prefix}] 등급으로 강화되었습니다.`);
+                showEquipInfoInPanel(slot, owned.tier, true);
             } else {
                 owned.count = 3; // Max tier capped at 3 count
             }
@@ -237,21 +237,45 @@ function addEquipment(slot, tier) {
     if (!window.unseenItems) window.unseenItems = new Set();
     window.unseenItems.add(slot);
 
-    showEquipToast(`장비 획득: ${equipmentSlots[slot].name}`, `[${equipmentTiers[owned.tier-1].prefix}] 등급을 발견했습니다.`);
+    showEquipInfoInPanel(slot, owned.tier);
     if (typeof saveGameData === 'function') saveGameData();
 }
 
-function showEquipToast(title, msg) {
-    const container = document.getElementById('game-container');
-    const toast = document.createElement('div');
-    toast.className = 'relic-toast'; // Reuse relic toast style
-    toast.style.borderColor = '#00e5ff';
-    toast.innerHTML = `
-        <div style="color:#00e5ff; font-weight:bold; font-size:24px;">${title}</div>
-        <div style="color:#fff; font-size:18px;">${msg}</div>
+function showEquipInfoInPanel(slot, tier, isUpgrade = false) {
+    const slotData = equipmentSlots[slot];
+    const tierData = equipmentTiers[tier - 1];
+
+    if (typeof GameLogger !== 'undefined') {
+        if (isUpgrade) GameLogger.success(`🆙 Equipment Upgraded: ${slotData.name} -> [${tierData.prefix}]`);
+        else GameLogger.success(`⚔️ Equipment Found: ${slotData.name} [${tierData.prefix}]`);
+    }
+
+    const d = document.getElementById('unit-info');
+    if (!d) return;
+
+    const bonusVal = getTierStatValue(tier, slot);
+    const dispBonus = (['cooldown', 'crit_chance', 'damage', 'crit_damage', 'portal_dmg_reduction'].includes(slotData.stat))
+        ? `+${(bonusVal * 100).toFixed(0)}%`
+        : `+${bonusVal.toFixed(0)}`;
+
+    // Set lock for 4 seconds
+    window.infoPanelLockedUntil = Date.now() + 4000;
+
+    d.innerHTML = `
+        <div style="color:#00e5ff; font-weight:bold; font-size:39px; margin-bottom:6px;">⚔️ 장비 ${isUpgrade ? '강화!' : '획득!'}</div>
+        <div style="color:#fff; font-size:33px; font-weight:bold; margin-bottom:12px;">${slotData.icon} ${slotData.name}</div>
+        <div style="display:inline-block; background:#00e5ff; color:#000; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">[${tierData.prefix}] 등급</div>
+        <div style="font-size:27px; color:#00ff00; line-height:1.2;">현재 효과: ${slotData.label} ${dispBonus}</div>
+        <div style="color:#555; font-size:25px; margin-top:18px; font-style:italic; line-height:1.2;">"심연의 악령들조차 이 ${slotData.name}의 빛 앞에서는 눈을 멀게 될 것입니다."</div>
     `;
-    container.appendChild(toast);
-    setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 500); }, 3000);
+
+    // Auto reset after lock expires
+    setTimeout(() => {
+        if (typeof window.startInfoResetTimer === 'function') {
+            window.infoPanelLockedUntil = 0;
+            window.startInfoResetTimer();
+        }
+    }, 4050);
 }
 
 // Global hook for stats
