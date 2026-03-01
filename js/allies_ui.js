@@ -224,7 +224,15 @@ function showUnitInfo(tower) {
         return "";
     };
 
-    let th = `<div class="unit-info-title" style="font-size:32px; margin-bottom:4px;">${data.name}</div>`;
+    let th = `
+        <div style="display:flex; align-items:center; justify-content:center; gap:15px; margin-bottom:4px;">
+            <div class="unit-info-title" style="font-size:32px;">${data.name}</div>
+            <button class="info-sacrifice-btn" onclick="triggerSacrificeFromInfo()">타락</button>
+        </div>
+    `;
+
+    // Store tower for sacrifice trigger
+    window.lastInspectedTower = tower;
 
     let ih = `
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:4px; width:100%;">
@@ -293,6 +301,16 @@ function showUnitInfo(tower) {
 
     d.innerHTML = `${th}${ih}${divider}${ch}${desc}`;
     startInfoResetTimer();
+}
+
+function triggerSacrificeFromInfo() {
+    if (window.lastInspectedTower) {
+        if (typeof window.confirmSacrifice === 'function') {
+            window.confirmSacrifice(window.lastInspectedTower);
+        } else if (typeof confirmSacrifice === 'function') {
+            confirmSacrifice(window.lastInspectedTower);
+        }
+    }
 }
 
 function showEnemyInfo(enemy) {

@@ -210,6 +210,35 @@
 }
 .info-promo-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px #fff; background: #333; }
 
+.info-sacrifice-btn {
+    background: linear-gradient(135deg, #400, #000);
+    color: #ff1744;
+    border: 1.5px solid #ff1744;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    box-shadow: 0 0 10px rgba(255, 23, 68, 0.3);
+    animation: dangerFlicker 1s infinite;
+}
+
+@keyframes dangerFlicker {
+    0% { opacity: 0.8; box-shadow: 0 0 10px #f00; }
+    50% { opacity: 1; box-shadow: 0 0 25px #f00; }
+    100% { opacity: 0.8; box-shadow: 0 0 10px #f00; }
+}
+
+.info-sacrifice-btn:hover {
+    background: #ff1744;
+    color: #fff;
+    box-shadow: 0 0 20px #ff1744;
+    transform: scale(1.05);
+}
+
 /* [User Request] Drag Follow Visual */
 .drag-ghost {
     pointer-events: none !important;

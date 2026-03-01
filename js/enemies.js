@@ -41,8 +41,7 @@ const enemyCategories = {
         { type: 'heavy', name: '쇠사슬 집행자', icon: '⛓️', speed: 0.4, hp: 600, defense: 20, probability: 0.3, knockbackResist: 0.8, reward: 20, desc: "단단한 괴수입니다.", effectiveness: "관통 공격.", lore: "자신이 사용하던 사슬에 묶인 집행자입니다." }, 
         { type: 'lava', name: '불타는 분노', icon: '🌋', speed: 1.3, hp: 200, defense: 15, probability: 0.2, reward: 18, desc: "냉기 공격 시 도약합니다.", effectiveness: "화염 공격.", lore: "분노로 불타오르는 영혼입니다." }, 
         { type: 'burning', name: '고통의 재생자', icon: '💢', speed: 1.0, hp: 350, defense: 10, probability: 0.2, reward: 15, desc: "피해 시 회복합니다.", effectiveness: "강력한 일격.", lore: "재생의 원동력이 된 고통입니다." },
-        { type: 'abyssal_acolyte', name: '심연의 추종자', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, probability: 0.2, reward: 50, desc: "타격 시 데미지를 깎습니다.", effectiveness: "기절 유닛.", lore: "그림자 팔이 그들을 끌어당깁니다." },
-        { type: 'bringer_of_doom', name: '파멸의 인도자', icon: '⛓️‍💥', speed: 0.3, hp: 2200, defense: 20, probability: 0.1, reward: 150, desc: "슬롯 데미지를 영구 감소시킵니다.", effectiveness: "최우선 처치.", lore: "대지가 비명을 지르는 파멸의 인도자입니다." }
+        { type: 'abyssal_acolyte', name: '심연의 추종자', icon: '🌑', speed: 0.4, hp: 1200, defense: 15, probability: 0.2, reward: 50, desc: "타격 시 데미지를 깎습니다.", effectiveness: "기절 유닛.", lore: "그림자 팔이 그들을 끌어당깁니다." }
     ],
     treasure: [
         { type: 'gold', name: '황금의 잔상', icon: '💎', speed: 2.5, hp: 80, defense: 50, probability: 1.0, reward: 200, desc: "막대한 SE를 줍니다.", effectiveness: "속사형 유닛.", lore: "반짝이는 왕의 보물 잔재입니다." } 

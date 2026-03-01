@@ -93,76 +93,6 @@ function showAuraIndicator(tower) {
     document.getElementById('game-container').appendChild(indicator);
 }
 
-/**
- * Updates or creates the context buttons (Promotion/Sell) that appear over a unit.
- */
-function updateUnitOverlayButtons(tower) {
-    const el = tower.element;
-    if (!el) return;
-
-    // Remove existing overlay buttons
-    el.querySelectorAll('.unit-overlay-btn').forEach(b => b.remove());
-
-    const data = tower.data;
-
-    // Helper to create buttons with hover labels
-    const createBtn = (className, icon, label, onClick) => {
-        const btn = document.createElement('div');
-        btn.className = `unit-overlay-btn ${className}`;
-        btn.innerHTML = icon;
-        btn.onclick = onClick;
-
-        // Hover Label logic
-        btn.addEventListener('mouseenter', (e) => {
-            const tooltip = document.createElement('div');
-            tooltip.className = 'unit-btn-tooltip';
-            tooltip.innerText = label;
-            tooltip.style.position = 'absolute';
-            
-            // [User Request] If it's the sell button (Corrupt), show tooltip BELOW (6 o'clock)
-            if (className === 'sell-btn') {
-                tooltip.style.top = '40px'; 
-            } else {
-                tooltip.style.top = '-25px';
-            }
-            
-            tooltip.style.left = '50%';
-            tooltip.style.transform = 'translateX(-50%)';
-            tooltip.style.backgroundColor = 'rgba(0,0,0,0.8)';
-            tooltip.style.color = '#fff';
-            tooltip.style.padding = '2px 8px';
-            tooltip.style.borderRadius = '4px';
-            tooltip.style.fontSize = '12px';
-            tooltip.style.whiteSpace = 'nowrap';
-            tooltip.style.zIndex = '100';
-            tooltip.id = 'btn-tooltip-temp';
-            btn.appendChild(tooltip);
-        });
-        btn.addEventListener('mouseleave', () => {
-            const t = btn.querySelector('#btn-tooltip-temp');
-            if (t) t.remove();
-        });
-
-        return btn;
-    };
-
-    // 1. Promotion Buttons (10, 12, 2 o'clock)
-    if (data.type === 'apprentice') {
-        el.appendChild(createBtn('promote-10', '⚔️', 'Attack', (e) => { e.stopPropagation(); performJobChange(el, 'Attack'); }));
-        el.appendChild(createBtn('promote-12', '🪄', 'Support', (e) => { e.stopPropagation(); performJobChange(el, 'Support'); }));
-        el.appendChild(createBtn('promote-2', '💠', 'Special', (e) => { e.stopPropagation(); performJobChange(el, 'Special'); }));
-    } else if (data.upgrades && data.upgrades.length > 0) {
-        data.upgrades.forEach((u, i) => {
-            const ud = unitTypes.find(x => x.type === u);
-            if (!ud) return;
-            el.appendChild(createBtn(i === 0 ? 'promote-10' : 'promote-2', ud.icon, ud.name, (e) => { e.stopPropagation(); performMasterJobChange(tower, u); }));
-        });
-    }
-
-    // 2. Sell Button (6 o'clock)
-    el.appendChild(createBtn('sell-btn', '💀', 'Corrupt', (e) => { e.stopPropagation(); sellTower(tower); }));
-}
-
 function summonTower(targetSlot) {
     // 1. targetSlot validation
     if (!targetSlot || targetSlot.classList.contains('occupied')) return;
@@ -284,8 +214,6 @@ function summonTower(targetSlot) {
             
             const t = towers.find(x => x.element === this); 
             if(t){
-                // 3. Force buttons to be generated/updated
-                updateUnitOverlayButtons(t); 
                 showUnitInfo(t); 
                 showRangeIndicator(t);
                 startInfoResetTimer();
@@ -326,7 +254,6 @@ function summonTower(targetSlot) {
 
     // 8. Post-summon updates & synchronization
     window.towerCost += 5;
-    updateUnitOverlayButtons(tower);
     updateSummonButtonState();
 }
 
@@ -430,10 +357,8 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     if (typeof recordUnlock === 'function') recordUnlock(nt.type);
 
     if (el.parentElement) el.parentElement.classList.add('selected-slot');
-    updateUnitOverlayButtons(t); 
     updateSummonButtonState();
-    if (fromInfo) showUnitInfo(t);
-    startInfoResetTimer();
+    if (fromInfo) showUnitInfo(t);    startInfoResetTimer();
     showRangeIndicator(t);
 }
 
@@ -491,7 +416,7 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
 
     if (el.parentElement) el.parentElement.classList.add('selected-slot');
     if(nt.type==='rampart') tower.charges=5;
-    updateUnitOverlayButtons(tower);    updateSummonButtonState();
+    updateSummonButtonState();
     if (fromInfo) showUnitInfo(tower);
     startInfoResetTimer();
     showRangeIndicator(tower);
