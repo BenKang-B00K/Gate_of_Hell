@@ -57,8 +57,8 @@ function updateGauges() {
     const currentPE = Math.floor(portalEnergy);
     const peDelta = currentPE - lastPortalEnergy;
     if (peDelta !== 0) {
-        // [User Request] PE up: rgba(148, 0, 211, 0.3), down: rgba(0, 229, 255, 0.3)
-        const peColor = peDelta > 0 ? "rgba(148, 0, 211, 0.3)" : "rgba(0, 229, 255, 0.3)";
+        // [User Request] Remove background color, apply color to text: up (purple), down (cyan)
+        const peColor = peDelta > 0 ? "#9400d3" : "#00e5ff";
         spawnGaugePop('pe-label', peDelta, peColor);
         lastPortalEnergy = currentPE;
     }
@@ -120,7 +120,7 @@ function spawnGaugePop(containerId, amount, customColor = null) {
     const isGain = amount > 0;
     div.className = `gauge-floating-num ${isGain ? 'gain' : 'loss'}`;
     div.innerText = (isGain ? '+' : '') + amount;
-    if (customColor) div.style.background = customColor;
+    if (customColor) div.style.color = customColor;
 
     // Append to the gauge-bar inside the wrapper
     const bar = container.querySelector('.gauge-bar');
