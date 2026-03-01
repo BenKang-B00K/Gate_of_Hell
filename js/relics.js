@@ -294,7 +294,7 @@ function renderTotalBonuses() {
         portal_dmg_reduction: "포탈 안정성",
         summon_cost_reduction: "소환 비용 절감",
         execute_threshold: "처형 임계치",
-        aura_range: "오라 범위 확장",
+        aura_range: "범위 확장",
         sell_refund: "판매 환급 보너스"
     };
 
