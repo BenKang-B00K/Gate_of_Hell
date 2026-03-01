@@ -226,12 +226,11 @@ const unitTypes = [
 ];
 
 const shrineTypes = [
-    { 
-        type: 'shrine_might', 
-        name: '힘의 성소', 
-        icon: '🕍', 
-        role: '버프', 
-        tier: 1, 
+    {
+        type: 'shrine_might',
+        name: '힘의 성소',
+        icon: '✝️',
+        role: '버프',        tier: 1, 
         bonus: { type: 'damage', value: 0.2 }, 
         desc: "바로 옆 칸(좌/우)에 위치한 아군의 공격력을 20% 증가시킵니다.",
         demoDesc: "철거 중: 주변 아군의 공격력을 20% 감소시킵니다.",
