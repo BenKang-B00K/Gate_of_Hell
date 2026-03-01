@@ -181,32 +181,42 @@ function applyShrineBuffs() {
         }
     });
 
+    const mastery = (typeof getRelicBonus === 'function') ? getRelicBonus('shrine_mastery') : 0;
+    const effectMult = 1.0 + mastery;
+
     const shrines = towers.filter(t => t.isShrine);
     shrines.forEach(shrine => {
         const area = shrine.slotElement.dataset.area;
         const idx = parseInt(shrine.slotElement.dataset.index);
         const isLeft = area === 'left-slots';
         const col = idx % 3;
+        const row = Math.floor(idx / 3);
 
-        // Target: Immediately adjacent slot in the same area
-        // Left: Shrine is at col 0, targets col 1
-        // Right: Shrine is at col 2, targets col 1
-        let targetIdx = -1;
-        if (isLeft && col === 0) targetIdx = idx + 1;
-        else if (!isLeft && col === 2) targetIdx = idx - 1;
+        // Targets: Immediately adjacent slots
+        let targets = [];
+        
+        // Basic: Horizontal (adjacent column)
+        if (isLeft && col === 0) targets.push({ a: area, i: idx + 1 });
+        else if (!isLeft && col === 2) targets.push({ a: area, i: idx - 1 });
 
-        if (targetIdx !== -1) {
-            const targetSlot = document.querySelector(`.card-slot[data-area="${area}"][data-index="${targetIdx}"]`);
+        // Mastery: Cross expansion (Vertical)
+        if (mastery > 0) {
+            if (row > 0) targets.push({ a: area, i: idx - 3 }); // Up
+            if (row < 6) targets.push({ a: area, i: idx + 3 }); // Down
+        }
+
+        targets.forEach(tgt => {
+            const targetSlot = document.querySelector(`.card-slot[data-area="${tgt.a}"][data-index="${tgt.i}"]`);
             if (targetSlot && targetSlot.classList.contains('occupied')) {
                 const targetUnit = towers.find(t => t.slotElement === targetSlot);
                 if (targetUnit && !targetUnit.isShrine) {
                     const multiplier = shrine.isDemolishing ? -1 : 1;
                     if (shrine.data.bonus.type === 'damage') {
-                        targetUnit.shrineDmgBonus = (targetUnit.shrineDmgBonus || 0) + (shrine.data.bonus.value * multiplier);
+                        targetUnit.shrineDmgBonus = (targetUnit.shrineDmgBonus || 0) + (shrine.data.bonus.value * effectMult * multiplier);
                     }
                 }
             }
-        }
+        });
     });
 }
 
