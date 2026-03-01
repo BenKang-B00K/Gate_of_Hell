@@ -171,6 +171,13 @@ const relicsData = {
         lore: "심연의 기운이 흐르는 방향을 가리킵니다. 적의 위치를 더 멀리서 포착할 수 있게 해줍니다.", 
         bonus: { type: 'range', value: 5 },
         maxStack: 10, dropSource: 'all'
+    },
+    'abyssal_lantern': { 
+        name: "심연의 등불", icon: '🏮', 
+        effect: "모든 아군의 공격력이 중첩당 +2% 증가합니다.", 
+        lore: "심연의 어둠 속에서도 아군의 투지를 밝혀주는 등불입니다.", 
+        bonus: { type: 'damage', value: 0.02 },
+        maxStack: 10, dropSource: 'all'
     }
 };
 
