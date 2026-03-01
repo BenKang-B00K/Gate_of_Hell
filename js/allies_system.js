@@ -227,15 +227,20 @@ function summonTower(targetSlot) {
     unit.addEventListener('click', function(e) { 
         e.stopPropagation(); 
         if(Date.now() - mousedownTime < 400) { 
+            // 1. Clear previous selections
             document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected')); 
             const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
+            
+            // 2. Select this unit
             this.classList.add('selected'); 
             window.draggedUnit = this; 
             isMovingUnit = true;      
+            
             const t = towers.find(x => x.element === this); 
             if(t){
-                updateUnitOverlayButtons(t); // [User Request Fix] Ensure buttons exist when selected
+                // 3. Force buttons to be generated/updated
+                updateUnitOverlayButtons(t); 
                 showUnitInfo(t); 
                 showRangeIndicator(t);
                 startInfoResetTimer();

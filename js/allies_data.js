@@ -109,8 +109,9 @@ function updateStageInfo() {
 
         enemiesLeftLabel.innerText = remaining;
         
-        // [User Request Fix] Ensure gauge width is calculated correctly (0% when all gone)
-        const progress = Math.min(100, (remaining / totalStageEnemies) * 100);
+        // Ensure totalStageEnemies is at least 1 to avoid division by zero
+        const total = Math.max(1, totalStageEnemies);
+        const progress = Math.min(100, (remaining / total) * 100);
         if (rsFill) rsFill.style.width = `${progress}%`;
     }
 }

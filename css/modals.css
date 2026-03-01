@@ -282,24 +282,75 @@
 
 /* Exorcist Section Styles */
 #exorcist-tree-container {
-    display: flex; flex-direction: column; gap: 15px; padding: 10px;
+    display: flex; flex-direction: column; gap: 10px; padding: 10px;
+    max-height: 550px; overflow-y: auto;
+}
+
+.ex-tree-header-row {
+    display: grid;
+    grid-template-columns: 120px repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 8px;
+    position: sticky; top: 0; background: #1a1a1a; z-index: 5;
+}
+
+.ex-tree-header {
+    text-align: center; font-family: 'Cinzel', serif; font-size: 18px;
+    font-weight: 900; color: #ffd700; letter-spacing: 2px;
+}
+
+.ex-tree-role-group {
+    display: flex; flex-direction: column; gap: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px; padding: 10px;
+    margin-bottom: 15px;
 }
 
 .ex-tree-row {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; padding: 15px 25px;
-    background: rgba(255,215,0,0.03); border-radius: 15px;
-    border: 1px solid rgba(255,215,0,0.1);
+    display: grid;
+    grid-template-columns: 120px repeat(4, 1fr);
+    align-items: center; gap: 10px;
 }
 
+.ex-role-label {
+    font-family: 'Cinzel', serif; font-size: 16px; font-weight: 900;
+    text-align: right; padding-right: 15px; color: #aaa;
+    text-transform: uppercase;
+}
+.ex-role-label.attack { color: #ff4500; }
+.ex-role-label.support { color: #00e5ff; }
+.ex-role-label.special { color: #ffd700; }
+
 .ex-node {
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    cursor: pointer; transition: transform 0.2s; width: 120px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    cursor: pointer; transition: all 0.2s; width: 100%;
 }
 .ex-node:hover { transform: scale(1.08); }
 .ex-node .icon { font-size: 40px; filter: drop-shadow(0 0 5px rgba(255,215,0,0.3)); }
 .ex-node .icon.locked { filter: grayscale(1) brightness(0.3); }
 .ex-node .name { font-size: 16px; font-weight: bold; color: #ffd700; text-align: center; text-shadow: 0 2px 4px #000; }
+
+/* Deployed Label Style */
+.ex-deployed-badge {
+    margin-top: 2px;
+    font-size: 10px;
+    font-weight: 900;
+    color: #00ff00;
+    background: rgba(0, 255, 0, 0.15);
+    border: 1px solid #00ff00;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: deployedPulse 2s infinite alternate;
+}
+
+@keyframes deployedPulse {
+    from { opacity: 0.6; box-shadow: 0 0 5px rgba(0, 255, 0, 0.2); }
+    to { opacity: 1; box-shadow: 0 0 10px rgba(0, 255, 0, 0.4); }
+}
 
 .ex-arrow {
     color: #ffd700; font-size: 30px; opacity: 0.5;

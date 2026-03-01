@@ -13,7 +13,7 @@ const equipmentSlots = {
     necklace: { name: "영혼의 목걸이", icon: "📿", stat: "se_gain", label: "SE 획득 보너스" },
     mainhand: { name: "심판의 검", icon: "🔮", stat: "cooldown", label: "공격 속도 증가" },
     offhand: { name: "마법서", icon: "📙", stat: "crit_damage", label: "치명타 피해량" },
-    belt: { name: "성스러운 벨트", icon: "🎗️", stat: "summon_cost_reduction", label: "소환 비용 절감" },
+    belt: { name: "퇴마 허리띠", icon: "🎗️", stat: "summon_cost_reduction", label: "소환 비용 절감" },
     gloves: { name: "응징의 장갑", icon: "🧤", stat: "crit_chance", label: "치명타 확률" },
     boots: { name: "차원 장화", icon: "👢", stat: "aura_range", label: "오라 범위 확장" }
 };

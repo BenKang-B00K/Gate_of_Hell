@@ -204,34 +204,88 @@ function renderExorcistTree() {
     if (!container) return;
     container.innerHTML = '';
     
-    const trees = [
-        { apprentice: 'apprentice', t2: 'chainer', t3: 'executor', t4: 'transmuter' },
-        { apprentice: 'apprentice', t2: 'talisman', t3: 'grandsealer', t4: 'cursed_talisman' },
-        { apprentice: 'apprentice', t2: 'monk', t3: 'vajra', t4: 'asura' },
-        { apprentice: 'apprentice', t2: 'archer', t3: 'voidsniper', t4: 'piercing_shadow' },
-        { apprentice: 'apprentice', t2: 'ice', t3: 'absolutezero', t4: 'cocytus' },
-        { apprentice: 'apprentice', t2: 'assassin', t3: 'abyssal', t4: 'reaper' },
-        { apprentice: 'apprentice', t2: 'tracker', t3: 'seer', t4: 'doom_guide' },
-        { apprentice: 'apprentice', t2: 'necromancer', t3: 'wraithlord', t4: 'forsaken_king' },
-        { apprentice: 'apprentice', t2: 'guardian', t3: 'rampart', t4: 'void_gatekeeper' },
-        { apprentice: 'apprentice', t2: 'alchemist', t3: 'midas', t4: 'philosopher' },
-        { apprentice: 'apprentice', t2: 'mirror', t3: 'illusion', t4: 'oracle' },
-        { apprentice: 'apprentice', t2: 'knight', t3: 'paladin', t4: 'eternal_wall' }
+    // 1. Header Row (Tiers)
+    const header = document.createElement('div');
+    header.className = 'ex-tree-header-row';
+    header.innerHTML = `
+        <div class="ex-tree-header">ROLE</div>
+        <div class="ex-tree-header">TIER 1</div>
+        <div class="ex-tree-header">TIER 2</div>
+        <div class="ex-tree-header">TIER 3</div>
+        <div class="ex-tree-header">TIER 4</div>
+    `;
+    container.appendChild(header);
+
+    const roles = [
+        { 
+            id: 'attack', name: 'ATTACK', 
+            paths: [
+                { t1: 'apprentice', t2: 'knight', t3: 'paladin', t4: 'eternal_wall' },
+                { t1: 'apprentice', t2: 'knight', t3: 'crusader', t4: 'eternal_wall' },
+                { t1: 'apprentice', t2: 'fire', t3: 'hellfire', t4: 'purgatory' },
+                { t1: 'apprentice', t2: 'fire', t3: 'phoenix', t4: 'purgatory' },
+                { t1: 'apprentice', t2: 'archer', t3: 'voidsniper', t4: 'piercing_shadow' },
+                { t1: 'apprentice', t2: 'archer', t3: 'thousandhand', t4: 'piercing_shadow' }
+            ] 
+        },
+        { 
+            id: 'support', name: 'SUPPORT', 
+            paths: [
+                { t1: 'apprentice', t2: 'chainer', t3: 'executor', t4: 'warden' },
+                { t1: 'apprentice', t2: 'chainer', t3: 'binder', t4: 'warden' },
+                { t1: 'apprentice', t2: 'ice', t3: 'absolutezero', t4: 'cocytus' },
+                { t1: 'apprentice', t2: 'ice', t3: 'permafrost', t4: 'cocytus' },
+                { t1: 'apprentice', t2: 'tracker', t3: 'seer', t4: 'doom_guide' },
+                { t1: 'apprentice', t2: 'tracker', t3: 'commander', t4: 'doom_guide' }
+            ] 
+        },
+        { 
+            id: 'special', name: 'SPECIAL', 
+            paths: [
+                { t1: 'apprentice', t2: 'talisman', t3: 'grandsealer', t4: 'cursed_talisman' },
+                { t1: 'apprentice', t2: 'talisman', t3: 'flamemaster', t4: 'cursed_talisman' },
+                { t1: 'apprentice', t2: 'monk', t3: 'vajra', t4: 'asura' },
+                { t1: 'apprentice', t2: 'monk', t3: 'saint', t4: 'asura' },
+                { t1: 'apprentice', t2: 'necromancer', t3: 'wraithlord', t4: 'forsaken_king' },
+                { t1: 'apprentice', t2: 'necromancer', t3: 'cursedshaman', t4: 'forsaken_king' },
+                { t1: 'apprentice', t2: 'guardian', t3: 'rampart', t4: 'void_gatekeeper' },
+                { t1: 'apprentice', t2: 'guardian', t3: 'judgment', t4: 'void_gatekeeper' },
+                { t1: 'apprentice', t2: 'alchemist', t3: 'midas', t4: 'transmuter' },
+                { t1: 'apprentice', t2: 'alchemist', t3: 'philosopher', t4: 'transmuter' },
+                { t1: 'apprentice', t2: 'mirror', t3: 'illusion', t4: 'oracle' },
+                { t1: 'apprentice', t2: 'mirror', t3: 'reflection', t4: 'oracle' }
+            ] 
+        }
     ];
 
-    trees.forEach(tree => {
-        const row = document.createElement('div');
-        row.className = 'ex-tree-row';
+    roles.forEach(role => {
+        const group = document.createElement('div');
+        group.className = 'ex-tree-role-group';
         
-        row.appendChild(createExNode(tree.apprentice));
-        row.appendChild(createArrow());
-        row.appendChild(createExNode(tree.t2));
-        row.appendChild(createArrow());
-        row.appendChild(createExNode(tree.t3));
-        row.appendChild(createArrow());
-        row.appendChild(createExNode(tree.t4));
-        
-        container.appendChild(row);
+        // Use a Set to avoid redundant rows for T1/T2 if they are shared
+        // But for a tree feel, let's group by T3 branches
+        role.paths.forEach((path, idx) => {
+            const row = document.createElement('div');
+            row.className = 'ex-tree-row';
+            
+            // Role Label (Only on first path of role)
+            const roleLabel = document.createElement('div');
+            roleLabel.className = `ex-role-label ${role.id}`;
+            roleLabel.innerText = (idx === 0) ? role.name : "";
+            row.appendChild(roleLabel);
+
+            // T1
+            row.appendChild(createExNode(path.t1));
+            // T2
+            row.appendChild(createExNode(path.t2));
+            // T3
+            row.appendChild(createExNode(path.t3));
+            // T4
+            row.appendChild(createExNode(path.t4));
+
+            group.appendChild(row);
+        });
+        container.appendChild(group);
     });
 }
 
@@ -263,6 +317,17 @@ function createExNode(type) {
         <div class="icon ${isUnlocked ? '' : 'locked'}">${isUnlocked ? data.icon : '?'}</div>
         <div class="name">${isUnlocked ? data.name : '???'}</div>
     `;
+
+    // Add 'DEPLOYED' label if unit is on field
+    if (isUnlocked && typeof towers !== 'undefined') {
+        const isDeployed = towers.some(t => t.data.type === type);
+        if (isDeployed) {
+            const badge = document.createElement('div');
+            badge.className = 'ex-deployed-badge';
+            badge.innerText = '보유 중';
+            node.appendChild(badge);
+        }
+    }
     
     if (isUnlocked) {
         const clearUnseen = () => {
@@ -305,7 +370,7 @@ function showExorcistDetail(unit) {
         <div class="col-detail-header">
             <div class="col-detail-icon">${unit.icon}</div>
             <div class="col-detail-title-group">
-                <div class="col-detail-title">${unit.name} [Tier ${unit.tier}]</div>
+                <div class="col-detail-title">${unit.name}</div>
                 <div class="col-detail-stats">
                     <span>공격: ${unit.damage}</span>
                     <span>사거리: ${unit.range}</span>

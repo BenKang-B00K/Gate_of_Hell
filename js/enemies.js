@@ -230,9 +230,20 @@ function handleEnemyDeath(target, killer = null) {
 
         let reward = target.reward;
         if (killer && killer.data && killer.data.type === 'abyssal') reward = Math.floor(reward * 1.5);
-        const relicBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('se_gain') : 0;
-        reward = Math.floor(reward * (1.0 + relicBonus));
-        money = Math.min(1000, money + reward); updateGauges();
+        
+        // 1. Apply Equipment Multiplier (%)
+        const equipMult = (typeof getEquipBonus === 'function') ? getEquipBonus('se_gain') : 0;
+        reward = Math.floor(reward * (1.0 + equipMult));
+
+        // 2. Apply Relic Flat Bonus (e.g., soul_urn gives +1 per stack)
+        const relicFlatBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('se_gain') : 0;
+        reward += relicFlatBonus;
+
+        // 3. Update money using maxMoney constant
+        const limit = (typeof maxMoney !== 'undefined') ? maxMoney : 1000;
+        money = Math.min(limit, money + reward); 
+        
+        updateGauges();
         if (typeof saveGameData === 'function') saveGameData();
 
         if (typeof createSEGainEffect === 'function' && target.element) {

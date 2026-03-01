@@ -50,12 +50,13 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
         linkedEnemies.forEach(e => applyDamage(e, sharedAmount, sourceTower, true));
     }
     if (target.hp <= 0) {
+        const limit = (typeof maxMoney !== 'undefined') ? maxMoney : 1000;
         if (sourceTower && sourceTower.data.type === 'midas') {
-            money = Math.min(1000, money + 15);
+            money = Math.min(limit, money + 15);
             if (typeof updateGauges === 'function') updateGauges();
         }
         if (sourceTower && sourceTower.data.type === 'transmuter') {
-            money = Math.min(1000, money + 25);
+            money = Math.min(limit, money + 25);
             if (typeof updateGauges === 'function') updateGauges();
         }
         if (typeof handleEnemyDeath === 'function') handleEnemyDeath(target, sourceTower);
@@ -65,8 +66,9 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
 
 function handleSpecialAblities(tower, target) {
     const type = tower.data.type;
+    const limit = (typeof maxMoney !== 'undefined') ? maxMoney : 1000;
     if (type === 'alchemist' && Math.random() < 0.05) {
-        money = Math.min(1000, money + 2);
+        money = Math.min(limit, money + 2);
         if (typeof updateGauges === 'function') updateGauges();
     }
     if (type === 'mirror') {

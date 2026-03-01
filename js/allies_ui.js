@@ -199,8 +199,22 @@ function showUnitInfo(tower) {
     if (!d) return;
 
     const data = tower.data;
-    const finalDmg = Math.round(data.damage * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
-    const attackSpeed = (1000 / tower.cooldown).toFixed(1);
+    
+    // 1. Attack Stats
+    const baseDmg = data.damage;
+    const finalDmg = Math.round(baseDmg * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
+    const bonusDmg = finalDmg - baseDmg;
+    
+    // 2. Range Stats
+    const baseRange = data.range;
+    const bonusRange = tower.rangeBonus || 0;
+    const finalRange = baseRange + bonusRange;
+    
+    // 3. Attack Speed Stats
+    const sm = 1.0 + (tower.speedBonus || 0);
+    const baseAS = (1000 / data.cooldown).toFixed(1);
+    const finalAS = (baseAS * sm).toFixed(1);
+    const bonusAS = (finalAS - baseAS).toFixed(1);
     
     let th = `<div class="unit-info-title" style="font-size:32px; margin-bottom:4px;">${data.name}</div>`;
     
@@ -208,15 +222,15 @@ function showUnitInfo(tower) {
         <div style="display:flex; justify-content:center; gap:10px; margin-bottom:4px; width:100%;">
             <div class="unit-info-stats" style="flex:1; border-color:#ff4500; padding:2px 6px; min-width:70px;">
                 <span style="color:#ff4500; font-size:14px; display:block; font-weight:bold;">ATTACK</span>
-                <span style="font-size:22px; font-weight:900;">${finalDmg}</span>
+                <span style="font-size:20px; font-weight:900;">${baseDmg} <span style="color:#00ff00; font-size:14px;">(+${bonusDmg})</span></span>
             </div>
             <div class="unit-info-stats" style="flex:1; border-color:#00e5ff; padding:2px 6px; min-width:70px;">
                 <span style="color:#00e5ff; font-size:14px; display:block; font-weight:bold;">RANGE</span>
-                <span style="font-size:22px; font-weight:900;">${data.range}</span>
+                <span style="font-size:20px; font-weight:900;">${baseRange} <span style="color:#00ff00; font-size:14px;">(+${bonusRange})</span></span>
             </div>
             <div class="unit-info-stats" style="flex:1; border-color:#ffd700; padding:2px 6px; min-width:70px;">
                 <span style="color:#ffd700; font-size:14px; display:block; font-weight:bold;">ATTACK SPEED</span>
-                <span style="font-size:22px; font-weight:900;">${attackSpeed}</span>
+                <span style="font-size:20px; font-weight:900;">${baseAS} <span style="color:#00ff00; font-size:14px;">(+${bonusAS})</span></span>
             </div>
         </div>
     `;
