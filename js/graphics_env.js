@@ -133,37 +133,6 @@ function drawPortal() {
     ctx.ellipse(cx, cy, coreRadius * 1.5, coreRadius * 0.6, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // 4. Escaping Souls (Portal Particles)
-    if (Math.random() < 0.15 + energyRatio * 0.2) {
-        portalSouls.push({
-            x: cx + (Math.random() - 0.5) * 100,
-            y: cy,
-            vx: (Math.random() - 0.5) * 1.5,
-            vy: -1 - Math.random() * 2,
-            life: 1.0,
-            size: 2 + Math.random() * 3
-        });
-    }
-
-    for (let i = portalSouls.length - 1; i >= 0; i--) {
-        const s = portalSouls[i];
-        s.x += s.vx;
-        s.y += s.vy;
-        s.life -= 0.02;
-        
-        if (s.life <= 0) {
-            portalSouls.splice(i, 1);
-            continue;
-        }
-        
-        ctx.fillStyle = `rgba(200, 100, 255, ${s.life * 0.8})`;
-        ctx.shadowBlur = 5;
-        ctx.shadowColor = '#fff';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size * s.life, 0, Math.PI * 2);
-        ctx.fill();
-    }
-
     ctx.restore();
 }
 
