@@ -223,10 +223,11 @@ function summonTower(targetSlot) {
             const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
             this.classList.add('selected'); 
-            window.draggedUnit = this; // Mark as candidate for movement
-            isMovingUnit = true;      // Activate move mode
+            window.draggedUnit = this; 
+            isMovingUnit = true;      
             const t = towers.find(x => x.element === this); 
             if(t){
+                updateUnitOverlayButtons(t); // [User Request Fix] Ensure buttons exist when selected
                 showUnitInfo(t); 
                 showRangeIndicator(t);
                 startInfoResetTimer();
@@ -365,7 +366,7 @@ function performJobChange(el, targetRole = null, fromInfo = false) {
     // [User Request] Record unlock for collections
     if (typeof recordUnlock === 'function') recordUnlock(nt.type);
 
-    updateUnitOverlayButtons(t);
+    updateUnitOverlayButtons(t); // [User Request Fix] Update buttons after promotion
     updateSummonButtonState();
     if (fromInfo) showUnitInfo(t);
     startInfoResetTimer();

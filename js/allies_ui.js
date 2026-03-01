@@ -215,7 +215,7 @@ function showUnitInfo(tower) {
                 <span style="font-size:22px; font-weight:900;">${data.range}</span>
             </div>
             <div class="unit-info-stats" style="flex:1; border-color:#ffd700; padding:2px 6px; min-width:70px;">
-                <span style="color:#ffd700; font-size:14px; display:block; font-weight:bold;">AS (Spd)</span>
+                <span style="color:#ffd700; font-size:14px; display:block; font-weight:bold;">ATTACK SPEED</span>
                 <span style="font-size:22px; font-weight:900;">${attackSpeed}</span>
             </div>
         </div>

@@ -158,6 +158,17 @@
         inset 0 0 20px rgba(255, 215, 0, 0.1);
 }
 
+#unit-info::before, #unit-info::after {
+    content: "⛧";
+    position: absolute;
+    color: rgba(255, 215, 0, 0.4);
+    font-size: 24px;
+    top: 15px;
+}
+
+#unit-info::before { left: 20px; }
+#unit-info::after { right: 20px; }
+
 .unit-info-title { 
     color: #ffd700; 
     font-weight: bold; 
