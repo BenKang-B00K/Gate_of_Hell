@@ -773,7 +773,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
         // Deselect when clicking empty space
         document.addEventListener('mousedown', (e) => {
-            if (!e.target.closest('.unit') && !e.target.closest('.tower-card') && !e.target.closest('.job-btn') && !e.target.closest('.info-promo-btn')) {
+            if (!e.target.closest('.unit') && !e.target.closest('.tower-card') && !e.target.closest('.job-btn') && !e.target.closest('.info-promo-btn') && !e.target.closest('.enemy')) {
                 document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
                 document.querySelectorAll('.card-slot.selected-slot').forEach(s => s.classList.remove('selected-slot'));
                 const ri = document.getElementById('range-indicator'); if (ri) ri.remove();

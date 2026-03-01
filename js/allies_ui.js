@@ -295,6 +295,7 @@ function showUnitInfo(tower) {
 }
 
 function showEnemyInfo(enemy) {
+    if (!enemy) return;
     window.infoPanelLockedUntil = Date.now() + 5000;
     const d = document.getElementById('unit-info');
     if (!d) return;
@@ -305,6 +306,7 @@ function showEnemyInfo(enemy) {
 
     let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin:8px 0;"></div>`;
     
+    // Fallback names for old data structure if needed
     const enemyNames = {
         'normal': '속삭이는 영혼', 'mist': '방랑하는 안개', 'memory': '빛바랜 기억',
         'shade': '깜빡이는 그림자', 'tank': '철갑 망령', 'runner': '가속된 그림자',
@@ -317,6 +319,8 @@ function showEnemyInfo(enemy) {
     };
 
     const dispName = enemy.data?.name || enemyNames[enemy.type] || enemy.type;
+    const dispLore = enemy.data?.lore || "이 영혼에 대한 기록이 없습니다.";
+    const dispDesc = enemy.desc || "심연에서 솟아난 부정한 존재입니다.";
 
     let th = `<div style="color:#ff4500; font-weight:bold; font-size:32px; margin-bottom:4px; text-shadow:0 0 15px #ff4500;">${dispName}</div>`;
     
@@ -333,8 +337,8 @@ function showEnemyInfo(enemy) {
         </div>
     `;
     
-    let eh = `<div style="color:#ff8a80; font-size:18px; margin-bottom:4px; padding: 0 20px;"><strong>특성:</strong> ${enemy.desc || "심연의 존재입니다."}</div>`;
-    let lh = `<div style="color:#666; font-size:16px; font-style:italic; line-height:1.2; padding: 0 30px;">"${enemy.data?.lore || "이 영혼에 대한 기록이 없습니다."}"</div>`;
+    let eh = `<div style="color:#ff8a80; font-size:18px; margin-bottom:4px; padding: 0 20px;"><strong>특성:</strong> ${dispDesc}</div>`;
+    let lh = `<div style="color:#666; font-size:16px; font-style:italic; line-height:1.2; padding: 0 30px;">"${dispLore}"</div>`;
 
     d.innerHTML = `${th}${ih}${divider}${eh}${lh}` ;
     startInfoResetTimer();

@@ -177,8 +177,35 @@ function spawnEnemy() {
     hpBg.appendChild(hpFill); enemyDiv.appendChild(hpBg);
     const { hpStageMult, speedStageMult } = getStageMultipliers();
     const randomX = Math.random() * 20 + 40; 
-    const enemy = { element: enemyDiv, hpFill: hpFill, initialX: randomX, x: randomX, targetX: Math.random() * 20 + 40, y: -20, swayPhase: Math.random() * Math.PI * 2, swaySpeed: 0.02 + Math.random() * 0.03, baseSpeed: selected.speed * speedStageMult, speed: selected.speed * speedStageMult, maxHp: selected.hp * hpStageMult, defense: selected.defense || 0, hp: selected.hp * hpStageMult, reward: selected.reward || 10, type: selected.type, icon: selected.icon, desc: selected.desc };
-    enemyDiv.addEventListener('mousedown', (e) => { e.stopPropagation(); if (typeof window.showEnemyInfo === 'function') window.showEnemyInfo(enemy); });
+    const enemy = { 
+        element: enemyDiv, 
+        hpFill: hpFill, 
+        initialX: randomX, 
+        x: randomX, 
+        targetX: Math.random() * 20 + 40, 
+        y: -20, 
+        swayPhase: Math.random() * Math.PI * 2, 
+        swaySpeed: 0.02 + Math.random() * 0.03, 
+        baseSpeed: selected.speed * speedStageMult, 
+        speed: selected.speed * speedStageMult, 
+        maxHp: selected.hp * hpStageMult, 
+        defense: selected.defense || 0, 
+        hp: selected.hp * hpStageMult, 
+        reward: selected.reward || 10, 
+        type: selected.type, 
+        icon: selected.icon, 
+        desc: selected.desc,
+        data: {
+            name: selected.name || selected.type,
+            lore: selected.lore || "이 영혼에 대한 기록이 없습니다."
+        }
+    };
+    enemyDiv.addEventListener('mousedown', (e) => { 
+        e.stopPropagation(); 
+        if (typeof window.showEnemyInfo === 'function') {
+            window.showEnemyInfo(enemy);
+        }
+    });
     road.appendChild(enemyDiv);
     if (selected.type === 'boar') enemy.vxSign = Math.random() < 0.5 ? -1 : 1; 
     enemies.push(enemy);

@@ -9,12 +9,21 @@
     justify-content: center;
     align-items: center;
     font-family: serif;
+    width: 40px; /* Logical size for click area */
+    height: 40px;
     /* [User Request] Hide DOM icons to prevent overlap with Canvas */
     color: transparent !important;
     font-size: 0 !important;
     text-shadow: none !important;
     border-radius: 50%;
     transition: top 0.1s linear, left 0.1s linear;
+}
+
+.enemy.boss { 
+    z-index: 100; 
+    font-weight: bold; 
+    width: 120px; 
+    height: 120px; 
 }
 
 .enemy.spawning {
