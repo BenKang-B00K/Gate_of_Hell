@@ -673,19 +673,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const pauseBtn = document.getElementById('game-pause-btn');
-    if (pauseBtn) {
-        pauseBtn.addEventListener('click', () => {
+    const pauseOverlay = document.getElementById('pause-overlay');
+    const resumeBtn = document.getElementById('pause-resume-btn');
+
+    if (pauseBtn && pauseOverlay && resumeBtn) {
+        const togglePause = () => {
             if (!gameStarted) return;
             isPaused = !isPaused;
+            pauseOverlay.style.display = isPaused ? 'flex' : 'none';
             pauseBtn.innerText = isPaused ? "재개" : "일시정지";
             pauseBtn.classList.toggle('active', isPaused);
             
-            // If pausing, clear indicators
             if (isPaused) {
                 const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
                 const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
             }
-        });
+        };
+
+        pauseBtn.addEventListener('click', togglePause);
+        resumeBtn.addEventListener('click', togglePause);
     }
     
     gameLoop();

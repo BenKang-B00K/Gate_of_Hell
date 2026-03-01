@@ -496,11 +496,58 @@ function executeSacrifice(t) {
     if (ai) ai.remove();
 }
 
+/**
+ * Handles clicks on unit slots
+ */
+function handleSlotClick(index) {
+    const allSlots = document.querySelectorAll('.card-slot');
+    const slot = Array.from(allSlots).find(s => parseInt(s.dataset.index) === index);
+    if (!slot) return;
+
+    if (slot.classList.contains('occupied')) {
+        const unit = slot.querySelector('.unit');
+        if (unit) {
+            unit.click();
+        }
+    } else {
+        const selectedUnit = document.querySelector('.unit.selected');
+        // Check if we are in "move mode" or have a selected unit to move
+        if (selectedUnit) {
+            executeMove(selectedUnit, slot);
+        }
+    }
+}
+
+/**
+ * Main Summon Entry Point from UI
+ */
+function summonUnit() {
+    const allSlots = document.querySelectorAll('.card-slot');
+    const emptySlots = Array.from(allSlots).filter(s => !s.classList.contains('occupied'));
+    
+    if (towers.length >= maxTowers) {
+        const warning = document.getElementById('max-units-warning');
+        if (warning) {
+            warning.style.display = 'block';
+            setTimeout(() => warning.style.display = 'none', 3000);
+        }
+        return;
+    }
+
+    if (emptySlots.length === 0) return;
+
+    // Pick a random empty slot from the 42 available ritual altars
+    const randomSlot = emptySlots[Math.floor(Math.random() * emptySlots.length)];
+    summonTower(randomSlot);
+}
+
 // Global Exports for UI interaction
 window.performJobChange = performJobChange;
 window.performMasterJobChange = performMasterJobChange;
 window.sellTower = sellTower;
 window.summonTower = summonTower;
+window.summonUnit = summonUnit;
+window.handleSlotClick = handleSlotClick;
 window.executeMove = executeMove;
 window.showRangeIndicator = showRangeIndicator;
 window.showAuraIndicator = showAuraIndicator;

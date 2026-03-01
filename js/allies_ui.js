@@ -7,7 +7,7 @@ let currentFusionType = null;
 let corruptBtnElement = null;
 
 /**
- * Creates unit slots in the UI
+ * Creates unit slots in the UI (3x7 Grid on each side = 42 total slots)
  */
 function initAllies() {
     const leftSlots = document.getElementById('left-slots');
@@ -17,11 +17,13 @@ function initAllies() {
     leftSlots.innerHTML = '';
     rightSlots.innerHTML = '';
 
-    for (let i = 0; i < 8; i++) {
+    // Create 21 slots for left side
+    for (let i = 0; i < 21; i++) {
         const slot = createSlotElement(i, 'left-slots');
         leftSlots.appendChild(slot);
     }
-    for (let i = 8; i < 16; i++) {
+    // Create 21 slots for right side (indices 21-41)
+    for (let i = 21; i < 42; i++) {
         const slot = createSlotElement(i, 'right-slots');
         rightSlots.appendChild(slot);
     }
@@ -137,7 +139,7 @@ function updateSummonButtonState() {
 
     if(scd) scd.innerText = `${finalTowerCost} SE`;
 
-    const isMax = towers.length >= maxTowers;
+    const isMax = towers.length >= 16; // Explicitly 16 as per maxTowers
     const isBroke = money < finalTowerCost;
 
     if (sw) {

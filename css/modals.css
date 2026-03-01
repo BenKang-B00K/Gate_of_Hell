@@ -580,10 +580,53 @@
     100% { transform: scale(1.02); box-shadow: 0 0 60px #800; }
 }
 
-@keyframes eeriePulse {
-    from { transform: scale(1); text-shadow: 0 0 30px #8b0000; }
-    to { transform: scale(1.05); text-shadow: 0 0 90px #ff0000; }
+/* Pause Overlay (Time Frozen Theme) */
+#pause-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(0, 30, 60, 0.9) 0%, #000 100%);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1300; /* Highest priority */
+    backdrop-filter: blur(15px);
+    animation: overlayFadeIn 0.3s ease-out;
 }
+
+#pause-content {
+    width: 600px; padding: 60px; text-align: center;
+    background: linear-gradient(145deg, #051015, #000);
+    border: 4px solid #00e5ff; border-radius: 40px 40px 15px 15px;
+    box-shadow: 0 0 100px rgba(0, 229, 255, 0.3), inset 0 0 30px rgba(0, 0, 0, 0.8);
+    position: relative;
+}
+
+#pause-header {
+    font-family: 'Cinzel', serif;
+    font-size: 42px; font-weight: 900; color: #00e5ff;
+    margin-bottom: 30px; letter-spacing: 10px;
+    text-shadow: 0 0 25px #00e5ff;
+}
+
+#pause-body {
+    font-size: 22px; color: #ccc; line-height: 1.6; margin-bottom: 50px;
+    font-style: italic; letter-spacing: 1px;
+}
+
+#pause-resume-btn {
+    padding: 20px 60px; font-size: 24px; font-weight: 900; border-radius: 15px;
+    cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-family: 'Cinzel', serif;
+    background: linear-gradient(135deg, #00e5ff 0%, #008ba3 100%);
+    color: #000; border: 3px solid #fff;
+    box-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
+    text-transform: uppercase; letter-spacing: 4px;
+}
+
+#pause-resume-btn:hover {
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 0 50px #00e5ff, 0 0 20px #fff;
+    filter: brightness(1.2);
+}
+
+#pause-resume-btn:active { transform: scale(0.95); }
 
 /* Quit Modal (Abyssal Theme) */
 #quit-modal {

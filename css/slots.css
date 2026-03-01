@@ -5,85 +5,65 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(7, 1fr);
-    gap: 12px;
-    padding: 15px;
-    z-index: 2; /* [User Request] Slots z=2 */
+    gap: 15px;
+    padding: 20px;
+    z-index: 2;
     background: transparent;
-    margin-top: 444px; /* Scaled: 148 * 3 */
     perspective: 1000px;
     overflow: visible;
+    height: 100%; /* Fill the game-layout height */
 }
 
 .card-slot {
     position: relative;
     box-sizing: border-box;
-    border: 2px solid rgba(255, 215, 0, 0.05); 
-    background: linear-gradient(145deg, #0a0a0a, #1a1510);
-    border-radius: 8px;
+    border: 2px solid rgba(255, 215, 0, 0.1); 
+    background: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,215,0,0.15)" stroke-width="1.5"/><path d="M50 5 L95 95 L5 95 Z" fill="none" stroke="rgba(255,215,0,0.1)" stroke-width="1"/></svg>') center/80% no-repeat,
+        linear-gradient(145deg, #0a0a0a, #1a1510);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: visible; 
-    z-index: 2; /* [User Request] Slots z=2 */
+    z-index: 2;
     box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
 }
 
-/* Background Sacred Sigil Pattern (Thematic Core) */
-.card-slot::before {
-    content: "";
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%; height: 80%;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,215,0,0.2)" stroke-width="1.5"/><path d="M50 5 L95 95 L5 95 Z" fill="none" stroke="rgba(255,215,0,0.15)" stroke-width="1"/></svg>');
-    background-size: contain;
-    background-repeat: no-repeat;
-    pointer-events: none;
-    transition: all 0.6s ease;
-    opacity: 0.7; /* Increased from 0.5 */
-}
-
 .card-slot:hover { 
-    transform: scale(1.05) translateZ(20px); 
-    background: linear-gradient(145deg, #1a1510, #2a2010);
-    border-color: rgba(255, 215, 0, 0.3);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,215,0,0.05);
-}
-
-.card-slot:hover::before {
-    transform: translate(-50%, -50%) rotate(90deg) scale(1.1);
-    opacity: 1;
-    filter: brightness(2) drop-shadow(0 0 5px #ffd700);
+    transform: scale(1.05) translateZ(30px); 
+    background-color: #2a2010;
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.7), inset 0 0 20px rgba(255,215,0,0.1);
 }
 
 .card-slot.occupied { 
-    border-color: rgba(255, 215, 0, 0.2); 
-    background: radial-gradient(circle at center, #151515 0%, #050505 100%); 
+    border-color: rgba(255, 215, 0, 0.3); 
     animation: divineResonance 4s infinite alternate ease-in-out;
 }
 
 @keyframes divineResonance {
-    0% { border-color: rgba(255, 215, 0, 0.1); box-shadow: 0 0 5px rgba(255, 215, 0, 0.05), inset 0 0 15px #000; }
-    100% { border-color: rgba(255, 215, 0, 0.4); box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.05); }
+    0% { border-color: rgba(255, 215, 0, 0.15); box-shadow: 0 0 10px rgba(255, 215, 0, 0.1), inset 0 0 15px #000; }
+    100% { border-color: rgba(255, 215, 0, 0.5); box-shadow: 0 0 25px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.1); }
 }
 
 .card-slot.drag-over {
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, #1a1510 100%);
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.2);
+    background-color: rgba(255, 215, 0, 0.2);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
     border-color: #ffd700;
 }
 
 .unit {
     position: relative;
-    width: 85%; height: 85%;
+    width: 90%; height: 90%;
     display: flex; justify-content: center; align-items: flex-end;
-    cursor: pointer; z-index: 110; /* [User Request] Above bottom-panel (100) */
+    cursor: pointer; z-index: 110;
     pointer-events: auto; background: transparent;
     overflow: visible;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 /* Holy Footprint Aura */
@@ -93,21 +73,20 @@
     bottom: 5px; left: 50%;
     transform: translateX(-50%) scaleX(2.5);
     width: 30px; height: 12px;
-    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.3) 0%, transparent 75%);
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.4) 0%, transparent 75%);
     filter: blur(3px);
     z-index: -1;
     animation: auraBreath 2.5s infinite alternate;
 }
 
 @keyframes auraBreath {
-    from { opacity: 0.3; transform: translateX(-50%) scaleX(2.2); }
-    to { opacity: 0.7; transform: translateX(-50%) scaleX(3.0); filter: blur(5px); }
+    from { opacity: 0.4; transform: translateX(-50%) scaleX(2.2); }
+    to { opacity: 0.8; transform: translateX(-50%) scaleX(3.0); filter: blur(5px); }
 }
 
 .unit.selected { 
     transform: scale(1.1); 
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: brightness(0.85) contrast(1.1) drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));
+    filter: contrast(1.1) drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
 }
 
 /* Selection Ritual Circle */
@@ -116,9 +95,9 @@
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 140%; height: 140%;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,215,0,0.4)" stroke-width="1.5" stroke-dasharray="12 6"/></svg>');
-    animation: rotateSacred 12s linear infinite;
+    width: 150%; height: 150%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,215,0,0.5)" stroke-width="2" stroke-dasharray="15 5"/></svg>');
+    animation: rotateSacred 15s linear infinite;
     pointer-events: none;
     z-index: -1;
 }
@@ -131,53 +110,46 @@
 .unit.summoning { animation: holySummon 0.8s ease-out forwards; }
 
 @keyframes holySummon {
-    0% { transform: scale(0) translateY(40px); filter: brightness(15) blur(10px); opacity: 0; }
-    50% { transform: scale(1.3) translateY(-20px); filter: brightness(8) blur(4px); opacity: 1; }
+    0% { transform: scale(0) translateY(50px); filter: brightness(20) blur(15px); opacity: 0; }
+    50% { transform: scale(1.4) translateY(-25px); filter: brightness(10) blur(5px); opacity: 1; }
     100% { transform: scale(1) translateY(0); filter: brightness(1) blur(0); opacity: 1; }
 }
 
 .unit-overlay-btn {
-    position: absolute; width: 44px; height: 44px;
+    position: absolute; width: 48px; height: 44px;
     background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
     border-radius: 50%;
     display: none; justify-content: center; align-items: center;
     font-size: 24px; cursor: pointer; z-index: 120;
     border: 2px solid rgba(255, 255, 255, 0.8); pointer-events: auto;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,255,255,0.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8);
 }
 
 .unit.selected .unit-overlay-btn { display: flex; }
 
 .unit-overlay-btn:hover { 
-    transform: scale(1.2) rotate(5deg); 
+    transform: scale(1.2); 
     background: #fff; 
     color: #000;
     border-color: #ffd700;
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6), 0 0 10px #fff;
-    z-index: 121; 
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
 }
 
-/* Positional Classes: Clock-based */
-.promote-10 { top: -25px; left: -25px; border-color: #00ff00; color: #00ff00; }
-.promote-12 { top: -35px; left: calc(50% - 22px); border-color: #00e5ff; color: #00e5ff; }
-.promote-2 { top: -25px; right: -25px; border-color: #ffd700; color: #ffd700; }
-
 .sell-btn { 
-    bottom: -20px; left: calc(50% - 22px); 
+    bottom: -20px; left: calc(50% - 24px); 
     border-color: #ff1744; color: #ff1744; 
-    background: linear-gradient(145deg, #400, #000);
     animation: dangerPulse 2s infinite alternate;
 }
 
 @keyframes dangerPulse {
-    from { box-shadow: 0 0 15px rgba(255, 23, 68, 0.4); border-color: rgba(255, 23, 68, 0.5); }
-    to { box-shadow: 0 0 35px rgba(255, 23, 68, 0.8); border-color: #ff1744; filter: brightness(1.2); }
+    from { box-shadow: 0 0 15px rgba(255, 23, 68, 0.4); filter: brightness(1); }
+    to { box-shadow: 0 0 35px rgba(255, 23, 68, 0.8); filter: brightness(1.3); }
 }
 
 .cooldown-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: conic-gradient(rgba(0, 0, 0, 0.4) 0deg, transparent 0deg);
     pointer-events: none; z-index: 5;
-    border-radius: 8px;
+    border-radius: 12px;
 }
