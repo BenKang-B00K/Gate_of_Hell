@@ -90,13 +90,13 @@ function recordUnlock(type, isEnemy = false) {
                 'wraith': 'WRAITH ENCOUNTER',
                 'spirit': 'SPIRIT ENCOUNTER',
                 'demon': 'DEMON ENCOUNTER',
-                'boss': 'ABYSSAL BOSS ENCOUNTER'
+                 'abyssal_boss': 'ABYSSAL BOSS ENCOUNTER'
             };
 
             // Find category
             let catKey = 'specter';
             if (bossData[stage] && bossData[stage].type === type) {
-                catKey = 'boss';
+                catKey =  'abyssal_boss';
             } else {
                 for (const ck in enemyCategories) {
                     if (enemyCategories[ck].some(e => e.type === type)) {

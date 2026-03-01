@@ -20,28 +20,28 @@ const relicsData = {
         effect: "모든 적의 이동 속도가 15% 감소합니다.", 
         lore: "강을 건너는 배의 속도를 조절하는 노입니다. 이제는 산 자의 시간을 늦춥니다.", 
         bonus: { type: 'slow_strength', value: 0.15 },
-        maxStack: 1, dropSource: 'boss'
+        maxStack: 1, dropSource:  'abyssal_boss'
     },
     'cerberus_fang': { 
         name: "케르베로스의 송곳니", icon: '🦴', 
         effect: "모든 아군의 공격력이 10% 증가합니다.", 
         lore: "지옥의 문지기의 날카로운 이빨입니다. 적의 본질을 찢는 힘을 줍니다.", 
         bonus: { type: 'damage', value: 0.1 },
-        maxStack: 1, dropSource: 'boss'
+        maxStack: 1, dropSource:  'abyssal_boss'
     },
     'gluttony_crown': { 
         name: "대식의 왕관", icon: '👑', 
         effect: "보물 유령의 출현 확률이 1% 증가합니다.", 
         lore: "더 많은 것을 갈구하게 만드는 저주받은 왕관입니다.", 
         bonus: { type: 'treasure_chance', value: 0.01 },
-        maxStack: 1, dropSource: 'boss'
+        maxStack: 1, dropSource:  'abyssal_boss'
     },
     'fallen_wings': { 
         name: "타락천사의 날개", icon: '🪽', 
         effect: "치명타 확률이 10% 증가합니다.", 
         lore: "순수한 어둠의 깃털입니다. 영혼의 가장 취약한 부분을 타격하도록 인도합니다.", 
         bonus: { type: 'crit_chance', value: 0.1 },
-        maxStack: 1, dropSource: 'boss'
+        maxStack: 1, dropSource:  'abyssal_boss'
     },
     'spectral_chain': { 
         name: "저주받은 자의 사슬", icon: '⛓️', 
@@ -175,9 +175,9 @@ function renderRelicsGrid() {
     grid.innerHTML = '';
 
     const allRelicIds = Object.keys(relicsData);
-    const normalRelics = allRelicIds.filter(id => !['boss', 'demon', 'supreme_boss'].includes(relicsData[id].dropSource));
+    const normalRelics = allRelicIds.filter(id => ![ 'abyssal_boss', 'demon', 'supreme_boss'].includes(relicsData[id].dropSource));
     const supremeRelics = allRelicIds.filter(id => relicsData[id].dropSource === 'demon');
-    const bossRelics = allRelicIds.filter(id => relicsData[id].dropSource === 'boss');
+    const bossRelics = allRelicIds.filter(id => relicsData[id].dropSource ===  'abyssal_boss');
     const ancientRelics = allRelicIds.filter(id => relicsData[id].dropSource === 'supreme_boss');
 
     const createSlot = (id) => {
@@ -339,7 +339,7 @@ function checkRelicDrop(enemy) {
         if (enemy.isBoss) {
             canDrop = true; 
         } else {
-            const isNormal = !['boss', 'demon', 'supreme_boss'].includes(data.dropSource);
+            const isNormal = ![ 'abyssal_boss', 'demon', 'supreme_boss'].includes(data.dropSource);
             if (isNormal) {
                 if ([...specters, ...wraiths, ...spirits, ...demons].includes(enemy.type)) canDrop = true;
             } else if (data.dropSource === 'demon' && demons.includes(enemy.type)) {

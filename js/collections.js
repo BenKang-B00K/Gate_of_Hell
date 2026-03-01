@@ -99,7 +99,7 @@ function renderGhostGrid(category) {
     grid.innerHTML = '';
     
     let pool = [];
-    if (category === 'boss') {
+    if (category === 'abyssal_boss') {
         pool = Object.values(bossData);
     } else {
         pool = enemyCategories[category] || [];

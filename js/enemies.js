@@ -121,7 +121,7 @@ function spawnBoss() {
     const data = bossData[stage] || { name: "Boss", type: "cerberus", hp: 3000, speed: 0.1, size: 60 };
     if (typeof recordUnlock === 'function') recordUnlock(data.type, true);
     const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy', 'boss', 'spawning', data.type);
+    enemyDiv.classList.add('enemy',  'abyssal_boss', 'spawning', data.type);
     enemyDiv.innerText = '';
     setTimeout(() => { enemyDiv.classList.remove('spawning'); }, 500);
     const hpBg = document.createElement('div'); hpBg.className = 'hp-bar-bg'; hpBg.style.display = 'none';
