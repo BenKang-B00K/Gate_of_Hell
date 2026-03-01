@@ -20,7 +20,9 @@
     gap: 12px;
     align-items: center;
     justify-content: center;
-    flex: 1;
+    flex: 4 4 0; /* 40% ratio */
+    width: 40%;  /* [User Request] 40% width */
+    min-width: 0; 
     height: 100%;
     background: linear-gradient(145deg, rgba(30, 25, 0, 0.8), rgba(20, 0, 0, 0.9));
     border-radius: 40px 15px 15px 15px;
@@ -348,13 +350,13 @@
 /* Floating Gauge Numbers VFX */
 .gauge-floating-num {
     position: absolute;
-    top: -10px; /* Centered vertically relative to the bar */
-    transform: translateX(-50%); /* Center the number on the fill tip */
-    font-size: 24px;
+    right: 10px; /* Fixed at the right end of the bar */
+    top: -15px;  /* Float slightly above the bar center */
+    font-size: 26px;
     font-weight: 900;
     pointer-events: none;
     z-index: 200;
-    text-shadow: 2px 2px 4px #000;
+    text-shadow: 2px 2px 5px #000, 0 0 10px rgba(0,0,0,0.8);
     white-space: nowrap;
 }
 

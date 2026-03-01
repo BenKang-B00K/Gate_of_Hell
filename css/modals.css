@@ -1,5 +1,19 @@
 /* modals.css - All Fullscreen Overlays and Dialogs */
 
+/* Common Overlay Styling */
+.overlay-base {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex; justify-content: center; align-items: center;
+    backdrop-filter: blur(15px);
+    animation: overlayFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; transform: scale(1.05); }
+    to { opacity: 1; transform: scale(1); }
+}
+
 /* Sacrifice Confirmation Modal */
 #sacrifice-modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -7,6 +21,7 @@
     display: flex; justify-content: center; align-items: center;
     z-index: 1100; /* [User Request] Critical Modal z=1100 */
     backdrop-filter: blur(10px);
+    animation: overlayFadeIn 0.2s ease-out;
 }
 
 #sacrifice-content {
@@ -161,6 +176,7 @@
     display: flex; justify-content: center; align-items: center;
     z-index: 1100; /* [User Request] Critical Modal z=1100 */
     backdrop-filter: blur(15px);
+    animation: overlayFadeIn 0.2s ease-out;
 }
 
 .boss-victory-content {
@@ -176,6 +192,7 @@
     display: flex; justify-content: center; align-items: center;
     z-index: 1000; /* [User Request] Overlay z=1000 */
     backdrop-filter: blur(15px);
+    animation: overlayFadeIn 0.2s ease-out;
 }
 
 #collections-content {
@@ -335,6 +352,7 @@
     background: rgba(0, 0, 0, 0.95);
     display: flex; justify-content: center; align-items: center;
     z-index: 1000; backdrop-filter: blur(15px);
+    animation: overlayFadeIn 0.2s ease-out;
 }
 
 #equip-content {

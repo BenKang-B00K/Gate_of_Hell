@@ -133,7 +133,16 @@ function spawnBoss() {
     hpBg.appendChild(hpFill); enemyDiv.appendChild(hpBg);
     const { hpStageMult, speedStageMult } = getStageMultipliers(true);
     const boss = { element: enemyDiv, hpFill: hpFill, initialX: 50, x: 50, targetX: 50, y: -20, baseSpeed: data.speed * speedStageMult, speed: data.speed * speedStageMult, maxHp: data.hp * hpStageMult, hp: data.hp * hpStageMult, reward: 500, isBoss: true, data: data, lastAbilityTime: Date.now() };
-    enemyDiv.addEventListener('mousedown', (e) => { e.stopPropagation(); if (typeof window.showEnemyInfo === 'function') window.showEnemyInfo(boss); });
+    
+    // Improved Event Listener for AA-tier Interactivity
+    enemyDiv.addEventListener('mousedown', (e) => { 
+        e.preventDefault();
+        e.stopPropagation(); 
+        if (typeof window.showEnemyInfo === 'function') {
+            window.showEnemyInfo(boss); 
+        }
+    });
+    
     road.appendChild(enemyDiv);
     enemies.push(boss); bossInstance = boss;
     if (data.type === 'charon') { for(let i=0; i<5; i++) spawnPassenger(boss); }

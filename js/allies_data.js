@@ -49,28 +49,26 @@ function updateGauges() {
     // Calculate Deltas for Floating VFX
     const currentMoney = Math.floor(money);
     const moneyDelta = currentMoney - lastMoney;
-    const sePercent = Math.min((money / maxMoney) * 100, 100);
     if (moneyDelta !== 0) {
-        spawnGaugePop('se-label', moneyDelta, sePercent);
+        spawnGaugePop('se-label', moneyDelta);
         lastMoney = currentMoney;
     }
 
     const currentPE = Math.floor(portalEnergy);
     const peDelta = currentPE - lastPortalEnergy;
-    const pePercent = Math.min((portalEnergy / maxPortalEnergy) * 100, 100);
     if (peDelta !== 0) {
-        spawnGaugePop('pe-label', peDelta, pePercent);
+        spawnGaugePop('pe-label', peDelta);
         lastPortalEnergy = currentPE;
     }
 
     if (moneyDisplay) moneyDisplay.innerText = `${currentMoney} / ${maxMoney}`;
     if (peDisplay) peDisplay.innerText = `${currentPE} / ${maxPortalEnergy}`;
     
-    if (peFill) peFill.style.width = `${pePercent}%`;
-    if (seFill) seFill.style.width = `${sePercent}%`;
+    if (peFill) peFill.style.width = `${Math.min((portalEnergy / maxPortalEnergy) * 100, 100)}%`;
+    if (seFill) seFill.style.width = `${Math.min((money / maxMoney) * 100, 100)}%`;
 }
 
-function spawnGaugePop(containerId, amount, percent) {
+function spawnGaugePop(containerId, amount) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -78,9 +76,6 @@ function spawnGaugePop(containerId, amount, percent) {
     const isGain = amount > 0;
     div.className = `gauge-floating-num ${isGain ? 'gain' : 'loss'}`;
     div.innerText = (isGain ? '+' : '') + amount;
-    
-    // Position at the tip of the fill
-    div.style.left = `${percent}%`;
     
     // Append to the gauge-bar inside the wrapper
     const bar = container.querySelector('.gauge-bar');
@@ -104,19 +99,17 @@ function updateStageInfo() {
 
     if (enemiesLeftLabel) {
         const remaining = Math.max(0, (totalStageEnemies - currentStageSpawned) + enemies.length);
-        const rsPercent = (remaining / totalStageEnemies) * 100;
 
         // Calculate Delta for RS VFX
         const rsDelta = remaining - lastEnemiesLeft;
         if (rsDelta !== 0 && lastEnemiesLeft !== 0) {
-            spawnGaugePop('rs-label', rsDelta, rsPercent);
+            spawnGaugePop('rs-label', rsDelta);
         }
         lastEnemiesLeft = remaining;
 
         enemiesLeftLabel.innerText = remaining;
-        if (rsFill) rsFill.style.width = `${rsPercent}%`;
+        if (rsFill) rsFill.style.width = `${(remaining / totalStageEnemies) * 100}%`;
     }
-
 }
 const unitTypes = [
     { type: 'apprentice', name: '견습 퇴마사', role: '기본', tier: 1, icon: '🧙', damage: 40, range: 360, cooldown: 833, desc: "정화된 에너지 볼트를 발사하여 단일 대상을 공격합니다." },

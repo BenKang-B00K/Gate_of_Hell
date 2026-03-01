@@ -45,7 +45,7 @@ function drawLavaRoad() {
     const time = globalAnimTimer;
     const roadWidth = 114; 
     const roadX = 123;
-    const bridgeHeight = 640;
+    const gameScreenHeight = 416; // [User Request] Stop drawing at the UI boundary (Portal Y)
     
     ctx.save();
 
@@ -55,20 +55,20 @@ function drawLavaRoad() {
     leftGrad.addColorStop(0, '#020005');
     leftGrad.addColorStop(1, '#0a0510');
     ctx.fillStyle = leftGrad;
-    ctx.fillRect(0, 0, roadX, bridgeHeight);
+    ctx.fillRect(0, 0, roadX, gameScreenHeight);
     
     // Right Abyss
     const rightGrad = ctx.createLinearGradient(roadX + roadWidth, 0, 360, 0);
     rightGrad.addColorStop(0, '#0a0510');
     rightGrad.addColorStop(1, '#020005');
     ctx.fillStyle = rightGrad;
-    ctx.fillRect(roadX + roadWidth, 0, 360 - (roadX + roadWidth), bridgeHeight);
+    ctx.fillRect(roadX + roadWidth, 0, 360 - (roadX + roadWidth), gameScreenHeight);
 
     // 2. Rising Void Mist from the Abyss
     ctx.globalCompositeOperation = 'screen';
     for(let i = 0; i < 6; i++) {
         const mx = (i % 2 === 0) ? Math.random() * 50 : 310 + Math.random() * 50;
-        const my = (time * 20 + i * 100) % 640;
+        const my = (time * 20 + i * 100) % gameScreenHeight;
         const ms = 40 + Math.sin(time + i) * 10;
         const mGrad = ctx.createRadialGradient(mx, my, 0, mx, my, ms);
         mGrad.addColorStop(0, 'rgba(40, 0, 80, 0.15)');
@@ -81,19 +81,17 @@ function drawLavaRoad() {
     // 3. Hell Stone Bridge Body
     // Base Stone Color
     ctx.fillStyle = '#111115';
-    ctx.fillRect(roadX, 0, roadWidth, bridgeHeight);
+    ctx.fillRect(roadX, 0, roadWidth, gameScreenHeight);
 
     // Stone Slab Patterns with Shading
     const slabHeight = 40;
-    for(let y = 0; y < bridgeHeight; y += slabHeight) {
-        const scrollY = (y + time * 5) % bridgeHeight;
-        
+    for(let y = 0; y < gameScreenHeight; y += slabHeight) {
         // Slab highlights and shadows for 3D feel
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
         ctx.strokeRect(roadX + 2, y, roadWidth - 4, slabHeight);
         
         // Cracks with Glowing Energy
-        if ((y / slabHeight) % 3 === 0) {
+        if ((Math.floor(y / slabHeight)) % 3 === 0) {
             ctx.beginPath();
             ctx.moveTo(roadX + 10, y + 5);
             ctx.lineTo(roadX + 40, y + 25);
@@ -108,8 +106,8 @@ function drawLavaRoad() {
     const wallWidth = 8;
     // Shadow under walls
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-    ctx.fillRect(roadX - 4, 0, 4, bridgeHeight);
-    ctx.fillRect(roadX + roadWidth, 0, 4, bridgeHeight);
+    ctx.fillRect(roadX - 4, 0, 4, gameScreenHeight);
+    ctx.fillRect(roadX + roadWidth, 0, 4, gameScreenHeight);
 
     // Stone Walls
     const wallGrad = ctx.createLinearGradient(roadX, 0, roadX + wallWidth, 0);
@@ -118,26 +116,53 @@ function drawLavaRoad() {
     wallGrad.addColorStop(1, '#111');
     
     ctx.fillStyle = wallGrad;
-    ctx.fillRect(roadX, 0, wallWidth, bridgeHeight); // Left wall
+    ctx.fillRect(roadX, 0, wallWidth, gameScreenHeight); // Left wall
     ctx.save();
     ctx.translate(roadX + roadWidth, 0);
     ctx.scale(-1, 1);
-    ctx.fillRect(0, 0, wallWidth, bridgeHeight); // Right wall (mirrored)
+    ctx.fillRect(0, 0, wallWidth, gameScreenHeight); // Right wall (mirrored)
     ctx.restore();
 
     // 5. Evil Aura Rising from Bridge
     if (Math.random() < 0.1) {
         const ax = roadX + Math.random() * roadWidth;
-        const ay = Math.random() * bridgeHeight;
+        const ay = Math.random() * gameScreenHeight;
         spawnParticles(ax, ay, 'rgba(148, 0, 211, 0.4)', 1);
     }
 
-    // 6. Lightning Overlay (Inherited)
+    // 6. Soul Flow Arrows (Moving Downward)
+    ctx.save();
+    const arrowSpacing = 120;
+    const arrowOffset = (time * 40) % arrowSpacing; // Movement speed
+    ctx.strokeStyle = 'rgba(255, 50, 50, 0.15)'; // Very subtle red/purple
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+
+    for(let y = -20 + arrowOffset; y < gameScreenHeight; y += arrowSpacing) {
+        if (y < 0) continue;
+        const alpha = Math.min(0.15, (y / 100) * 0.15) * (1 - (y / gameScreenHeight)); // Fade in at top, fade out at portal
+        ctx.globalAlpha = alpha;
+
+        const ax = 180; // Center of the bridge
+        const aw = 15;  // Arrow width
+        const ah = 10;  // Arrow height
+
+        ctx.beginPath();
+        ctx.moveTo(ax - aw, y);
+        ctx.lineTo(ax, y + ah);
+        ctx.lineTo(ax + aw, y);
+        ctx.stroke();
+    }
+    ctx.globalAlpha = 1.0;
+    ctx.restore();
+
+    // 7. Lightning Overlay (Inherited)
+
     if (lightningTimer > 0) {
         lightningTimer--;
         const flicker = Math.random() > 0.5 ? 1 : 0.5;
         ctx.fillStyle = `rgba(255, 215, 0, ${lightningIntensity * flicker * 0.1})`;
-        ctx.fillRect(roadX, 0, roadWidth, bridgeHeight);
+        ctx.fillRect(roadX, 0, roadWidth, gameScreenHeight);
         lightningIntensity *= 0.95;
     }
 
