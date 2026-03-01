@@ -106,6 +106,18 @@ function recordUnlock(type, isEnemy = false) {
                     <div class="unlock-title evil">ABYSSAL WHISPER</div>
                     <div id="unlock-icon">${enemyData.icon}</div>
                     <div id="unlock-name">${dispName}</div>
+                    
+                    <div style="display:flex; justify-content:center; gap:15px; margin:15px 0; width:100%;">
+                        <div style="border:1px solid #ff1744; background:rgba(183,28,28,0.2); padding:5px 15px; border-radius:5px;">
+                            <span style="color:#ff1744; font-size:14px; display:block; font-weight:bold;">HEALTH</span>
+                            <span style="font-size:22px; font-weight:bold; color:#fff;">${Math.floor(enemyData.hp)}</span>
+                        </div>
+                        <div style="border:1px solid #aaa; background:rgba(255,255,255,0.1); padding:5px 15px; border-radius:5px;">
+                            <span style="color:#aaa; font-size:14px; display:block; font-weight:bold;">DEFENSE</span>
+                            <span style="font-size:22px; font-weight:bold; color:#fff;">${enemyData.defense || 0}</span>
+                        </div>
+                    </div>
+
                     <div id="unlock-desc">${enemyData.desc || enemyData.lore || "심연에서 새로운 기운이 감지되었습니다."}</div>
                     <div class="unlock-hint">(클릭하여 계속)</div>
                 `;
