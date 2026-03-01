@@ -30,8 +30,8 @@
 }
 
 #road {
-    flex: 0 0 340px; /* Fixed width for the bridge */
-    background-color: #000000;
+    width: 340px;
+    background-color: transparent;
     position: relative;
     display: flex;
     justify-content: center;

@@ -108,7 +108,10 @@ function updateStageInfo() {
         lastEnemiesLeft = remaining;
 
         enemiesLeftLabel.innerText = remaining;
-        if (rsFill) rsFill.style.width = `${(remaining / totalStageEnemies) * 100}%`;
+        
+        // [User Request Fix] Ensure gauge width is calculated correctly (0% when all gone)
+        const progress = Math.min(100, (remaining / totalStageEnemies) * 100);
+        if (rsFill) rsFill.style.width = `${progress}%`;
     }
 }
 const unitTypes = [
