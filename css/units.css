@@ -239,6 +239,33 @@
     transform: scale(1.05);
 }
 
+.info-sacrifice-btn.shrine-demo {
+    background: linear-gradient(135deg, #002a32, #000);
+    color: #00e5ff;
+    border-color: #00e5ff;
+}
+
+.unit.shrine {
+    filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.4));
+    animation: shrinePulse 3s infinite alternate ease-in-out;
+}
+
+.unit.shrine.demolishing {
+    filter: grayscale(0.8) sepia(1) hue-rotate(-50deg) brightness(0.8);
+    animation: demoFlicker 0.5s infinite;
+}
+
+@keyframes shrinePulse {
+    from { filter: drop-shadow(0 0 5px rgba(0, 229, 255, 0.3)) brightness(1); }
+    to { filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.6)) brightness(1.2); }
+}
+
+@keyframes demoFlicker {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
 /* [User Request] Drag Follow Visual */
 .drag-ghost {
     pointer-events: none !important;

@@ -143,6 +143,7 @@ function resetGameState() {
     
     // Reset Stats & Costs
     window.towerCost = 30;
+    window.shrineCost = 100;
     damageMultiplier = 1.0;
     critChance = 0.05;
     critMultiplier = 2.0;
@@ -172,12 +173,52 @@ function resetGameState() {
 
 let gameStarted = false;
 
+function applyShrineBuffs() {
+    // Reset all tower bonuses from shrines first
+    towers.forEach(t => {
+        if (!t.isShrine) {
+            t.shrineDmgBonus = 0;
+        }
+    });
+
+    const shrines = towers.filter(t => t.isShrine);
+    shrines.forEach(shrine => {
+        const area = shrine.slotElement.dataset.area;
+        const idx = parseInt(shrine.slotElement.dataset.index);
+        const isLeft = area === 'left-slots';
+        const col = idx % 3;
+
+        // Target: Immediately adjacent slot in the same area
+        // Left: Shrine is at col 0, targets col 1
+        // Right: Shrine is at col 2, targets col 1
+        let targetIdx = -1;
+        if (isLeft && col === 0) targetIdx = idx + 1;
+        else if (!isLeft && col === 2) targetIdx = idx - 1;
+
+        if (targetIdx !== -1) {
+            const targetSlot = document.querySelector(`.card-slot[data-area="${area}"][data-index="${targetIdx}"]`);
+            if (targetSlot && targetSlot.classList.contains('occupied')) {
+                const targetUnit = towers.find(t => t.slotElement === targetSlot);
+                if (targetUnit && !targetUnit.isShrine) {
+                    const multiplier = shrine.isDemolishing ? -1 : 1;
+                    if (shrine.data.bonus.type === 'damage') {
+                        targetUnit.shrineDmgBonus = (targetUnit.shrineDmgBonus || 0) + (shrine.data.bonus.value * multiplier);
+                    }
+                }
+            }
+        }
+    });
+}
+
 function gameLoop() {
     // Render custom canvas graphics (Road effects, etc.) - ALWAYS render for atmosphere
     if (typeof renderGraphics === 'function') renderGraphics();
 
     if (!gameStarted || isPaused) { requestAnimationFrame(gameLoop); return; }
-    
+
+    // [User Request] Apply Shrine Buffs continuously
+    applyShrineBuffs();
+
     const targetY = 416; // [User Request] Match portal logical boundary
     gameWidth = gameContainer.offsetWidth;
     const nowTime = Date.now();
@@ -343,7 +384,6 @@ function gameLoop() {
         } else {
             let baseX = enemy.initialX + (targetX - enemy.initialX) * progress;
             if (enemy.type === 'runner' || enemy.type === 'dimension') {
-                // Reduced sway from 8 to 5 to stay within the 35-65% road area
                 baseX += Math.sin(enemy.y * 0.04) * 5;
             } else if (['normal', 'mist', 'memory', 'shade', 'tank'].includes(enemy.type)) {
                 enemy.swayPhase = (enemy.swayPhase || 0) + (enemy.swaySpeed || 0.03);
@@ -353,18 +393,13 @@ function gameLoop() {
         }
 
         if(enemy.element) {
-            // [User Request] Fixed Y-axis pathing: Scale logical coordinates (360x640) to physical container (1080x1920)
-            // Logic: 360 * 3 = 1080. We apply a 3x multiplier to the top position.
             enemy.element.style.top = `${enemy.y * 3}px`;
             enemy.element.style.left = `${enemy.x}%`;
-            
-            // [User Request] Perspective Effects Removed (No scale/opacity reduction near portal)
             enemy.element.style.opacity = enemy.isStealthed ? 0.6 : 1.0;
             enemy.element.style.transform = `translate(-50%, -50%) scale(1)`; 
         }
 
         if (enemy.y >= targetY) {
-            // [Defensive] Ensure portalEnergy does not become negative
             portalEnergy = Math.max(0, portalEnergy + (enemy.hp + (enemy.isBoss ? 200 : 0)));
             if (enemy.isBoss) bossInstance = null;
             
@@ -386,27 +421,18 @@ function gameLoop() {
         }
     }
 
-    // Friendly Skeletons & Ghosts Logic
-    const relicSummonBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_damage') : 0;
-    
     [...friendlySkeletons, ...friendlyGhosts].forEach((summon, index, array) => {
-        // Move Up
         summon.y -= summon.speed || 1.0;
         if (summon.element) {
-            // [Bug Fix] Scale logical Y to physical top (3x)
             summon.element.style.top = `${summon.y * 3}px`;
             summon.element.style.left = `${summon.x}%`;
         }
-
-        // Cleanup if they go off screen (top)
         if (summon.y < -50) {
             if (summon.element) summon.element.remove();
             if (friendlySkeletons.includes(summon)) friendlySkeletons.splice(friendlySkeletons.indexOf(summon), 1);
             else friendlyGhosts.splice(friendlyGhosts.indexOf(summon), 1);
             return;
         }
-
-        // Attack Logic (Simple proximity)
         const summonPxX = (summon.x / 100) * gameWidth;
         const now = Date.now();
         if (now - (summon.lastAttack || 0) > 1000) {
@@ -414,13 +440,10 @@ function gameLoop() {
                 const exPx = (e.x / 100) * gameWidth;
                 return Math.sqrt(Math.pow(exPx - summonPxX, 2) + Math.pow(e.y - summon.y, 2)) < 40;
             });
-
             if (target) {
                 const baseDmg = friendlySkeletons.includes(summon) ? 20 : 40;
                 applyDamage(target, baseDmg * (1.0 + relicSummonBonus), null);
                 summon.lastAttack = now;
-                
-                // Visual feedback
                 if (summon.element) {
                     summon.element.style.transform = 'translate(-50%, -50%) scale(1.3)';
                     setTimeout(() => { if(summon.element) summon.element.style.transform = 'translate(-50%, -50%) scale(1)'; }, 200);
@@ -438,7 +461,7 @@ function gameLoop() {
             const ratio = Math.min(1, elapsed / cd);
             overlay.style.background = `conic-gradient(rgba(0, 0, 0, 0.3) ${(1 - ratio) * 360}deg, transparent 0deg)`;
         }
-        if (tower.data.type === 'void_gatekeeper' || tower.isFeared || tower.isFrozenTomb) return;
+        if (tower.isShrine || tower.data.type === 'void_gatekeeper' || tower.isFeared || tower.isFrozenTomb) return;
         if (nowTime - (tower.lastShot || 0) >= cd) {
             const tr = tower.slotElement.getBoundingClientRect();
             const tx = tr.left + tr.width / 2;
@@ -456,9 +479,7 @@ function gameLoop() {
         }
     });
 
-    // Render custom canvas graphics (Road effects, etc.)
     if (typeof renderGraphics === 'function') renderGraphics();
-
     requestAnimationFrame(gameLoop);
 }
 
@@ -472,20 +493,15 @@ function shoot(tower, target) {
     let sx = (tr.left + tr.width / 2) - gr.left;
     let sy = (tr.top + tr.height / 2) - gr.top;
 
-    // Special case: Apprentice staff head origin
     if (tower.data.type === 'apprentice') {
         const LOGICAL_WIDTH = 1080;
         const scaleX = gr.width / LOGICAL_WIDTH;
         const scaleY = gr.height / 1920;
         const cx = ((tr.left + tr.width / 2) - gr.left) / scaleX;
         const cy = ((tr.top + tr.height / 2) - gr.top) / scaleY;
-        
-        // Logical Jewel Pos (Attacking): staffOX=9, staffOY=-12 -> Jewel is at X=10.5, Y=-13
-        // Using S=3.0 scale
         const area = tower.slotElement.dataset.area;
         const isLeft = area === 'left-slots';
         const lx = isLeft ? 10.5 : -10.5; 
-        
         sx = (cx + (lx * 3.0)) * scaleX;
         sy = (cy + (-13.0 * 3.0)) * scaleY;
     }
@@ -517,25 +533,21 @@ function shoot(tower, target) {
         
         handleSpecialAblities(tower, target);
         const relicDmgBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('damage') : 0;
-        let finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus);
+        const shrineDmg = tower.shrineDmgBonus || 0;
+        let finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus + shrineDmg);
         
-        // Critical Hit Logic
         const relicCritChance = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_chance') : 0;
-        const totalCritChance = critChance + relicCritChance + (tower.data.type === 'vajra' ? 0.2 : 0); // Vajra has 20% innate crit
+        const totalCritChance = critChance + relicCritChance + (tower.data.type === 'vajra' ? 0.2 : 0);
         let isCritShot = false;
         if (Math.random() < totalCritChance) {
             isCritShot = true;
             const relicCritBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_damage') : 0;
             const totalCritMultiplier = critMultiplier + relicCritBonus;
             finalDamageMultiplier *= totalCritMultiplier;
-            
-            // Critical Visual Effect
             if (target.element) {
                 target.element.classList.add('crit-hit');
                 setTimeout(() => target.element && target.element.classList.remove('crit-hit'), 300);
             }
-            
-            // Vajra Special Crit Effect: Massive Knockback
             if (tower.data.type === 'vajra') {
                 const nearby = enemies.filter(e => {
                     const exPx = (e.x / 100) * gameWidth;
@@ -551,7 +563,6 @@ function shoot(tower, target) {
                 });
             }
         }
-
         applyDamage(target, tower.data.damage * finalDamageMultiplier, tower, false, false, isCritShot);
     }, 200);
 }
@@ -560,19 +571,15 @@ function createDamageText(target, amount, isCrit) {
     if (!target || !target.element) return;
     const rect = target.element.getBoundingClientRect();
     const gameRect = gameContainer.getBoundingClientRect();
-    
     const x = (rect.left + rect.width / 2) - gameRect.left;
     const y = (rect.top + rect.height / 2) - gameRect.top;
-    
     const div = document.createElement('div');
     div.className = `damage-text${isCrit ? ' crit' : ''}`;
     div.style.left = `${x + (Math.random() * 20 - 10)}px`;
     div.style.top = `${y}px`;
     div.innerText = Math.round(amount);
-    
     gameContainer.appendChild(div);
     setTimeout(() => div.remove(), 800);
-    
     if (isCrit) createStatusEffectText(x, y, "CRITICAL");
 }
 
@@ -582,7 +589,6 @@ function createStatusEffectText(x, y, text, type = '') {
     div.style.left = `${x}px`;
     div.style.top = `${y - 30}px`;
     div.innerText = text;
-    
     gameContainer.appendChild(div);
     setTimeout(() => div.remove(), 1000);
 }
@@ -590,9 +596,6 @@ function createStatusEffectText(x, y, text, type = '') {
 document.addEventListener('DOMContentLoaded', () => {
     gameContainer = document.getElementById('game-container');
     road = document.getElementById('road');
-    
-    // Explicitly set these for enemies.js as well if needed (though they share global scope usually)
-    // but some browsers/bundlers might behave differently.
     window.gameContainer = gameContainer;
     window.road = road;
     
@@ -600,12 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startScreen = document.getElementById('start-screen');
     const unlockModal = document.getElementById('unlock-modal');
     const retryBtn = document.getElementById('retry-btn');
-    if (retryBtn) {
-        retryBtn.onclick = () => {
-            // [User Request] Match "Stop Exorcism" behavior: Full page reload for a guaranteed clean state
-            window.location.reload();
-        };
-    }
+    if (retryBtn) retryBtn.onclick = () => window.location.reload();
 
     const restartBtnTop = document.getElementById('restart-btn-top');
     const quitModal = document.getElementById('quit-modal');
@@ -614,40 +612,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (restartBtnTop && quitModal && quitConfirm && quitCancel) {
         restartBtnTop.innerText = "퇴마 중단";
-        restartBtnTop.onclick = () => {
-            quitModal.style.display = 'flex';
-            isPaused = true;
-        };
-
-        quitConfirm.onclick = () => {
-            window.location.reload();
-        };
-
-        quitCancel.onclick = () => {
-            quitModal.style.display = 'none';
-            isPaused = false;
-        };
+        restartBtnTop.onclick = () => { quitModal.style.display = 'flex'; isPaused = true; };
+        quitConfirm.onclick = () => window.location.reload();
+        quitCancel.onclick = () => { quitModal.style.display = 'none'; isPaused = false; };
     }
+    if (unlockModal) unlockModal.addEventListener('click', () => { unlockModal.style.display = 'none'; isPaused = false; });
     
-    // [User Request] Re-enable 'click anywhere to resume' for Boss/Unlock modal
-    if (unlockModal) {
-        unlockModal.addEventListener('click', () => {
-            unlockModal.style.display = 'none';
-            isPaused = false;
-        });
-    }
-    
-    // Start thunder sound loop
-    thunderInterval = setInterval(() => {
-        if (gameStarted) clearInterval(thunderInterval);
-    }, 2000);
-
     if (startBtn && startScreen) {
-        // [User Request] Tutorial Toggle Listener (Start and Game sync)
         const tutorialToggle = document.getElementById('tutorial-toggle');
         const tutorialStatus = document.getElementById('tutorial-status');
         const tutorialContainer = document.getElementById('tutorial-toggle-container');
-        
         const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
         const gameTutorialStatus = document.getElementById('game-tutorial-status');
         const gameTutorialContainer = document.getElementById('game-tutorial-toggle-container');
@@ -657,50 +631,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (gameTutorialToggle) gameTutorialToggle.checked = state;
             if (tutorialStatus) tutorialStatus.innerText = state ? 'ON' : 'OFF';
             if (gameTutorialStatus) gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
-            
-            // [User Request] Save Setting
             localStorage.setItem('goh_tutorial_enabled', state);
         };
 
-        // Load Saved Setting
         const savedTutorial = localStorage.getItem('goh_tutorial_enabled');
-        if (savedTutorial !== null) {
-            syncToggles(savedTutorial === 'true');
-        }
+        if (savedTutorial !== null) syncToggles(savedTutorial === 'true');
 
-        if (tutorialToggle) {
-            tutorialToggle.addEventListener('change', () => syncToggles(tutorialToggle.checked));
-        }
-        if (gameTutorialToggle) {
-            gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked));
-        }
+        if (tutorialToggle) tutorialToggle.addEventListener('change', () => syncToggles(tutorialToggle.checked));
+        if (gameTutorialToggle) gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked));
 
-        // [User Request] Click anywhere on container to toggle
-        if (tutorialContainer) {
-            tutorialContainer.addEventListener('click', (e) => {
-                if (e.target !== tutorialToggle && !e.target.closest('.slider')) {
-                    const newState = !tutorialToggle.checked;
-                    syncToggles(newState);
-                }
-            });
-        }
-        if (gameTutorialContainer) {
-            gameTutorialContainer.addEventListener('click', (e) => {
-                if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) {
-                    const newState = !gameTutorialToggle.checked;
-                    syncToggles(newState);
-                }
-            });
-        }
-
-        startBtn.addEventListener('mouseenter', () => {
-            // hover sound removed
-        });
+        if (tutorialContainer) tutorialContainer.addEventListener('click', (e) => { if (e.target !== tutorialToggle && !e.target.closest('.slider')) syncToggles(!tutorialToggle.checked); });
+        if (gameTutorialContainer) gameTutorialContainer.addEventListener('click', (e) => { if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) syncToggles(!gameTutorialToggle.checked); });
 
         startBtn.addEventListener('click', () => {
-            clearInterval(thunderInterval);
             startScreen.classList.add('shrink-to-info');
-            
             setTimeout(() => {
                 startScreen.style.display = 'none';
                 gameStarted = true;
@@ -708,7 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 initAllies();
                 updateSummonButtonState();
                 if (typeof updateGauges === 'function') updateGauges();
-            }, 800); // Match animation duration
+            }, 800);
         });
     }
 
@@ -722,73 +666,35 @@ document.addEventListener('DOMContentLoaded', () => {
             isPaused = !isPaused;
             pauseOverlay.style.display = isPaused ? 'flex' : 'none';
             pauseBtn.innerText = isPaused ? "재개" : "일시정지";
-            pauseBtn.classList.toggle('active', isPaused);
-            
             if (isPaused) {
                 const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
                 const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
             }
         };
-
         pauseBtn.addEventListener('click', togglePause);
         resumeBtn.addEventListener('click', togglePause);
     }
-    
     gameLoop();
 
-        // Global ESC Key Listener
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                const recordsOverlay = document.getElementById('records-overlay');
-                const relicsOverlay = document.getElementById('relics-overlay');
-                const collectionsOverlay = document.getElementById('collections-overlay');
-                const equipOverlay = document.getElementById('equip-overlay');
-                const unlockModal = document.getElementById('unlock-modal');
-                const gameOverOverlay = document.getElementById('game-over-overlay');
-                
-                let closedSomething = false;
-    
-                if (recordsOverlay && recordsOverlay.style.display === 'flex') {
-                    recordsOverlay.style.display = 'none';
-                    closedSomething = true;
-                }
-                if (relicsOverlay && relicsOverlay.style.display === 'flex') {
-                    relicsOverlay.style.display = 'none';
-                    closedSomething = true;
-                }
-                if (collectionsOverlay && collectionsOverlay.style.display === 'flex') {
-                    collectionsOverlay.style.display = 'none';
-                    closedSomething = true;
-                }
-                if (equipOverlay && equipOverlay.style.display === 'flex') {
-                    equipOverlay.style.display = 'none';
-                    closedSomething = true;
-                }
-                if (unlockModal && unlockModal.style.display === 'flex') {
-                    unlockModal.style.display = 'none';
-                    closedSomething = true;
-                }
-                
-                if (closedSomething) {
-                    isPaused = false;
-                }
-                
-                // Also deselect units
-                document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
-                document.querySelectorAll('.card-slot.selected-slot').forEach(s => s.classList.remove('selected-slot'));
-                const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
-                const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
-            }
-        });
-    
-        // Deselect when clicking empty space
-        document.addEventListener('mousedown', (e) => {
-            if (!e.target.closest('.unit') && !e.target.closest('.tower-card') && !e.target.closest('.job-btn') && !e.target.closest('.info-promo-btn') && !e.target.closest('.enemy')) {
-                document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
-                document.querySelectorAll('.card-slot.selected-slot').forEach(s => s.classList.remove('selected-slot'));
-                const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
-                const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
-            }
-        });
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            const mods = ['relics-overlay', 'collections-overlay', 'equip-overlay', 'unlock-modal'];
+            let closed = false;
+            mods.forEach(m => { const el = document.getElementById(m); if(el && el.style.display === 'flex'){ el.style.display='none'; closed=true; }});
+            if (closed) isPaused = false;
+            document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
+            document.querySelectorAll('.card-slot.selected-slot').forEach(s => s.classList.remove('selected-slot'));
+            const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
+            const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
+        }
     });
-    
+
+    document.addEventListener('mousedown', (e) => {
+        if (!e.target.closest('.unit') && !e.target.closest('.tower-card') && !e.target.closest('.job-btn') && !e.target.closest('.info-promo-btn') && !e.target.closest('.enemy')) {
+            document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
+            document.querySelectorAll('.card-slot.selected-slot').forEach(s => s.classList.remove('selected-slot'));
+            const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
+            const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
+        }
+    });
+});

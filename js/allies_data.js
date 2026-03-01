@@ -1,9 +1,11 @@
 /* allies_data.js - Constants and Unit Definitions */
 
 window.towerCost = 30;
+window.shrineCost = 100;
+window.shrineCostIncrement = 50;
 const jobChangeCost = 200; 
 const maxTowers = 16; 
-
+window.maxTowers = maxTowers;
 /* allies_data.js - Global State and Shared Functions */
 let stage = 1;
 let isTimeFrozen = false;
@@ -222,3 +224,18 @@ const unitTypes = [
     { type: 'void_gatekeeper', name: '공허의 문지기', role: '지원', tier: 4, icon: '🚪', damage: 0, range: 0, cooldown: 0, desc: "패시브로 문을 봉인하여, 포탈 오염도에 입는 모든 피해를 50% 감소시킵니다." },
     { type: 'eternal_wall', name: '영원의 수호벽', role: '지원', tier: 4, icon: '🗿', damage: 3000, range: 420, cooldown: 2000, desc: "강력한 안정화 오라를 내뿜어 맵 상의 모든 적을 80% 둔화시킵니다." }
 ];
+
+const shrineTypes = [
+    { 
+        type: 'shrine_might', 
+        name: '힘의 성소', 
+        icon: '⛩️', 
+        role: '버프', 
+        tier: 1, 
+        bonus: { type: 'damage', value: 0.2 }, 
+        desc: "바로 옆 칸(좌/우)에 위치한 아군의 공격력을 20% 증가시킵니다.",
+        demoDesc: "철거 중: 주변 아군의 공격력을 20% 감소시킵니다.",
+        lore: "고대 전사들의 투지가 깃든 성소입니다. 그 기운은 주변의 무기를 더욱 날카롭게 벼려줍니다."
+    }
+];
+window.shrineTypes = shrineTypes;

@@ -52,10 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.add('active');
 
             document.querySelectorAll('.collections-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(`${tab}-section`).classList.add('active');
+            const section = document.getElementById(`${tab}-section`);
+            if (section) section.classList.add('active');
 
             if (tab === 'ghosts') {
                 renderGhostGrid('specter');
+            } else if (tab === 'shrines') {
+                renderShrineGrid();
             } else {
                 renderExorcistTree();
             }
@@ -152,7 +155,6 @@ function renderGhostGrid(category) {
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             };
         } else {
-            // [User Request] Show placeholder for locked item
             item.onmouseenter = () => {
                 if (Date.now() > colInfoLockedUntil) {
                     const infoPane = document.getElementById('col-info-pane');
@@ -183,13 +185,55 @@ function renderGhostGrid(category) {
     }
 }
 
+function renderShrineGrid() {
+    const grid = document.getElementById('shrine-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    shrineTypes.forEach(shrine => {
+        const item = document.createElement('div');
+        item.className = 'col-item'; 
+        item.innerText = shrine.icon;
+        
+        item.onclick = () => {
+            showShrineDetail(shrine);
+            colInfoLockedUntil = Date.now() + 15000;
+            startColInfoResetTimer();
+        };
+        item.onmouseenter = () => {
+            if (Date.now() > colInfoLockedUntil) showShrineDetail(shrine);
+        };
+        item.onmouseleave = () => {
+            if (Date.now() > colInfoLockedUntil) resetColInfo();
+        };
+        grid.appendChild(item);
+    });
+}
+
+function showShrineDetail(shrine) {
+    const infoPane = document.getElementById('col-info-pane');
+    if (!infoPane) return;
+
+    infoPane.innerHTML = `
+        <div class="col-detail-header">
+            <div class="col-detail-icon">${shrine.icon}</div>
+            <div class="col-detail-title-group">
+                <div class="col-detail-title">${shrine.name}</div>
+                <div class="col-detail-stats">
+                    <span style="color:#00ff00;">효과: ${shrine.desc}</span>
+                    <span style="color:#ff1744;">철거 중: ${shrine.demoDesc}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-detail-lore">"${shrine.lore}"</div>
+    `;
+}
+
 function showGhostDetail(enemy) {
     const infoPane = document.getElementById('col-info-pane');
     if (!infoPane) return;
 
     const killCount = (window.killCounts && window.killCounts[enemy.type]) || 0;
-    
-    // Priority: 1. enemy.name 2. enemy.type
     const dispName = enemy.name || enemy.type;
     
     infoPane.innerHTML = `

@@ -48,6 +48,29 @@
     animation: divineResonance 4s infinite alternate ease-in-out;
 }
 
+/* [User Request] Slot Type Differentiation */
+.card-slot.shrine-only {
+    background:
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="none" stroke="rgba(0,229,255,0.15)" stroke-width="1.5"/><path d="M50 10 L90 90 L10 90 Z" fill="none" stroke="rgba(0,229,255,0.1)" stroke-width="1"/></svg>') center/70% no-repeat,
+        linear-gradient(145deg, #05151a, #0a1a20);
+    border-color: rgba(0, 229, 255, 0.1);
+}
+
+/* Drag & Drop Visual Feedback */
+.card-slot.drag-valid {
+    background-color: rgba(0, 255, 0, 0.2) !important;
+    box-shadow: 0 0 40px rgba(0, 255, 0, 0.4) !important;
+    border-color: #00ff00 !important;
+    transform: scale(1.05) translateZ(50px);
+}
+
+.card-slot.drag-invalid {
+    background-color: rgba(255, 0, 0, 0.2) !important;
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.4) !important;
+    border-color: #ff0000 !important;
+    cursor: no-drop;
+}
+
 @keyframes divineResonance {
     0% { border-color: rgba(255, 215, 0, 0.15); box-shadow: 0 0 10px rgba(255, 215, 0, 0.1), inset 0 0 15px #000; }
     100% { border-color: rgba(255, 215, 0, 0.5); box-shadow: 0 0 25px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.1); }

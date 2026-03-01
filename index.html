@@ -139,9 +139,12 @@
                         <div style="font-size: 24px; font-weight: bold;">소환</div>
                         <div id="summon-cost-display" style="font-size: 24px; opacity: 0.8; margin-top: 6px;">40 SE</div>
                     </div>
-                    <!-- 2. TBD Card (Formerly Records) -->
-                    <div class="tower-card placeholder">
-                        <div style="font-size: 30px; color: #444;">준비중</div>
+                    <!-- 2. Shrine Card -->
+                    <div id="shrine-card" class="tower-card" style="border-color: #00e5ff; color: #00e5ff;">
+                        <div id="shrine-warning" class="card-warning" style="display: none;">SE 부족</div>
+                        <div style="font-size: 42px;">⛩️</div>
+                        <div style="font-size: 24px; font-weight: bold;">성소</div>
+                        <div id="shrine-cost-display" style="font-size: 24px; opacity: 0.8; margin-top: 6px;">100 SE</div>
                     </div>
                     <!-- 3. Purge Card -->
                     <div id="purge-card" class="tower-card" style="border-color: #9400d3; color: #9400d3;" title="포탈 오염도 50% 제거">
@@ -183,6 +186,7 @@
             <div id="collections-header">
                 <div id="collections-tabs">
                     <button class="col-tab-btn active" data-tab="ghosts">악의 존재</button>
+                    <button class="col-tab-btn" data-tab="shrines">성소</button>
                     <button class="col-tab-btn" data-tab="exorcists">퇴마사</button>
                 </div>
                 <button id="close-collections">❌</button>
@@ -197,6 +201,12 @@
                 </div>
                 <div id="ghost-grid" class="collections-grid">
                     <!-- 10 columns grid dynamically populated -->
+                </div>
+            </div>
+
+            <div id="shrines-section" class="collections-section">
+                <div id="shrine-grid" class="collections-grid">
+                    <!-- Shrine items populated here -->
                 </div>
             </div>
 
