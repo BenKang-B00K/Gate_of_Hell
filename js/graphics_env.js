@@ -43,20 +43,105 @@ function drawAtmosphericEffects() {
 
 function drawLavaRoad() {
     const time = globalAnimTimer;
-    // Road is 340px wide in a 1080px container.
-    // 340 / 3 = 113.33 logical pixels.
-    // Centered: (360 - 113.33) / 2 = 123.33
     const roadWidth = 114; 
     const roadX = 123;
+    const bridgeHeight = 640;
+    
     ctx.save();
-    if (lightningTimer <= 0) {
-        if (Math.random() < 0.01) { lightningTimer = 10 + Math.random() * 20; lightningIntensity = 0.3 + Math.random() * 0.4; }
-    } else {
-        lightningTimer--; const flicker = Math.random() > 0.5 ? 1 : 0.5;
-        ctx.fillStyle = `rgba(255, 215, 0, ${lightningIntensity * flicker * 0.15})`; ctx.fillRect(roadX, 0, roadWidth, 640);
+
+    // 1. The Abyssal Void (Side Cliffs)
+    // Left Abyss
+    const leftGrad = ctx.createLinearGradient(0, 0, roadX, 0);
+    leftGrad.addColorStop(0, '#020005');
+    leftGrad.addColorStop(1, '#0a0510');
+    ctx.fillStyle = leftGrad;
+    ctx.fillRect(0, 0, roadX, bridgeHeight);
+    
+    // Right Abyss
+    const rightGrad = ctx.createLinearGradient(roadX + roadWidth, 0, 360, 0);
+    rightGrad.addColorStop(0, '#0a0510');
+    rightGrad.addColorStop(1, '#020005');
+    ctx.fillStyle = rightGrad;
+    ctx.fillRect(roadX + roadWidth, 0, 360 - (roadX + roadWidth), bridgeHeight);
+
+    // 2. Rising Void Mist from the Abyss
+    ctx.globalCompositeOperation = 'screen';
+    for(let i = 0; i < 6; i++) {
+        const mx = (i % 2 === 0) ? Math.random() * 50 : 310 + Math.random() * 50;
+        const my = (time * 20 + i * 100) % 640;
+        const ms = 40 + Math.sin(time + i) * 10;
+        const mGrad = ctx.createRadialGradient(mx, my, 0, mx, my, ms);
+        mGrad.addColorStop(0, 'rgba(40, 0, 80, 0.15)');
+        mGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = mGrad;
+        ctx.beginPath(); ctx.arc(mx, my, ms, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+
+    // 3. Hell Stone Bridge Body
+    // Base Stone Color
+    ctx.fillStyle = '#111115';
+    ctx.fillRect(roadX, 0, roadWidth, bridgeHeight);
+
+    // Stone Slab Patterns with Shading
+    const slabHeight = 40;
+    for(let y = 0; y < bridgeHeight; y += slabHeight) {
+        const scrollY = (y + time * 5) % bridgeHeight;
+        
+        // Slab highlights and shadows for 3D feel
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.strokeRect(roadX + 2, y, roadWidth - 4, slabHeight);
+        
+        // Cracks with Glowing Energy
+        if ((y / slabHeight) % 3 === 0) {
+            ctx.beginPath();
+            ctx.moveTo(roadX + 10, y + 5);
+            ctx.lineTo(roadX + 40, y + 25);
+            ctx.lineTo(roadX + 20, y + 35);
+            ctx.strokeStyle = `rgba(255, 50, 0, ${0.1 + Math.sin(time * 3) * 0.1})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+    }
+
+    // 4. Side Railings (Stone Walls)
+    const wallWidth = 8;
+    // Shadow under walls
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.fillRect(roadX - 4, 0, 4, bridgeHeight);
+    ctx.fillRect(roadX + roadWidth, 0, 4, bridgeHeight);
+
+    // Stone Walls
+    const wallGrad = ctx.createLinearGradient(roadX, 0, roadX + wallWidth, 0);
+    wallGrad.addColorStop(0, '#222');
+    wallGrad.addColorStop(0.5, '#444');
+    wallGrad.addColorStop(1, '#111');
+    
+    ctx.fillStyle = wallGrad;
+    ctx.fillRect(roadX, 0, wallWidth, bridgeHeight); // Left wall
+    ctx.save();
+    ctx.translate(roadX + roadWidth, 0);
+    ctx.scale(-1, 1);
+    ctx.fillRect(0, 0, wallWidth, bridgeHeight); // Right wall (mirrored)
+    ctx.restore();
+
+    // 5. Evil Aura Rising from Bridge
+    if (Math.random() < 0.1) {
+        const ax = roadX + Math.random() * roadWidth;
+        const ay = Math.random() * bridgeHeight;
+        spawnParticles(ax, ay, 'rgba(148, 0, 211, 0.4)', 1);
+    }
+
+    // 6. Lightning Overlay (Inherited)
+    if (lightningTimer > 0) {
+        lightningTimer--;
+        const flicker = Math.random() > 0.5 ? 1 : 0.5;
+        ctx.fillStyle = `rgba(255, 215, 0, ${lightningIntensity * flicker * 0.1})`;
+        ctx.fillRect(roadX, 0, roadWidth, bridgeHeight);
         lightningIntensity *= 0.95;
     }
-    ctx.globalAlpha = 1.0; ctx.restore();
+
+    ctx.restore();
 }
 
 function drawSpawningGate() {

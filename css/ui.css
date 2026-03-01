@@ -348,7 +348,8 @@
 /* Floating Gauge Numbers VFX */
 .gauge-floating-num {
     position: absolute;
-    right: -40px; /* Positioned to the right of the gauge */
+    top: -10px; /* Centered vertically relative to the bar */
+    transform: translateX(-50%); /* Center the number on the fill tip */
     font-size: 24px;
     font-weight: 900;
     pointer-events: none;
