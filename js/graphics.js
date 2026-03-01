@@ -45,6 +45,7 @@ function renderGraphics() {
     
     // 0. Logical Updates
     if(typeof updateParticles === 'function') updateParticles();
+    if(typeof updateSoulEssences === 'function') updateSoulEssences();
     if(typeof updateLightPillars === 'function') updateLightPillars();
     if(typeof updatePromotionBursts === 'function') updatePromotionBursts();
     if(typeof updateStageFlashes === 'function') updateStageFlashes();
@@ -68,6 +69,7 @@ function renderGraphics() {
 
     // 4. VFX and Selection (Top Layers)
     if(typeof drawParticles === 'function') drawParticles(); 
+    if(typeof drawSoulEssences === 'function') drawSoulEssences();
     if(typeof drawLightPillars === 'function') drawLightPillars();
     if(typeof drawPromotionBursts === 'function') drawPromotionBursts();
     if(typeof window.drawBanishEffects === 'function') window.drawBanishEffects();

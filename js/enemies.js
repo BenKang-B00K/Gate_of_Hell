@@ -212,6 +212,13 @@ function handleEnemyDeath(target, killer = null) {
         if (target.type === 'ember_hatred') spawnDeathExplosion(target, 'rgba(255, 69, 0, 0.6)', 100, 0, false, (e) => { e.speed *= 1.5; setTimeout(() => { e.speed = e.baseSpeed; }, 3000); });
         if (killer && killer.data.type === 'wraithlord') spawnFriendlySkeleton(target);
 
+        // [User Request] Soul Essence Sparkle Effect
+        if (typeof spawnSoulEssence === 'function') {
+            const lx = (target.x / 100) * 360; // Logical X
+            const ly = target.y;               // Logical Y
+            spawnSoulEssence(lx, ly);
+        }
+
         target.element.remove(); enemies.splice(idx, 1);
         if (typeof checkRelicDrop === 'function') checkRelicDrop(target);
         if (typeof checkEquipmentDrop === 'function') checkEquipmentDrop(target);

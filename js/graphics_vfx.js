@@ -6,6 +6,55 @@ const promotionBursts = [];
 const stageFlashes = []; 
 const banishEffects = []; 
 const purgeEffects = []; 
+const soulEssences = [];
+
+function spawnSoulEssence(lx, ly) {
+    const side = Math.random() < 0.5 ? -1 : 1;
+    soulEssences.push({
+        x: lx,
+        y: ly,
+        startX: lx,
+        startY: ly,
+        vx: side * (Math.random() * 1.5 + 0.5),
+        vy: -4.5 - Math.random() * 2,
+        gravity: 0.25,
+        life: 1.0,
+        decay: 0.01 + Math.random() * 0.01,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.2
+    });
+}
+
+function updateSoulEssences() {
+    for (let i = soulEssences.length - 1; i >= 0; i--) {
+        const s = soulEssences[i];
+        s.x += s.vx;
+        s.y += s.vy;
+        s.vy += s.gravity;
+        s.life -= s.decay;
+        s.rotation += s.rotSpeed;
+        if (s.life <= 0) soulEssences.splice(i, 1);
+    }
+}
+
+function drawSoulEssences() {
+    ctx.save();
+    soulEssences.forEach(s => {
+        ctx.globalAlpha = s.life;
+        ctx.font = `${14 + s.life * 10}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.save();
+        ctx.translate(s.x, s.y);
+        ctx.rotate(s.rotation);
+        // ✨ emoji with a glow
+        ctx.shadowBlur = 10 * s.life;
+        ctx.shadowColor = '#ffd700';
+        ctx.fillText('✨', 0, 0);
+        ctx.restore();
+    });
+    ctx.restore();
+}
 
 function spawnPurgeEffect(lx, ly) {
     purgeEffects.push({ x: lx, y: ly, life: 1.0 });
@@ -180,6 +229,9 @@ function drawParticles() {
 
 // Exports
 window.spawnPurgeEffect = spawnPurgeEffect;
+window.spawnSoulEssence = spawnSoulEssence;
+window.updateSoulEssences = updateSoulEssences;
+window.drawSoulEssences = drawSoulEssences;
 window.spawnStageFlash = spawnStageFlash;
 window.spawnPromotionBurst = spawnPromotionBurst;
 window.spawnLightPillar = spawnLightPillar;
