@@ -656,7 +656,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (gameTutorialToggle) gameTutorialToggle.checked = state;
             if (tutorialStatus) tutorialStatus.innerText = state ? 'ON' : 'OFF';
             if (gameTutorialStatus) gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
+            
+            // [User Request] Save Setting
+            localStorage.setItem('goh_tutorial_enabled', state);
         };
+
+        // Load Saved Setting
+        const savedTutorial = localStorage.getItem('goh_tutorial_enabled');
+        if (savedTutorial !== null) {
+            syncToggles(savedTutorial === 'true');
+        }
 
         if (tutorialToggle) {
             tutorialToggle.addEventListener('change', () => syncToggles(tutorialToggle.checked));
