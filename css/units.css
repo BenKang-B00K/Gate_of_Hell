@@ -124,6 +124,18 @@
     to { transform: scale(1.2); box-shadow: 0 0 15px #ff0000; }
 }
 
+/* Card Warning Logic: Show only on hover when disabled */
+.card-warning {
+    display: none; /* Controlled by JS for logic, but we hide it visually unless hovered */
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tower-card.disabled:hover .card-warning {
+    display: block !important;
+    opacity: 1;
+}
+
 /* Unit Info Panel (Sacred Artifact Style) */
 #unit-info {
     background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
