@@ -76,10 +76,9 @@ function attachGlobalListeners() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#ffd700; font-weight:bold; font-size:36px; margin-bottom:6px;">도감 확인</div>
+                    <div style="color:#ffd700; font-weight:bold; font-size:36px; margin-bottom:6px;">운명의 기록소</div>
                     <div style="display:inline-block; background:#8b6508; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">기록소</div>
                     <div style="font-size:24px; color:#bbb; line-height:1.2;">지금까지 조우한 악령들의 정보와 수호자들의 전직 계보를 확인합니다.</div>
-                    <div style="color:#ffd700; font-size:22px; margin-top:10px;">상태: 영구 기록됨</div>
                     <div style="color:#555; font-size:22px; margin-top:15px; font-style:italic; line-height:1.2;">"지식은 심연에 대항하는 가장 강력한 무기입니다. 과거의 승리를 기록하고 미래를 준비하십시오."</div>
                 `;
                 startInfoResetTimer();

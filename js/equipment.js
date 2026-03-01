@@ -51,10 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#00e5ff; font-weight:bold; font-size:36px; margin-bottom:6px;">장비고 확인</div>
+                    <div style="color:#00e5ff; font-weight:bold; font-size:36px; margin-bottom:6px;">신성한 장비고</div>
                     <div style="display:inline-block; background:#006064; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">병기고</div>
                     <div style="font-size:24px; color:#bbb; line-height:1.2;">심연에서 획득한 성스러운 무구들을 관리하고 강화합니다.</div>
-                    <div style="color:#00e5ff; font-size:22px; margin-top:10px;">상태: 무장 완료</div>
                     <div style="color:#555; font-size:22px; margin-top:15px; font-style:italic; line-height:1.2;">"부러진 칼날도 퇴마사의 손에 들리면 악령을 베는 신검이 될 것입니다."</div>
                 `;
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
