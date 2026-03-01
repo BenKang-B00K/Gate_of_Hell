@@ -515,9 +515,12 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    box-shadow: inset 0 0 30px #000, 0 10px 30px rgba(0,0,0,0.5);
+    align-items: center; /* [User Request] Center align */
+    text-align: center;  /* [User Request] Center align text */
+    box-shadow: inset 0 0 30px #000;
     box-sizing: border-box;
 }
+
 
 #relic-bonus-pane {
     flex: 1;

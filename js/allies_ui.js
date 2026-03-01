@@ -7,96 +7,69 @@ let currentFusionType = null;
 let corruptBtnElement = null;
 
 /**
- * Creates grid slots for unit placement.
+ * Creates unit slots in the UI
  */
-function createSlots(containerId, count) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    container.innerHTML = '';
-    for (let i = 0; i < count; i++) {
-        const cell = document.createElement('div');
-        cell.classList.add('card-slot');
-        cell.dataset.col = i % 3;
-        cell.dataset.area = containerId;
-        slots.push(cell);
-        container.appendChild(cell);
-        
-        // Interaction Listeners
-        cell.addEventListener('click', function() { 
-            if (typeof isMovingUnit !== 'undefined' && isMovingUnit && draggedUnit) {
-                executeMove(draggedUnit, this); 
-            }
-        });
-        cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
-        cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
-        cell.addEventListener('drop', e => { 
-            e.preventDefault(); 
-            cell.classList.remove('drag-over'); 
-            if (draggedUnit) executeMove(draggedUnit, cell); 
-        });
+function initAllies() {
+    const leftSlots = document.getElementById('left-slots');
+    const rightSlots = document.getElementById('right-slots');
+    if (!leftSlots || !rightSlots) return;
+
+    leftSlots.innerHTML = '';
+    rightSlots.innerHTML = '';
+
+    for (let i = 0; i < 8; i++) {
+        const slot = createSlotElement(i, 'left-slots');
+        leftSlots.appendChild(slot);
     }
+    for (let i = 8; i < 16; i++) {
+        const slot = createSlotElement(i, 'right-slots');
+        rightSlots.appendChild(slot);
+    }
+
+    attachGlobalListeners();
+}
+
+function createSlotElement(index, area) {
+    const slot = document.createElement('div');
+    slot.className = 'card-slot';
+    slot.dataset.index = index;
+    slot.dataset.area = area;
+    
+    slot.onclick = () => {
+        if (typeof handleSlotClick === 'function') handleSlotClick(index);
+    };
+
+    return slot;
 }
 
 let listenersAttached = false;
+function attachGlobalListeners() {
+    if (listenersAttached) return;
 
-/**
- * Main Initialization for Ally System UI
- */
-function initAllies() {
-    // 1. Setup Slots (7x3 grid = 21 slots per side)
-    // Clear old slots from DOM if they exist to prevent memory leaks/ID clashes
-    document.getElementById('left-slots').innerHTML = '';
-    document.getElementById('right-slots').innerHTML = '';
-    
-    slots.length = 0; 
-    createSlots('left-slots', 21); 
-    createSlots('right-slots', 21);
-
-    if (listenersAttached) {
-        updateGauges();
-        updateSummonButtonState();
-        return;
-    }
-
-    // 2. Summon Button Logic
-    const tc = document.getElementById('tower-card');
-    if(tc) {
-        tc.addEventListener('click', () => { 
-            if (towers.length >= maxTowers) {
-                const warning = document.getElementById('max-units-warning');
-                if (warning) {
-                    warning.style.display = 'block';
-                    setTimeout(() => { warning.style.display = 'none'; }, 1500);
-                }
-                return;
-            }
-            const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
-            const finalTowerCost = Math.max(5, towerCost - reduction);
-            if(money < finalTowerCost) return; 
-            
-            const vs = slots.filter(c => !c.classList.contains('occupied'));
-            if(vs.length > 0) {
-                summonTower(vs[Math.floor(Math.random()*vs.length)]);
-            }
+    // 1. Summon Button
+    const summonBtn = document.getElementById('tower-card');
+    if (summonBtn) {
+        summonBtn.addEventListener('click', () => {
+            if (typeof summonUnit === 'function') summonUnit();
         });
-        tc.addEventListener('mouseenter', () => {
+        summonBtn.addEventListener('mouseenter', () => {
             const d = document.getElementById('unit-info');
             if (d) {
                 const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
                 const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
                 d.innerHTML = `
-                    <div style="color:#ffd700; font-weight:bold; font-size:36px; margin-bottom:6px;">퇴마사 소환</div>
-                    <div style="display:inline-block; background:#8b6508; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">기본 소환</div>
-                    <div style="font-size:24px; color:#bbb; line-height:1.2;">심연에 맞설 새로운 퇴마사를 무작위 빈 슬롯에 소환합니다.</div>
-                    <div style="color:#ffd700; font-size:22px; margin-top:10px;">현재 비용: ${finalTowerCost} SE</div>
-                    <div style="color:#555; font-size:22px; margin-top:15px; font-style:italic; line-height:1.2;">"부름에 응한 영혼들이 문의 수호자가 될 것입니다. 소환할수록 더 많은 에너지가 필요합니다."</div>
+                    <div style="color:#4caf50; font-weight:bold; font-size:36px; margin-bottom:6px;">퇴마사 소환</div>
+                    <div style="display:inline-block; background:#2e7d32; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">의식</div>
+                    <div style="font-size:24px; color:#bbb; line-height:1.2;">심연에 대항할 무작위 [견습 퇴마사]를 비어있는 제단에 소환합니다.</div>
+                    <div style="color:#ffd700; font-size:22px; margin-top:10px;">비용: ${finalTowerCost} SE</div>
+                    <div style="color:#555; font-size:22px; margin-top:15px; font-style:italic; line-height:1.2;">"부름에 응답한 자들이 어둠을 몰아낼 것입니다."</div>
                 `;
                 startInfoResetTimer();
             }
         });
     }
 
-    // 2.5 Collections Card Hover Logic
+    // 2. Collections Button
     const colBtn = document.getElementById('collections-btn');
     if (colBtn) {
         colBtn.addEventListener('mouseenter', () => {
@@ -122,7 +95,7 @@ function initAllies() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#9400d3; font-weight:bold; font-size:39px; margin-bottom:6px;">영혼 정화</div>
+                    <div style="color:#ff1744; font-weight:bold; font-size:39px; margin-bottom:6px;">영혼 정화</div>
                     <div style="display:inline-block; background:#4b0082; color:#fff; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">기술</div>
                     <div style="font-size:27px; color:#bbb; line-height:1.2;">소울 에너지를 사용하여 포탈 오염도를 즉시 50% 제거합니다.</div>
                     <div style="color:#ff4500; font-size:24px; margin-top:12px;">비용: 800 SE</div>
@@ -135,13 +108,6 @@ function initAllies() {
 
     // 4. Resource Hover Info
     setupResourceTooltips();
-
-    // 5. Initialize Corruption Warning Element
-    if (!document.getElementById('corrupt-warning')) {
-        const warning = document.createElement('div');
-        warning.id = 'corrupt-warning';
-        document.body.appendChild(warning);
-    }
 
     listenersAttached = true;
     updateGauges();
@@ -160,7 +126,6 @@ function setupResourceTooltips() {
 /**
  * Syncs Summon Card visual state
  */
-
 function updateSummonButtonState() {
     const tc = document.getElementById('tower-card');
     if (!tc) return;
@@ -205,19 +170,10 @@ function updateSummonButtonState() {
     }
 }
 
-        tc.style.pointerEvents = 'none';
-    } else {
-        tc.classList.remove('locked');
-        tc.style.opacity = '1';
-        tc.style.pointerEvents = 'auto';
-    }
-}
-
 /**
  * Displays detailed unit info in the bottom panel
  */
 function showUnitInfo(tower) {
-    // [User Request] Lock info panel for 5 seconds when showing unit info
     window.infoPanelLockedUntil = Date.now() + 5000;
     
     const d = document.getElementById('unit-info');
@@ -225,8 +181,6 @@ function showUnitInfo(tower) {
 
     const data = tower.data;
     const finalDmg = Math.round(data.damage * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
-    
-    // [User Request] Calculate Attack Speed (AS) = Attacks per second
     const attackSpeed = (1000 / tower.cooldown).toFixed(1);
     
     let th = `<div class="unit-info-title" style="font-size:32px; margin-bottom:4px;">${data.name}</div>`;
@@ -248,7 +202,6 @@ function showUnitInfo(tower) {
         </div>
     `;
 
-    // Minimized Divider
     let divider = `<div style="width:90%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:4px 0;"></div>`;
     
     let ch = ''; 
@@ -289,7 +242,6 @@ function showUnitInfo(tower) {
         ch += `</div>`;
     }
 
-    // [User Request] Enhanced Description Styling
     let desc = `
         <div style="margin-top:6px; padding:8px 15px; background:rgba(255,215,0,0.05); border-radius:12px; border-left:4px solid #ffd700; width:90%; box-sizing:border-box; position:relative;">
             <div style="position:absolute; top:2px; left:10px; font-size:10px; color:#ffd700; opacity:0.5; font-family:serif;">SCROLL OF DESTINY</div>
@@ -300,103 +252,61 @@ function showUnitInfo(tower) {
     `;
 
     d.innerHTML = `${th}${ih}${divider}${ch}${desc}`;
-    
-    // Check for Corruption (Tier 3)
-    if (data.tier === 3) {
-        updateEvolutionTree(data.type);
-    } else {
-        if(corruptBtnElement) { corruptBtnElement.remove(); corruptBtnElement = null; }
-    }
-
     startInfoResetTimer();
 }
 
-/**
- * Specialized UI for Tier 3 -> Corruption Evolution
- */
-function updateEvolutionTree(exorcistType) {
-    const canCorrupt = (exorcistType === 'soul_reaper' || exorcistType === 'abyss_walker');
-    if (canCorrupt) {
-        const targetResult = (exorcistType === 'soul_reaper') ? 'reaper' : 'doom_guide';
-        currentFusionType = exorcistType;
-
-        if(!corruptBtnElement) {
-            corruptBtnElement = document.createElement('div');
-            corruptBtnElement.id = 'corrupt-btn-variant';
-            corruptBtnElement.innerHTML = '💀 타락 의식 시작 💀';
-            corruptBtnElement.addEventListener('click', () => attemptCorruption(exorcistType, targetResult));
-            document.body.appendChild(corruptBtnElement);
-        }
-        updateCorruptButtonState();
-    }
-}
-
-function updateCorruptButtonState() {
-    if (!corruptBtnElement) return;
-    const cost = 666; 
-    if (money < cost) corruptBtnElement.classList.add('locked');
-    else corruptBtnElement.classList.remove('locked');
-}
-
-function attemptCorruption(baseType, resultType) {
-    const cost = 666; 
-    if (money < cost) { showCorruptWarning("소울 에너지가 부족합니다"); return; }
-    if (typeof proceedEvolution === 'function') {
-        if(!proceedEvolution(baseType, resultType, cost)) showCorruptWarning("제물이 필요합니다");
-    }
-}
-
-function showCorruptWarning(message) {
-    const cw = document.getElementById('corrupt-warning');
-    if (!cw) return;
-    cw.innerHTML = `<strong>[타락]</strong> ${message}`;
-    cw.style.display = 'block';
-    setTimeout(() => { cw.style.display = 'none'; }, 3000);
-}
-
-/**
- * Visual feedback for insufficient resources
- */
-function flashResourceError(type) {
-    let el;
-    if (type === 'se') el = document.getElementById('se-label');
-    else if (type === 'pe') el = document.getElementById('pe-label');
-    
-    if (el) {
-        el.classList.add('shake-error');
-        setTimeout(() => el.classList.remove('shake-error'), 500);
-    }
-}
-
-function startInfoResetTimer() {
-    if (infoResetTimer) clearTimeout(infoResetTimer);
-    infoResetTimer = setTimeout(() => {
-        const d = document.getElementById('unit-info');
-        if (d) {
-            d.innerHTML = `
-                <div class="info-default-text" style="font-size:36px; opacity:0.6;">GATE OF HELL</div>
-                <div style="color:#555; font-size:24px; margin-top:10px; letter-spacing:8px; font-weight:bold;">SACRED TABLET</div>
-                <div style="width:60%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:15px 0;"></div>
-                <div style="color:#444; font-size:18px; font-style:italic;">"영혼을 정화하는 성스러운 기록이 이곳에 새겨집니다."</div>
-            `;
-        }
-        
-        // [User Request] Deselect units and clear indicators after 10 seconds
-        document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
-        const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
-        const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
-        
-        if(corruptBtnElement) { corruptBtnElement.remove(); corruptBtnElement = null; }
-    }, 10000);
-}
-
-// Resource Info Function
-function showResourceInfo(type) {
-    if (Date.now() < infoPanelLockedUntil) return;
+function showEnemyInfo(enemy) {
+    window.infoPanelLockedUntil = Date.now() + 5000;
     const d = document.getElementById('unit-info');
     if (!d) return;
 
-    let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); margin:15px 0;"></div>`;
+    const hp = Math.floor(enemy.hp);
+    const maxHp = Math.floor(enemy.maxHp || hp);
+    const def = enemy.defense || 0;
+
+    let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin:8px 0;"></div>`;
+    
+    const enemyNames = {
+        'normal': '속삭이는 영혼', 'mist': '방랑하는 안개', 'memory': '빛바랜 기억',
+        'shade': '깜빡이는 그림자', 'tank': '철갑 망령', 'runner': '가속된 그림자',
+        'greedy': '탐욕스러운 폴터가이스트', 'mimic': '미믹 영혼', 'dimension': '차원 이동 망령',
+        'deceiver': '절망의 세이렌', 'boar': '야생의 복수자', 'soul_eater': '소울 이터',
+        'frost': '코키토스 방랑자', 'lightspeed': '필사적인 전령', 'frost_outcast': '얼어붙은 마음', 'ember_hatred': '증오의 불꽃',
+        'heavy': '쇠사슬 집행자', 'lava': '불타는 분노', 'burning': '고통의 재생자',
+        'abyssal_acolyte': '심연의 추종자', 'bringer_of_doom': '파멸의 인도자', 'gold': '황금의 잔상',
+        'cerberus': '케르베로스', 'charon': '카론', 'beelzebub': '바알세불', 'lucifer': '루시퍼'
+    };
+
+    const dispName = enemy.data?.name || enemyNames[enemy.type] || enemy.type;
+
+    let th = `<div style="color:#ff4500; font-weight:bold; font-size:32px; margin-bottom:4px; text-shadow:0 0 15px #ff4500;">${dispName}</div>`;
+    
+    let ih = `
+        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:8px; width:100%; padding: 0 15px;">
+            <div class="unit-info-stats" style="flex:2; border-color:#ff1744; background:rgba(183,28,28,0.1); padding: 4px 8px;">
+                <span style="color:#ff1744; font-size:14px; display:block; font-weight:bold;">HEALTH</span>
+                <span style="font-size:22px; font-weight:bold;">${hp} / ${maxHp}</span>
+            </div>
+            <div class="unit-info-stats" style="flex:1; border-color:#888; background:rgba(255,255,255,0.05); padding: 4px 8px;">
+                <span style="color:#aaa; font-size:14px; display:block; font-weight:bold;">DEFENSE</span>
+                <span style="font-size:22px; font-weight:bold;">${def}</span>
+            </div>
+        </div>
+    `;
+    
+    let eh = `<div style="color:#ff8a80; font-size:18px; margin-bottom:4px; padding: 0 20px;"><strong>특성:</strong> ${enemy.desc || "심연의 존재입니다."}</div>`;
+    let lh = `<div style="color:#666; font-size:16px; font-style:italic; line-height:1.2; padding: 0 30px;">"${enemy.data?.lore || "이 영혼에 대한 기록이 없습니다."}"</div>`;
+
+    d.innerHTML = `${th}${ih}${divider}${eh}${lh}` ;
+    startInfoResetTimer();
+}
+
+function showResourceInfo(type) {
+    window.infoPanelLockedUntil = Date.now() + 5000;
+    const d = document.getElementById('unit-info');
+    if (!d) return;
+
+    let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin:12px 0;"></div>`;
 
     if (type === 'se') {
         d.innerHTML = `
@@ -426,45 +336,32 @@ function showResourceInfo(type) {
     startInfoResetTimer();
 }
 
-function showEnemyInfo(enemy) {
-    if (Date.now() < infoPanelLockedUntil) return;
-    const d = document.getElementById('unit-info');
-    if (!d) return;
+function flashResourceError(type) {
+    const el = document.getElementById(`${type}-label`);
+    if (el) {
+        el.classList.add('shake-error');
+        setTimeout(() => el.classList.remove('shake-error'), 400);
+    }
+}
 
-    const names = { 'cerberus': '케르베로스', 'charon': '카론', 'beelzebub': '바알세불', 'lucifer': '루시퍼' };
-    const dispName = enemy.data?.name || names[enemy.type] || enemy.type;
-    const hp = Math.floor(enemy.hp);
-    const maxHp = Math.floor(enemy.maxHp || hp);
-    const def = enemy.defense || 0;
-
-    let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, #ff450066, transparent); margin:12px 0;"></div>`;
-
-    let th = `<div style="color:#ff4500; font-weight:bold; font-size:32px; margin-bottom:4px; text-shadow:0 0 15px #ff4500;">${dispName}</div>`;
-    
-    let ih = `
-        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:8px; width:100%; padding: 0 15px;">
-            <div class="unit-info-stats" style="flex:2; border-color:#ff1744; background:rgba(183,28,28,0.1); padding: 4px 8px;">
-                <span style="color:#ff1744; font-size:14px; display:block; font-weight:bold;">HEALTH</span>
-                <span style="font-size:22px; font-weight:bold;">${hp} / ${maxHp}</span>
-            </div>
-            <div class="unit-info-stats" style="flex:1; border-color:#888; background:rgba(255,255,255,0.05); padding: 4px 8px;">
-                <span style="color:#aaa; font-size:14px; display:block; font-weight:bold;">DEFENSE</span>
-                <span style="font-size:22px; font-weight:bold;">${def}</span>
-            </div>
-        </div>
-    `;
-    
-    // Effectiveness & Lore
-    let eh = `<div style="color:#ff8a80; font-size:18px; margin-bottom:4px; padding: 0 20px;"><strong>특성:</strong> ${enemy.desc || "심연의 존재입니다."}</div>`;
-    let lh = `<div style="color:#666; font-size:16px; font-style:italic; line-height:1.2; padding: 0 30px;">"${enemy.data?.lore || "이 영혼에 대한 기록이 없습니다."}"</div>`;
-
-    d.innerHTML = `${th}${ih}${divider}${eh}${lh}`;
-    startInfoResetTimer();
+function startInfoResetTimer() {
+    if (infoResetTimer) clearTimeout(infoResetTimer);
+    infoResetTimer = setTimeout(() => {
+        if (Date.now() > window.infoPanelLockedUntil) {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 귀환</span></div>
+                `;
+            }
+        } else {
+            startInfoResetTimer(); // Retry later
+        }
+    }, 5000);
 }
 
 // Global Exports
 window.initAllies = initAllies;
-window.updateGauges = updateGauges;
 window.updateSummonButtonState = updateSummonButtonState;
 window.showUnitInfo = showUnitInfo;
 window.showEnemyInfo = showEnemyInfo;

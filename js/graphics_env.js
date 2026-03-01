@@ -1,44 +1,15 @@
 /* graphics_env.js - Environment Rendering */
 
-const sideClouds = []; 
 const sideMist = [];   
 let lightningTimer = 0;
 let lightningIntensity = 0;
 
 function initAtmosphere() {
-    if (sideClouds.length > 0) return;
-    for(let i=0; i<15; i++) {
-        sideClouds.push({
-            x: Math.random() * (360 + 400) - 200, 
-            y: Math.random() * 250,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: (Math.random() - 0.5) * 0.1,
-            size: 35 + Math.random() * 20, // [User Request] Reduced size to match slot (Radius 35-55px)
-            opacity: Math.random(),
-            targetOpacity: Math.random(),
-            flash: 0
-        });
-    }
+    // Cloud generation logic removed
 }
 
 function drawAtmosphericEffects() {
-    initAtmosphere();
-    const time = globalAnimTimer;
-    ctx.save();
-    sideClouds.forEach(c => {
-        c.x += c.vx; c.y += c.vy;
-        if (Math.abs(c.opacity - c.targetOpacity) < 0.01) c.targetOpacity = Math.random();
-        else c.opacity += (c.targetOpacity > c.opacity ? 0.002 : -0.002);
-        if (c.x > 360 + 300) c.x = -300;
-        if (c.x < -300) c.x = 360 + 300;
-        if (c.flash > 0) c.flash -= 0.08;
-        else if (Math.random() < 0.0015) c.flash = 1.0;
-        const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.size);
-        const baseColor = c.flash > 0 ? `rgba(255, 255, 200, ${c.opacity * c.flash * 0.8})` : `rgba(15, 15, 25, ${c.opacity * 0.5})`;
-        grad.addColorStop(0, baseColor); grad.addColorStop(1, 'transparent');
-        ctx.fillStyle = grad; ctx.beginPath(); ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2); ctx.fill();
-    });
-    ctx.globalAlpha = 1.0; ctx.restore();
+    // Atmosphere drawing logic removed (Clouds are gone)
 }
 
 function drawLavaRoad() {

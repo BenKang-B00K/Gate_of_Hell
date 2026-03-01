@@ -8,14 +8,14 @@ const equipmentTiers = [
 ];
 
 const equipmentSlots = {
-    helmet: { name: "투구", icon: "🪖", stat: "damage", label: "공격력 증가" },
-    armor: { name: "갑옷", icon: "🛡️", stat: "portal_dmg_reduction", label: "포탈 데미지 감소" },
-    necklace: { name: "목걸이", icon: "📿", stat: "se_gain", label: "SE 획득 보너스" },
-    mainhand: { name: "주무기", icon: "⚔️", stat: "cooldown", label: "공격 속도 증가" },
-    offhand: { name: "보조무기", icon: "🔮", stat: "crit_damage", label: "치명타 피해량" },
-    belt: { name: "벨트", icon: "ベルト", stat: "summon_cost_reduction", label: "소환 비용 절감" },
-    gloves: { name: "장갑", icon: "🧤", stat: "crit_chance", label: "치명타 확률" },
-    boots: { name: "장화", icon: "👢", stat: "aura_range", label: "오라 범위 확장" }
+    helmet: { name: "성스러운 투구", icon: "🪖", stat: "damage", label: "공격력 증가" },
+    armor: { name: "판금 갑옷", icon: "🛡️", stat: "portal_dmg_reduction", label: "포탈 데미지 감소" },
+    necklace: { name: "영혼의 목걸이", icon: "📿", stat: "se_gain", label: "SE 획득 보너스" },
+    mainhand: { name: "심판의 검", icon: "⚔️", stat: "cooldown", label: "공격 속도 증가" },
+    offhand: { name: "마법서", icon: "🔮", stat: "crit_damage", label: "치명타 피해량" },
+    belt: { name: "성스러운 벨트", icon: "🎗️", stat: "summon_cost_reduction", label: "소환 비용 절감" },
+    gloves: { name: "응징의 장갑", icon: "🧤", stat: "crit_chance", label: "치명타 확률" },
+    boots: { name: "차원 장화", icon: "👢", stat: "aura_range", label: "오라 범위 확장" }
 };
 
 // State: Highest tier and count for each slot
@@ -79,7 +79,7 @@ function renderEquipGrid() {
         const slotData = equipmentSlots[slotKey];
         const owned = window.ownedEquipment[slotKey];
         const slotDiv = document.createElement('div');
-        slotDiv.className = 'equip-slot';
+        slotDiv.className = `equip-slot ${slotKey}`;
         
         if (owned.tier > 0) {
             const tierData = equipmentTiers[owned.tier - 1];
