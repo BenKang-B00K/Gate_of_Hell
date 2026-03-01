@@ -204,11 +204,39 @@ function summonTower(targetSlot) {
 
     // Attach Event Listeners (Drag & Click)
     let mousedownTime;
-    unit.addEventListener('dragstart', function() { 
+    
+    // [User Request] Drag Follow Visual
+    let dragGhost = null;
+
+    unit.addEventListener('dragstart', function(e) { 
         window.draggedUnit = this; 
         isMovingUnit = true; 
-        this.classList.add('dragging'); // [User Request] Mark as dragging to hide circles/buttons
+        this.classList.add('dragging'); 
         
+        // Create Visual Ghost
+        dragGhost = this.cloneNode(true);
+        dragGhost.classList.add('drag-ghost');
+        dragGhost.style.position = 'fixed';
+        dragGhost.style.pointerEvents = 'none';
+        dragGhost.style.zIndex = '9999';
+        dragGhost.style.opacity = '0.8';
+        dragGhost.style.transform = 'translate(-50%, -50%) scale(1.2)';
+        document.body.appendChild(dragGhost);
+
+        // Hide native drag image
+        const img = new Image();
+        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        e.dataTransfer.setDragImage(img, 0, 0);
+
+        const moveGhost = (ev) => {
+            if (dragGhost) {
+                dragGhost.style.left = `${ev.clientX}px`;
+                dragGhost.style.top = `${ev.clientY}px`;
+            }
+        };
+        window.addEventListener('mousemove', moveGhost);
+        this._moveGhost = moveGhost;
+
         // Hide clutter
         const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
         const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
@@ -219,9 +247,15 @@ function summonTower(targetSlot) {
             startInfoResetTimer();
         } 
     });
+
     unit.addEventListener('dragend', function() {
         this.classList.remove('dragging');
         isMovingUnit = false;
+        if (dragGhost) {
+            dragGhost.remove();
+            dragGhost = null;
+        }
+        window.removeEventListener('mousemove', this._moveGhost);
     });
     unit.addEventListener('mousedown', function(e) { if(e.button !== 0) return; mousedownTime = Date.now(); });
     unit.addEventListener('click', function(e) { 

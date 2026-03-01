@@ -66,6 +66,45 @@ function updateGauges() {
     
     if (peFill) peFill.style.width = `${Math.min((portalEnergy / maxPortalEnergy) * 100, 100)}%`;
     if (seFill) seFill.style.width = `${Math.min((money / maxMoney) * 100, 100)}%`;
+
+    // [User Request] Portal Energy Cursed Effect
+    const peStatus = document.getElementById('cursed-status');
+    const peRatio = portalEnergy / maxPortalEnergy;
+    if (peStatus) {
+        if (peRatio >= 0.75) {
+            peStatus.innerText = "저주: 지옥의 숨결 (공격 속도 -20%)";
+            peStatus.style.color = "#ff0000";
+        } else if (peRatio >= 0.5) {
+            peStatus.innerText = "저주: 심연의 그림자 (공격 속도 -10%)";
+            peStatus.style.color = "#ff4500";
+        } else {
+            peStatus.innerText = "저주: 없음";
+            peStatus.style.color = "#ff00ff";
+        }
+    }
+
+    // PE Label Hover: Show info in Sacred Tablet
+    const peLabel = document.getElementById('pe-label');
+    if (peLabel) {
+        peLabel.onmouseenter = () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div style="color:#ff00ff; font-weight:bold; font-size:36px; margin-bottom:6px;">👿 포탈 오염도 (PE)</div>
+                    <div style="display:inline-block; background:#2e003e; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">지옥 악한 기운</div>
+                    <div style="font-size:24px; color:#bbb; line-height:1.2;">악령들이 포탈을 통과할 때마다 성스러운 결계가 오염됩니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ff00ff44, transparent); margin:15px 0;"></div>
+                    <div style="color:#ff4500; font-size:20px;">[오염 단계별 저주]</div>
+                    <div style="font-size:18px; color:#aaa; margin-top:5px;">
+                        • 50% 이상: 심연의 그림자 (공격 속도 -10%)<br>
+                        • 75% 이상: 지옥의 숨결 (공격 속도 -20%)<br>
+                        • 100% 도달: 성스러운 결계 붕괴 (Game Over)
+                    </div>
+                `;
+                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+            }
+        };
+    }
 }
 
 function spawnGaugePop(containerId, amount) {

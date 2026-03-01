@@ -209,3 +209,18 @@
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .info-promo-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px #fff; background: #333; }
+
+/* [User Request] Drag Follow Visual */
+.drag-ghost {
+    pointer-events: none !important;
+    z-index: 9999 !important;
+    position: fixed !important;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6)) brightness(1.2);
+    animation: ghostFloat 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes ghostFloat {
+    from { transform: translate(-50%, -50%) scale(1.2); }
+    to { transform: translate(-50%, -55%) scale(1.3); }
+}
+

@@ -134,7 +134,10 @@ function showEquipDetail(slotKey) {
         : `+${bonusVal}`;
 
     infoPane.innerHTML = `
-        <div class="relic-detail-title" style="color:#00e5ff; text-shadow: 0 0 15px rgba(0, 229, 255, 0.5);">[${tierData.prefix}] ${slotData.name}</div>
+        <div class="relic-detail-title" style="color:#00e5ff; text-shadow: 0 0 15px rgba(0, 229, 255, 0.5); line-height:1.1;">
+            <span style="font-size:20px; opacity:0.8; display:block;">[${tierData.prefix}]</span>
+            <span style="font-size:32px;">${slotData.name}</span>
+        </div>
         <div class="relic-detail-effect" style="color:#00ff00;">현재 효과: ${slotData.label} ${dispBonus}</div>
         <div class="relic-detail-lore" style="border-color:#00e5ff;">"심연의 악령들조차 이 ${slotData.name}의 빛 앞에서는 눈을 멀게 될 것입니다. 현재 ${owned.count}개 보유 중 (3개 수집 시 다음 등급으로 강화)"</div>
     `;
