@@ -118,7 +118,7 @@ function recordUnlock(type, isEnemy = false) {
                         </div>
                         <div style="flex:1; border:1px solid #00e5ff; background:rgba(0,229,255,0.1); padding:5px 5px; border-radius:5px; min-width:80px;">
                             <span style="color:#00e5ff; font-size:12px; display:block; font-weight:bold;">SPEED</span>
-                            <span style="font-size:20px; font-weight:bold; color:#fff;">${(enemyData.speed || 0).toFixed(1)}</span>
+                            <span style="font-size:20px; font-weight:bold; color:#fff;">${(enemyData.speed || 0).toFixed(0)}</span>
                         </div>
                     </div>
 
