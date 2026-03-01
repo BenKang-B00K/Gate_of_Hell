@@ -54,6 +54,11 @@ function recordUnlock(type, isEnemy = false) {
         if (!window.encounteredEnemies) window.encounteredEnemies = new Set();
         if (window.encounteredEnemies.has(type)) return;
         window.encounteredEnemies.add(type);
+
+        // Show notification badge
+        const notif = document.getElementById('collections-notif');
+        if (notif) notif.style.display = 'flex';
+
         saveGameData();
 
         if (!isTutorialEnabled) return;
@@ -105,6 +110,11 @@ function recordUnlock(type, isEnemy = false) {
 
     if (!window.unlockedUnits.has(type)) {
         window.unlockedUnits.add(type);
+
+        // Show notification badge
+        const notif = document.getElementById('collections-notif');
+        if (notif) notif.style.display = 'flex';
+
         saveGameData();
 
         if (!isTutorialEnabled) return;

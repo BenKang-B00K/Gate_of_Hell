@@ -73,6 +73,31 @@
 
 .tower-card.placeholder { display: none; }
 
+/* Notification Badge (Red '!') */
+.card-notification {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff0000;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px #ff0000;
+    z-index: 5;
+    animation: notifPulse 1s infinite alternate;
+}
+
+@keyframes notifPulse {
+    from { transform: scale(1); box-shadow: 0 0 5px #ff0000; }
+    to { transform: scale(1.2); box-shadow: 0 0 15px #ff0000; }
+}
+
 /* Unit Info Panel (Sacred Artifact Style) */
 #unit-info {
     background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
@@ -101,8 +126,24 @@
     text-transform: uppercase; text-align: center;
 }
 
-.unit-info-title { color: #ffd700; font-weight: bold; font-size: 36px; margin-bottom: 10px; text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); letter-spacing: 2px; }
-.unit-info-stats { font-size: 24px; color: #ccc; background: rgba(255, 255, 255, 0.05); padding: 8px 20px; border-radius: 30px; border: 1px solid rgba(255, 215, 0, 0.2); margin-bottom: 15px; }
+.unit-info-title { 
+    color: #ffd700; 
+    font-weight: bold; 
+    font-size: 32px; /* Reduced from 36px */
+    margin-bottom: 6px; /* Reduced from 10px */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); 
+    letter-spacing: 2px; 
+}
+
+.unit-info-stats { 
+    font-size: 20px; /* Reduced from 24px */
+    color: #ccc; 
+    background: rgba(255, 255, 255, 0.05); 
+    padding: 4px 12px; /* Reduced from 8px 20px */
+    border-radius: 20px; /* Adjusted radius */
+    border: 1px solid rgba(255, 215, 0, 0.2); 
+    margin-bottom: 8px; /* Reduced from 15px */
+}
 
 .info-promo-btn {
     padding: 10px 20px !important; font-size: 52px !important; min-width: 80px; min-height: 80px;

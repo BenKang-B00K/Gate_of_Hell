@@ -169,6 +169,10 @@ function initRelics() {
             renderRelicsGrid();
             relicsOverlay.style.display = 'flex';
             if (typeof isPaused !== 'undefined') isPaused = true;
+            
+            // Hide notification when opened
+            const notif = document.getElementById('relics-notif');
+            if (notif) notif.style.display = 'none';
         });
         relicsBtn.addEventListener('mouseenter', () => {
             const d = document.getElementById('unit-info');
@@ -322,6 +326,11 @@ function collectRelic(id) {
         collectedRelics[id] = currentCount + 1;
         updateRelicBonuses();
         showRelicInfoInPanel(data);
+
+        // Show notification badge
+        const notif = document.getElementById('relics-notif');
+        if (notif) notif.style.display = 'flex';
+
         return true;
     }
     return false;

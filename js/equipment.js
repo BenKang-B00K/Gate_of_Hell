@@ -39,8 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (equipBtn) {
         equipBtn.onclick = () => {
             equipOverlay.style.display = 'flex';
-            isPaused = true;
+            if (typeof isPaused !== 'undefined') isPaused = true;
             renderEquipGrid();
+
+            // Hide notification when opened
+            const notif = document.getElementById('equip-notif');
+            if (notif) notif.style.display = 'none';
         };
         // Reuse Sacred Tablet for hover
         equipBtn.onmouseenter = () => {
@@ -207,6 +211,10 @@ function addEquipment(slot, tier) {
         }
     }
     
+    // Show notification badge
+    const notif = document.getElementById('equip-notif');
+    if (notif) notif.style.display = 'flex';
+
     showEquipToast(`장비 획득: ${equipmentSlots[slot].name}`, `[${equipmentTiers[owned.tier-1].prefix}] 등급을 발견했습니다.`);
     if (typeof saveGameData === 'function') saveGameData();
 }

@@ -13,10 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (collectionsBtn) {
         collectionsBtn.onclick = () => {
             collectionsOverlay.style.display = 'flex';
-            isPaused = true;
+            if (typeof isPaused !== 'undefined') isPaused = true;
             colInfoLockedUntil = 0;
             resetColInfo();
             renderGhostGrid('basic'); 
+
+            // Hide notification when opened
+            const notif = document.getElementById('collections-notif');
+            if (notif) notif.style.display = 'none';
         };
     }
 
