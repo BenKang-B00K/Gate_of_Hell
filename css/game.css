@@ -37,6 +37,9 @@
     justify-content: center;
     overflow: hidden;
     z-index: 1;
+    padding: 0 2px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #road::before, #road::after {
