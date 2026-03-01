@@ -299,6 +299,8 @@
 .ex-tree-header {
     text-align: center; font-family: 'Cinzel', serif; font-size: 18px;
     font-weight: 900; color: #ffd700; letter-spacing: 2px;
+    border-top: 2px solid rgba(255, 215, 0, 0.3);
+    padding-top: 4px;
 }
 
 .ex-tree-role-group {
