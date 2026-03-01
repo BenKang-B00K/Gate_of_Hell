@@ -473,6 +473,26 @@
     animation: shieldPulse 2s infinite;
 }
 
+/* Magic Circle for Crystal Ball (Mainhand) */
+.equip-slot.mainhand.tier-2::before {
+    content: "";
+    position: absolute;
+    width: 120%; height: 120%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="45" fill="none" stroke="rgba(0, 229, 255, 0.2)" stroke-width="1" stroke-dasharray="5 5"/></svg>');
+    animation: rotateSacred 10s linear infinite;
+    pointer-events: none;
+}
+
+/* Spiritual Glow for Spellbook (Offhand) */
+.equip-slot.offhand.tier-2 .equip-icon {
+    animation: spiritualFloat 3s infinite alternate ease-in-out;
+}
+
+@keyframes spiritualFloat {
+    from { transform: translateY(0); filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); }
+    to { transform: translateY(-10px); filter: drop-shadow(0 15px 20px rgba(255, 165, 0, 0.4)); }
+}
+
 @keyframes shieldPulse {
     0% { transform: scale(0.8); opacity: 0.3; }
     100% { transform: scale(1.2); opacity: 0; }
@@ -486,11 +506,28 @@
 .equip-icon {
     font-size: 64px;
     filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8));
-    transition: transform 0.3s;
+    transition: all 0.3s ease;
     z-index: 2;
 }
 
-.equip-slot:hover .equip-icon { transform: scale(1.1); }
+/* Shading Techniques by Tier */
+.equip-slot.tier-1 .equip-icon { 
+    filter: grayscale(1) brightness(0.6) contrast(1.2); 
+} /* Rusty/Common Shading */
+
+.equip-slot.tier-2 .equip-icon { 
+    filter: brightness(1.1) contrast(1.1) drop-shadow(0 0 10px rgba(0, 229, 255, 0.5)); 
+} /* Holy/Polished Shading */
+
+.equip-slot.tier-3 .equip-icon { 
+    filter: brightness(1.2) contrast(1.3) sepia(0.3) hue-rotate(-20deg) drop-shadow(0 0 15px rgba(255, 0, 255, 0.6)); 
+} /* Legendary/Magic Shading */
+
+.equip-slot.tier-4 .equip-icon { 
+    filter: brightness(1.4) contrast(1.4) saturate(1.5) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); 
+} /* Ancient/Divine Shading */
+
+.equip-slot:hover .equip-icon { transform: scale(1.1); filter: brightness(1.5) contrast(1.2); }
 
 .equip-tier-label {
     position: absolute; 

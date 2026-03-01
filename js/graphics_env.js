@@ -111,11 +111,11 @@ function drawLavaRoad() {
         spawnParticles(ax, ay, 'rgba(148, 0, 211, 0.4)', 1);
     }
 
-    // 6. Soul Flow Arrows (Moving Downward)
+    // 6. Soul Flow Arrows (Moving Downward - Slower & More Spaced)
     ctx.save();
-    const arrowSpacing = 120;
-    const arrowOffset = (time * 40) % arrowSpacing; 
-    ctx.strokeStyle = '#ff3366'; // More vibrant pinkish-red for visibility
+    const arrowSpacing = 160; // Increased spacing (was 120)
+    const arrowOffset = (time * 20) % arrowSpacing; // Halved speed (was 40)
+    ctx.strokeStyle = '#ff3366'; 
     ctx.lineWidth = 2.5;
     ctx.lineJoin = 'round';
     ctx.shadowBlur = 5;
@@ -123,12 +123,12 @@ function drawLavaRoad() {
 
     for(let y = -20 + arrowOffset; y < gameScreenHeight; y += arrowSpacing) {
         if (y < 0) continue;
-        // Adjusted alpha calculation for better visibility
-        const alpha = Math.min(0.4, (y / 100) * 0.4) * (1 - (y / gameScreenHeight)); 
+        // Alpha calculation for smooth fade-in and fade-out
+        const alpha = Math.min(0.35, (y / 150) * 0.35) * (1 - (y / gameScreenHeight)); 
         ctx.globalAlpha = alpha;
 
         const ax = 180; 
-        const aw = 18;  // Slightly wider
+        const aw = 18;  
         const ah = 12;  
 
         ctx.beginPath();
@@ -138,6 +138,7 @@ function drawLavaRoad() {
         ctx.stroke();
     }
     ctx.restore();
+
     // 7. Lightning Overlay (Inherited)
 
     if (lightningTimer > 0) {
