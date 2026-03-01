@@ -11,6 +11,7 @@
     background: transparent;
     margin-top: 148px;
     perspective: 1000px;
+    overflow: visible;
 }
 
 .card-slot {

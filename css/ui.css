@@ -57,7 +57,7 @@
     flex: 1;
     width: 100%;
     gap: 15px; /* [User Request] Increased from 10px to 15px */
-    overflow: hidden;
+    overflow: visible; /* Changed from hidden to prevent hover-induced layout shifts */
 }
 
 /* Stage Title (Centralized) */
