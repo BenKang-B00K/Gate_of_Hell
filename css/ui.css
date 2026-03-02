@@ -91,8 +91,34 @@
 #top-right-hud {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 8px;
     height: 16px;
+    min-width: 80px;
+}
+
+#cursed-status-container {
+    cursor: pointer;
+    padding: 0 6px;
+    border-radius: 2px;
+    background: rgba(148, 0, 211, 0.1);
+    border: 1px solid rgba(148, 0, 211, 0.3);
+    transition: all 0.2s;
+    height: 14px;
+    display: flex;
+    align-items: center;
+}
+
+#cursed-status-container:hover {
+    background: rgba(148, 0, 211, 0.2);
+    border-color: #ff00ff;
+}
+
+#cursed-status {
+    font-size: 9px;
+    color: #ff00ff;
+    font-weight: bold;
+    white-space: nowrap;
 }
 
 #game-tutorial-toggle-container {

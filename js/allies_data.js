@@ -113,18 +113,40 @@ function updateGauges() {
     const peRatio = portalEnergy / maxPortalEnergy;
     if (peStatus) {
         if (peRatio >= 0.75) {
-            peStatus.innerText = "저주: 지옥의 숨결 (공격 속도 -20%)";
+            peStatus.innerText = "저주: 3단계 (지옥의 숨결)";
             peStatus.style.color = "#ff0000";
         } else if (peRatio >= 0.5) {
-            peStatus.innerText = "저주: 심연의 그림자 (공격 속도 -10%)";
+            peStatus.innerText = "저주: 2단계 (심연의 그림자)";
             peStatus.style.color = "#ff4500";
         } else if (peRatio >= 0.3) {
-            peStatus.innerText = "저주: 흐릿한 공포 (공격 속도 -5%)";
+            peStatus.innerText = "저주: 1단계 (흐릿한 공포)";
             peStatus.style.color = "#ffa500";
         } else {
             peStatus.innerText = "저주: 없음";
-            peStatus.style.color = "#ff00ff";
+            peStatus.style.color = "#00ff00"; // Green for clean
         }
+    }
+
+    // Detail Toggle Logic
+    const peContainer = document.getElementById('cursed-status-container');
+    if (peContainer) {
+        peContainer.onclick = () => {
+            const d = document.getElementById('unit-info');
+            if (d) {
+                d.innerHTML = `
+                    <div class="unit-info-title" style="color:#ff00ff;">👿 심연의 저주 (Abyssal Curse)</div>
+                    <div class="unit-info-desc" style="color:#aaa;">포탈 오염도가 상승함에 따라 모든 퇴마사에게 강력한 제약이 걸립니다.</div>
+                    <div class="info-divider"></div>
+                    <div style="font-size:8px; text-align:left; color:#888; width:100%; padding:0 5px;">
+                        <span style="color:#ffa500;">• 1단계 (30%↑):</span> 공속 -5%<br>
+                        <span style="color:#ff4500;">• 2단계 (50%↑):</span> 공속 -10%<br>
+                        <span style="color:#ff0000;">• 3단계 (75%↑):</span> 공속 -20%<br>
+                        <span style="color:#fff; font-weight:bold;">• 100% 도달:</span> 세계 멸망 (Game Over)
+                    </div>
+                `;
+                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+            }
+        };
     }
 
     // PE Label Hover: Show info in Sacred Tablet
