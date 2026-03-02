@@ -127,29 +127,60 @@ function updateGauges() {
         }
     }
 
-    // Detail Toggle Logic
+    // Floating Tooltip Toggle Logic
     const peContainer = document.getElementById('cursed-status-container');
-    if (peContainer) {
-        peContainer.onclick = () => {
-            const d = document.getElementById('unit-info');
-            if (d) {
-                d.innerHTML = `
-                    <div class="unit-info-title" style="color:#ff00ff;">👿 심연의 저주 (Abyssal Curse)</div>
-                    <div class="unit-info-desc" style="color:#aaa;">포탈 오염도가 상승함에 따라 모든 퇴마사에게 강력한 제약이 걸립니다.</div>
-                    <div class="info-divider"></div>
-                    <div style="font-size:8px; text-align:left; color:#888; width:100%; padding:0 5px;">
-                        <span style="color:#ffa500;">• 1단계 (30%↑):</span> 공속 -5%<br>
-                        <span style="color:#ff4500;">• 2단계 (50%↑):</span> 공속 -10%<br>
-                        <span style="color:#ff0000;">• 3단계 (75%↑):</span> 공속 -20%<br>
-                        <span style="color:#fff; font-weight:bold;">• 100% 도달:</span> 세계 멸망 (Game Over)
-                    </div>
-                `;
-                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+    const tooltip = document.getElementById('global-tooltip');
+    
+    if (peContainer && tooltip) {
+        peContainer.onclick = (e) => {
+            e.stopPropagation(); // Prevent closing immediately
+            
+            // If already visible, hide it
+            if (tooltip.style.display === 'block') {
+                tooltip.style.display = 'none';
+                return;
             }
+
+            const peRatio = portalEnergy / maxPortalEnergy;
+            
+            // Set Content
+            tooltip.innerHTML = `
+                <div class="tooltip-title">👿 심연의 저주</div>
+                <div class="tooltip-content">포탈 오염도가 상승할수록 퇴마사들의 결속이 약해집니다.</div>
+                <div class="tooltip-stat"><span>1단계 (30%↑)</span><span>공속 -5%</span></div>
+                <div class="tooltip-stat"><span>2단계 (50%↑)</span><span>공속 -10%</span></div>
+                <div class="tooltip-stat"><span>3단계 (75%↑)</span><span>공속 -20%</span></div>
+                <div class="tooltip-stat" style="border-top:1px solid #444; margin-top:5px; padding-top:2px;">
+                    <span style="color:#fff;">현재 단계</span>
+                    <span style="color:${peRatio >= 0.75 ? '#ff0000' : peRatio >= 0.5 ? '#ff4500' : peRatio >= 0.3 ? '#ffa500' : '#00ff00'}">
+                        ${peRatio >= 0.75 ? '3단계' : peRatio >= 0.5 ? '2단계' : peRatio >= 0.3 ? '1단계' : '없음'}
+                    </span>
+                </div>
+            `;
+
+            // Positioning
+            tooltip.style.display = 'block';
+            const rect = peContainer.getBoundingClientRect();
+            const gameRect = document.getElementById('game-container').getBoundingClientRect();
+            
+            // Position above the cursed-status bar
+            const x = (rect.left + rect.width / 2) - gameRect.left;
+            const y = rect.top - gameRect.top - 10; // 10px offset above
+
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y}px`;
+            tooltip.style.transform = `translate(-50%, -100%)`; // Center horizontally and move up
         };
     }
 
-    // PE Label Hover: Show info in Sacred Tablet
+    // Close tooltip when clicking anywhere else
+    document.addEventListener('click', (e) => {
+        if (tooltip && !tooltip.contains(e.target) && e.target !== peContainer) {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    // PE Label Hover: Show info in Sacred Tablet (Fallback/Legacy)
     const peLabel = document.getElementById('pe-label');
     if (peLabel) {
         peLabel.onmouseenter = () => {
