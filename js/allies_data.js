@@ -42,8 +42,8 @@ function initLogicalSlots() {
     const roadWidth = 114;
     const slotW = 38;
     const slotH = 50;
-    const startY = 40;
-    const spacingY = 55;
+    const startY = 35;
+    const spacingY = 52; // Total height for 7 rows: 35 + (6 * 52) + 50 = 397px. Fits within 416.
 
     // Left Side (3 columns)
     for(let r=0; r<7; r++) {
