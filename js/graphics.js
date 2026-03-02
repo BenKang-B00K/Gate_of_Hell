@@ -9,7 +9,7 @@ const LOGICAL_HEIGHT = 640;
 let scaleFactor = 1.0;
 
 function initGraphics() {
-    const container = document.getElementById('game-container');
+    const container = document.getElementById('top-panel');
     if (!container) return;
     container.appendChild(canvas);
     canvas.style.imageRendering = 'pixelated';
@@ -18,10 +18,14 @@ function initGraphics() {
 }
 
 function resizeCanvas() {
-    const container = document.getElementById('game-container');
+    const container = document.getElementById('top-panel');
     if (!container) return;
+    
+    // We keep internal resolution at LOGICAL_WIDTH/HEIGHT
     canvas.width = LOGICAL_WIDTH;
     canvas.height = LOGICAL_HEIGHT;
+    
+    // Fit to parent (top-panel) while maintaining aspect ratio or simple fill
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     

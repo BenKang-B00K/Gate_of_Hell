@@ -34,138 +34,105 @@
     </div>
 
     <div id="game-container">
-        <!-- Restart Button -->
-        <button id="restart-btn-top">재시작</button>
-
-        <!-- Top Right HUD (Tutorial & Pause) -->
-        <div id="top-right-hud">
-            <!-- In-game Tutorial Toggle -->
-            <div id="game-tutorial-toggle-container">
-                <span id="game-tutorial-label">TUTORIAL</span>
-                <label class="switch">
-                    <input type="checkbox" id="game-tutorial-toggle" checked>
-                    <span class="slider round"></span>
-                </label>
-                <span id="game-tutorial-status">ON</span>
-            </div>
-
-            <!-- Pause Button -->
-            <div id="pause-btn-container">
-                <button id="game-pause-btn">PAUSE</button>
-            </div>
+        <!-- 1. Top Panel: Pure Game World (Canvas) -->
+        <div id="top-panel">
+            <div id="frozen-overlay"></div>
+            <div id="start-timer"></div>
+            <!-- Canvas will be injected here by graphics.js -->
         </div>
 
-        <!-- Difficulty Message Overlay -->
-        <div id="difficulty-msg-container">
-            <div id="difficulty-msg"></div>
-        </div>
-
-
-        <div id="frozen-overlay"></div>
-        
-        <!-- Game World is now 100% Canvas rendered -->
-
-        <div id="start-timer"></div>
-
+        <!-- 2. Bottom Panel: Consolidated UI & HUD -->
         <div id="bottom-panel">
-            <!-- Thematic Stage Header (Centralized) -->
-            <div id="stage-title-central">
-                <span id="stage-name">속삭이는 문</span>
-                <div class="stage-depth">[Depth: <span id="stage-display">1</span>]</div>
+            <!-- HUD Area (Top of Bottom Panel) -->
+            <div id="hud-top-bar">
+                <button id="restart-btn-top">재시작</button>
+                
+                <!-- Thematic Stage Header -->
+                <div id="stage-title-central">
+                    <span id="stage-name">속삭이는 문</span>
+                    <div class="stage-depth">[Depth: <span id="stage-display">1</span>]</div>
+                </div>
+
+                <div id="top-right-hud">
+                    <div id="game-tutorial-toggle-container">
+                        <span id="game-tutorial-label">TUTORIAL</span>
+                        <label class="switch">
+                            <input type="checkbox" id="game-tutorial-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span id="game-tutorial-status">ON</span>
+                    </div>
+                    <button id="game-pause-btn">PAUSE</button>
+                </div>
             </div>
 
-            <!-- Unified Gauges Container (5:30:30:30:5) -->
+            <!-- Gauges Section -->
             <div id="gauges-grid">
                 <div class="spacer"></div>
-                
                 <!-- Soul Energy -->
                 <div class="gauge-wrapper" id="se-label" style="cursor:help;">
-                    <div class="gauge-info">
-                        <span>✨ 소울 에너지 (SE)</span>
-                    </div>
+                    <div class="gauge-info"><span>✨ SE</span></div>
                     <div class="gauge-bar se">
                         <div id="se-gauge-fill"></div>
                         <span id="se-display-text" class="gauge-count">150 / 1000</span>
                     </div>
                 </div>
-
                 <!-- Portal Energy -->
                 <div class="gauge-wrapper" id="pe-label">
-                    <div class="gauge-info">
-                        <span>👿 포탈 오염도 (PE)</span>
-                    </div>
+                    <div class="gauge-info"><span>👿 PE</span></div>
                     <div class="gauge-bar pe">
                         <div id="portal-gauge-fill"></div>
                         <span id="portal-energy-label" class="gauge-count">0 / 1500</span>
                     </div>
                     <div id="cursed-status">저주: 없음</div>
                 </div>
-
-                <!-- Remaining Specters Gauge -->
+                <!-- Remaining Specters -->
                 <div class="gauge-wrapper rs" id="rs-label">
-                    <div class="gauge-info">
-                        <span>💀 남은 악령 (RS)</span>
-                    </div>
+                    <div class="gauge-info"><span>💀 RS</span></div>
                     <div class="gauge-bar rs">
                         <div id="rs-gauge-fill"></div>
                         <span id="enemies-left" class="gauge-count">0</span>
                     </div>
                 </div>
-
                 <div class="spacer"></div>
             </div>
 
             <div id="bottom-main-ui">
                 <div id="control-panel">
-                    <!-- Corner Decors -->
-                    <div class="panel-corner tl">🌙</div>
-                    <div class="panel-corner tr">🌙</div>
-                    <div class="panel-corner bl">🌙</div>
-                    <div class="panel-corner br">🌙</div>
+                    <div class="panel-corner tl">🌙</div><div class="panel-corner tr">🌙</div>
+                    <div class="panel-corner bl">🌙</div><div class="panel-corner br">🌙</div>
 
-                    <!-- 1. Summon Card -->
                     <div id="tower-card" class="tower-card">
                         <div id="summon-warning" class="card-warning" style="display: none;">SE 부족</div>
-                        <div style="font-size: 42px;">🪄</div>
-                        <div style="font-size: 24px; font-weight: bold;">소환</div>
-                        <div id="summon-cost-display" style="font-size: 24px; opacity: 0.8; margin-top: 6px;">40 SE</div>
+                        <div style="font-size: 32px;">🧙</div>
+                        <div style="font-size: 18px; font-weight: bold;">소환</div>
+                        <div id="summon-cost-display" style="font-size: 18px; opacity: 0.8;">40 SE</div>
                     </div>
-                    <!-- 2. Shrine Card -->
                     <div id="shrine-card" class="tower-card" style="border-color: #00e5ff; color: #00e5ff;">
                         <div id="shrine-warning" class="card-warning" style="display: none;">SE 부족</div>
-                        <div style="font-size: 42px;">🕍</div>
-                        <div style="font-size: 24px; font-weight: bold;">성소</div>
-                        <div id="shrine-cost-display" style="font-size: 24px; opacity: 0.8; margin-top: 6px;">100 SE</div>
+                        <div style="font-size: 32px;">🕍</div>
+                        <div style="font-size: 18px; font-weight: bold;">성소</div>
+                        <div id="shrine-cost-display" style="font-size: 18px; opacity: 0.8;">100 SE</div>
                     </div>
-                    <!-- 3. Purge Card -->
-                    <div id="purge-card" class="tower-card" style="border-color: #9400d3; color: #9400d3;" title="포탈 오염도 50% 제거">
+                    <div id="purge-card" class="tower-card" style="border-color: #9400d3; color: #9400d3;">
                         <div id="purge-warning" class="card-warning" style="display: none;">SE 부족</div>
-                        <div style="font-size: 42px;">🔥</div>
-                        <div style="font-size: 24px; font-weight: bold;">정화</div>
-                        <div id="purge-cost-display" style="font-size: 24px; opacity: 0.8; margin-top: 6px;">800 SE</div>
+                        <div style="font-size: 32px;">🔥</div>
+                        <div style="font-size: 18px; font-weight: bold;">정화</div>
+                        <div id="purge-cost-display" style="font-size: 18px; opacity: 0.8;">800 SE</div>
                     </div>
-                    <!-- 4. Relics Card -->
                     <div id="relics-btn" class="tower-card" style="border-color: #ff4500; color: #ff4500;">
-                        <div id="relics-notif" class="card-notification" style="display: none;">!</div>
-                        <div style="font-size: 42px;">🏺</div>
-                        <div style="font-size: 24px;">유물</div>
+                        <div style="font-size: 32px;">🏺</div><div style="font-size: 18px;">유물</div>
                     </div>
-                    <!-- 5. Equipment Card -->
                     <div id="equip-btn" class="tower-card" style="border-color: #00e5ff; color: #00e5ff;">
-                        <div id="equip-notif" class="card-notification" style="display: none;">!</div>
-                        <div style="font-size: 42px;">⚔️</div>
-                        <div style="font-size: 24px;">장비</div>
+                        <div style="font-size: 32px;">⚔️</div><div style="font-size: 18px;">장비</div>
                     </div>
-                    <!-- 6. Collections Card -->
                     <div id="collections-btn" class="tower-card" style="border-color: #ffd700; color: #ffd700;">
-                        <div id="collections-notif" class="card-notification" style="display: none;">!</div>
-                        <div style="font-size: 42px;">📖</div>
-                        <div style="font-size: 24px;">도감</div>
+                        <div style="font-size: 32px;">📖</div><div style="font-size: 18px;">도감</div>
                     </div>
                 </div>
 
                 <div id="unit-info">
-                    <div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 귀환</span></div>
+                    <div class="info-default-text">Gate of Hell<br><span style="font-size:24px; opacity:0.8;">Sacred Tablet</span></div>
                 </div>
             </div>
         </div>

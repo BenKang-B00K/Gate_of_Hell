@@ -18,8 +18,9 @@ function initInputHandlers() {
 function getLogicalCoords(e) {
     const canvas = document.getElementById('game-canvas');
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) * (LOGICAL_WIDTH / rect.width);
-    const y = (e.clientY - rect.top) * (LOGICAL_HEIGHT / rect.height);
+    // canvas.width is always 360, canvas.height is always 640
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     return { x, y };
 }
 
