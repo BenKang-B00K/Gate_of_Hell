@@ -742,4 +742,61 @@ document.addEventListener('DOMContentLoaded', () => {
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
         }
     });
+
+    // [DEBUG] Initialize Debug Features
+    initDebugFeatures();
 });
+
+function initDebugFeatures() {
+    const masterBtn = document.getElementById('debug-master-toggle');
+    const menu = document.getElementById('debug-menu');
+    if (!masterBtn || !menu) return;
+
+    let debugActive = false;
+
+    masterBtn.onclick = (e) => {
+        e.stopPropagation();
+        debugActive = !debugActive;
+        menu.style.display = debugActive ? 'flex' : 'none';
+        masterBtn.innerText = debugActive ? 'DEBUG: ON' : 'DEBUG: OFF';
+        masterBtn.style.background = debugActive ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 0, 0, 0.3)';
+    };
+
+    // Feature 1: Add SE
+    const addSeBtn = document.getElementById('debug-add-se');
+    if (addSeBtn) {
+        addSeBtn.onclick = (e) => {
+            e.stopPropagation();
+            const limit = (typeof maxMoney !== 'undefined') ? maxMoney : 1000;
+            money = Math.min(limit, money + 500);
+            if (typeof updateGauges === 'function') updateGauges();
+            if (typeof updateSummonButtonState === 'function') updateSummonButtonState();
+        };
+    }
+
+    // Feature 2: Kill All Enemies
+    const killAllBtn = document.getElementById('debug-kill-all');
+    if (killAllBtn) {
+        killAllBtn.onclick = (e) => {
+            e.stopPropagation();
+            [...enemies].forEach(enemy => {
+                enemy.hp = 0;
+                if (typeof handleEnemyDeath === 'function') handleEnemyDeath(enemy);
+            });
+        };
+    }
+
+    // Feature 3: Next Depth
+    const nextBtn = document.getElementById('debug-next-stage');
+    if (nextBtn) {
+        nextBtn.onclick = (e) => {
+            e.stopPropagation();
+            enemies.forEach(en => { if(en.element) en.element.remove(); });
+            enemies = [];
+            currentStageSpawned = totalStageEnemies;
+            if (typeof triggerStageTransition === 'function') triggerStageTransition();
+            stage++;
+            initStage();
+        };
+    }
+}

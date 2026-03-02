@@ -37,6 +37,16 @@
         
         <!-- 1. Top Panel: Information & Management -->
         <div id="top-panel">
+            <!-- [DEBUG] Control Block - Comment out this div to disable entirely -->
+            <div id="debug-control-container" style="position: absolute; top: 5px; left: 10px; z-index: 200; display: flex; gap: 5px;">
+                <button id="debug-master-toggle" style="background: rgba(255, 0, 0, 0.3); color: #fff; border: 1px solid #f00; font-size: 10px; padding: 2px 5px; cursor: pointer; font-family: 'monospace';">DEBUG: OFF</button>
+                <div id="debug-menu" style="display: none; background: rgba(0, 0, 0, 0.8); border: 1px solid #555; padding: 5px; gap: 5px; border-radius: 3px;">
+                    <button id="debug-add-se" style="background: #444; color: #ffd700; border: none; font-size: 10px; cursor: pointer; padding: 2px 5px;">+500 SE</button>
+                    <button id="debug-kill-all" style="background: #444; color: #ff4500; border: none; font-size: 10px; cursor: pointer; padding: 2px 5px;">KILL ALL</button>
+                    <button id="debug-next-stage" style="background: #444; color: #00e5ff; border: none; font-size: 10px; cursor: pointer; padding: 2px 5px;">NEXT</button>
+                </div>
+            </div>
+
             <!-- [DISABLED] Management Row
             <div id="top-management-row">
                 <button id="restart-btn-top">재시작</button>
