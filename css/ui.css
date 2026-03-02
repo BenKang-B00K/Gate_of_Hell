@@ -403,7 +403,7 @@
     font-family: 'Cinzel', serif;
     color: #3e2723;
     text-align: center;
-    font-size: 10px; /* Shrunk from 12px */
+    font-size: 8.5px; /* Shrunk from 10px */
     height: 100%;
     display: flex;
     flex-direction: column;
