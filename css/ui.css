@@ -330,7 +330,20 @@
     color: #aaa;
     min-width: 0;
     overflow: hidden; /* Prevent scrollbars in 128px */
+    position: relative; /* Context for decorations */
 }
+
+#unit-info::before, #unit-info::after {
+    content: "🌙";
+    position: absolute;
+    font-size: 10px;
+    color: #3e2723;
+    top: -4px;
+    z-index: 5;
+}
+
+#unit-info::before { left: -4px; }
+#unit-info::after { right: -4px; transform: scaleX(-1); }
 
 /* Compact Info Layouts */
 .info-row { display: flex; width: 100%; align-items: center; justify-content: center; gap: 4px; margin-bottom: 2px; }
