@@ -382,7 +382,7 @@
     font-family: 'Cinzel', serif;
     color: #3e2723;
     text-align: center;
-    font-size: 12px;
+    font-size: 10px; /* Shrunk from 12px */
     height: 100%;
     display: flex;
     flex-direction: column;
