@@ -26,15 +26,14 @@ function attachGlobalListeners() {
                 const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
                 const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
                 d.innerHTML = `
-                    <div style="color:#ffd700; font-weight:bold; font-size:36px; margin-bottom:6px;">🧙 견습 퇴마사 소환</div>
-                    <div style="display:inline-block; background:#2a2010; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">소환 비용: ${finalTowerCost} SE</div>
-                    <div style="font-size:24px; color:#bbb; line-height:1.2;">성스러운 기운을 모아 새로운 견습 퇴마사를 부릅니다.</div>
-                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:15px 0;"></div>
-                    <div style="color:#00ff00; font-size:20px;">[소환 규칙]</div>
-                    <div style="font-size:18px; color:#aaa; margin-top:5px;">
-                        • 중앙 2개 열의 빈 슬롯에 무작위로 소환됨<br>
-                        • 소환할 때마다 비용이 5 SE씩 증가<br>
-                        • 최대 16명까지 동시 유지 가능
+                    <div class="unit-info-title">🧙 견습 퇴마사 소환</div>
+                    <div style="display:inline-block; background:#2a2010; color:#fff; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold; margin-bottom:4px;">비용: ${finalTowerCost} SE</div>
+                    <div class="unit-info-desc">성스러운 기운을 모아 새로운 견습 퇴마사를 부릅니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:4px 0;"></div>
+                    <div style="color:#00ff00; font-size:9px; font-weight:bold;">[소환 규칙]</div>
+                    <div style="font-size:8px; color:#aaa; margin-top:2px;">
+                        • 중앙 빈 슬롯에 무작위 소환<br>
+                        • 소환마다 비용 5 SE 증가 (최대 16명)
                     </div>
                 `;
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
@@ -53,15 +52,14 @@ function attachGlobalListeners() {
             if (d) {
                 const cost = window.shrineCost || 100;
                 d.innerHTML = `
-                    <div style="color:#00e5ff; font-weight:bold; font-size:36px; margin-bottom:6px;">🕍 성소 건립 (Shrine)</div>
-                    <div style="display:inline-block; background:#002a32; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">건립 비용: ${cost} SE</div>
-                    <div style="font-size:24px; color:#bbb; line-height:1.2;">퇴마사를 보조하는 성스러운 건축물을 세웁니다.</div>
-                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #00e5ff44, transparent); margin:15px 0;"></div>
-                    <div style="color:#ffd700; font-size:20px;">[건립 규칙]</div>
-                    <div style="font-size:18px; color:#aaa; margin-top:5px;">
-                        • 좌측 1열 / 우측 3열 전용 슬롯에만 건립 가능<br>
-                        • 건립 시마다 비용이 50 SE 증가<br>
-                        • 철거 시 1 스테이지 동안 디버프가 발생함
+                    <div class="unit-info-title">🕍 성소 건립 (Shrine)</div>
+                    <div style="display:inline-block; background:#002a32; color:#fff; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold; margin-bottom:4px;">비용: ${cost} SE</div>
+                    <div class="unit-info-desc">퇴마사를 보조하는 성스러운 건축물을 세웁니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #00e5ff44, transparent); margin:4px 0;"></div>
+                    <div style="color:#ffd700; font-size:9px; font-weight:bold;">[건립 규칙]</div>
+                    <div style="font-size:8px; color:#aaa; margin-top:2px;">
+                        • 전용 슬롯에만 건립 가능<br>
+                        • 철거 시 1 스테이지 동안 디버프 발생
                     </div>
                 `;
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
@@ -79,11 +77,11 @@ function attachGlobalListeners() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#9400d3; font-weight:bold; font-size:36px; margin-bottom:6px;">🔥 공간 정화 (Purge)</div>
-                    <div style="display:inline-block; background:#1a002a; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">정화 비용: 800 SE</div>
-                    <div style="font-size:24px; color:#bbb; line-height:1.2;">모아둔 에너지를 폭발시켜 포탈의 오염도를 50% 제거합니다.</div>
-                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #9400d344, transparent); margin:15px 0;"></div>
-                    <div style="color:#ff1744; font-size:18px; font-style:italic;">"불길이 닿는 곳에 부정한 기운은 남지 않을 것입니다."</div>
+                    <div class="unit-info-title" style="color:#9400d3;">🔥 공간 정화 (Purge)</div>
+                    <div style="display:inline-block; background:#1a002a; color:#fff; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold; margin-bottom:4px;">비용: 800 SE</div>
+                    <div class="unit-info-desc">에너지를 폭발시켜 포탈 오염도를 50% 제거합니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #9400d344, transparent); margin:8px 0;"></div>
+                    <div style="color:#ff1744; font-size:9px; font-style:italic;">"부정한 기운은 남지 않을 것입니다."</div>
                 `;
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             }
@@ -97,11 +95,10 @@ function attachGlobalListeners() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#ff4500; font-weight:bold; font-size:36px; margin-bottom:6px;">🏺 심연의 유물 (Relics)</div>
-                    <div style="display:inline-block; background:#2a1005; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">영구적 강화</div>
-                    <div style="font-size:24px; color:#bbb; line-height:1.2;">악의 존재들을 정화하며 얻은 신성한 보물들입니다.</div>
-                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ff450044, transparent); margin:15px 0;"></div>
-                    <div style="color:#ff8a80; font-size:18px; font-style:italic;">"과거의 승리자들이 남긴 유산이 당신의 길을 밝혀줄 것입니다."</div>
+                    <div class="unit-info-title" style="color:#ff4500;">🏺 심연의 유물 (Relics)</div>
+                    <div style="font-size:10px; color:#bbb; line-height:1.2;">악의 존재를 정화하며 얻은 보물들입니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ff450044, transparent); margin:8px 0;"></div>
+                    <div style="color:#ff8a80; font-size:9px; font-style:italic;">과거의 승리자들이 남긴 유산입니다.</div>
                 `;
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             }
@@ -115,11 +112,10 @@ function attachGlobalListeners() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#00e5ff; font-weight:bold; font-size:36px; margin-bottom:6px;">⚔️ 신성한 장비 (Equipment)</div>
-                    <div style="display:inline-block; background:#002a32; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">전투 보조 기구</div>
-                    <div style="font-size:24px; color:#bbb; line-height:1.2;">퇴마사들의 능력을 극대화하는 고대의 무구들을 관리합니다.</div>
-                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #00e5ff44, transparent); margin:15px 0;"></div>
-                    <div style="color:#80d8ff; font-size:18px; font-style:italic;">"가장 날카로운 칼날조차 정화된 의지 없이는 녹슨 쇠붙이에 불과합니다."</div>
+                    <div class="unit-info-title" style="color:#00e5ff;">⚔️ 신성한 장비 (Equipment)</div>
+                    <div style="font-size:10px; color:#bbb; line-height:1.2;">퇴마사들의 능력을 극대화하는 무구들입니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #00e5ff44, transparent); margin:8px 0;"></div>
+                    <div style="color:#80d8ff; font-size:9px; font-style:italic;">날카로운 칼날과 정화된 의지.</div>
                 `;
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             }
@@ -133,11 +129,10 @@ function attachGlobalListeners() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div style="color:#ffd700; font-weight:bold; font-size:36px; margin-bottom:6px;">📖 성스러운 기록 (Records)</div>
-                    <div style="display:inline-block; background:#2a2010; color:#fff; padding:3px 12px; border-radius:9px; font-size:22px; font-weight:bold; margin-bottom:10px;">지식의 보관소</div>
-                    <div style="font-size:24px; color:#bbb; line-height:1.2;">지금까지 조우한 악의 존재들과 아군 수호자들의 기록을 확인합니다.</div>
-                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:15px 0;"></div>
-                    <div style="color:#ffecb3; font-size:18px; font-style:italic;">"적을 아는 것이야말로 심연을 닫는 첫 번째 열쇠입니다."</div>
+                    <div class="unit-info-title" style="color:#ffd700;">📖 성스러운 기록 (Records)</div>
+                    <div style="font-size:10px; color:#bbb; line-height:1.2;">조우한 악의 존재들과 수호자들의 기록입니다.</div>
+                    <div style="width:100%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:8px 0;"></div>
+                    <div style="color:#ffecb3; font-size:9px; font-style:italic;">지식은 심연을 닫는 열쇠입니다.</div>
                 `;
                 if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
             }
@@ -204,14 +199,14 @@ function showUnitInfo(tower) {
     const isDemolishing = tower.isDemolishing;
 
     const formatBonus = (val) => {
-        if (val > 0) return `<span style="color:#00ff00; font-size:14px;">(+${val})</span>`;
-        if (val < 0) return `<span style="color:#ff1744; font-size:14px;">(${val})</span>`;
+        if (val > 0) return `<span style="color:#00ff00; font-size:7px;">(+${val})</span>`;
+        if (val < 0) return `<span style="color:#ff1744; font-size:7px;">(${val})</span>`;
         return "";
     };
 
     let th = `
-        <div style="display:flex; align-items:center; justify-content:center; gap:15px; margin-bottom:4px;">
-            <div class="unit-info-title" style="font-size:32px;">${data.name}</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:2px;">
+            <div class="unit-info-title">${data.name}</div>
             <button class="info-sacrifice-btn ${isShrine ? 'shrine-demo' : ''}" 
                     onclick="triggerSacrificeFromInfo()" 
                     ${isDemolishing ? 'disabled' : ''}>
@@ -225,10 +220,10 @@ function showUnitInfo(tower) {
     let ih = '';
     if (isShrine) {
         ih = `
-            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:4px; width:100%;">
-                <div class="unit-info-stats" style="flex:1; border-color:#00e5ff; padding:4px 12px;">
-                    <span style="color:#00e5ff; font-size:14px; display:block; font-weight:bold;">EFFECT</span>
-                    <span style="font-size:20px; font-weight:900; color:${isDemolishing ? '#ff1744' : '#00ff00'}">
+            <div style="display:flex; justify-content:center; gap:4px; width:100%;">
+                <div class="unit-info-stats" style="flex:1; border-color:#00e5ff;">
+                    <span style="color:#00e5ff; font-weight:bold;">EFFECT</span>
+                    <span style="font-weight:900; color:${isDemolishing ? '#ff1744' : '#00ff00'}">
                         공격력 ${isDemolishing ? '-20%' : '+20%'}
                     </span>
                 </div>
@@ -247,42 +242,42 @@ function showUnitInfo(tower) {
         const bonusAS = (finalAS - baseAS).toFixed(1);
 
         ih = `
-            <div style="display:flex; justify-content:center; gap:10px; margin-bottom:4px; width:100%;">
-                <div class="unit-info-stats" style="flex:1; border-color:#ff4500; padding:2px 6px; min-width:70px;">
-                    <span style="color:#ff4500; font-size:14px; display:block; font-weight:bold;">ATTACK</span>
-                    <span style="font-size:20px; font-weight:900;">${baseDmg} ${formatBonus(bonusDmg)}</span>
+            <div style="display:flex; justify-content:center; gap:4px; width:100%;">
+                <div class="unit-info-stats" style="flex:1; border-color:#ff4500;">
+                    <span style="color:#ff4500; font-weight:bold;">ATK</span>
+                    <span style="font-weight:900;">${baseDmg}${formatBonus(bonusDmg)}</span>
                 </div>
-                <div class="unit-info-stats" style="flex:1; border-color:#00e5ff; padding:2px 6px; min-width:70px;">
-                    <span style="color:#00e5ff; font-size:14px; display:block; font-weight:bold;">RANGE</span>
-                    <span style="font-size:20px; font-weight:900;">${baseRange} ${formatBonus(bonusRange)}</span>
+                <div class="unit-info-stats" style="flex:1; border-color:#00e5ff;">
+                    <span style="color:#00e5ff; font-weight:bold;">RNG</span>
+                    <span style="font-weight:900;">${baseRange}${formatBonus(bonusRange)}</span>
                 </div>
-                <div class="unit-info-stats" style="flex:1; border-color:#ffd700; padding:2px 6px; min-width:70px;">
-                    <span style="color:#ffd700; font-size:14px; display:block; font-weight:bold;">ATTACK SPEED</span>
-                    <span style="font-size:20px; font-weight:900;">${baseAS} ${formatBonus(bonusAS)}</span>
+                <div class="unit-info-stats" style="flex:1; border-color:#ffd700;">
+                    <span style="color:#ffd700; font-weight:bold;">SPD</span>
+                    <span style="font-weight:900;">${baseAS}${formatBonus(bonusAS)}</span>
                 </div>
             </div>
         `;
     }
 
-    let divider = `<div style="width:90%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:4px 0;"></div>`;
-    let desc = `<div class="unit-info-desc" style="font-size:18px; line-height:1.2; color:#aaa; padding:0 10px;">${isDemolishing ? data.demoDesc : data.desc}</div>`;
+    let divider = `<div style="width:90%; height:1px; background:linear-gradient(90deg, transparent, #ffd70044, transparent); margin:2px 0;"></div>`;
+    let desc = `<div class="unit-info-desc">${isDemolishing ? data.demoDesc : data.desc}</div>`;
     
     let ch = ''; 
     if(!isShrine && data.type === 'apprentice') {
         ch = `
-            <div style="color:#888; font-size:14px; margin-bottom:2px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">전직 경로 선택</div>
-            <div class="master-btn-container" style="margin-top:0; gap:12px;">
+            <div style="color:#888; font-size:8px; margin-bottom:2px; font-weight:bold;">전직 경로</div>
+            <div class="master-btn-container" style="margin-top:0;">
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange('knight', true)">⚔️</button>
-                    <span style="color:#ff4500; font-size:12px; font-weight:bold;">ATTACK</span>
+                    <span style="color:#ff4500; font-weight:bold;">ATTACK</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange('chainer', true)">🪄</button>
-                    <span style="color:#00e5ff; font-size:12px; font-weight:bold;">SUPPORT</span>
+                    <span style="color:#00e5ff; font-weight:bold;">SUPPORT</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
                     <button class="info-promo-btn" onclick="performJobChange('alchemist', true)">💠</button>
-                    <span style="color:#ffd700; font-size:12px; font-weight:bold;">SPECIAL</span>
+                    <span style="color:#ffd700; font-weight:bold;">SPECIAL</span>
                 </div>
             </div>
         `;
@@ -306,15 +301,15 @@ function showUnitInfo(tower) {
             const u1 = unitTypes.find(u => u.type === p.to[0]);
             const u2 = unitTypes.find(u => u.type === p.to[1]);
             ch = `
-                <div style="color:#888; font-size:14px; margin-bottom:2px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">마스터 전직</div>
-                <div class="master-btn-container" style="margin-top:0; gap:20px;">
+                <div style="color:#888; font-size:8px; margin-bottom:2px; font-weight:bold;">마스터 전직</div>
+                <div class="master-btn-container" style="margin-top:0;">
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <button class="info-promo-btn" onclick="performMasterJobChange(window.lastInspectedTower, '${u1.type}', true)">${u1.icon}</button>
-                        <span style="color:#fff; font-size:12px;">${u1.name}</span>
+                        <span style="color:#fff;">${u1.name}</span>
                     </div>
                     <div style="display:flex; flex-direction:column; align-items:center;">
                         <button class="info-promo-btn" onclick="performMasterJobChange(window.lastInspectedTower, '${u2.type}', true)">${u2.icon}</button>
-                        <span style="color:#fff; font-size:12px;">${u2.name}</span>
+                        <span style="color:#fff;">${u2.name}</span>
                     </div>
                 </div>
             `;
@@ -344,26 +339,26 @@ function showEnemyInfo(enemy) {
     const maxHp = Math.floor(enemy.maxHp || hp);
     const def = enemy.defense || 0;
 
-    let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin:8px 0;"></div>`;
+    let divider = `<div style="width:80%; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin:4px 0;"></div>`;
     const dispName = enemy.data?.name || enemy.type;
     const dispLore = enemy.data?.lore || "이 영혼에 대한 기록이 없습니다.";
     const dispDesc = enemy.desc || "심연에서 솟아난 부정한 존재입니다.";
 
-    let th = `<div style="color:#ff4500; font-weight:bold; font-size:32px; margin-bottom:4px; text-shadow:0 0 15px #ff4500;">${dispName}</div>`;
+    let th = `<div style="color:#ff4500; font-weight:bold; font-size:14px; margin-bottom:2px; text-shadow:0 0 5px #ff4500;">${dispName}</div>`;
     let ih = `
-        <div style="display:flex; justify-content:center; gap:10px; margin-bottom:8px; width:100%; padding: 0 15px;">
-            <div class="unit-info-stats" style="flex:2; border-color:#ff1744; background:rgba(183,28,28,0.1); padding: 4px 8px;">
-                <span style="color:#ff1744; font-size:14px; display:block; font-weight:bold;">HEALTH</span>
-                <span style="font-size:22px; font-weight:bold;">${hp} / ${maxHp}</span>
+        <div style="display:flex; justify-content:center; gap:4px; width:100%; padding: 0 5px;">
+            <div class="unit-info-stats" style="flex:2; border-color:#ff1744; background:rgba(183,28,28,0.1);">
+                <span style="color:#ff1744; font-weight:bold;">HEALTH</span>
+                <span style="font-weight:bold;">${hp} / ${maxHp}</span>
             </div>
-            <div class="unit-info-stats" style="flex:1; border-color:#888; background:rgba(255,255,255,0.05); padding: 4px 8px;">
-                <span style="color:#aaa; font-size:14px; display:block; font-weight:bold;">DEFENSE</span>
-                <span style="font-size:22px; font-weight:bold;">${def}</span>
+            <div class="unit-info-stats" style="flex:1; border-color:#888; background:rgba(255,255,255,0.05);">
+                <span style="color:#aaa; font-weight:bold;">DEF</span>
+                <span style="font-weight:bold;">${def}</span>
             </div>
         </div>
     `;
-    let eh = `<div style="color:#ff8a80; font-size:18px; margin-bottom:4px; padding: 0 20px;"><strong>특성:</strong> ${dispDesc}</div>`;
-    let lh = `<div style="color:#666; font-size:16px; font-style:italic; line-height:1.2; padding: 0 30px;">"${dispLore}"</div>`;
+    let eh = `<div style="color:#ff8a80; font-size:9px; margin-bottom:2px; padding: 0 5px;">${dispDesc}</div>`;
+    let lh = `<div style="color:#666; font-size:8px; font-style:italic; line-height:1.1; padding: 0 10px;">"${dispLore}"</div>`;
 
     d.innerHTML = `${th}${ih}${divider}${eh}${lh}` ;
     startInfoResetTimer();
@@ -376,7 +371,7 @@ function startInfoResetTimer() {
             const d = document.getElementById('unit-info');
             if (d) {
                 d.innerHTML = `
-                    <div class="info-default-text">Gate of Hell<br><span style="font-size:30px; opacity:0.8;">악령들의 귀환</span></div>
+                    <div class="info-default-text">Gate of Hell<br><span style="font-size:10px; opacity:0.8;">Sacred Tablet</span></div>
                 `;
             }
         }

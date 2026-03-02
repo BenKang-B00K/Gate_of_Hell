@@ -153,22 +153,22 @@
 /* Main UI: Control Panel & Unit Info */
 #bottom-main-ui {
     display: flex;
-    flex: 80; /* 80% */
+    flex: 80; /* 80% of 160px = 128px */
     width: 100%;
-    gap: 8px;
+    gap: 6px;
     min-height: 0;
-    padding-top: 4px;
+    padding-top: 2px;
 }
 
 #control-panel {
-    flex: 3;
+    flex: 45; /* 45% ratio */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 4px;
+    gap: 3px;
     background: linear-gradient(145deg, rgba(30, 25, 0, 0.8), rgba(20, 0, 0, 0.9));
     border: 2px solid #2a2010;
-    padding: 6px;
+    padding: 4px;
     position: relative;
 }
 
@@ -183,20 +183,25 @@
     transition: all 0.2s;
     color: #ffd700;
     position: relative;
-    padding: 2px;
+    padding: 1px;
+    line-height: 1.1;
 }
+
+.tower-card .card-icon { font-size: 20px; }
+.tower-card .card-label { font-size: 10px; font-weight: bold; }
+.tower-card .card-cost { font-size: 9px; opacity: 0.8; }
 
 .tower-card:hover { background: #1a1a1a; transform: translateY(-1px); border-color: #ffd700; }
 .tower-card.disabled { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
 
 .card-warning {
     position: absolute;
-    top: -15px;
+    top: -12px;
     left: 50%;
     transform: translateX(-50%);
     background: #ff0000;
     color: #fff;
-    font-size: 9px;
+    font-size: 8px;
     padding: 1px 4px;
     border-radius: 2px;
     white-space: nowrap;
@@ -204,25 +209,52 @@
 }
 
 #unit-info {
-    flex: 2;
+    flex: 55; /* 55% ratio */
     background: #050505;
     border: 2px solid #2a2010;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
-    padding: 8px;
+    padding: 6px;
     color: #aaa;
     min-width: 0;
     overflow-y: auto;
 }
 
+.unit-info-title { font-size: 14px !important; color: #ffd700; font-weight: bold; margin-bottom: 2px; }
+.unit-info-stats { border: 1px solid rgba(255,255,255,0.1); padding: 2px 4px; border-radius: 3px; }
+.unit-info-stats span:first-child { font-size: 8px !important; }
+.unit-info-stats span:last-child { font-size: 11px !important; }
+.unit-info-desc { font-size: 9px !important; margin-top: 4px; color: #888; }
+
+.info-promo-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    padding: 0;
+    margin: 0 2px;
+}
+
+.info-sacrifice-btn {
+    font-size: 9px;
+    padding: 2px 6px;
+    height: 18px;
+}
+
+.master-btn-container { margin-top: 4px; gap: 8px; }
+.master-btn-container span { font-size: 8px !important; }
+
 .info-default-text {
     font-family: 'Cinzel', serif;
     color: #3e2723;
     text-align: center;
-    font-size: 14px;
+    font-size: 12px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* Corner Decors */
