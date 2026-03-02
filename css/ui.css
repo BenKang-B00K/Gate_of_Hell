@@ -292,7 +292,7 @@
 
 .tower-card .card-icon { font-size: 16px; margin-bottom: 2px; }
 .tower-card .card-label { font-size: 9px; font-weight: bold; }
-.tower-card .card-cost { font-size: 8px; opacity: 0.8; }
+.tower-card .card-cost { font-size: 7px; opacity: 0.8; }
 
 .tower-card:hover { background: #1a1a1a; transform: translateY(-1px); border-color: #ffd700; }
 .tower-card.disabled { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; }
