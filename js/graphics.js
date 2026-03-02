@@ -4,9 +4,8 @@ const canvas = document.createElement('canvas');
 canvas.id = 'game-canvas';
 const ctx = canvas.getContext('2d');
 
-window.LOGICAL_WIDTH = 360; 
-window.LOGICAL_HEIGHT = 480; 
-const RENDER_SCALE = 3.0; // [User Request] 1080 / 360 = 3x
+window.LOGICAL_WIDTH = 1080; 
+window.LOGICAL_HEIGHT = 1440; // 75% of 1920
 let scaleFactor = 1.0;
 
 function initGraphics() {
@@ -23,17 +22,21 @@ function resizeCanvas() {
     const container = document.getElementById('top-panel');
     if (!container) return;
     
-    const cr = container.getBoundingClientRect();
-    window.LOGICAL_HEIGHT = Math.floor(cr.height);
-
-    // [User Request] Set internal buffer to 1080 width
-    canvas.width = 1080;
-    canvas.height = window.LOGICAL_HEIGHT * RENDER_SCALE;
+    // Set canvas resolution to full 1080 width
+    canvas.width = window.LOGICAL_WIDTH;
+    
+    // Dynamic height based on container ratio, but internal logic prefers fixed ratio
+    // We will sync LOGICAL_HEIGHT to the actual pixel height ratio relative to 1080 width
+    const rect = container.getBoundingClientRect();
+    const ratio = rect.height / rect.width;
+    window.LOGICAL_HEIGHT = Math.floor(window.LOGICAL_WIDTH * ratio);
+    
+    canvas.height = window.LOGICAL_HEIGHT;
     
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     
-    scaleFactor = cr.width / window.LOGICAL_WIDTH;
+    scaleFactor = rect.width / window.LOGICAL_WIDTH;
     
     disableSmoothing();
 }
@@ -45,12 +48,10 @@ function disableSmoothing() {
 }
 
 function renderGraphics() {
-    // Clear entire 1080 buffer
+    // Clear entire buffer
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    ctx.save();
-    // Scale everything by 3x so our 360 logic fits 1080
-    ctx.scale(RENDER_SCALE, RENDER_SCALE);
+    // No ctx.scale needed - we are native 1080p now
     
     lavaPhase += 0.02;
     globalAnimTimer += 0.06; 
@@ -90,8 +91,6 @@ function renderGraphics() {
     if(typeof drawStageFlashes === 'function') drawStageFlashes();
     
     drawSelectionHalo();
-    
-    ctx.restore();
 }
 
 function drawSelectionHalo() {

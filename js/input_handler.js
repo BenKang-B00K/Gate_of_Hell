@@ -18,7 +18,7 @@ function initInputHandlers() {
 function getLogicalCoords(e) {
     const canvas = document.getElementById('game-canvas');
     const rect = canvas.getBoundingClientRect();
-    // canvas.width is always 360, canvas.height is always 640
+    // canvas.width is LOGICAL_WIDTH (1080), canvas.height is LOGICAL_HEIGHT
     const x = (e.clientX - rect.left) * (canvas.width / rect.width);
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     return { x, y };
@@ -28,16 +28,16 @@ function handleMouseDown(e) {
     const { x, y } = getLogicalCoords(e);
     lastMouseDownTime = Date.now();
 
-    // 1. Check if unit clicked
+    // 1. Check if unit clicked (Threshold scaled for 1080p: 30 * 3 = 90)
     const clickedTower = towers.find(t => {
         const dist = Math.sqrt(Math.pow(t.lx - x, 2) + Math.pow(t.ly - y, 2));
-        return dist < 30; // Radius for click
+        return dist < 90; 
     });
 
-    // 2. Check if enemy clicked
+    // 2. Check if enemy clicked (Threshold scaled for 1080p: 25 * 3 = 75)
     const clickedEnemy = enemies.find(en => {
         const dist = Math.sqrt(Math.pow((en.x / 100) * LOGICAL_WIDTH - x, 2) + Math.pow(en.y - y, 2));
-        return dist < 25;
+        return dist < 75; 
     });
 
     if (clickedEnemy) {
@@ -96,7 +96,7 @@ function handleMouseUp(e) {
 function findNearestSlot(lx, ly) {
     if (!window.logicalSlots) return null;
     let nearest = null;
-    let minDist = 40; // Max distance to snap
+    let minDist = 120; // 40 * 3
     
     window.logicalSlots.forEach(slot => {
         const dist = Math.sqrt(Math.pow(slot.lx - lx, 2) + Math.pow(slot.ly - ly, 2));

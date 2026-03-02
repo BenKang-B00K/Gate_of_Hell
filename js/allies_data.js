@@ -38,12 +38,13 @@ let lavaPhase = 0;
 const logicalSlots = [];
 function initLogicalSlots() {
     logicalSlots.length = 0;
-    const roadX = 123;
-    const roadWidth = 114;
-    const slotW = 38;
-    const slotH = 50;
-    const startY = 45;
-    const spacingY = 64; // Further expanded for 480 height.
+    // Base 360 values * 3
+    const roadX = 123 * 3; // 369
+    const roadWidth = 114 * 3; // 342
+    const slotW = 38 * 3; // 114
+    const slotH = 50 * 3; // 150
+    const startY = 45 * 3; // 135
+    const spacingY = 64 * 3; // 192
 
     // Left Side (3 columns)
     for(let r=0; r<7; r++) {
@@ -51,7 +52,7 @@ function initLogicalSlots() {
             logicalSlots.push({
                 area: 'left-slots',
                 index: r * 3 + c,
-                lx: 10 + c * slotW + (slotW/2),
+                lx: 30 + c * slotW + (slotW/2), // 10*3 = 30 margin
                 ly: startY + r * spacingY + (slotH/2),
                 type: (c === 0) ? 'shrine' : 'unit'
             });
@@ -63,7 +64,7 @@ function initLogicalSlots() {
             logicalSlots.push({
                 area: 'right-slots',
                 index: r * 3 + c,
-                lx: roadX + roadWidth + 5 + c * slotW + (slotW/2),
+                lx: roadX + roadWidth + 15 + c * slotW + (slotW/2), // 5*3 = 15 margin
                 ly: startY + r * spacingY + (slotH/2),
                 type: (c === 2) ? 'shrine' : 'unit'
             });

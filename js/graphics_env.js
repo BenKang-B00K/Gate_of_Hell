@@ -14,8 +14,8 @@ function drawAtmosphericEffects() {
 
 function drawLavaRoad() {
     const time = globalAnimTimer;
-    const roadWidth = 114; 
-    const roadX = 123;
+    const roadWidth = 114 * 3; // 342 
+    const roadX = 123 * 3; // 369
     const gameScreenHeight = LOGICAL_HEIGHT; 
     
     ctx.save();
@@ -38,9 +38,9 @@ function drawLavaRoad() {
     // 2. Rising Void Mist from the Abyss
     ctx.globalCompositeOperation = 'screen';
     for(let i = 0; i < 6; i++) {
-        const mx = (i % 2 === 0) ? Math.random() * 50 : (LOGICAL_WIDTH - 50) + Math.random() * 50;
+        const mx = (i % 2 === 0) ? Math.random() * 150 : (LOGICAL_WIDTH - 150) + Math.random() * 150;
         const my = (time * 20 + i * 100) % gameScreenHeight;
-        const ms = 40 + Math.sin(time + i) * 10;
+        const ms = 120 + Math.sin(time + i) * 30; // Scaled mist size
         const mGrad = ctx.createRadialGradient(mx, my, 0, mx, my, ms);
         mGrad.addColorStop(0, 'rgba(40, 0, 80, 0.15)');
         mGrad.addColorStop(1, 'transparent');
@@ -55,40 +55,40 @@ function drawLavaRoad() {
     ctx.fillRect(roadX, 0, roadWidth, gameScreenHeight);
 
     // Stone Slab Patterns with Shading
-    const slabHeight = 40;
+    const slabHeight = 120; // 40 * 3
     for(let y = 0; y < gameScreenHeight; y += slabHeight) {
         // Slab highlights and shadows for 3D feel
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-        ctx.strokeRect(roadX + 2, y, roadWidth - 4, slabHeight);
+        ctx.strokeRect(roadX + 6, y, roadWidth - 12, slabHeight);
         
         // Refined Magma Cracks (Only on some slabs to reduce noise)
         if ((Math.floor(y / slabHeight)) % 5 === 0) {
             ctx.save();
             ctx.beginPath();
-            const startX = roadX + 20 + Math.random() * 20;
-            const startY = y + 10;
+            const startX = roadX + 60 + Math.random() * 60;
+            const startY = y + 30;
             ctx.moveTo(startX, startY);
             // Zig-zag crack pattern
-            ctx.lineTo(startX + 15, startY + 10);
-            ctx.lineTo(startX - 5, startY + 20);
-            ctx.lineTo(startX + 10, startY + 30);
+            ctx.lineTo(startX + 45, startY + 30);
+            ctx.lineTo(startX - 15, startY + 60);
+            ctx.lineTo(startX + 30, startY + 90);
             
             // Magma Glow Effect
-            ctx.shadowBlur = 8;
+            ctx.shadowBlur = 24;
             ctx.shadowColor = '#ff4500';
             ctx.strokeStyle = `rgba(255, 69, 0, ${0.2 + Math.sin(time * 2) * 0.1})`;
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 4.5;
             ctx.stroke();
             ctx.restore();
         }
     }
 
     // 4. Side Railings (Stone Walls)
-    const wallWidth = 8;
+    const wallWidth = 24; // 8 * 3
     // Shadow under walls
     ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-    ctx.fillRect(roadX - 4, 0, 4, gameScreenHeight);
-    ctx.fillRect(roadX + roadWidth, 0, 4, gameScreenHeight);
+    ctx.fillRect(roadX - 12, 0, 12, gameScreenHeight);
+    ctx.fillRect(roadX + roadWidth, 0, 12, gameScreenHeight);
 
     // Stone Walls
     const wallGrad = ctx.createLinearGradient(roadX, 0, roadX + wallWidth, 0);
@@ -108,28 +108,27 @@ function drawLavaRoad() {
     if (Math.random() < 0.1) {
         const ax = roadX + Math.random() * roadWidth;
         const ay = Math.random() * gameScreenHeight;
-        spawnParticles(ax, ay, 'rgba(148, 0, 211, 0.4)', 1);
+        spawnParticles(ax, ay, 'rgba(148, 0, 211, 0.4)', 3);
     }
 
     // 6. Soul Flow Arrows (Moving Downward - Slower & More Spaced)
     ctx.save();
-    const arrowSpacing = 160; 
-    const arrowOffset = (time * 20) % arrowSpacing; 
+    const arrowSpacing = 480; // 160 * 3
+    const arrowOffset = (time * 60) % arrowSpacing; 
     ctx.strokeStyle = '#ff3366'; 
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 7.5;
     ctx.lineJoin = 'round';
-    ctx.shadowBlur = 5;
+    ctx.shadowBlur = 15;
     ctx.shadowColor = '#ff0033';
 
-    for(let y = -20 + arrowOffset; y < gameScreenHeight; y += arrowSpacing) {
+    for(let y = -60 + arrowOffset; y < gameScreenHeight; y += arrowSpacing) {
         if (y < 0) continue;
-        // Alpha calculation for smooth fade-in and fade-out
-        const alpha = Math.min(0.35, (y / 150) * 0.35) * (1 - (y / gameScreenHeight)); 
+        const alpha = Math.min(0.35, (y / 450) * 0.35) * (1 - (y / gameScreenHeight)); 
         ctx.globalAlpha = alpha;
 
         const ax = LOGICAL_WIDTH / 2; 
-        const aw = 18;  
-        const ah = 12;  
+        const aw = 54; // 18 * 3
+        const ah = 36; // 12 * 3 
 
         ctx.beginPath();
         ctx.moveTo(ax - aw, y);
@@ -153,12 +152,12 @@ function drawLavaRoad() {
 }
 
 function drawSpawningGate() {
-    const cx = LOGICAL_WIDTH / 2; const cy = -5; const time = globalAnimTimer;
+    const cx = LOGICAL_WIDTH / 2; const cy = -15; const time = globalAnimTimer;
     ctx.save();
     
     // 1. Infernal Core Glow
     const pulse = (Math.sin(time * 2) + 1) / 2;
-    const baseRadius = 80 + pulse * 10;
+    const baseRadius = 240 + pulse * 30; // Scaled radius
     
     const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseRadius * 1.5);
     coreGrad.addColorStop(0, 'rgba(255, 100, 0, 0.8)');
@@ -166,17 +165,17 @@ function drawSpawningGate() {
     coreGrad.addColorStop(1, 'transparent');
     
     ctx.fillStyle = coreGrad;
-    ctx.fillRect(cx - 150, cy - 20, 300, 150);
+    ctx.fillRect(cx - 450, cy - 60, 900, 450);
 
     // 2. Rising Hellfire Embers (Procedural)
     ctx.globalCompositeOperation = 'lighter';
     for(let i = 0; i < 8; i++) {
         const offTime = time + i * 0.5;
-        const ex = cx + Math.sin(offTime * 2) * 60;
-        const ey = cy + (offTime % 5) * 20;
-        const size = 2 + Math.sin(offTime) * 2;
+        const ex = cx + Math.sin(offTime * 2) * 180;
+        const ey = cy + (offTime % 5) * 60;
+        const size = 6 + Math.sin(offTime) * 6;
         
-        ctx.fillStyle = `rgba(255, 200, 50, ${0.6 * (1 - (ey/100))})`;
+        ctx.fillStyle = `rgba(255, 200, 50, ${0.6 * (1 - (ey/300))})`;
         ctx.beginPath();
         ctx.arc(ex, ey, size, 0, Math.PI * 2);
         ctx.fill();
@@ -184,9 +183,9 @@ function drawSpawningGate() {
     
     // 3. Spawning Sigil
     ctx.strokeStyle = `rgba(255, 50, 0, ${0.3 + pulse * 0.2})`;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.ellipse(cx, cy + 10, 100 + pulse * 5, 20 + pulse * 2, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, cy + 30, 300 + pulse * 15, 60 + pulse * 6, 0, 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.restore();
@@ -205,8 +204,8 @@ function drawPortal() {
     ctx.save();
     
     // 1. Dimensional Distortion (Outer Ring)
-    const drift = Math.sin(time) * 5;
-    const outerRadius = 90 + energyRatio * 30;
+    const drift = Math.sin(time) * 15;
+    const outerRadius = 270 + energyRatio * 90; // Scaled 3x
     
     const outerGrad = ctx.createRadialGradient(cx, cy + drift, 0, cx, cy + drift, outerRadius * 1.8);
     // Colors shift from Abyssal Purple to Hellish Red
@@ -229,7 +228,7 @@ function drawPortal() {
     
     for(let i = 0; i < layers; i++) {
         const layerTime = time * rotSpeed * (1 + i * 0.3);
-        const rx = (outerRadius - i * 15) * (0.9 + Math.sin(time * 1.5 + i) * 0.1);
+        const rx = (outerRadius - i * 45) * (0.9 + Math.sin(time * 1.5 + i) * 0.1);
         const ry = rx * 0.35;
         
         ctx.save();
@@ -241,10 +240,10 @@ function drawPortal() {
         
         const alpha = (0.4 + energyRatio * 0.4) / (i + 1);
         ctx.strokeStyle = `rgba(${rOut + 50}, 50, ${bOut + 100}, ${alpha})`;
-        ctx.lineWidth = 4 - i;
+        ctx.lineWidth = 12 - i * 3;
         
         if (energyRatio > 0.7) {
-            ctx.shadowBlur = 10 + i * 5;
+            ctx.shadowBlur = 30 + i * 15;
             ctx.shadowColor = `rgba(255, 0, 0, ${energyRatio})`;
         }
         
@@ -254,7 +253,7 @@ function drawPortal() {
 
     // 3. The Singularity (Event Horizon)
     const corePulse = (Math.sin(time * 5) + 1) / 2;
-    const coreRadius = 25 + corePulse * 5 + energyRatio * 15;
+    const coreRadius = 75 + corePulse * 15 + energyRatio * 45; // Scaled 3x
     
     const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
     coreGrad.addColorStop(0, '#000'); // Pure darkness at center
@@ -271,12 +270,12 @@ function drawPortal() {
         ctx.globalCompositeOperation = 'lighter';
         for(let i = 0; i < 5; i++) {
             const ang = (time * 10 + i * Math.PI * 0.4) % (Math.PI * 2);
-            const dist = coreRadius + Math.random() * 20;
+            const dist = coreRadius + Math.random() * 60;
             const sx = cx + Math.cos(ang) * dist * 1.5;
             const sy = cy + Math.sin(ang) * dist * 0.6;
             
             ctx.fillStyle = '#ff00ff';
-            ctx.fillRect(sx, sy, 2, 2);
+            ctx.fillRect(sx, sy, 6, 6);
         }
     }
 
@@ -286,7 +285,8 @@ function drawPortal() {
 function drawSlots() {
     if (!window.logicalSlots) return;
     const pulse = (Math.sin(lavaPhase * 1.5) + 1) / 2; 
-    const sw = 34; const sh = 46;
+    const sw = 34 * 3; // 102
+    const sh = 46 * 3; // 138
 
     window.logicalSlots.forEach(slot => {
         const x = slot.lx - sw/2;
@@ -294,18 +294,23 @@ function drawSlots() {
         const w = sw; const h = sh;
 
         ctx.save();
-        ctx.shadowBlur = 15 + 8 * pulse; ctx.shadowColor = 'rgba(255, 215, 0, 0.3)';
+        ctx.shadowBlur = 45 + 24 * pulse; ctx.shadowColor = 'rgba(255, 215, 0, 0.3)';
         ctx.beginPath(); ctx.moveTo(x + w / 2, y); ctx.lineTo(x + w, y + h / 4); ctx.lineTo(x + w, y + 3 * h / 4);
         ctx.lineTo(x + w / 2, y + h); ctx.lineTo(x, y + 3 * h / 4); ctx.lineTo(x, y + h / 4); ctx.closePath();
         ctx.fillStyle = 'rgba(255, 215, 0, 0.05)'; ctx.fill();
-        ctx.strokeStyle = `rgba(255, 215, 0, ${0.4 + 0.3 * pulse})`; ctx.lineWidth = 1.0; ctx.stroke();
+        ctx.strokeStyle = `rgba(255, 215, 0, ${0.4 + 0.3 * pulse})`; ctx.lineWidth = 3.0; ctx.stroke();
         ctx.restore();
     });
 }
 
 function drawShadow(lx, ly, size = 10) {
     ctx.save(); ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'; ctx.beginPath();
-    ctx.ellipse(lx, ly + 12, size, size * 0.35, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    // Size is typically passed from unit size (already logical?), need to verify calls.
+    // If size is from unit data (unscaled), we scale it.
+    // If size is hardcoded in draw call, we scale it.
+    // Assuming size passed is relative to 360 logic for now? No, everything is 1080 logic now.
+    // So passed size should be 1080 logic. 
+    ctx.ellipse(lx, ly + 36, size, size * 0.35, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 }
 
 window.drawAtmosphericEffects = drawAtmosphericEffects;

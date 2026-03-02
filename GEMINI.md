@@ -8,17 +8,11 @@
 
 ### 🚀 Development & CLI Workflow
 - **Total Function Replacement:** When providing code updates, always provide the full function scope to ensure error-free pasting via CLI.
-- **Strict Logic Separation:** Keep core logic in `script.js` and modular systems in their respective `allies_*.js` or `enemies.js` files.
 - **UI Sync:** Any data change (HP, Cost, Damage) must be accompanied by its corresponding UI update call (e.g., `updateGauges()` or `updateSummonButtonState()`).
 - **Defensive Coding:** Always include null/undefined checks for game objects to prevent script crashes during high-density waves.
 
 
 ## 📏 Resolution & Coordinate Mandates
-
-- **Strict Logical Coordinates:**
-    - All game logic (collision, movement speed, projectile paths) MUST be calculated within the **360x640** logical coordinate system.
-    - Never use `window.innerWidth` or real-time `canvas.width` for internal logic calculations.
-
 - **Pixel-Perfect Integer Positioning:**
     - When rendering to the Canvas, use `Math.floor()` or `Math.round()` for all X and Y coordinates to prevent anti-aliasing blur.
     - Floating-point coordinates are strictly prohibited in `ctx.drawImage` or `ctx.fillText` calls.
@@ -28,13 +22,10 @@
     - CSS elements must include `image-rendering: pixelated;` and `image-rendering: crisp-edges;` to maintain the 1-bit/pixel-art aesthetic.
 
 - **UI & HUD Isolation:**
-    - In-game UI (HP bars, damage numbers) must follow the 360x640 grid.
     - External HUD elements (defined in `ui.css`) may use higher-fidelity layouts but must not interfere with the logical game area.
 
 - **Safe Zone Adherence:**
     - Keep all critical interactive elements within a **10px horizontal / 20px vertical** safe zone to ensure compatibility across various mobile aspect ratios.
-
-- Container 나 UI Box, 패널은 기본적으로 Padding 5px, Border 5px 넣어.
 
 - 너는 오랜 경험을 가진 시니어 개발자야. 그래서 미리 계획을 하고 굉장히 효율적으로 일할수 있지. 게임에 전체적인 흐름 과 개발 과정을 다 알고 있는 너는 경험과 지식을 토대로 2~3가지 추천 업그레이드 방향을 제시한다.
 
