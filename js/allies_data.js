@@ -127,61 +127,85 @@ function updateGauges() {
         }
     }
 
-    // Floating Tooltip Toggle Logic
-    const peContainer = document.getElementById('cursed-status-container');
+    // Floating Tooltip for Gauges
     const tooltip = document.getElementById('global-tooltip');
-    
-    if (peContainer && tooltip) {
-        peContainer.onclick = (e) => {
-            e.stopPropagation(); // Prevent closing immediately
-            
-            // If already visible, hide it
-            if (tooltip.style.display === 'block') {
-                tooltip.style.display = 'none';
-                return;
-            }
+    const gameContainer = document.getElementById('game-container');
 
-            const peRatio = portalEnergy / maxPortalEnergy;
-            
-            // Set Content
-            tooltip.innerHTML = `
-                <div class="tooltip-title">👿 심연의 저주</div>
-                <div class="tooltip-content">포탈 오염도가 상승할수록 퇴마사들의 결속이 약해집니다.</div>
-                <div class="tooltip-stat"><span>1단계 (30%↑)</span><span>공속 -5%</span></div>
-                <div class="tooltip-stat"><span>2단계 (50%↑)</span><span>공속 -10%</span></div>
-                <div class="tooltip-stat"><span>3단계 (75%↑)</span><span>공속 -20%</span></div>
-                <div class="tooltip-stat" style="border-top:1px solid #444; margin-top:5px; padding-top:2px;">
-                    <span style="color:#fff;">현재 단계</span>
-                    <span style="color:${peRatio >= 0.75 ? '#ff0000' : peRatio >= 0.5 ? '#ff4500' : peRatio >= 0.3 ? '#ffa500' : '#00ff00'}">
-                        ${peRatio >= 0.75 ? '3단계' : peRatio >= 0.5 ? '2단계' : peRatio >= 0.3 ? '1단계' : '없음'}
-                    </span>
-                </div>
-            `;
+    const showTooltip = (targetEl, title, text, stats = []) => {
+        if (!tooltip || !gameContainer) return;
+        
+        let statHtml = stats.map(s => `<div class="tooltip-stat"><span>${s.label}</span><span>${s.val}</span></div>`).join('');
+        
+        tooltip.innerHTML = `
+            <div class="tooltip-title">${title}</div>
+            <div class="tooltip-content">${text}</div>
+            ${statHtml}
+        `;
 
-            // Positioning
-            tooltip.style.display = 'block';
-            const rect = peContainer.getBoundingClientRect();
-            const gameRect = document.getElementById('game-container').getBoundingClientRect();
-            
-            // Position above the cursed-status bar
-            const x = (rect.left + rect.width / 2) - gameRect.left;
-            const y = rect.top - gameRect.top - 10; // 10px offset above
+        tooltip.style.display = 'block';
+        const rect = targetEl.getBoundingClientRect();
+        const gameRect = gameContainer.getBoundingClientRect();
+        
+        const x = (rect.left + rect.width / 2) - gameRect.left;
+        const y = rect.top - gameRect.top - 10;
 
-            tooltip.style.left = `${x}px`;
-            tooltip.style.top = `${y}px`;
-            tooltip.style.transform = `translate(-50%, -100%)`; // Center horizontally and move up
+        tooltip.style.left = `${x}px`;
+        tooltip.style.top = `${y}px`;
+        tooltip.style.transform = `translate(-50%, -100%)`;
+    };
+
+    // 1. Cursed Status Eye
+    const peStatusContainer = document.getElementById('cursed-status-container');
+    if (peStatusContainer) {
+        peStatusContainer.onclick = (e) => {
+            e.stopPropagation();
+            showTooltip(peStatusContainer, "👿 심연의 저주", "포탈 오염도에 따른 디버프 단계입니다.", [
+                { label: "1단계 (30%↑)", val: "공속 -5%" },
+                { label: "2단계 (50%↑)", val: "공속 -10%" },
+                { label: "3단계 (75%↑)", val: "공속 -20%" }
+            ]);
+        };
+    }
+
+    // 2. SE Gauge
+    const seLabel = document.getElementById('se-label');
+    if (seLabel) {
+        seLabel.onclick = (e) => {
+            e.stopPropagation();
+            showTooltip(seLabel, "✨ 소울 에너지 (SE)", "퇴마사를 소환하고 성소를 건립하는 데 필요한 영적인 에너지입니다.", [
+                { label: "획득 방법", val: "악령 처치" }
+            ]);
+        };
+    }
+
+    // 3. PE Gauge
+    const peLabel = document.getElementById('pe-label');
+    if (peLabel) {
+        peLabel.onclick = (e) => {
+            e.stopPropagation();
+            showTooltip(peLabel, "👿 포탈 오염도 (PE)", "악령들이 포탈을 통과할 때 쌓이는 오염 수치입니다. 100% 도달 시 게임 오버.", [
+                { label: "정화 방법", val: "정화(Purge) 기능 사용" }
+            ]);
+        };
+    }
+
+    // 4. RS Gauge
+    const rsLabel = document.getElementById('rs-label');
+    if (rsLabel) {
+        rsLabel.onclick = (e) => {
+            e.stopPropagation();
+            showTooltip(rsLabel, "💀 남은 악령 (RS)", "현재 스테이지를 클리어하기 위해 처치해야 할 악령의 총량입니다.", [
+                { label: "진행도", val: "처치 시 감소" }
+            ]);
         };
     }
 
     // Close tooltip when clicking anywhere else
     document.addEventListener('click', (e) => {
-        if (tooltip && !tooltip.contains(e.target) && e.target !== peContainer) {
+        if (tooltip && !tooltip.contains(e.target)) {
             tooltip.style.display = 'none';
         }
     });
-
-    // PE Label Hover: Show info in Sacred Tablet (Fallback/Legacy)
-    const peLabel = document.getElementById('pe-label');
     if (peLabel) {
         peLabel.onmouseenter = () => {
             const d = document.getElementById('unit-info');
