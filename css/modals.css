@@ -338,11 +338,44 @@
 #equip-header h2 { color: #00e5ff; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 15px rgba(0, 229, 255, 0.8); text-align: center; }
 #close-equip { background: none; border: none; color: #888; font-size: 24px; cursor: pointer; position: absolute; right: 15px; }
 
-.equip-icon { font-size: 36px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); }
-.equip-tier-label { position: absolute; bottom: 3px; font-size: 8px; font-weight: 900; padding: 1px 5px; background: rgba(0,0,0,0.6); }
+.equip-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    padding: 10px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 10px;
+}
 
-#equip-details { margin-top: 15px; min-height: 150px; display: flex; gap: 10px; }
-.equip-bonus-title { color: #00e5ff; font-size: 18px; font-weight: 900; text-align: center; margin-bottom: 10px; }
+.equip-slot {
+    aspect-ratio: 1/1;
+    background: #111;
+    border: 2px solid #333;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.equip-slot.empty { cursor: default; }
+.equip-slot.selected { border-color: #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); background: #1a1a1a; }
+
+.equip-icon { font-size: 32px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); }
+.equip-tier-label { position: absolute; bottom: 3px; font-size: 8px; font-weight: 900; padding: 1px 5px; background: rgba(0,0,0,0.6); border-radius: 2px; }
+
+#equip-details { margin-top: 15px; min-height: 120px; display: flex; gap: 10px; }
+.equip-bonus-title { color: #00e5ff; font-size: 16px; font-weight: 900; text-align: center; margin-bottom: 10px; }
+
+.total-bonus-item {
+    display: flex; justify-content: space-between;
+    padding: 4px 10px; border-left: 3px solid #444; background: rgba(255,255,255,0.02);
+    margin-bottom: 4px; font-family: monospace; font-size: 10px;
+}
 
 /* Pause Overlay */
 #pause-content { width: 90%; max-width: 350px; padding: 25px; text-align: center; background: linear-gradient(145deg, #051015, #000); border: 3px solid #00e5ff; border-radius: 20px 20px 10px 10px; }

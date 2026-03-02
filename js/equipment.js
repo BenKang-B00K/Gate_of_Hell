@@ -69,9 +69,9 @@ function renderEquipGrid() {
             slotDiv.classList.add(`tier-${owned.tier}`); // Apply tier class to slot
             slotDiv.innerHTML = `
                 <div class="equip-icon">${slotData.icon}</div>
-                <div style="font-size: 18px; color: #fff; margin-top: 5px; z-index:3;">${slotData.name}</div>
+                <div style="font-size: 10px; color: #fff; margin-top: 3px; z-index:3;">${slotData.name}</div>
                 <div class="equip-tier-label tier-${owned.tier}">${tierData.prefix}</div>
-                ${owned.count > 1 ? `<div style="position:absolute; top:8px; right:12px; font-size:20px; color:#ffd700; z-index:3; font-weight:bold;">x${owned.count}</div>` : ''}
+                ${owned.count > 1 ? `<div style="position:absolute; top:4px; right:6px; font-size:11px; color:#ffd700; z-index:3; font-weight:bold;">x${owned.count}</div>` : ''}
             `;
 
             // New Badge if unseen
@@ -118,12 +118,12 @@ function showEquipDetail(slotKey) {
         : `+${bonusVal}`;
 
     infoPane.innerHTML = `
-        <div class="relic-detail-title" style="color:#00e5ff; text-shadow: 0 0 15px rgba(0, 229, 255, 0.5); line-height:1.1;">
-            <span style="font-size:20px; opacity:0.8; display:block;">[${tierData.prefix}]</span>
-            <span style="font-size:32px;">${slotData.name}</span>
+        <div class="relic-detail-title" style="color:#00e5ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); line-height:1.1;">
+            <span style="font-size:11px; opacity:0.8; display:block;">[${tierData.prefix}]</span>
+            <span style="font-size:16px;">${slotData.name}</span>
         </div>
-        <div class="relic-detail-effect" style="color:#00ff00;">현재 효과: ${slotData.label} ${dispBonus}</div>
-        <div class="relic-detail-lore" style="border-color:#00e5ff;">"심연의 악령들조차 이 ${slotData.name}의 빛 앞에서는 눈을 멀게 될 것입니다. 현재 ${owned.count}개 보유 중 (3개 수집 시 다음 등급으로 강화)"</div>
+        <div class="relic-detail-effect" style="color:#00ff00; font-size:11px;">현재 효과: ${slotData.label} ${dispBonus}</div>
+        <div class="relic-detail-lore" style="border-color:#00e5ff; font-size:10px; padding:8px;">"심연의 악령들조차 이 ${slotData.name}의 빛 앞에서는 눈을 멀게 될 것입니다. 현재 ${owned.count}개 보유 중 (3개 수집 시 강화)"</div>
     `;
 }
 
@@ -131,7 +131,7 @@ function renderEquipBonuses() {
     const bonusPane = document.getElementById('equip-bonus-pane');
     if (!bonusPane) return;
 
-    let html = '<div class="equip-bonus-title">총 장비 효과</div>';
+    let html = '<div class="equip-bonus-title" style="font-size:16px;">총 장비 효과</div>';
     let hasAny = false;
 
     Object.keys(equipmentSlots).forEach(slotKey => {
@@ -145,16 +145,16 @@ function renderEquipBonuses() {
                 : `+${bonusVal}`;
 
             html += `
-                <div class="total-bonus-item" style="color:#00e5ff; text-shadow: 0 0 8px rgba(0, 229, 255, 0.3); border-left-color: #00e5ff;">
+                <div class="total-bonus-item" style="color:#00e5ff; font-size:10px; padding:3px 8px; border-left-width:3px;">
                     <span>${slotData.label}</span>
-                    <span class="val" style="text-shadow: 0 0 10px #00e5ff, 0 0 20px #00acc1;">${dispBonus}</span>
+                    <span class="val" style="font-weight:bold;">${dispBonus}</span>
                 </div>
             `;
         }
     });
 
     if (!hasAny) {
-        html += '<div style="color:#444; font-style:italic; text-align:center; margin-top:30px; font-size:24px;">장착된 장비가 없습니다.</div>';
+        html += '<div style="color:#444; font-style:italic; text-align:center; margin-top:15px; font-size:12px;">장착된 장비가 없습니다.</div>';
     }
     bonusPane.innerHTML = html;
 }
@@ -246,11 +246,11 @@ function showEquipInfoInPanel(slot, tier, isUpgrade = false) {
     window.infoPanelLockedUntil = Date.now() + 4000;
 
     d.innerHTML = `
-        <div style="color:#00e5ff; font-weight:bold; font-size:39px; margin-bottom:6px;">⚔️ 장비 ${isUpgrade ? '강화!' : '획득!'}</div>
-        <div style="color:#fff; font-size:33px; font-weight:bold; margin-bottom:12px;">${slotData.icon} ${slotData.name}</div>
-        <div style="display:inline-block; background:#00e5ff; color:#000; padding:3px 12px; border-radius:9px; font-size:24px; font-weight:bold; margin-bottom:12px;">[${tierData.prefix}] 등급</div>
-        <div style="font-size:27px; color:#00ff00; line-height:1.2;">현재 효과: ${slotData.label} ${dispBonus}</div>
-        <div style="color:#555; font-size:25px; margin-top:18px; font-style:italic; line-height:1.2;">"심연의 악령들조차 이 ${slotData.name}의 빛 앞에서는 눈을 멀게 될 것입니다."</div>
+        <div class="unit-info-title" style="color:#00e5ff;">⚔️ 장비 ${isUpgrade ? '강화!' : '획득!'}</div>
+        <div style="color:#fff; font-size:12px; font-weight:bold; margin:4px 0;">${slotData.icon} ${slotData.name}</div>
+        <div style="display:inline-block; background:#00e5ff; color:#000; padding:1px 6px; border-radius:3px; font-size:9px; font-weight:bold; margin-bottom:4px;">[${tierData.prefix}] 등급</div>
+        <div style="font-size:10px; color:#00ff00; line-height:1.2;">효과: ${slotData.label} ${dispBonus}</div>
+        <div class="unit-info-desc">"심연의 악령들조차 이 무구의 빛 앞에서는 눈을 멀게 될 것입니다."</div>
     `;
 
     // Auto reset after lock expires
