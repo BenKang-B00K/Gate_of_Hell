@@ -26,15 +26,12 @@ function drawUnitAuras(cx, cy, tower) {
 
 function drawUnits() {
     if (typeof towers === 'undefined') return;
-    const container = document.getElementById('game-container');
-    if(!container) return;
-    const containerRect = container.getBoundingClientRect();
-    const scaleX = 360 / containerRect.width; const scaleY = 640 / containerRect.height;
 
     towers.forEach(tower => {
-        const rect = tower.element.getBoundingClientRect();
-        let cx = Math.floor(((rect.left + rect.width / 2) - containerRect.left) * scaleX);
-        let cy = Math.floor(((rect.top + rect.height / 2) - containerRect.top) * scaleY);
+        // [User Request] Use logical coordinates (360x640)
+        let cx = tower.lx;
+        let cy = tower.ly;
+        
         if(typeof drawShadow === 'function') drawShadow(cx, cy, 14);
         drawUnitAuras(cx, cy, tower);
         const bob = Math.sin(globalAnimTimer + (cx * 0.05)) * 2; cy += Math.floor(bob);

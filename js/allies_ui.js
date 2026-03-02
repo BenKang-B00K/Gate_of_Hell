@@ -1,93 +1,13 @@
-/* allies_ui.js - Unified UI System (Slots, Info, and Corruption) */
+/* allies_ui.js - Unified UI System (Info Panel & HUD) */
 
 let infoResetTimer = null;
 let infoPanelLockedUntil = 0;
-let selectedSlotData = null;
-let currentFusionType = null;
-let corruptBtnElement = null;
 
 /**
- * Creates unit slots in the UI (3x7 Grid on each side = 42 total slots)
+ * Initializes UI listeners. Logical slots are handled by graphics_env.js and input_handler.js
  */
 function initAllies() {
-    const leftSlots = document.getElementById('left-slots');
-    const rightSlots = document.getElementById('right-slots');
-    if (!leftSlots || !rightSlots) return;
-
-    leftSlots.innerHTML = '';
-    rightSlots.innerHTML = '';
-
-    for (let i = 0; i < 21; i++) {
-        const slot = createSlotElement(i, 'left-slots');
-        leftSlots.appendChild(slot);
-    }
-    for (let i = 0; i < 21; i++) {
-        const slot = createSlotElement(i, 'right-slots');
-        rightSlots.appendChild(slot);
-    }
-
     attachGlobalListeners();
-}
-
-function createSlotElement(index, area) {
-    const slot = document.createElement('div');
-    slot.className = 'card-slot';
-    slot.dataset.index = index;
-    slot.dataset.area = area;
-    
-    // [User Request] Placement Restriction Logic
-    const isLeft = area === 'left-slots';
-    const col = index % 3; // 0, 1, 2
-    if ((isLeft && col === 0) || (!isLeft && col === 2)) {
-        slot.classList.add('shrine-only');
-        slot.dataset.slotType = 'shrine';
-    } else {
-        slot.classList.add('unit-only');
-        slot.dataset.slotType = 'unit';
-    }
-
-    slot.onclick = () => {
-        // Selection is handled via unit click mostly, 
-        // but could add slot selection here if needed.
-    };
-
-    // Drag and Drop Listeners
-    slot.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if (window.draggedUnit) {
-            const isShrine = window.draggedUnit.classList.contains('shrine');
-            const slotType = slot.dataset.slotType;
-            if ((isShrine && slotType === 'shrine') || (!isShrine && slotType === 'unit')) {
-                slot.classList.add('drag-valid');
-            } else {
-                slot.classList.add('drag-invalid');
-            }
-        } else {
-            slot.classList.add('drag-over');
-        }
-    });
-
-    slot.addEventListener('dragleave', () => {
-        slot.classList.remove('drag-over', 'drag-valid', 'drag-invalid');
-    });
-
-    slot.addEventListener('drop', (e) => {
-        e.preventDefault();
-        slot.classList.remove('drag-over', 'drag-valid', 'drag-invalid');
-        const unit = window.draggedUnit;
-        if (!unit) return;
-
-        const isShrine = unit.classList.contains('shrine');
-        const slotType = slot.dataset.slotType;
-
-        if ((isShrine && slotType === 'shrine') || (!isShrine && slotType === 'unit')) {
-            if (typeof executeMove === 'function') executeMove(unit, slot);
-        } else {
-            if (typeof GameLogger !== 'undefined') GameLogger.warn(`🚫 This slot only accepts ${slotType === 'shrine' ? 'Shrines' : 'Exorcists'}!`);
-        }
-    });
-
-    return slot;
 }
 
 let listenersAttached = false;
@@ -353,15 +273,15 @@ function showUnitInfo(tower) {
             <div style="color:#888; font-size:14px; margin-bottom:2px; text-transform:uppercase; letter-spacing:2px; font-weight:bold;">전직 경로 선택</div>
             <div class="master-btn-container" style="margin-top:0; gap:12px;">
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(window.lastInspectedTower.element, 'Attack', true)">⚔️</button>
+                    <button class="info-promo-btn" onclick="performJobChange('knight', true)">⚔️</button>
                     <span style="color:#ff4500; font-size:12px; font-weight:bold;">ATTACK</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(window.lastInspectedTower.element, 'Support', true)">🪄</button>
+                    <button class="info-promo-btn" onclick="performJobChange('chainer', true)">🪄</button>
                     <span style="color:#00e5ff; font-size:12px; font-weight:bold;">SUPPORT</span>
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center;">
-                    <button class="info-promo-btn" onclick="performJobChange(window.lastInspectedTower.element, 'Special', true)">💠</button>
+                    <button class="info-promo-btn" onclick="performJobChange('alchemist', true)">💠</button>
                     <span style="color:#ffd700; font-size:12px; font-weight:bold;">SPECIAL</span>
                 </div>
             </div>
@@ -402,7 +322,7 @@ function showUnitInfo(tower) {
     }
 
     d.innerHTML = `${th}${ih}${divider}${ch}${desc}`;
-    startColInfoResetTimer();
+    startInfoResetTimer();
 }
 
 function triggerSacrificeFromInfo() {

@@ -20,7 +20,7 @@ function initStage() {
     if (typeof GameLogger !== 'undefined') GameLogger.info(`🚀 Starting DEPTH ${stage}`);
     isBossStage = (stage % 10 === 0); bossSpawned = false; bossInstance = null;
     if (typeof spawnStageFlash === 'function') spawnStageFlash(`DEPTH ${stage}`);
-    sealedGhostCount = 0; 
+    
     if (isBossStage) {
         totalStageEnemies = 15; 
         const bossName = bossData[stage] ? bossData[stage].name : "알 수 없는 존재";
@@ -78,42 +78,35 @@ function spawnWave() {
 }
 
 function spawnBoss() {
-    const road = document.getElementById('road');
-    const data = bossData[stage] || { name: "Boss", type: "cerberus", hp: 3000, speed: 0.1, size: 60 };
+    const data = bossData[stage] || { name: "Boss", type: "cerberus", hp: 3000, speed: 0.1, size: 60, icon: '👺' };
     if (typeof recordUnlock === 'function') recordUnlock(data.type, true);
-    const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy',  'abyssal_boss', 'spawning', data.type);
-    enemyDiv.innerText = '';
-    setTimeout(() => { enemyDiv.classList.remove('spawning'); }, 500);
-    const hpBg = document.createElement('div'); hpBg.className = 'hp-bar-bg'; hpBg.style.display = 'none';
-    const hpFill = document.createElement('div'); hpFill.className = 'hp-bar-fill';
-    hpBg.appendChild(hpFill); enemyDiv.appendChild(hpBg);
+    
     const { hpStageMult, speedStageMult } = getStageMultipliers(true);
-    const boss = { element: enemyDiv, hpFill: hpFill, initialX: 50, x: 50, targetX: 50, y: -20, baseSpeed: data.speed * speedStageMult, speed: data.speed * speedStageMult, maxHp: data.hp * hpStageMult, hp: data.hp * hpStageMult, reward: 500, isBoss: true, data: data, lastAbilityTime: Date.now() };
+    const boss = { 
+        initialX: 50, x: 50, targetX: 50, y: -20, 
+        baseSpeed: data.speed * speedStageMult, speed: data.speed * speedStageMult, 
+        maxHp: data.hp * hpStageMult, hp: data.hp * hpStageMult, 
+        reward: 500, isBoss: true, type: data.type, icon: data.icon, data: data, 
+        lastAbilityTime: Date.now() 
+    };
     
-    // Improved Event Listener for AA-tier Interactivity
-    enemyDiv.addEventListener('mousedown', (e) => { 
-        e.preventDefault();
-        e.stopPropagation(); 
-        if (typeof window.showEnemyInfo === 'function') {
-            window.showEnemyInfo(boss); 
-        }
-    });
-    
-    road.appendChild(enemyDiv);
     enemies.push(boss); bossInstance = boss;
     if (data.type === 'charon') { for(let i=0; i<5; i++) spawnPassenger(boss); }
     if (data.type === 'lucifer') { 
         const fo = document.getElementById('frozen-overlay'); if(fo) fo.style.opacity = 1;
-        setTimeout(() => { if (boss.hp > 0 && typeof towers !== 'undefined') {
-            const active = towers.filter(t => !t.isFrozenTomb);
-            if (active.length > 0) { active[0].isFrozenTomb = true; active[0].element.classList.add('frozen-tomb'); }
-        }}, 3000);
+        setTimeout(() => { 
+            if (boss.hp > 0 && typeof towers !== 'undefined') {
+                const active = towers.filter(t => !t.isFrozenTomb);
+                if (active.length > 0) { 
+                    const target = active[Math.floor(Math.random()*active.length)];
+                    target.isFrozenTomb = true; 
+                }
+            }
+        }, 3000);
     }
 }
 
 function spawnEnemy() {
-    const road = document.getElementById('road');
     currentStageSpawned++; updateStageInfo();
     const relicTreasure = (typeof getRelicBonus === 'function') ? getRelicBonus('treasure_chance') : 0;
     const finalTC = treasureChance + relicTreasure;
@@ -125,19 +118,13 @@ function spawnEnemy() {
     const totalSetProb = types.reduce((sum, e) => sum + e.probability, 0);
     let currentRand = Math.random() * totalSetProb; let selected = types[0];
     for (const et of types) { currentRand -= et.probability; if (currentRand <= 0) { selected = et; break; } }
+    
     if (typeof recordUnlock === 'function') recordUnlock(selected.type, true);
     if (typeof GameLogger !== 'undefined') GameLogger.debug(`👾 Spawned: ${selected.name || selected.type}`);
-    const enemyDiv = document.createElement('div');
-    enemyDiv.classList.add('enemy', 'spawning', selected.type); enemyDiv.innerText = '';
-    setTimeout(() => { enemyDiv.classList.remove('spawning'); }, 500);
-    const hpBg = document.createElement('div'); hpBg.className = 'hp-bar-bg'; hpBg.style.display = 'none';
-    const hpFill = document.createElement('div'); hpFill.className = 'hp-bar-fill';
-    hpBg.appendChild(hpFill); enemyDiv.appendChild(hpBg);
+    
     const { hpStageMult, speedStageMult } = getStageMultipliers();
     const randomX = Math.random() * 20 + 40; 
     const enemy = { 
-        element: enemyDiv, 
-        hpFill: hpFill, 
         initialX: randomX, 
         x: randomX, 
         targetX: Math.random() * 20 + 40, 
@@ -158,31 +145,27 @@ function spawnEnemy() {
             lore: selected.lore || "이 영혼에 대한 기록이 없습니다."
         }
     };
-    enemyDiv.addEventListener('mousedown', (e) => { 
-        e.stopPropagation(); 
-        if (typeof window.showEnemyInfo === 'function') {
-            window.showEnemyInfo(enemy);
-        }
-    });
-    road.appendChild(enemyDiv);
     if (selected.type === 'boar') enemy.vxSign = Math.random() < 0.5 ? -1 : 1; 
     enemies.push(enemy);
 }
 
 function spawnPassenger(boss) {
-    const road = document.getElementById('road');
-    const div = document.createElement('div'); div.classList.add('enemy', 'normal', 'boarded', 'spawning');
-    road.appendChild(div); setTimeout(() => { div.classList.remove('spawning'); }, 500);
     const { hpStageMult, speedStageMult } = getStageMultipliers();
-    const enemy = { element: div, initialX: boss.x, x: boss.x, targetX: 50, y: boss.y, baseSpeed: 0.5 * speedStageMult, speed: 0.5 * speedStageMult, maxHp: 100 * hpStageMult, hp: 100 * hpStageMult, type: 'normal', isBoarded: true, parentBoss: boss, offsetX: (Math.random() - 0.5) * 30, offsetY: (Math.random() - 0.5) * 40, reward: 5, invincible: true };
+    const enemy = { 
+        initialX: boss.x, x: boss.x, targetX: 50, y: boss.y, 
+        baseSpeed: 0.5 * speedStageMult, speed: 0.5 * speedStageMult, 
+        maxHp: 100 * hpStageMult, hp: 100 * hpStageMult, 
+        type: 'normal', icon: '👻', isBoarded: true, parentBoss: boss, 
+        offsetX: (Math.random() - 0.5) * 30, offsetY: (Math.random() - 0.5) * 40, 
+        reward: 5, invincible: true 
+    };
     enemies.push(enemy);
 }
 
 function spawnFriendlyGhost() {
-    const road = document.getElementById('road'); const div = document.createElement('div'); div.classList.add('friendly-ghost'); road.appendChild(div);
-    const randomX = Math.random() * 20 + 40; div.style.left = `${randomX}%`;
-    const startY = 416 - 20; div.style.top = `${startY * 3}px`;
-    friendlyGhosts.push({ element: div, x: randomX, y: startY, speed: 0.5, maxHp: 500 });
+    const randomX = Math.random() * 20 + 40;
+    const startY = 416 - 20;
+    friendlyGhosts.push({ x: randomX, y: startY, speed: 0.5, maxHp: 500, icon: '👻' });
 }
 
 function handleEnemyDeath(target, killer = null) {
@@ -193,9 +176,10 @@ function handleEnemyDeath(target, killer = null) {
         if (!window.killCounts) window.killCounts = {};
         window.killCounts[target.type] = (window.killCounts[target.type] || 0) + 1;
 
-        if (target.isCursedMark) spawnDeathExplosion(target, '#2e003e', 100, 0.5);
-        if (target.isHellfireBurn) spawnDeathExplosion(target, '#ff4500', 80, 30, true);
-        if (target.type === 'ember_hatred') spawnDeathExplosion(target, 'rgba(255, 69, 0, 0.6)', 100, 0, false, (e) => { e.speed *= 1.5; setTimeout(() => { e.speed = e.baseSpeed; }, 3000); });
+        if (target.isCursedMark) spawnDeathExplosion(target, '#2e003e', 30, 0.5); // Logical radius
+        if (target.isHellfireBurn) spawnDeathExplosion(target, '#ff4500', 25, 30, true);
+        if (target.type === 'ember_hatred') spawnDeathExplosion(target, 'rgba(255, 69, 0, 0.6)', 35, 0, false, (e) => { e.speed *= 1.5; setTimeout(() => { e.speed = e.baseSpeed; }, 3000); });
+        
         if (killer && killer.data.type === 'wraithlord') spawnFriendlySkeleton(target);
 
         // [User Request] Soul Essence Sparkle Effect
@@ -205,7 +189,7 @@ function handleEnemyDeath(target, killer = null) {
             spawnSoulEssence(lx, ly);
         }
 
-        target.element.remove(); enemies.splice(idx, 1);
+        enemies.splice(idx, 1);
         if (typeof checkRelicDrop === 'function') checkRelicDrop(target);
         if (typeof checkEquipmentDrop === 'function') checkEquipmentDrop(target);
         updateStageInfo(); 
@@ -216,7 +200,7 @@ function handleEnemyDeath(target, killer = null) {
             if (target.data.type === 'cerberus') { rid = 'cerberus_fang'; rm = `Obtained [${target.data.rewardName}]`; bd = "Global ATK +10%"; }
             else if (target.data.type === 'charon') { rid = 'stygian_oar'; rm = `Obtained [${target.data.rewardName}]`; bd = "Enemy Speed -15%"; }
             else if (target.data.type === 'beelzebub') { rid = 'gluttony_crown'; rm = `Obtained [${target.data.rewardName}]`; bd = "Treasure Spawn Rate Up"; }
-            else if (target.data.type === 'lucifer') { rid = 'fallen_wings'; rm = `Obtained [${target.data.rewardName}]`; bd = "Crit Chance +10%"; const fo = document.getElementById('frozen-overlay'); if(fo) fo.style.opacity = 0; if(typeof towers !== 'undefined') towers.forEach(t => { if (t.isFrozenTomb) { t.isFrozenTomb = false; t.element.classList.remove('frozen-tomb'); } }); }
+            else if (target.data.type === 'lucifer') { rid = 'fallen_wings'; rm = `Obtained [${target.data.rewardName}]`; bd = "Crit Chance +10%"; const fo = document.getElementById('frozen-overlay'); if(fo) fo.style.opacity = 0; if(typeof towers !== 'undefined') towers.forEach(t => { if (t.isFrozenTomb) { t.isFrozenTomb = false; } }); }
             if (rid && typeof collectRelic === 'function') collectRelic(rid);
             showBossVictory(target.data.name, rm, bd); bossInstance = null;
         }
@@ -224,54 +208,45 @@ function handleEnemyDeath(target, killer = null) {
         let reward = target.reward;
         if (killer && killer.data && killer.data.type === 'abyssal') reward = Math.floor(reward * 1.5);
         
-        // 1. Apply Equipment Multiplier (%)
         const equipMult = (typeof getEquipBonus === 'function') ? getEquipBonus('se_gain') : 0;
         reward = Math.floor(reward * (1.0 + equipMult));
 
-        // 2. Apply Relic Flat Bonus (e.g., soul_urn gives +1 per stack)
         const relicFlatBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('se_gain') : 0;
         reward += relicFlatBonus;
 
-        // 3. Update money using maxMoney constant
         const limit = (typeof maxMoney !== 'undefined') ? maxMoney : 1000;
         money = Math.min(limit, money + reward); 
         
         updateGauges();
         if (typeof saveGameData === 'function') saveGameData();
 
-        if (typeof createSEGainEffect === 'function' && target.element) {
-            const r = target.element.getBoundingClientRect(); 
-            const gr = gameContainer.getBoundingClientRect();
-            // Centering the effect on the target element
-            const centerX = (r.left + r.width / 2) - gr.left;
-            const centerY = (r.top + r.height / 2) - gr.top;
-            createSEGainEffect(centerX, centerY, reward, gameContainer);
+        if (typeof createSEGainEffect === 'function') {
+            const lx = (target.x / 100) * 360;
+            createSEGainEffect(lx, target.y, reward);
         }
         if (typeof window.updateSummonButtonState === 'function') window.updateSummonButtonState();
     }
 }
 
-function spawnDeathExplosion(target, color, radius, dmgVal, isBurn = false, extraEff = null) {
-    const exp = document.createElement('div'); exp.style.position = 'absolute'; exp.style.left = target.element.style.left; exp.style.top = target.element.style.top;
-    exp.style.width = `${radius*2}px`; exp.style.height = `${radius*2}px`; exp.style.background = `radial-gradient(circle, ${color}, transparent)`;
-    exp.style.transform = 'translate(-50%, -50%)'; exp.style.zIndex = '19'; exp.style.borderRadius = '50%'; exp.style.opacity = '0.8';
-    gameContainer.appendChild(exp); setTimeout(() => exp.remove(), 400);
-    const tX = target.x;
+function spawnDeathExplosion(target, color, lRadius, dmgVal, isBurn = false, extraEff = null) {
+    // Add to groundEffects for Canvas rendering or just spawn particles
+    if (typeof spawnParticles === 'function') spawnParticles((target.x/100)*360, target.y, color, 20);
+    
     enemies.forEach(e => {
         if (e === target || e.hp <= 0) return;
-        const eX = e.x; const dist = Math.sqrt(Math.pow(eX - tX, 2) + Math.pow(e.y - target.y, 2));
-        if (dist < radius / 3) { // scaled logical radius
+        const eX = (e.x / 100) * 360;
+        const tX = (target.x / 100) * 360;
+        const dist = Math.sqrt(Math.pow(eX - tX, 2) + Math.pow(e.y - target.y, 2));
+        if (dist < lRadius) { 
             if (dmgVal > 0 && typeof window.applyDamage === 'function') window.applyDamage(e, dmgVal, null);
-            if (isBurn) { e.isBurning = true; e.burnEndTime = Date.now() + 3000; e.isHellfireBurn = true; if(e.element) e.element.classList.add('burning'); }
+            if (isBurn) { e.isBurning = true; e.burnEndTime = Date.now() + 3000; e.isHellfireBurn = true; }
             if (extraEff) extraEff(e);
         }
     });
 }
 
 function spawnFriendlySkeleton(target) {
-    const road = document.getElementById('road'); const div = document.createElement('div'); div.classList.add('friendly-skeleton'); road.appendChild(div);
-    div.style.left = target.element.style.left; div.style.top = target.element.style.top;
-    friendlySkeletons.push({ element: div, x: target.x, y: target.y, speed: 0.7 });
+    friendlySkeletons.push({ x: (target.x / 100) * 360, y: target.y, speed: 0.7, icon: '💀' });
 }
 
 function showBossWarning(bossName) {
@@ -293,7 +268,8 @@ function showBossWarning(bossName) {
 }
 
 function showBossVictory(bossName, rewardMsg, bonusDetail) {
-    const container = document.getElementById('game-container'); const overlay = document.createElement('div'); overlay.className = 'boss-victory-overlay';
+    const container = document.getElementById('game-container'); 
+    const overlay = document.createElement('div'); overlay.className = 'boss-victory-overlay';
     overlay.innerHTML = `<div class="boss-victory-content"><div class="boss-victory-header">심연의 존재가 추방되었습니다</div><div class="boss-victory-name">마왕 [${bossName}]<br>소멸</div><div class="boss-victory-reward">${rewardMsg}</div><div class="boss-victory-bonus">${bonusDetail}</div><div class="boss-victory-hint">(클릭하여 계속)</div></div>`;
     container.appendChild(overlay); isPaused = true;
     overlay.addEventListener('click', () => { overlay.classList.add('fade-out'); setTimeout(() => { overlay.remove(); isPaused = false; }, 500); });
@@ -320,22 +296,21 @@ function drawEnemies() {
     });
 }
 
-function createSEGainEffect(x, y, amount, container) {
-    if (!container) return; const div = document.createElement('div'); div.className = 'se-gain-effect'; div.innerText = `+${amount}`;
-    div.style.left = `${x}px`; div.style.top = `${y}px`; container.appendChild(div); setTimeout(() => div.remove(), 600);
+function createSEGainEffect(lx, ly, amount) {
+    // Add to a new array in graphics_vfx to draw floating SE gain text on Canvas
+    if (typeof spawnFloatingText === 'function') spawnFloatingText(`+${amount}`, lx, ly, '#ffd700');
 }
 
 function triggerStageTransition() {
     if (typeof spawnLightPillar !== 'function') return;
-    const slots = document.querySelectorAll('.card-slot'); const container = document.getElementById('game-container'); if (!container) return;
-    const cr = container.getBoundingClientRect(); const count = 4 + Math.floor(Math.random() * 3);
-    const shuffled = Array.from(slots).sort(() => 0.5 - Math.random());
-    shuffled.slice(0, count).forEach((s, i) => {
+    const count = 4 + Math.floor(Math.random() * 3);
+    for(let i=0; i<count; i++) {
         setTimeout(() => {
-            const r = s.getBoundingClientRect();
-            spawnLightPillar(((r.left + r.width / 2) - cr.left) * (360 / cr.width), ((r.top + r.height / 2) - cr.top) * (640 / cr.height));
+            const rx = Math.random() * 300 + 30;
+            const ry = Math.random() * 300 + 100;
+            spawnLightPillar(rx, ry);
         }, i * 300);
-    });
+    }
 }
 
 // Window Exports

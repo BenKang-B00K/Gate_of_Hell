@@ -181,24 +181,11 @@ function applyShrineBuffs() {
     const shrines = towers.filter(t => t.isShrine);
 
     shrines.forEach(shrine => {
-        const area = shrine.slotElement.dataset.area;
-        const idx = parseInt(shrine.slotElement.dataset.index);
-        const isLeft = area === 'left-slots';
-        const col = idx % 3;
-        const row = Math.floor(idx / 3);
-
         const data = shrine.data;
-        // Default range if not specified
-        const baseRange = data.range || 1; 
         const isGlobal = data.rangeType === 'all';
-
-        // [User Request] Power amplification (+50%) ONLY for global shrines
         const effectMult = isGlobal ? (1.0 + mastery) : 1.0;
 
-        let targetIndices = [];
-
         if (isGlobal) {
-            // Affects all non-shrine units in the game
             towers.forEach(t => {
                 if (!t.isShrine) {
                     const multiplier = shrine.isDemolishing ? -1 : 1;
@@ -210,39 +197,16 @@ function applyShrineBuffs() {
             return;
         }
 
-        // Directional targeting
-        if (baseRange === 1) {
-            // Target: Side (Col 1)
-            const targetCol = 1;
-            targetIndices.push(row * 3 + targetCol);
-            
-            // [User Request] Mastery Expansion: Diagonals (Side-Up, Side-Down)
-            if (mastery > 0) {
-                if (row > 0) targetIndices.push((row - 1) * 3 + targetCol);
-                if (row < 6) targetIndices.push((row + 1) * 3 + targetCol);
-            }
-        } else if (baseRange === 2) {
-            // Target: Col 1 and Col 2 (or Col 0 for right side)
-            const cols = isLeft ? [1, 2] : [1, 0];
-            cols.forEach(c => {
-                targetIndices.push(row * 3 + c);
-                // [User Request] Mastery Expansion: Diagonals for 2-tile
-                if (mastery > 0) {
-                    if (row > 0) targetIndices.push((row - 1) * 3 + c);
-                    if (row < 6) targetIndices.push((row + 1) * 3 + c);
-                }
-            });
-        }
+        // Logical distance based buffering (cardinal tiles)
+        const rangeThreshold = (mastery > 0) ? 80 : 55; // Expand range if mastery exists
 
-        targetIndices.forEach(ti => {
-            const targetSlot = document.querySelector(`.card-slot[data-area="${area}"][data-index="${ti}"]`);
-            if (targetSlot && targetSlot.classList.contains('occupied')) {
-                const targetUnit = towers.find(t => t.slotElement === targetSlot);
-                if (targetUnit && !targetUnit.isShrine) {
-                    const multiplier = shrine.isDemolishing ? -1 : 1;
-                    if (data.bonus.type === 'damage') {
-                        targetUnit.shrineDmgBonus = (targetUnit.shrineDmgBonus || 0) + (data.bonus.value * effectMult * multiplier);
-                    }
+        towers.forEach(t => {
+            if (t === shrine || t.isShrine) return;
+            const dist = Math.sqrt(Math.pow(t.lx - shrine.lx, 2) + Math.pow(t.ly - shrine.ly, 2));
+            if (dist < rangeThreshold) {
+                const multiplier = shrine.isDemolishing ? -1 : 1;
+                if (data.bonus.type === 'damage') {
+                    t.shrineDmgBonus = (t.shrineDmgBonus || 0) + (data.bonus.value * effectMult * multiplier);
                 }
             }
         });
@@ -302,38 +266,34 @@ function gameLoop() {
         else if (peRatio >= 0.5) t.speedBonus -= 0.1; // -10% speed
         else if (peRatio >= 0.3) t.speedBonus -= 0.05; // -5% speed
 
-        if (!t.slotElement) return;
-        const gameW = gameContainer.offsetWidth;
-        const tRect = t.slotElement.getBoundingClientRect();
-        const tX = tRect.left + tRect.width / 2;
-        const tY = tRect.top + tRect.height / 2;
+        const tx = t.lx;
+        const ty = t.ly;
 
         // Debuffs from enemies
         enemies.forEach(e => {
             if (e.type === 'frost_outcast' && e.hp > 0) {
-                const exPx = (e.x / 100) * gameW;
-                const dist = Math.sqrt(Math.pow(exPx - tX, 2) + Math.pow(e.y - tY, 2));
-                if (dist < 360) t.speedBonus -= 0.2;
+                const ex = (e.x / 100) * 360;
+                const dist = Math.sqrt(Math.pow(ex - tx, 2) + Math.pow(e.y - ty, 2));
+                if (dist < 120) t.speedBonus -= 0.2; // 120 logical pixels ~ 360px in 1080p
             }
         });
 
         // Buffs from nearby allies (Tracker, Seer, Commander)
         towers.forEach(other => {
-            if (other === t || !other.slotElement) return;
-            const oRect = other.slotElement.getBoundingClientRect();
-            const oX = oRect.left + oRect.width / 2;
-            const oY = oRect.top + oRect.height / 2;
-            const dist = Math.sqrt(Math.pow(oX - tX, 2) + Math.pow(oY - tY, 2));
+            if (other === t) return;
+            const ox = other.lx;
+            const oy = other.ly;
+            const dist = Math.sqrt(Math.pow(ox - tx, 2) + Math.pow(oy - ty, 2));
 
             const relicAuraBonus = (typeof getRelicBonus === 'function' ? getRelicBonus('aura_range') : 0) + (typeof getEquipBonus === 'function' ? getEquipBonus('aura_range') : 0);
-            if (dist < (195 + relicAuraBonus)) { // Base range 195px covers ~1 tile cardinal in 1080p
+            if (dist < (65 + relicAuraBonus)) { // 65 logical px
                 if (other.data.type === 'tracker') {
-                    t.rangeBonus += 90; // +90 range (scaled from 30)
+                    t.rangeBonus += 30; 
                 } else if (other.data.type === 'seer') {
-                    t.rangeBonus += 150; // +150 range (scaled from 50)
+                    t.rangeBonus += 50; 
                 } else if (other.data.type === 'commander') {
-                    t.speedBonus += 0.2; // +20% attack speed
-                    t.damageBonus += 0.2; // +20% damage
+                    t.speedBonus += 0.2; 
+                    t.damageBonus += 0.2; 
                 }
             }
         });
@@ -344,21 +304,21 @@ function gameLoop() {
         if (nowTime > effect.endTime) { effect.element.remove(); groundEffects.splice(i, 1); continue; }
         if (effect.type === 'seal') {
             enemies.forEach(e => {
-                const exPx = (e.x / 100) * gameWidth;
-                const dist = Math.sqrt(Math.pow(exPx - effect.x, 2) + Math.pow(e.y - effect.y, 2));
-                if (dist <= effect.radius) { e.isSilenced = true; if (e.element) e.element.classList.add('silenced'); }
+                const ex = (e.x / 100) * 360;
+                const dist = Math.sqrt(Math.pow(ex - effect.lx, 2) + Math.pow(e.y - effect.ly, 2));
+                if (dist <= effect.lRadius) { e.isSilenced = true; }
             });
         } else if (effect.type === 'fire') {
             enemies.forEach(e => {
-                const exPx = (e.x / 100) * gameWidth;
-                const dist = Math.sqrt(Math.pow(exPx - effect.x, 2) + Math.pow(e.y - effect.y, 2));
-                if (dist <= effect.radius) applyDamage(e, 20 / 60, null);
+                const ex = (e.x / 100) * 360;
+                const dist = Math.sqrt(Math.pow(ex - effect.lx, 2) + Math.pow(e.y - effect.ly, 2));
+                if (dist <= effect.lRadius) applyDamage(e, 20 / 60, null);
             });
         } else if (effect.type === 'blizzard') {
             enemies.forEach(e => {
-                const exPx = (e.x / 100) * gameWidth;
-                const dist = Math.sqrt(Math.pow(exPx - effect.x, 2) + Math.pow(e.y - effect.y, 2));
-                if (dist <= effect.radius) e.inBlizzard = true;
+                const ex = (e.x / 100) * 360;
+                const dist = Math.sqrt(Math.pow(ex - effect.lx, 2) + Math.pow(e.y - effect.ly, 2));
+                if (dist <= effect.lRadius) e.inBlizzard = true;
             });
         }
     }
@@ -524,102 +484,69 @@ function gameLoop() {
 
 function shoot(tower, target) {
     tower.lastShot = Date.now();
-    const proj = document.createElement('div');
-    proj.className = `projectile ${tower.data.type}`;
-    const tr = tower.element.getBoundingClientRect();
-    const gr = gameContainer.getBoundingClientRect();
     
-    let sx = (tr.left + tr.width / 2) - gr.left;
-    let sy = (tr.top + tr.height / 2) - gr.top;
-
-    if (tower.data.type === 'apprentice') {
-        const LOGICAL_WIDTH = 1080;
-        const scaleX = gr.width / LOGICAL_WIDTH;
-        const scaleY = gr.height / 1920;
-        const cx = ((tr.left + tr.width / 2) - gr.left) / scaleX;
-        const cy = ((tr.top + tr.height / 2) - gr.top) / scaleY;
-        const area = tower.slotElement.dataset.area;
-        const isLeft = area === 'left-slots';
-        const lx = isLeft ? 10.5 : -10.5; 
-        sx = (cx + (lx * 3.0)) * scaleX;
-        sy = (cy + (-13.0 * 3.0)) * scaleY;
+    // Spawn logical projectile (we'll need to draw these in graphics.js)
+    if (typeof spawnProjectile === 'function') {
+        spawnProjectile(tower, target);
+    } else {
+        // Fallback for damage if projectile system isn't fully ready
+        setTimeout(() => {
+            if (target && target.hp > 0) {
+                handleHit(tower, target);
+            }
+        }, 200);
     }
+}
 
-    proj.style.left = `${sx}px`; proj.style.top = `${sy}px`;
-    gameContainer.appendChild(proj);
-    setTimeout(() => {
-        if (target && target.element && target.element.isConnected) {
-            const ter = target.element.getBoundingClientRect();
-            proj.style.left = `${(ter.left + ter.width / 2) - gr.left}px`;
-            proj.style.top = `${(ter.top + ter.height / 2) - gr.top}px`;
-        } else if (target) {
-            proj.style.left = `${(target.x / 100) * gameWidth}px`;
-            proj.style.top = `${target.y}px`;
-        } else proj.remove();
-    }, 10);
-    setTimeout(() => {
-        proj.remove();
-        if (typeof createAttackEffect === 'function') createAttackEffect(tower.data.type, target, gameContainer);
-        
-        if (target.type === 'cursed_vajra' && Math.random() < 0.15) {
-            tower.isStunned = true; tower.stunEndTime = Date.now() + 1000;
-            if (tower.element) tower.element.classList.add('feared');
-            setTimeout(() => { tower.isStunned = false; if (tower.element) tower.element.classList.remove('feared'); }, 1000);
+function handleHit(tower, target) {
+    if (typeof createAttackEffect === 'function') createAttackEffect(tower.data.type, target);
+    
+    if (target.type === 'cursed_vajra' && Math.random() < 0.15) {
+        tower.isStunned = true; tower.stunEndTime = Date.now() + 1000;
+        setTimeout(() => { tower.isStunned = false; }, 1000);
+    }
+    if (target.type === 'void_piercer' && tower.range > 150 && Math.random() < 0.5) return;
+    if (target.type === 'mimic' && Math.random() < 0.2) { target.y += 40; }
+    if (target.type === 'soul_eater') target.lastHitTime = Date.now();
+    
+    handleSpecialAblities(tower, target);
+    const relicDmgBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('damage') : 0;
+    const shrineDmg = tower.shrineDmgBonus || 0;
+    let finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus + shrineDmg);
+    
+    const relicCritChance = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_chance') : 0;
+    const totalCritChance = critChance + relicCritChance + (tower.data.type === 'vajra' ? 0.2 : 0);
+    let isCritShot = false;
+    if (Math.random() < totalCritChance) {
+        isCritShot = true;
+        const relicCritBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_damage') : 0;
+        const totalCritMultiplier = critMultiplier + relicCritBonus;
+        finalDamageMultiplier *= totalCritMultiplier;
+        if (tower.data.type === 'vajra') {
+            const nearby = enemies.filter(e => {
+                const ex = (e.x / 100) * 360;
+                const tx = (target.x / 100) * 360;
+                const dist = Math.sqrt(Math.pow(ex - tx, 2) + Math.pow(e.y - target.y, 2));
+                return dist < 80;
+            });
+            nearby.forEach(e => {
+                e.y = Math.max(0, e.y - 40);
+            });
         }
-        if (target.type === 'void_piercer' && tower.range > 150 && Math.random() < 0.5) return;
-        if (target.type === 'mimic' && Math.random() < 0.2) { target.y += 40; if (target.element) target.element.style.top = `${target.y}px`; }
-        if (target.type === 'soul_eater') target.lastHitTime = Date.now();
-        
-        handleSpecialAblities(tower, target);
-        const relicDmgBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('damage') : 0;
-        const shrineDmg = tower.shrineDmgBonus || 0;
-        let finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus + shrineDmg);
-        
-        const relicCritChance = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_chance') : 0;
-        const totalCritChance = critChance + relicCritChance + (tower.data.type === 'vajra' ? 0.2 : 0);
-        let isCritShot = false;
-        if (Math.random() < totalCritChance) {
-            isCritShot = true;
-            const relicCritBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_damage') : 0;
-            const totalCritMultiplier = critMultiplier + relicCritBonus;
-            finalDamageMultiplier *= totalCritMultiplier;
-            if (target.element) {
-                target.element.classList.add('crit-hit');
-                setTimeout(() => target.element && target.element.classList.remove('crit-hit'), 300);
-            }
-            if (tower.data.type === 'vajra') {
-                const nearby = enemies.filter(e => {
-                    const exPx = (e.x / 100) * gameWidth;
-                    const ter = target.element.getBoundingClientRect();
-                    const tx = (ter.left + ter.width / 2);
-                    const ty = (ter.top + ter.height / 2);
-                    const dist = Math.sqrt(Math.pow(exPx - tx, 2) + Math.pow(e.y - ty, 2));
-                    return dist < 80;
-                });
-                nearby.forEach(e => {
-                    e.y = Math.max(0, e.y - 40);
-                    if (e.element) e.element.style.top = `${e.y}px`;
-                });
-            }
-        }
-        applyDamage(target, tower.data.damage * finalDamageMultiplier, tower, false, false, isCritShot);
-    }, 200);
+    }
+    applyDamage(target, tower.data.damage * finalDamageMultiplier, tower, false, false, isCritShot);
 }
 
 function createDamageText(target, amount, isCrit) {
-    if (!target || !target.element) return;
-    const rect = target.element.getBoundingClientRect();
-    const gameRect = gameContainer.getBoundingClientRect();
-    const x = (rect.left + rect.width / 2) - gameRect.left;
-    const y = (rect.top + rect.height / 2) - gameRect.top;
-    const div = document.createElement('div');
-    div.className = `damage-text${isCrit ? ' crit' : ''}`;
-    div.style.left = `${x + (Math.random() * 20 - 10)}px`;
-    div.style.top = `${y}px`;
-    div.innerText = Math.round(amount);
-    gameContainer.appendChild(div);
-    setTimeout(() => div.remove(), 800);
-    if (isCrit) createStatusEffectText(x, y, "CRITICAL");
+    if (!target) return;
+    const lx = (target.x / 100) * 360;
+    const ly = target.y;
+    const color = isCrit ? '#ff4500' : '#fff';
+    const size = isCrit ? 24 : 18;
+    if (typeof spawnFloatingText === 'function') {
+        spawnFloatingText(Math.round(amount), lx, ly, color, size);
+        if (isCrit) spawnFloatingText("CRITICAL", lx, ly - 25, "#ff0000", 14);
+    }
 }
 
 function createStatusEffectText(x, y, text, type = '') {
@@ -690,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 startScreen.style.display = 'none';
                 gameStarted = true;
+                if (typeof initLogicalSlots === 'function') initLogicalSlots();
                 initStage(); 
                 initAllies();
                 updateSummonButtonState();

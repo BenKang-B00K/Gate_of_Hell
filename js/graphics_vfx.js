@@ -7,6 +7,38 @@ const stageFlashes = [];
 const banishEffects = []; 
 const purgeEffects = []; 
 const soulEssences = [];
+const floatingTexts = [];
+
+function spawnFloatingText(text, lx, ly, color = '#fff', size = 18) {
+    floatingTexts.push({
+        text, lx, ly, color, size,
+        life: 1.0,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: -1.0 - Math.random() * 1.0
+    });
+}
+
+function updateFloatingTexts() {
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        const ft = floatingTexts[i];
+        ft.lx += ft.vx;
+        ft.ly += ft.vy;
+        ft.life -= 0.02;
+        if (ft.life <= 0) floatingTexts.splice(i, 1);
+    }
+}
+
+function drawFloatingTexts() {
+    ctx.save();
+    floatingTexts.forEach(ft => {
+        ctx.globalAlpha = ft.life;
+        ctx.fillStyle = ft.color;
+        ctx.font = `bold ${ft.size}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.fillText(ft.text, ft.lx, ft.ly);
+    });
+    ctx.restore();
+}
 
 function spawnSoulEssence(lx, ly) {
     const side = Math.random() < 0.5 ? -1 : 1;
@@ -228,6 +260,9 @@ function drawParticles() {
 }
 
 // Exports
+window.spawnFloatingText = spawnFloatingText;
+window.updateFloatingTexts = updateFloatingTexts;
+window.drawFloatingTexts = drawFloatingTexts;
 window.spawnPurgeEffect = spawnPurgeEffect;
 window.spawnSoulEssence = spawnSoulEssence;
 window.updateSoulEssences = updateSoulEssences;

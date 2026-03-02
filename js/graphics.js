@@ -51,6 +51,7 @@ function renderGraphics() {
     if(typeof updateStageFlashes === 'function') updateStageFlashes();
     if(typeof window.updateBanishEffects === 'function') window.updateBanishEffects();
     if(typeof updatePurgeEffects === 'function') updatePurgeEffects();
+    if(typeof updateFloatingTexts === 'function') updateFloatingTexts();
     
     // 1. Level 1: Road (Lava & Lightning)
     if(typeof drawLRoad === 'function') drawLRoad();
@@ -61,8 +62,6 @@ function renderGraphics() {
     if(typeof drawEnemies === 'function') drawEnemies(); 
     
     // 3. Level 3: Portal, Spawning Gate, and Clouds
-    // Note: Clouds/Mist are handled inside drawAtmosphericEffects. 
-    // We separate them by calling specific environmental renders in order.
     if(typeof drawPortal === 'function') drawPortal(); 
     if(typeof drawSpawningGate === 'function') drawSpawningGate(); 
     if(typeof drawAtmosphericEffects === 'function') drawAtmosphericEffects(); 
@@ -70,6 +69,7 @@ function renderGraphics() {
     // 4. VFX and Selection (Top Layers)
     if(typeof drawParticles === 'function') drawParticles(); 
     if(typeof drawSoulEssences === 'function') drawSoulEssences();
+    if(typeof drawFloatingTexts === 'function') drawFloatingTexts();
     if(typeof drawLightPillars === 'function') drawLightPillars();
     if(typeof drawPromotionBursts === 'function') drawPromotionBursts();
     if(typeof window.drawBanishEffects === 'function') window.drawBanishEffects();
@@ -77,6 +77,23 @@ function renderGraphics() {
     if(typeof drawStageFlashes === 'function') drawStageFlashes();
     
     drawSelectionHalo();
+}
+
+function drawSelectionHalo() {
+    const selected = (typeof getSelectedTower === 'function') ? getSelectedTower() : null;
+    if (!selected) return;
+
+    const cx = selected.lx;
+    const cy = selected.ly;
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255, 215, 0, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
 }
 
 if (document.readyState === 'loading') {

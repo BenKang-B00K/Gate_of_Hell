@@ -282,27 +282,21 @@ function drawPortal() {
 }
 
 function drawSlots() {
-    const cardSlots = document.querySelectorAll('.card-slot');
-    const container = document.getElementById('game-container');
-    if(!container) return;
-    const containerRect = container.getBoundingClientRect();
-    const scaleX = 360 / containerRect.width; const scaleY = 640 / containerRect.height;
+    if (!window.logicalSlots) return;
     const pulse = (Math.sin(lavaPhase * 1.5) + 1) / 2; 
+    const sw = 34; const sh = 46;
 
-    cardSlots.forEach(slot => {
-        const rect = slot.getBoundingClientRect();
-        const sx = (rect.left - containerRect.left) * scaleX;
-        const sy = (rect.top - containerRect.top) * scaleY;
-        const sw = rect.width * scaleX; const sh = rect.height * scaleY;
-        const padding = 1.0; const x = sx + padding; const y = sy + padding;
-        const w = sw - padding * 2; const h = sh - padding * 2;
+    window.logicalSlots.forEach(slot => {
+        const x = slot.lx - sw/2;
+        const y = slot.ly - sh/2;
+        const w = sw; const h = sh;
 
         ctx.save();
-        ctx.shadowBlur = 15 + 8 * pulse; ctx.shadowColor = 'rgba(255, 255, 255, 0.55)';
+        ctx.shadowBlur = 15 + 8 * pulse; ctx.shadowColor = 'rgba(255, 215, 0, 0.3)';
         ctx.beginPath(); ctx.moveTo(x + w / 2, y); ctx.lineTo(x + w, y + h / 4); ctx.lineTo(x + w, y + 3 * h / 4);
         ctx.lineTo(x + w / 2, y + h); ctx.lineTo(x, y + 3 * h / 4); ctx.lineTo(x, y + h / 4); ctx.closePath();
         ctx.fillStyle = 'rgba(255, 215, 0, 0.05)'; ctx.fill();
-        ctx.strokeStyle = `rgba(255, 215, 0, ${0.7 + 0.3 * pulse})`; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.strokeStyle = `rgba(255, 215, 0, ${0.4 + 0.3 * pulse})`; ctx.lineWidth = 1.0; ctx.stroke();
         ctx.restore();
     });
 }

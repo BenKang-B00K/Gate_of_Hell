@@ -49,24 +49,22 @@ function showRangeIndicator(tower) {
 
     const indicator = document.createElement('div');
     indicator.id = 'range-indicator';
-    const s = tower.slotElement;
-    if (!s) return;
-    const rect = s.getBoundingClientRect();
     const container = document.getElementById('game-container');
     if (!container) return;
     const containerRect = container.getBoundingClientRect();
+    const currentScale = containerRect.width / 360;
 
     const finalRange = tower.range + (tower.rangeBonus || 0);
-    indicator.style.width = `${finalRange * 2 * (containerRect.width / 360)}px`;
-    indicator.style.height = `${finalRange * 2 * (containerRect.height / 640)}px`;
-    indicator.style.left = `${(rect.left + rect.width / 2) - containerRect.left}px`;
-    indicator.style.top = `${(rect.top + rect.height / 2) - containerRect.top}px`;
+    indicator.style.width = `${finalRange * 2 * currentScale}px`;
+    indicator.style.height = `${finalRange * 2 * currentScale}px`;
+    indicator.style.left = `${tower.lx * currentScale}px`;
+    indicator.style.top = `${tower.ly * currentScale}px`;
     
     container.appendChild(indicator);
 }
 
 function summonTower(targetSlot) {
-    if (!targetSlot || targetSlot.classList.contains('occupied')) return;
+    if (!targetSlot || targetSlot.isOccupied) return;
 
     const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
     const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
@@ -88,26 +86,21 @@ function summonTower(targetSlot) {
 
     if (typeof GameLogger !== 'undefined') GameLogger.success(`✨ Summoned: ${apprenticeData.name}`);
 
-    const unit = document.createElement('div');
-    unit.classList.add('unit', 'apprentice', 'summoning');
-    unit.title = apprenticeData.name;
-    unit.innerText = ''; 
-    unit.draggable = true;
-    targetSlot.appendChild(unit);
-    targetSlot.classList.add('occupied');
+    targetSlot.isOccupied = true;
 
     const tower = {
-        element: unit,
         data: apprenticeData,
-        slotElement: targetSlot,
+        currentSlot: targetSlot,
+        lx: targetSlot.lx,
+        ly: targetSlot.ly,
         level: 1,
-        lastAttackTime: 0,
+        lastShot: 0,
         range: apprenticeData.range,
         cooldown: apprenticeData.cooldown,
-        spentSE: finalTowerCost
+        spentSE: finalTowerCost,
+        isShrine: false
     };
 
-    attachUnitListeners(unit);
     towers.push(tower);
     if (typeof recordUnlock === 'function') recordUnlock('apprentice');
     window.towerCost += 5;
@@ -115,8 +108,8 @@ function summonTower(targetSlot) {
 }
 
 function summonShrine() {
-    const allSlots = document.querySelectorAll('.card-slot.shrine-only');
-    const emptySlots = Array.from(allSlots).filter(s => !s.classList.contains('occupied'));
+    if (!window.logicalSlots) return;
+    const emptySlots = window.logicalSlots.filter(s => s.type === 'shrine' && !s.isOccupied);
 
     if (money < window.shrineCost) {
         if (typeof GameLogger !== 'undefined') GameLogger.warn("❌ Shrine failed: Insufficient SE");
@@ -135,27 +128,21 @@ function summonShrine() {
 
     if (typeof GameLogger !== 'undefined') GameLogger.success(`🕍 Shrine Created: ${data.name}`);
 
-    const unit = document.createElement('div');
-    unit.classList.add('unit', 'shrine', data.type, 'summoning');
-    unit.title = data.name;
-    unit.innerText = ''; 
-    unit.draggable = true;
-    randomSlot.appendChild(unit);
-    randomSlot.classList.add('occupied');
+    randomSlot.isOccupied = true;
 
     const tower = {
-        element: unit,
         data: data,
-        slotElement: randomSlot,
+        currentSlot: randomSlot,
+        lx: randomSlot.lx,
+        ly: randomSlot.ly,
         level: 1,
-        lastAttackTime: 0,
+        lastShot: 0,
         range: 0,
         cooldown: 0,
         isShrine: true,
         isDemolishing: false
     };
 
-    attachUnitListeners(unit);
     towers.push(tower);
     updateSummonButtonState();
 }
@@ -233,71 +220,49 @@ function attachUnitListeners(unit) {
     });
 }
 
-function performJobChange(unitEl, ntStr, fromInfo = false) {
-    const t = towers.find(x => x.element === unitEl);
-    if (!t || t.isShrine) return;
+function performJobChange(ntStr, fromInfo = false) {
+    const tower = window.lastInspectedTower;
+    if (!tower || tower.isShrine) return;
 
     const nt = unitTypes.find(u => u.type === ntStr);
     if (!nt) return;
 
-    if (t.data.tier === 1) {
+    if (tower.data.tier === 1) {
         if (money < jobChangeCost) { if (typeof flashResourceError === 'function') flashResourceError('se'); return; }
         money -= jobChangeCost;
         if (typeof updateGauges === 'function') updateGauges();
     }
 
-    const el = t.element;
-    const container = document.getElementById('game-container');
-    if (container) {
-        const rect = el.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const lx = ((rect.left + rect.width / 2) - containerRect.left) * (360 / containerRect.width);
-        const ly = ((rect.top + rect.height / 2) - containerRect.top) * (640 / containerRect.height);
-        if (typeof spawnPromotionBurst === 'function') spawnPromotionBurst(lx, ly, nt.tier);
+    if (typeof spawnPromotionBurst === 'function') {
+        spawnPromotionBurst(tower.lx, tower.ly, nt.tier);
     }
 
-    el.className=`unit ${nt.type} selected`; el.title=nt.name;
-    el.querySelectorAll('.cooldown-overlay').forEach(o => o.remove());
-    const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
-    
-    if (typeof GameLogger !== 'undefined') GameLogger.info(`🔝 Job Change: ${t.data.name} -> ${nt.name}`);
-    t.data=nt; t.range=nt.range; t.cooldown=nt.cooldown; t.spentSE+=jobChangeCost;
+    if (typeof GameLogger !== 'undefined') GameLogger.info(`🔝 Job Change: ${tower.data.name} -> ${nt.name}`);
+    tower.data = nt; tower.range = nt.range; tower.cooldown = nt.cooldown; tower.spentSE += jobChangeCost;
     
     if (typeof recordUnlock === 'function') recordUnlock(nt.type);
-    if (el.parentElement) el.parentElement.classList.add('selected-slot');
     updateSummonButtonState();
-    if (fromInfo) showUnitInfo(t);
-    startInfoResetTimer();
-    showRangeIndicator(t);
+    if (fromInfo) showUnitInfo(tower);
+    if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
+    showRangeIndicator(tower);
 }
 
 function performMasterJobChange(tower, ntStr, fromInfo = false) {
     const nt = unitTypes.find(u => u.type === ntStr);
     if (!nt) return;
 
-    const el = tower.element;
-    const container = document.getElementById('game-container');
-    if (container) {
-        const rect = el.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const lx = ((rect.left + rect.width / 2) - containerRect.left) * (360 / containerRect.width);
-        const ly = ((rect.top + rect.height / 2) - containerRect.top) * (640 / containerRect.height);
-        if (typeof spawnPromotionBurst === 'function') spawnPromotionBurst(lx, ly, nt.tier);
+    if (typeof spawnPromotionBurst === 'function') {
+        spawnPromotionBurst(tower.lx, tower.ly, nt.tier);
     }
 
-    el.className=`unit ${nt.type} selected`; el.title=nt.name;
-    el.querySelectorAll('.cooldown-overlay').forEach(o => o.remove());
-    const cdo = document.createElement('div'); cdo.className='cooldown-overlay'; cdo.style.pointerEvents='none'; el.appendChild(cdo);
-
     if (typeof GameLogger !== 'undefined') GameLogger.info(`👑 Master Promotion: ${tower.data.name} -> ${nt.name}`);
-    tower.data=nt; tower.range=nt.range; tower.cooldown=nt.cooldown;
+    tower.data = nt; tower.range = nt.range; tower.cooldown = nt.cooldown;
 
     if (typeof recordUnlock === 'function') recordUnlock(nt.type);
-    if (el.parentElement) el.parentElement.classList.add('selected-slot');
-    if(nt.type==='rampart') tower.charges=5;
+    if (nt.type === 'rampart') tower.charges = 5;
     updateSummonButtonState();
     if (fromInfo) showUnitInfo(tower);
-    startInfoResetTimer();
+    if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
     showRangeIndicator(tower);
 }
 
@@ -339,21 +304,15 @@ function confirmSacrifice(t) {
 
 function executeSacrifice(t) {
     if (typeof GameLogger !== 'undefined') GameLogger.warn(`💀 Sacrificed: ${t.data.name}`);
-    const s = t.slotElement;
-    s.classList.remove('occupied');
+    const s = t.currentSlot;
+    if (s) s.isOccupied = false;
 
     if (typeof spawnBanishEffect === 'function') {
-        const rect = s.getBoundingClientRect();
-        const container = document.getElementById('game-container');
-        if (container) {
-            const containerRect = container.getBoundingClientRect();
-            spawnBanishEffect(((rect.left + rect.width / 2) - containerRect.left) * (360 / containerRect.width), ((rect.top + rect.height / 2) - containerRect.top) * (640 / containerRect.height));
-        }
+        spawnBanishEffect(t.lx, t.ly);
     }
 
     const idx = towers.indexOf(t);
     if (idx > -1) {
-        if (t.element) t.element.remove();
         const refundBase = (t.data.tier === 1) ? 15 : (t.data.tier === 2) ? 100 : 300;
         const refundRelicBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('sell_refund') : 0;
         money = Math.min(1000, money + Math.floor(refundBase * (1.0 + refundRelicBonus)));
@@ -362,7 +321,6 @@ function executeSacrifice(t) {
     }
     
     const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
-    const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
     updateSummonButtonState();
 }
 
@@ -371,9 +329,8 @@ function checkDemolitionCleanup() {
         const t = towers[i];
         if (t.isShrine && t.isDemolishing) {
             if (typeof GameLogger !== 'undefined') GameLogger.success(`🧹 Demolition Complete: ${t.data.name}`);
-            const s = t.slotElement;
-            if (s) s.classList.remove('occupied');
-            if (t.element) t.element.remove();
+            const s = t.currentSlot;
+            if (s) s.isOccupied = false;
             towers.splice(i, 1);
         }
     }
@@ -381,9 +338,11 @@ function checkDemolitionCleanup() {
 }
 
 function summonUnitAuto() {
-    const allSlots = document.querySelectorAll('.card-slot.unit-only');
-    const emptySlots = Array.from(allSlots).filter(s => !s.classList.contains('occupied'));
-    if (emptySlots.length > 0) summonTower(emptySlots[Math.floor(Math.random() * emptySlots.length)]);
+    if (!window.logicalSlots) return;
+    const emptySlots = window.logicalSlots.filter(s => s.type === 'unit' && !s.isOccupied);
+    if (emptySlots.length > 0) {
+        summonTower(emptySlots[Math.floor(Math.random() * emptySlots.length)]);
+    }
 }
 
 window.performJobChange = performJobChange;

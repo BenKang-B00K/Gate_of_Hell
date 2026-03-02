@@ -34,6 +34,45 @@ let slots = [];
 let globalAnimTimer = 0;
 let lavaPhase = 0;
 
+// [User Request] Logical Slots for Canvas (3x7 grid each side)
+const logicalSlots = [];
+function initLogicalSlots() {
+    logicalSlots.length = 0;
+    const roadX = 123;
+    const roadWidth = 114;
+    const slotW = 38;
+    const slotH = 50;
+    const startY = 40;
+    const spacingY = 55;
+
+    // Left Side (3 columns)
+    for(let r=0; r<7; r++) {
+        for(let c=0; c<3; c++) {
+            logicalSlots.push({
+                area: 'left-slots',
+                index: r * 3 + c,
+                lx: 10 + c * slotW + (slotW/2),
+                ly: startY + r * spacingY + (slotH/2),
+                type: (c === 0) ? 'shrine' : 'unit'
+            });
+        }
+    }
+    // Right Side (3 columns)
+    for(let r=0; r<7; r++) {
+        for(let c=0; c<3; c++) {
+            logicalSlots.push({
+                area: 'right-slots',
+                index: r * 3 + c,
+                lx: roadX + roadWidth + 5 + c * slotW + (slotW/2),
+                ly: startY + r * spacingY + (slotH/2),
+                type: (c === 2) ? 'shrine' : 'unit'
+            });
+        }
+    }
+}
+window.logicalSlots = logicalSlots;
+window.initLogicalSlots = initLogicalSlots;
+
 let lastMoney = 150;
 let lastPortalEnergy = 0;
 
