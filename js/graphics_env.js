@@ -16,7 +16,7 @@ function drawLavaRoad() {
     const time = globalAnimTimer;
     const roadWidth = 114; 
     const roadX = 123;
-    const gameScreenHeight = 416; // [User Request] Stop drawing at the UI boundary (Portal Y)
+    const gameScreenHeight = (typeof LOGICAL_HEIGHT !== 'undefined') ? LOGICAL_HEIGHT : 480; 
     
     ctx.save();
 
@@ -196,7 +196,9 @@ function drawSpawningGate() {
  * AA-Grade Void Portal: Dynamic vortex with PE-based corruption evolution
  */
 function drawPortal() {
-    const cx = 180; const cy = 416; const time = globalAnimTimer;
+    const cx = 180; 
+    const cy = (typeof LOGICAL_HEIGHT !== 'undefined') ? LOGICAL_HEIGHT : 480; 
+    const time = globalAnimTimer;
     const pe = (typeof portalEnergy !== 'undefined') ? portalEnergy : 0;
     const energyRatio = pe / maxPortalEnergy;
     
