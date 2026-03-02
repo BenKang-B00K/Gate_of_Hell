@@ -76,6 +76,9 @@ function renderGraphics() {
     if(typeof drawPurgeEffects === 'function') drawPurgeEffects();
     if(typeof drawStageFlashes === 'function') drawStageFlashes();
     
+    // [User Request] Canvas-based Frozen Overlay (Highest Layer)
+    if(typeof drawFrozenOverlay === 'function') drawFrozenOverlay();
+    
     drawSelectionHalo();
 }
 

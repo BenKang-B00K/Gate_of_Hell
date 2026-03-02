@@ -156,7 +156,7 @@ function resetGameState() {
     // UI Reset
     updateGauges();
     updateStageInfo();
-    const fo = document.getElementById('frozen-overlay'); if (fo) fo.style.opacity = 0;
+    // [DISABLED] const fo = document.getElementById('frozen-overlay'); if (fo) fo.style.opacity = 0;
     
     // Reset Sacred Tablet (Unit Info)
     const d = document.getElementById('unit-info');

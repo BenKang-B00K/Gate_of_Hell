@@ -143,7 +143,7 @@ function spawnBoss() {
     enemies.push(boss); bossInstance = boss;
     if (data.type === 'charon') { for(let i=0; i<5; i++) spawnPassenger(boss); }
     if (data.type === 'lucifer') { 
-        const fo = document.getElementById('frozen-overlay'); if(fo) fo.style.opacity = 1;
+        // [DISABLED] const fo = document.getElementById('frozen-overlay'); if(fo) fo.style.opacity = 1;
         setTimeout(() => { if (boss.hp > 0 && typeof towers !== 'undefined') {
             const active = towers.filter(t => !t.isFrozenTomb);
             if (active.length > 0) { active[0].isFrozenTomb = true; active[0].element.classList.add('frozen-tomb'); }
@@ -255,7 +255,9 @@ function handleEnemyDeath(target, killer = null) {
             if (target.data.type === 'cerberus') { rid = 'cerberus_fang'; rm = `Obtained [${target.data.rewardName}]`; bd = "Global ATK +10%"; }
             else if (target.data.type === 'charon') { rid = 'stygian_oar'; rm = `Obtained [${target.data.rewardName}]`; bd = "Enemy Speed -15%"; }
             else if (target.data.type === 'beelzebub') { rid = 'gluttony_crown'; rm = `Obtained [${target.data.rewardName}]`; bd = "Treasure Spawn Rate Up"; }
-            else if (target.data.type === 'lucifer') { rid = 'fallen_wings'; rm = `Obtained [${target.data.rewardName}]`; bd = "Crit Chance +10%"; const fo = document.getElementById('frozen-overlay'); if(fo) fo.style.opacity = 0; if(typeof towers !== 'undefined') towers.forEach(t => { if (t.isFrozenTomb) { t.isFrozenTomb = false; t.element.classList.remove('frozen-tomb'); } }); }
+            else if (target.data.type === 'lucifer') { rid = 'fallen_wings'; rm = `Obtained [${target.data.rewardName}]`; bd = "Crit Chance +10%";
+            // [DISABLED] const fo = document.getElementById('frozen-overlay'); if(fo) fo.style.opacity = 0;
+            if(typeof towers !== 'undefined') towers.forEach(t => { if (t.isFrozenTomb) { t.isFrozenTomb = false; t.element.classList.remove('frozen-tomb'); } }); }
             if (rid && typeof collectRelic === 'function') collectRelic(rid);
             showBossVictory(target.data.name, rm, bd); bossInstance = null;
         }
