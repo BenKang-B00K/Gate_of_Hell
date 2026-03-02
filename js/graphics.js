@@ -18,15 +18,15 @@ function initGraphics() {
 }
 
 function resizeCanvas() {
-    const layer = document.getElementById('game-layer');
-    if (!layer) return;
+    const container = document.getElementById('game-container');
+    if (!container) return;
     canvas.width = LOGICAL_WIDTH;
     canvas.height = LOGICAL_HEIGHT;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     
-    const rect = layer.getBoundingClientRect();
-    scaleFactor = rect.width / LOGICAL_WIDTH;
+    const cr = container.getBoundingClientRect();
+    scaleFactor = cr.width / LOGICAL_WIDTH;
     
     disableSmoothing();
 }
@@ -75,9 +75,6 @@ function renderGraphics() {
     if(typeof window.drawBanishEffects === 'function') window.drawBanishEffects();
     if(typeof drawPurgeEffects === 'function') drawPurgeEffects();
     if(typeof drawStageFlashes === 'function') drawStageFlashes();
-    
-    // [User Request] Canvas-based Frozen Overlay (Highest Layer)
-    if(typeof drawFrozenOverlay === 'function') drawFrozenOverlay();
     
     drawSelectionHalo();
 }

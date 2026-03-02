@@ -1,22 +1,6 @@
 /* js/equipment.js - Equipment (장비) System */
 
-const equipmentTiers = [
-    { id: 1, prefix: "일반", dropRate: 0.015 },
-    { id: 2, prefix: "성스러운", dropRate: 0.005 },
-    { id: 3, prefix: "전설의", dropRate: 0.001 },
-    { id: 4, prefix: "숨겨진 고대", dropRate: 0.0002 }
-];
-
-const equipmentSlots = {
-    helmet: { name: "성스러운 투구", icon: "🪖", stat: "damage", label: "공격력 증가" },
-    armor: { name: "판금 갑옷", icon: "🧥", stat: "portal_dmg_reduction", label: "포탈 데미지 감소" },
-    necklace: { name: "영혼의 목걸이", icon: "📿", stat: "se_gain", label: "SE 획득 보너스" },
-    mainhand: { name: "진실의 보옥", icon: "🔮", stat: "cooldown", label: "공격 속도 증가" },
-    offhand: { name: "마법서", icon: "📙", stat: "crit_damage", label: "치명타 피해량" },
-    belt: { name: "퇴마 허리띠", icon: "🎗️", stat: "summon_cost_reduction", label: "소환 비용 절감" },
-    gloves: { name: "응징의 장갑", icon: "🧤", stat: "crit_chance", label: "치명타 확률" },
-    boots: { name: "차원 장화", icon: "👢", stat: "aura_range", label: "범위 확장" }
-};
+// equipmentTiers and equipmentSlots are now populated by data_loader.js from data/equipment.json
 
 // State: Highest tier and count for each slot
 // ownedEquipment[slot] = { tier: N, count: X }

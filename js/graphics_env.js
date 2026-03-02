@@ -3,7 +3,6 @@
 const sideMist = [];   
 let lightningTimer = 0;
 let lightningIntensity = 0;
-let frozenVisualAlpha = 0; // [User Request] Real-time alpha for canvas-based freeze
 
 function initAtmosphere() {
     // Cloud generation logic removed
@@ -313,59 +312,9 @@ function drawShadow(lx, ly, size = 10) {
     ctx.ellipse(lx, ly + 12, size, size * 0.35, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
 }
 
-/**
- * Canvas-based Frozen Overlay using globalCompositeOperation 'screen'
- */
-function drawFrozenOverlay() {
-    const targetAlpha = isTimeFrozen ? 1 : 0;
-    // Smooth interpolation (approx 1s fade)
-    frozenVisualAlpha += (targetAlpha - frozenVisualAlpha) * 0.05;
-
-    if (frozenVisualAlpha < 0.01) return;
-
-    const time = globalAnimTimer;
-    ctx.save();
-    
-    // 1. Set composite mode to 'screen' for vibrant ice look
-    ctx.globalCompositeOperation = 'screen';
-    ctx.globalAlpha = frozenVisualAlpha;
-
-    // 2. Abyssal Frost Gradient
-    const grad = ctx.createRadialGradient(180, 208, 0, 180, 208, 300);
-    grad.addColorStop(0, 'rgba(0, 229, 255, 0.1)');
-    grad.addColorStop(1, 'rgba(0, 150, 255, 0.4)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 360, 416); 
-
-    // 3. Animated Frost Patterns (Replaces CSS snowFall)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-    ctx.lineWidth = 1;
-    const spacing = 100;
-    const offsetX = (time * 15) % spacing;
-    const offsetY = (time * 30) % spacing;
-
-    for (let x = -spacing; x < 360 + spacing; x += spacing) {
-        for (let y = -spacing; y < 416 + spacing; y += spacing) {
-            const px = x + offsetX;
-            const py = y + offsetY;
-            
-            // Draw cross-shaped ice crystals
-            ctx.beginPath();
-            ctx.moveTo(px - 8, py); ctx.lineTo(px + 8, py);
-            ctx.moveTo(px, py - 8); ctx.lineTo(px, py + 8);
-            ctx.moveTo(px - 5, py - 5); ctx.lineTo(px + 5, py + 5);
-            ctx.moveTo(px + 5, py - 5); ctx.lineTo(px - 5, py + 5);
-            ctx.stroke();
-        }
-    }
-
-    ctx.restore();
-}
-
 window.drawAtmosphericEffects = drawAtmosphericEffects;
 window.drawLRoad = drawLavaRoad;
 window.drawSpawningGate = drawSpawningGate;
 window.drawPortal = drawPortal;
 window.drawSlots = drawSlots;
 window.drawShadow = drawShadow;
-window.drawFrozenOverlay = drawFrozenOverlay;

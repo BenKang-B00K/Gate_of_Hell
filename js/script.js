@@ -156,7 +156,7 @@ function resetGameState() {
     // UI Reset
     updateGauges();
     updateStageInfo();
-    // [DISABLED] const fo = document.getElementById('frozen-overlay'); if (fo) fo.style.opacity = 0;
+    const fo = document.getElementById('frozen-overlay'); if (fo) fo.style.opacity = 0;
     
     // Reset Sacred Tablet (Unit Info)
     const d = document.getElementById('unit-info');
@@ -644,7 +644,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const retryBtn = document.getElementById('retry-btn');
     if (retryBtn) retryBtn.onclick = () => window.location.reload();
 
-    /* [DISABLED] Management Logic
     const restartBtnTop = document.getElementById('restart-btn-top');
     const quitModal = document.getElementById('quit-modal');
     const quitConfirm = document.getElementById('quit-confirm-btn');
@@ -656,24 +655,21 @@ document.addEventListener('DOMContentLoaded', () => {
         quitConfirm.onclick = () => window.location.reload();
         quitCancel.onclick = () => { quitModal.style.display = 'none'; isPaused = false; };
     }
-    */
     if (unlockModal) unlockModal.addEventListener('click', () => { unlockModal.style.display = 'none'; isPaused = false; });
     
     if (startBtn && startScreen) {
         const tutorialToggle = document.getElementById('tutorial-toggle');
         const tutorialStatus = document.getElementById('tutorial-status');
         const tutorialContainer = document.getElementById('tutorial-toggle-container');
-        /* [DISABLED]
         const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
         const gameTutorialStatus = document.getElementById('game-tutorial-status');
         const gameTutorialContainer = document.getElementById('game-tutorial-toggle-container');
-        */
 
         const syncToggles = (state) => {
             if (tutorialToggle) tutorialToggle.checked = state;
-            // if (gameTutorialToggle) gameTutorialToggle.checked = state; // [DISABLED]
+            if (gameTutorialToggle) gameTutorialToggle.checked = state;
             if (tutorialStatus) tutorialStatus.innerText = state ? 'ON' : 'OFF';
-            // if (gameTutorialStatus) gameTutorialStatus.innerText = state ? 'ON' : 'OFF'; // [DISABLED]
+            if (gameTutorialStatus) gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
             localStorage.setItem('goh_tutorial_enabled', state);
         };
 
@@ -681,12 +677,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedTutorial !== null) syncToggles(savedTutorial === 'true');
 
         if (tutorialToggle) tutorialToggle.addEventListener('change', () => syncToggles(tutorialToggle.checked));
-        // if (gameTutorialToggle) gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked)); // [DISABLED]
+        if (gameTutorialToggle) gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked));
 
         if (tutorialContainer) tutorialContainer.addEventListener('click', (e) => { if (e.target !== tutorialToggle && !e.target.closest('.slider')) syncToggles(!tutorialToggle.checked); });
-        // if (gameTutorialContainer) gameTutorialContainer.addEventListener('click', (e) => { if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) syncToggles(!gameTutorialToggle.checked); }); // [DISABLED]
+        if (gameTutorialContainer) gameTutorialContainer.addEventListener('click', (e) => { if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) syncToggles(!gameTutorialToggle.checked); });
 
-        startBtn.addEventListener('click', () => {
+        startBtn.addEventListener('click', async () => {
+            // Ensure data is loaded
+            await window.gameDataLoaded;
+            
             startScreen.classList.add('shrink-to-info');
             setTimeout(() => {
                 startScreen.style.display = 'none';
@@ -699,7 +698,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* [DISABLED]
     const pauseBtn = document.getElementById('game-pause-btn');
     const pauseOverlay = document.getElementById('pause-overlay');
     const resumeBtn = document.getElementById('pause-resume-btn');
@@ -718,7 +716,6 @@ document.addEventListener('DOMContentLoaded', () => {
         pauseBtn.addEventListener('click', togglePause);
         resumeBtn.addEventListener('click', togglePause);
     }
-    */
     gameLoop();
 
     window.addEventListener('keydown', (e) => {
@@ -742,61 +739,4 @@ document.addEventListener('DOMContentLoaded', () => {
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
         }
     });
-
-    // [DEBUG] Initialize Debug Features
-    initDebugFeatures();
 });
-
-function initDebugFeatures() {
-    const masterBtn = document.getElementById('debug-master-toggle');
-    const menu = document.getElementById('debug-menu');
-    if (!masterBtn || !menu) return;
-
-    let debugActive = false;
-
-    masterBtn.onclick = (e) => {
-        e.stopPropagation();
-        debugActive = !debugActive;
-        menu.style.display = debugActive ? 'flex' : 'none';
-        masterBtn.innerText = debugActive ? 'DEBUG: ON' : 'DEBUG: OFF';
-        masterBtn.style.background = debugActive ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 0, 0, 0.3)';
-    };
-
-    // Feature 1: Add SE
-    const addSeBtn = document.getElementById('debug-add-se');
-    if (addSeBtn) {
-        addSeBtn.onclick = (e) => {
-            e.stopPropagation();
-            const limit = (typeof maxMoney !== 'undefined') ? maxMoney : 1000;
-            money = Math.min(limit, money + 500);
-            if (typeof updateGauges === 'function') updateGauges();
-            if (typeof updateSummonButtonState === 'function') updateSummonButtonState();
-        };
-    }
-
-    // Feature 2: Kill All Enemies
-    const killAllBtn = document.getElementById('debug-kill-all');
-    if (killAllBtn) {
-        killAllBtn.onclick = (e) => {
-            e.stopPropagation();
-            [...enemies].forEach(enemy => {
-                enemy.hp = 0;
-                if (typeof handleEnemyDeath === 'function') handleEnemyDeath(enemy);
-            });
-        };
-    }
-
-    // Feature 3: Next Depth
-    const nextBtn = document.getElementById('debug-next-stage');
-    if (nextBtn) {
-        nextBtn.onclick = (e) => {
-            e.stopPropagation();
-            enemies.forEach(en => { if(en.element) en.element.remove(); });
-            enemies = [];
-            currentStageSpawned = totalStageEnemies;
-            if (typeof triggerStageTransition === 'function') triggerStageTransition();
-            stage++;
-            initStage();
-        };
-    }
-}
