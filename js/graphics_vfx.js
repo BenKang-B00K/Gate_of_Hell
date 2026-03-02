@@ -142,7 +142,7 @@ function drawStageFlashes() {
         ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
         if (alpha > 0.1) {
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-            const fontSize = 42 + (1.0 - alpha) * 20; 
+            const fontSize = 24 + (1.0 - alpha) * 12; 
             ctx.font = `bold ${fontSize}px Cinzel, serif`;
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
             ctx.fillText(sf.text, LOGICAL_WIDTH / 2, LOGICAL_HEIGHT / 2);
