@@ -16,7 +16,7 @@ function drawLavaRoad() {
     const time = globalAnimTimer;
     const roadWidth = 114; 
     const roadX = 123;
-    const gameScreenHeight = (typeof LOGICAL_HEIGHT !== 'undefined') ? LOGICAL_HEIGHT : 480; 
+    const gameScreenHeight = LOGICAL_HEIGHT; 
     
     ctx.save();
 
@@ -29,16 +29,16 @@ function drawLavaRoad() {
     ctx.fillRect(0, 0, roadX, gameScreenHeight);
     
     // Right Abyss
-    const rightGrad = ctx.createLinearGradient(roadX + roadWidth, 0, 360, 0);
+    const rightGrad = ctx.createLinearGradient(roadX + roadWidth, 0, LOGICAL_WIDTH, 0);
     rightGrad.addColorStop(0, '#0a0510');
     rightGrad.addColorStop(1, '#020005');
     ctx.fillStyle = rightGrad;
-    ctx.fillRect(roadX + roadWidth, 0, 360 - (roadX + roadWidth), gameScreenHeight);
+    ctx.fillRect(roadX + roadWidth, 0, LOGICAL_WIDTH - (roadX + roadWidth), gameScreenHeight);
 
     // 2. Rising Void Mist from the Abyss
     ctx.globalCompositeOperation = 'screen';
     for(let i = 0; i < 6; i++) {
-        const mx = (i % 2 === 0) ? Math.random() * 50 : 310 + Math.random() * 50;
+        const mx = (i % 2 === 0) ? Math.random() * 50 : (LOGICAL_WIDTH - 50) + Math.random() * 50;
         const my = (time * 20 + i * 100) % gameScreenHeight;
         const ms = 40 + Math.sin(time + i) * 10;
         const mGrad = ctx.createRadialGradient(mx, my, 0, mx, my, ms);
@@ -113,8 +113,8 @@ function drawLavaRoad() {
 
     // 6. Soul Flow Arrows (Moving Downward - Slower & More Spaced)
     ctx.save();
-    const arrowSpacing = 160; // Increased spacing (was 120)
-    const arrowOffset = (time * 20) % arrowSpacing; // Halved speed (was 40)
+    const arrowSpacing = 160; 
+    const arrowOffset = (time * 20) % arrowSpacing; 
     ctx.strokeStyle = '#ff3366'; 
     ctx.lineWidth = 2.5;
     ctx.lineJoin = 'round';
@@ -127,7 +127,7 @@ function drawLavaRoad() {
         const alpha = Math.min(0.35, (y / 150) * 0.35) * (1 - (y / gameScreenHeight)); 
         ctx.globalAlpha = alpha;
 
-        const ax = 180; 
+        const ax = LOGICAL_WIDTH / 2; 
         const aw = 18;  
         const ah = 12;  
 
@@ -153,7 +153,7 @@ function drawLavaRoad() {
 }
 
 function drawSpawningGate() {
-    const cx = 180; const cy = -5; const time = globalAnimTimer;
+    const cx = LOGICAL_WIDTH / 2; const cy = -5; const time = globalAnimTimer;
     ctx.save();
     
     // 1. Infernal Core Glow
@@ -196,8 +196,8 @@ function drawSpawningGate() {
  * AA-Grade Void Portal: Dynamic vortex with PE-based corruption evolution
  */
 function drawPortal() {
-    const cx = 180; 
-    const cy = (typeof LOGICAL_HEIGHT !== 'undefined') ? LOGICAL_HEIGHT : 480; 
+    const cx = LOGICAL_WIDTH / 2; 
+    const cy = LOGICAL_HEIGHT; 
     const time = globalAnimTimer;
     const pe = (typeof portalEnergy !== 'undefined') ? portalEnergy : 0;
     const energyRatio = pe / maxPortalEnergy;

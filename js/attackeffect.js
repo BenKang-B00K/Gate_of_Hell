@@ -8,7 +8,7 @@
 function createAttackEffect(unitType, target) {
     if (!target) return;
 
-    const lx = (target.x / 100) * 360;
+    const lx = (target.x / 100) * LOGICAL_WIDTH;
     const ly = target.y;
 
     // Standard emoji-based effects using floating text system

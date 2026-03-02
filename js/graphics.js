@@ -4,8 +4,8 @@ const canvas = document.createElement('canvas');
 canvas.id = 'game-canvas';
 const ctx = canvas.getContext('2d');
 
-let LOGICAL_WIDTH = 360; 
-let LOGICAL_HEIGHT = 480; // Initial fallback
+window.LOGICAL_WIDTH = 360; 
+window.LOGICAL_HEIGHT = 480; 
 let scaleFactor = 1.0;
 
 function initGraphics() {
@@ -14,7 +14,7 @@ function initGraphics() {
     
     // Set logical height based on actual panel height to be 100% accurate
     const rect = container.getBoundingClientRect();
-    LOGICAL_HEIGHT = Math.floor(rect.height);
+    window.LOGICAL_HEIGHT = Math.floor(rect.height);
     
     container.appendChild(canvas);
     canvas.style.imageRendering = 'pixelated';
@@ -27,15 +27,15 @@ function resizeCanvas() {
     if (!container) return;
     
     const cr = container.getBoundingClientRect();
-    LOGICAL_HEIGHT = Math.floor(cr.height);
+    window.LOGICAL_HEIGHT = Math.floor(cr.height);
 
-    canvas.width = LOGICAL_WIDTH;
-    canvas.height = LOGICAL_HEIGHT;
+    canvas.width = window.LOGICAL_WIDTH;
+    canvas.height = window.LOGICAL_HEIGHT;
     
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     
-    scaleFactor = cr.width / LOGICAL_WIDTH;
+    scaleFactor = cr.width / window.LOGICAL_WIDTH;
     
     disableSmoothing();
 }

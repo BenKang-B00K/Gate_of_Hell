@@ -3,7 +3,6 @@ let thunderInterval;
 
 let spawnInterval = 4800; 
 let isPaused = false;
-let gameWidth = 360; 
 
 function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze = false, isCrit = false) {
     if (!target || target.hp <= 0) return;
@@ -13,7 +12,7 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
 
     // [Particles] Spark particles on hit
     if (typeof spawnParticles === 'function') {
-        const lx = (target.x / 100) * 360;
+        const lx = (target.x / 100) * LOGICAL_WIDTH;
         const ly = target.y;
         spawnParticles(lx, ly, target.isBoss ? '#f00' : '#fff', 4);
     }
@@ -197,7 +196,7 @@ function gameLoop() {
 
     applyShrineBuffs();
 
-    const targetY = (typeof LOGICAL_HEIGHT !== 'undefined') ? LOGICAL_HEIGHT : 480; 
+    const targetY = LOGICAL_HEIGHT; 
     const nowTime = Date.now();
 
     if (isTimeFrozen && nowTime > timeFreezeEndTime) {
@@ -213,7 +212,7 @@ function gameLoop() {
             let shouldBeStealthed = (cycle < 1000);
             
             const seers = towers.filter(t => t.data.type === 'seer');
-            const ex = (e.x / 100) * 360;
+            const ex = (e.x / 100) * LOGICAL_WIDTH;
             const revealed = seers.some(s => {
                 return Math.sqrt(Math.pow(ex - s.lx, 2) + Math.pow(e.y - s.ly, 2)) < 120;
             });
@@ -237,7 +236,7 @@ function gameLoop() {
 
         enemies.forEach(e => {
             if (e.type === 'frost_outcast' && e.hp > 0) {
-                const ex = (e.x / 100) * 360;
+                const ex = (e.x / 100) * LOGICAL_WIDTH;
                 const dist = Math.sqrt(Math.pow(ex - tx, 2) + Math.pow(e.y - ty, 2));
                 if (dist < 120) t.speedBonus -= 0.2; 
             }
@@ -268,19 +267,19 @@ function gameLoop() {
         if (nowTime > effect.endTime) { groundEffects.splice(i, 1); continue; }
         if (effect.type === 'seal') {
             enemies.forEach(e => {
-                const ex = (e.x / 100) * 360;
+                const ex = (e.x / 100) * LOGICAL_WIDTH;
                 const dist = Math.sqrt(Math.pow(ex - effect.lx, 2) + Math.pow(e.y - effect.ly, 2));
                 if (dist <= effect.lRadius) { e.isSilenced = true; }
             });
         } else if (effect.type === 'fire') {
             enemies.forEach(e => {
-                const ex = (e.x / 100) * 360;
+                const ex = (e.x / 100) * LOGICAL_WIDTH;
                 const dist = Math.sqrt(Math.pow(ex - effect.lx, 2) + Math.pow(e.y - effect.ly, 2));
                 if (dist <= effect.lRadius) applyDamage(e, 20 / 60, null);
             });
         } else if (effect.type === 'blizzard') {
             enemies.forEach(e => {
-                const ex = (e.x / 100) * 360;
+                const ex = (e.x / 100) * LOGICAL_WIDTH;
                 const dist = Math.sqrt(Math.pow(ex - effect.lx, 2) + Math.pow(e.y - effect.ly, 2));
                 if (dist <= effect.lRadius) e.inBlizzard = true;
             });
@@ -382,8 +381,8 @@ function gameLoop() {
         const now = Date.now();
         if (now - (summon.lastAttack || 0) > 1000) {
             const target = enemies.find(e => {
-                const ex = (e.x / 100) * 360;
-                const sx = (summon.x / 100) * 360;
+                const ex = (e.x / 100) * LOGICAL_WIDTH;
+                const sx = (summon.x / 100) * LOGICAL_WIDTH;
                 return Math.sqrt(Math.pow(ex - sx, 2) + Math.pow(e.y - summon.y, 2)) < 40;
             });
             if (target) {
@@ -404,7 +403,7 @@ function gameLoop() {
         if (nowTime - (tower.lastShot || 0) >= cd) {
             const inRange = enemies.filter(e => {
                 if (e.hp <= 0 || e.isStealthed) return false;
-                const ex = (e.x / 100) * 360;
+                const ex = (e.x / 100) * LOGICAL_WIDTH;
                 const dist = Math.sqrt(Math.pow(ex - tower.lx, 2) + Math.pow(e.y - tower.ly, 2));
                 return dist <= (tower.range + (tower.rangeBonus || 0));
             });
@@ -457,8 +456,8 @@ function handleHit(tower, target) {
         finalDamageMultiplier *= totalCritMultiplier;
         if (tower.data.type === 'vajra') {
             const nearby = enemies.filter(e => {
-                const ex = (e.x / 100) * 360;
-                const tx = (target.x / 100) * 360;
+                const ex = (e.x / 100) * LOGICAL_WIDTH;
+                const tx = (target.x / 100) * LOGICAL_WIDTH;
                 const dist = Math.sqrt(Math.pow(ex - tx, 2) + Math.pow(e.y - target.y, 2));
                 return dist < 80;
             });
@@ -472,7 +471,7 @@ function handleHit(tower, target) {
 
 function createDamageText(target, amount, isCrit) {
     if (!target) return;
-    const lx = (target.x / 100) * 360;
+    const lx = (target.x / 100) * LOGICAL_WIDTH;
     const ly = target.y;
     const color = isCrit ? '#ff4500' : '#fff';
     const size = isCrit ? 24 : 18;

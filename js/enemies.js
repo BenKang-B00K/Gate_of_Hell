@@ -164,7 +164,7 @@ function spawnPassenger(boss) {
 
 function spawnFriendlyGhost() {
     const randomX = Math.random() * 20 + 40;
-    const startY = 416 - 20;
+    const startY = LOGICAL_HEIGHT - 20;
     friendlyGhosts.push({ x: randomX, y: startY, speed: 0.5, maxHp: 500, icon: '👻' });
 }
 
@@ -184,7 +184,7 @@ function handleEnemyDeath(target, killer = null) {
 
         // [User Request] Soul Essence Sparkle Effect
         if (typeof spawnSoulEssence === 'function') {
-            const lx = (target.x / 100) * 360; // Logical X
+            const lx = (target.x / 100) * LOGICAL_WIDTH; // Logical X
             const ly = target.y;               // Logical Y
             spawnSoulEssence(lx, ly);
         }
@@ -221,7 +221,7 @@ function handleEnemyDeath(target, killer = null) {
         if (typeof saveGameData === 'function') saveGameData();
 
         if (typeof createSEGainEffect === 'function') {
-            const lx = (target.x / 100) * 360;
+            const lx = (target.x / 100) * LOGICAL_WIDTH;
             createSEGainEffect(lx, target.y, reward);
         }
         if (typeof window.updateSummonButtonState === 'function') window.updateSummonButtonState();
@@ -229,13 +229,12 @@ function handleEnemyDeath(target, killer = null) {
 }
 
 function spawnDeathExplosion(target, color, lRadius, dmgVal, isBurn = false, extraEff = null) {
-    // Add to groundEffects for Canvas rendering or just spawn particles
-    if (typeof spawnParticles === 'function') spawnParticles((target.x/100)*360, target.y, color, 20);
+    if (typeof spawnParticles === 'function') spawnParticles((target.x/100)*LOGICAL_WIDTH, target.y, color, 20);
     
     enemies.forEach(e => {
         if (e === target || e.hp <= 0) return;
-        const eX = (e.x / 100) * 360;
-        const tX = (target.x / 100) * 360;
+        const eX = (e.x / 100) * LOGICAL_WIDTH;
+        const tX = (target.x / 100) * LOGICAL_WIDTH;
         const dist = Math.sqrt(Math.pow(eX - tX, 2) + Math.pow(e.y - target.y, 2));
         if (dist < lRadius) { 
             if (dmgVal > 0 && typeof window.applyDamage === 'function') window.applyDamage(e, dmgVal, null);
@@ -246,7 +245,7 @@ function spawnDeathExplosion(target, color, lRadius, dmgVal, isBurn = false, ext
 }
 
 function spawnFriendlySkeleton(target) {
-    friendlySkeletons.push({ x: (target.x / 100) * 360, y: target.y, speed: 0.7, icon: '💀' });
+    friendlySkeletons.push({ x: (target.x / 100) * LOGICAL_WIDTH, y: target.y, speed: 0.7, icon: '💀' });
 }
 
 function showBossWarning(bossName) {
@@ -279,7 +278,7 @@ function drawEnemies() {
     if (!enemies) return; 
     enemies.forEach(e => {
         if (e.hp <= 0) return; 
-        const lx = (e.x / 100) * 360; 
+        const lx = (e.x / 100) * LOGICAL_WIDTH; 
         const ly = e.y;
         if (typeof drawShadow === 'function') drawShadow(lx, ly, e.isBoss ? 24 : 10);
         const floatY = ly + Math.sin(globalAnimTimer * 1.5 + (lx * 0.1)) * 3;
@@ -297,7 +296,6 @@ function drawEnemies() {
 }
 
 function createSEGainEffect(lx, ly, amount) {
-    // Add to a new array in graphics_vfx to draw floating SE gain text on Canvas
     if (typeof spawnFloatingText === 'function') spawnFloatingText(`+${amount}`, lx, ly, '#ffd700');
 }
 
@@ -306,8 +304,8 @@ function triggerStageTransition() {
     const count = 4 + Math.floor(Math.random() * 3);
     for(let i=0; i<count; i++) {
         setTimeout(() => {
-            const rx = Math.random() * 300 + 30;
-            const ry = Math.random() * 300 + 100;
+            const rx = Math.random() * (LOGICAL_WIDTH - 60) + 30;
+            const ry = Math.random() * (LOGICAL_HEIGHT - 180) + 100;
             spawnLightPillar(rx, ry);
         }, i * 300);
     }

@@ -670,7 +670,7 @@ function drawEternalWall(cx, cy, tower) {
 
 function drawSummons() {
     [...friendlySkeletons, ...friendlyGhosts].forEach(s => {
-        const lx = (s.x / 100) * 360;
+        const lx = (s.x / 100) * LOGICAL_WIDTH;
         const ly = s.y;
         ctx.save();
         ctx.font = '24px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';

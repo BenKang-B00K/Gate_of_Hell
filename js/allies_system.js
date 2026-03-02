@@ -41,7 +41,7 @@ function showRangeIndicator(tower) {
     const container = document.getElementById('game-container');
     if (!container) return;
     const containerRect = container.getBoundingClientRect();
-    const currentScale = containerRect.width / 360;
+    const currentScale = containerRect.width / LOGICAL_WIDTH;
 
     const finalRange = tower.range + (tower.rangeBonus || 0);
     indicator.style.width = `${finalRange * 2 * currentScale}px`;
