@@ -504,6 +504,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const settingsModal = document.getElementById('settings-modal');
     const closeSettingsBtn = document.getElementById('close-settings-btn');
 
+    const gaugeToggle = document.getElementById('gauge-detail-toggle');
+    const gaugeGrid = document.getElementById('gauges-grid');
+
+    if (gaugeToggle && gaugeGrid) {
+        gaugeToggle.onclick = () => {
+            gaugeGrid.classList.toggle('detailed');
+            gaugeToggle.innerText = gaugeGrid.classList.contains('detailed') ? '➖' : 'ℹ️';
+        };
+    }
+
     if (settingsBtn && settingsModal && closeSettingsBtn) {
         settingsBtn.onclick = () => {
             settingsModal.style.display = 'flex';

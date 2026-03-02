@@ -58,10 +58,13 @@
 
             <!-- Gauges Section -->
             <div id="gauges-grid">
-                <div class="spacer"></div>
+                <button id="gauge-detail-toggle" title="상세 정보">ℹ️</button>
                 <!-- Soul Energy -->
-                <div class="gauge-wrapper" id="se-label" style="cursor:help;">
-                    <div class="gauge-info"><span>✨ SE</span></div>
+                <div class="gauge-wrapper" id="se-label">
+                    <div class="gauge-info">
+                        <span class="gauge-icon">✨</span>
+                        <span class="gauge-full-label">소울 에너지</span>
+                    </div>
                     <div class="gauge-bar se">
                         <div id="se-gauge-fill"></div>
                         <span id="se-display-text" class="gauge-count">150 / 1000</span>
@@ -69,7 +72,10 @@
                 </div>
                 <!-- Portal Energy -->
                 <div class="gauge-wrapper" id="pe-label">
-                    <div class="gauge-info"><span>👿 PE</span></div>
+                    <div class="gauge-info">
+                        <span class="gauge-icon">👿</span>
+                        <span class="gauge-full-label">포탈 오염도</span>
+                    </div>
                     <div class="gauge-bar pe">
                         <div id="portal-gauge-fill"></div>
                         <span id="portal-energy-label" class="gauge-count">0 / 1500</span>
@@ -78,7 +84,10 @@
                 </div>
                 <!-- Remaining Specters -->
                 <div class="gauge-wrapper rs" id="rs-label">
-                    <div class="gauge-info"><span>💀 RS</span></div>
+                    <div class="gauge-info">
+                        <span class="gauge-icon">💀</span>
+                        <span class="gauge-full-label">남은 악령</span>
+                    </div>
                     <div class="gauge-bar rs">
                         <div id="rs-gauge-fill"></div>
                         <span id="enemies-left" class="gauge-count">0</span>
