@@ -14,7 +14,7 @@
 
 #top-panel {
     position: relative;
-    flex: 0 0 416px; /* Match targetY logical height */
+    flex: 0 0 70%; /* 70% of 640px = 448px */
     width: 100%;
     background: #050505;
     overflow: hidden;
@@ -22,7 +22,7 @@
 }
 
 #bottom-panel {
-    flex: 1;
+    flex: 0 0 30%; /* 30% of 640px = 192px */
     width: 100%;
     background: #0a0a0a;
     display: flex;

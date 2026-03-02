@@ -197,7 +197,7 @@ function gameLoop() {
 
     applyShrineBuffs();
 
-    const targetY = 416; 
+    const targetY = 448; 
     const nowTime = Date.now();
 
     if (isTimeFrozen && nowTime > timeFreezeEndTime) {
