@@ -43,7 +43,7 @@ function initLogicalSlots() {
     const slotW = 38;
     const slotH = 50;
     const startY = 45;
-    const spacingY = 58; // Expanded for 448 height.
+    const spacingY = 64; // Further expanded for 480 height.
 
     // Left Side (3 columns)
     for(let r=0; r<7; r++) {

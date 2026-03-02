@@ -139,13 +139,13 @@ function drawStageFlashes() {
         ctx.save();
         const flashAlpha = Math.min(0.6, alpha * 1.5);
         ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
-        ctx.fillRect(0, 0, 360, 448);
+        ctx.fillRect(0, 0, 360, 480);
         if (alpha > 0.1) {
             ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             const fontSize = 42 + (1.0 - alpha) * 20; 
             ctx.font = `bold ${fontSize}px Cinzel, serif`;
             ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-            ctx.fillText(sf.text, 180, 224); // 448 / 2
+            ctx.fillText(sf.text, 180, 240); // 480 / 2
         }
         ctx.restore();
     });

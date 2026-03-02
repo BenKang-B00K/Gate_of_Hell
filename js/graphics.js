@@ -5,7 +5,7 @@ canvas.id = 'game-canvas';
 const ctx = canvas.getContext('2d');
 
 const LOGICAL_WIDTH = 360; 
-const LOGICAL_HEIGHT = 448; 
+const LOGICAL_HEIGHT = 480; 
 let scaleFactor = 1.0;
 
 function initGraphics() {
