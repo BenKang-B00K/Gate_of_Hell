@@ -1,47 +1,36 @@
-/* allies_system.js - Core Mechanics */
+/* allies_system.js - Core Mechanics (Canvas Optimized) */
 
 let isMovingUnit = false;
-window.draggedUnit = null; // Explicitly declare global
+window.draggedUnit = null; 
 
-function executeMove(unit, targetSlot) {
-    const oldSlot = unit.parentElement;
-    if (oldSlot === targetSlot) { cancelMovement(); return; }
-    
-    // Switch or Move
-    if (targetSlot.classList.contains('occupied')) {
-        const targetUnit = targetSlot.querySelector('.unit');
-        if (targetUnit) {
-            oldSlot.appendChild(targetUnit);
-            targetSlot.appendChild(unit);
-            const u1 = towers.find(t => t.element === unit);
-            const u2 = towers.find(t => t.element === targetUnit);
-            if (u1) u1.slotElement = targetSlot;
-            if (u2) u2.slotElement = oldSlot;
-        }
+function executeMove(tower, targetSlot) {
+    const oldSlot = tower.currentSlot;
+    if (oldSlot === targetSlot) return;
+
+    // Swap logic
+    const occupant = towers.find(t => t.currentSlot === targetSlot);
+    if (occupant) {
+        occupant.currentSlot = oldSlot;
+        occupant.lx = oldSlot.lx;
+        occupant.ly = oldSlot.ly;
     } else {
-        targetSlot.appendChild(unit);
-        oldSlot.classList.remove('occupied');
-        targetSlot.classList.add('occupied');
-        const ud = towers.find(t => t.element === unit);
-        if (ud) ud.slotElement = targetSlot;
+        if (oldSlot) oldSlot.isOccupied = false;
     }
 
-    const t = towers.find(x => x.element === unit);
-    if (t && unit.classList.contains('selected')) {
-        if (!t.isShrine) showRangeIndicator(t);
+    tower.currentSlot = targetSlot;
+    tower.lx = targetSlot.lx;
+    tower.ly = targetSlot.ly;
+    targetSlot.isOccupied = true;
+
+    if (typeof GameLogger !== 'undefined') GameLogger.info(`🔄 Moved: ${tower.data.name}`);
+    
+    if (typeof getSelectedTower === 'function' && getSelectedTower() === tower) {
+        showRangeIndicator(tower);
     }
-
-    cancelMovement();
-}
-
-function cancelMovement() { 
-    if (window.draggedUnit) window.draggedUnit.classList.remove('move-ready'); 
-    window.draggedUnit = null; 
-    isMovingUnit = false; 
 }
 
 function showRangeIndicator(tower) {
-    if (tower.isShrine) return;
+    if (!tower || tower.isShrine) return;
     const ri = document.getElementById('range-indicator');
     if (ri) ri.remove();
     const ai = document.getElementById('aura-indicator');
@@ -124,7 +113,7 @@ function summonShrine() {
     if (typeof updateGauges === 'function') updateGauges();
 
     const randomSlot = emptySlots[Math.floor(Math.random() * emptySlots.length)];
-    const data = shrineTypes[0]; // might
+    const data = shrineTypes[0]; 
 
     if (typeof GameLogger !== 'undefined') GameLogger.success(`🕍 Shrine Created: ${data.name}`);
 
@@ -147,77 +136,12 @@ function summonShrine() {
     updateSummonButtonState();
 }
 
-function attachUnitListeners(unit) {
-    let mousedownTime;
-    let dragGhost = null;
-
-    unit.addEventListener('dragstart', function(e) { 
-        window.draggedUnit = this; 
-        isMovingUnit = true; 
-        this.classList.add('dragging'); 
-        
-        dragGhost = this.cloneNode(true);
-        dragGhost.classList.add('drag-ghost');
-        dragGhost.style.position = 'fixed';
-        dragGhost.style.pointerEvents = 'none';
-        dragGhost.style.zIndex = '9999';
-        dragGhost.style.opacity = '0.8';
-        dragGhost.style.transform = 'translate(-50%, -50%) scale(1.2)';
-        document.body.appendChild(dragGhost);
-
-        const img = new Image();
-        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-        e.dataTransfer.setDragImage(img, 0, 0);
-
-        const moveGhost = (ev) => {
-            if (dragGhost) {
-                dragGhost.style.left = `${ev.clientX}px`;
-                dragGhost.style.top = `${ev.clientY}px`;
-            }
-        };
-        window.addEventListener('mousemove', moveGhost);
-        this._moveGhost = moveGhost;
-
-        const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
-        const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
-
-        const t = towers.find(x => x.element === this); 
-        if(t){
-            showUnitInfo(t); 
-            startInfoResetTimer();
-        } 
-    });
-
-    unit.addEventListener('dragend', function() {
-        this.classList.remove('dragging');
-        isMovingUnit = false;
-        if (dragGhost) {
-            dragGhost.remove();
-            dragGhost = null;
-        }
-        window.removeEventListener('mousemove', this._moveGhost);
-    });
-
-    unit.addEventListener('mousedown', function(e) { if(e.button !== 0) return; mousedownTime = Date.now(); });
-    unit.addEventListener('click', function(e) { 
-        e.stopPropagation(); 
-        if(Date.now() - mousedownTime < 400) { 
-            document.querySelectorAll('.unit').forEach(u => u.classList.remove('selected')); 
-            document.querySelectorAll('.card-slot').forEach(s => s.classList.remove('selected-slot'));
-            const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
-            const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
-            
-            this.classList.add('selected'); 
-            if (this.parentElement) this.parentElement.classList.add('selected-slot');
-            
-            const t = towers.find(x => x.element === this); 
-            if(t){
-                showUnitInfo(t); 
-                if (!t.isShrine) showRangeIndicator(t);
-                startInfoResetTimer();
-            } 
-        } 
-    });
+function summonUnitAuto() {
+    if (!window.logicalSlots) return;
+    const emptySlots = window.logicalSlots.filter(s => s.type === 'unit' && !s.isOccupied);
+    if (emptySlots.length > 0) {
+        summonTower(emptySlots[Math.floor(Math.random() * emptySlots.length)]);
+    }
 }
 
 function performJobChange(ntStr, fromInfo = false) {
@@ -268,34 +192,15 @@ function performMasterJobChange(tower, ntStr, fromInfo = false) {
 
 function confirmSacrifice(t) {
     const modal = document.getElementById('sacrifice-modal');
-    if (!modal) return;
-    const header = document.getElementById('sacrifice-header');
-    const body = document.getElementById('sacrifice-body');
     const confirmBtn = document.getElementById('sacrifice-confirm-btn');
     const cancelBtn = document.getElementById('sacrifice-cancel-btn');
-
-    if (t.isShrine) {
-        header.innerText = "⚠️ [성소 철거: 정화의 중단]";
-        body.innerHTML = `이 성소를 철거하시겠습니까?<br><br>철거에는 <strong>1 스테이지</strong>의 시간이 소요되며,<br>그동안 성소는 <strong>불안정한 기운(디버프)</strong>을 내뿜게 됩니다.<br><br>정말로 철거를 시작하시겠습니까?`;
-        confirmBtn.innerText = "철거 시작";
-    } else {
-        header.innerText = "⚠️ [절대 금기: 영혼의 파기]";
-        body.innerHTML = `수호자와의 성스러운 계약을 강제로 끊으려 합니까?<br><br>영혼을 심연으로 돌려보내는 대가는 결코 가볍지 않으며,<br>한번 흩어진 본질은 결코 다시 불러올 수 없습니다.<br><br><strong>정말로 이 수호자를 영원한 어둠 속으로 추방하시겠습니까?</strong>`;
-        confirmBtn.innerText = "의식 거행 (추방)";
-    }
+    if (!modal || !confirmBtn || !cancelBtn) return;
 
     modal.style.display = 'flex';
     isPaused = true;
 
     confirmBtn.onclick = () => {
-        if (t.isShrine) {
-            t.isDemolishing = true;
-            if (t.element) t.element.classList.add('demolishing');
-            if (typeof GameLogger !== 'undefined') GameLogger.warn(`🏗️ Demolition Started: ${t.data.name}`);
-            showUnitInfo(t);
-        } else {
-            executeSacrifice(t);
-        }
+        executeSacrifice(t);
         modal.style.display = 'none';
         isPaused = false;
     };
@@ -335,14 +240,6 @@ function checkDemolitionCleanup() {
         }
     }
     updateSummonButtonState();
-}
-
-function summonUnitAuto() {
-    if (!window.logicalSlots) return;
-    const emptySlots = window.logicalSlots.filter(s => s.type === 'unit' && !s.isOccupied);
-    if (emptySlots.length > 0) {
-        summonTower(emptySlots[Math.floor(Math.random() * emptySlots.length)]);
-    }
 }
 
 window.performJobChange = performJobChange;

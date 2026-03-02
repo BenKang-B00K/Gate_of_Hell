@@ -56,9 +56,10 @@ function renderGraphics() {
     // 1. Level 1: Road (Lava & Lightning)
     if(typeof drawLRoad === 'function') drawLRoad();
     
-    // 2. Level 2: Units and Enemies
+    // 2. Level 2: Units, Enemies, and Summons
     if(typeof drawSlots === 'function') drawSlots();
     if(typeof drawUnits === 'function') drawUnits();
+    if(typeof drawSummons === 'function') drawSummons();
     if(typeof drawEnemies === 'function') drawEnemies(); 
     
     // 3. Level 3: Portal, Spawning Gate, and Clouds

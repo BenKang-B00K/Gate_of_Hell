@@ -28,7 +28,6 @@ function drawUnits() {
     if (typeof towers === 'undefined') return;
 
     towers.forEach(tower => {
-        // [User Request] Use logical coordinates (360x640)
         let cx = tower.lx;
         let cy = tower.ly;
         
@@ -90,18 +89,42 @@ function drawUnits() {
             case 'forsaken_king': drawForsakenKing(cx, cy, tower); break;
             case 'void_gatekeeper': drawVoidGatekeeper(cx, cy, tower); break;
             case 'eternal_wall': drawEternalWall(cx, cy, tower); break;
+            default:
+                // Draw icon as fallback
+                ctx.save();
+                ctx.font = '24px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(tower.data.icon || '🧙', cx, cy);
+                ctx.restore();
+                break;
+        }
+
+        // Draw cooldown overlay on Canvas
+        const sm = 1.0 + (tower.speedBonus || 0);
+        const cd = tower.cooldown / sm;
+        const elapsed = Date.now() - (tower.lastShot || 0);
+        if (elapsed < cd) {
+            const ratio = Math.min(1, elapsed / cd);
+            ctx.save();
+            ctx.globalAlpha = 0.4;
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, 20, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * (1 - ratio)));
+            ctx.lineTo(cx, cy);
+            ctx.fill();
+            ctx.restore();
         }
     });
 }
 
 function drawApprentice(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; 
+    const isLeft = area === 'left-slots'; 
     const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 250; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
     };
-    const flashIntensity = isAttacking ? 1.0 - (timeSinceShot / 250) : 0;
     p(-6, 0, '#000', 13, 15); p(-5, 1, '#5F7D7E', 11, 13); p(-2, 1, '#8BA8A9', 3, 11); p(-5, 11, '#4A5F60', 11, 3);
     p(-5, 7, '#3E2723', 11, 2); p(-1, 7, '#BCA371', 2, 2); p(-4, 14, '#000', 4, 3); p(1, 14, '#000', 4, 3);
     p(-5, -10, '#000', 11, 11); p(-4, -9, '#E8C4A2', 9, 9); p(-5, -11, '#000', 11, 5); p(-5, -11, '#BCA371', 11, 4);
@@ -114,8 +137,7 @@ function drawApprentice(cx, cy, tower) {
 }
 
 function drawChainer(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -127,7 +149,7 @@ function drawChainer(cx, cy, tower) {
 }
 
 function drawMonk(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
@@ -143,8 +165,7 @@ function drawMonk(cx, cy, tower) {
 }
 
 function drawTalisman(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -155,8 +176,7 @@ function drawTalisman(cx, cy, tower) {
 }
 
 function drawArcher(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 350; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -168,7 +188,7 @@ function drawArcher(cx, cy, tower) {
 }
 
 function drawAssassin(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 150; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
@@ -180,8 +200,7 @@ function drawAssassin(cx, cy, tower) {
 }
 
 function drawIce(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -191,8 +210,7 @@ function drawIce(cx, cy, tower) {
 }
 
 function drawFire(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -203,8 +221,7 @@ function drawFire(cx, cy, tower) {
 }
 
 function drawTracker(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -214,8 +231,7 @@ function drawTracker(cx, cy, tower) {
 }
 
 function drawNecromancer(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -226,8 +242,7 @@ function drawNecromancer(cx, cy, tower) {
 }
 
 function drawGuardian(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -238,8 +253,7 @@ function drawGuardian(cx, cy, tower) {
 }
 
 function drawKnight(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 250; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -251,8 +265,7 @@ function drawKnight(cx, cy, tower) {
 }
 
 function drawAlchemist(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 350; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -263,8 +276,7 @@ function drawAlchemist(cx, cy, tower) {
 }
 
 function drawMirror(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -274,8 +286,7 @@ function drawMirror(cx, cy, tower) {
 }
 
 function drawPaladin(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -286,8 +297,7 @@ function drawPaladin(cx, cy, tower) {
 }
 
 function drawCrusader(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 250; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -298,8 +308,7 @@ function drawCrusader(cx, cy, tower) {
 }
 
 function drawMidas(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -309,8 +318,7 @@ function drawMidas(cx, cy, tower) {
 }
 
 function drawIllusion(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 350; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -320,8 +328,7 @@ function drawIllusion(cx, cy, tower) {
 }
 
 function drawPhilosopher(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 350; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -331,8 +338,7 @@ function drawPhilosopher(cx, cy, tower) {
 }
 
 function drawReflection(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -343,8 +349,7 @@ function drawReflection(cx, cy, tower) {
 }
 
 function drawFlameMaster(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -355,8 +360,7 @@ function drawFlameMaster(cx, cy, tower) {
 }
 
 function drawVoidSniper(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -367,8 +371,7 @@ function drawVoidSniper(cx, cy, tower) {
 }
 
 function drawVajrapani(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -379,8 +382,7 @@ function drawVajrapani(cx, cy, tower) {
 }
 
 function drawAbsoluteZero(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -391,8 +393,7 @@ function drawAbsoluteZero(cx, cy, tower) {
 }
 
 function drawHellfireAlchemist(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 350; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -403,8 +404,7 @@ function drawHellfireAlchemist(cx, cy, tower) {
 }
 
 function drawPhoenixSummoner(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 500; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -415,8 +415,7 @@ function drawPhoenixSummoner(cx, cy, tower) {
 }
 
 function drawExecutor(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -427,8 +426,7 @@ function drawExecutor(cx, cy, tower) {
 }
 
 function drawBinder(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 350; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -439,8 +437,7 @@ function drawBinder(cx, cy, tower) {
 }
 
 function drawGrandSealer(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -451,8 +448,7 @@ function drawGrandSealer(cx, cy, tower) {
 }
 
 function drawSaint(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 500; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -462,8 +458,7 @@ function drawSaint(cx, cy, tower) {
 }
 
 function drawThousandHand(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -473,8 +468,7 @@ function drawThousandHand(cx, cy, tower) {
 }
 
 function drawPermafrost(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -484,8 +478,7 @@ function drawPermafrost(cx, cy, tower) {
 }
 
 function drawAbyssalKiller(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -495,8 +488,7 @@ function drawAbyssalKiller(cx, cy, tower) {
 }
 
 function drawSpatialSlasher(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 200; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -505,8 +497,7 @@ function drawSpatialSlasher(cx, cy, tower) {
 }
 
 function drawSeer(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -516,8 +507,7 @@ function drawSeer(cx, cy, tower) {
 }
 
 function drawCommander(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -526,8 +516,7 @@ function drawCommander(cx, cy, tower) {
 }
 
 function drawWraithLord(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -536,8 +525,7 @@ function drawWraithLord(cx, cy, tower) {
 }
 
 function drawCursedShaman(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -546,8 +534,7 @@ function drawCursedShaman(cx, cy, tower) {
 }
 
 function drawRampart(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -556,8 +543,7 @@ function drawRampart(cx, cy, tower) {
 }
 
 function drawJudgment(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -566,8 +552,7 @@ function drawJudgment(cx, cy, tower) {
 }
 
 function drawTransmuter(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 300; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -576,8 +561,7 @@ function drawTransmuter(cx, cy, tower) {
 }
 
 function drawOracle(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -586,8 +570,7 @@ function drawOracle(cx, cy, tower) {
 }
 
 function drawWarden(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 800; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -596,8 +579,7 @@ function drawWarden(cx, cy, tower) {
 }
 
 function drawCursedTalisman(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 350; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -606,8 +588,7 @@ function drawCursedTalisman(cx, cy, tower) {
 }
 
 function drawAsura(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 200; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -616,8 +597,7 @@ function drawAsura(cx, cy, tower) {
 }
 
 function drawPiercingShadow(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 600; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -626,8 +606,7 @@ function drawPiercingShadow(cx, cy, tower) {
 }
 
 function drawCocytus(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 1000; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -636,8 +615,7 @@ function drawCocytus(cx, cy, tower) {
 }
 
 function drawPurgatory(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 500; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -646,8 +624,7 @@ function drawPurgatory(cx, cy, tower) {
 }
 
 function drawReaper(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -656,8 +633,7 @@ function drawReaper(cx, cy, tower) {
 }
 
 function drawDoomGuide(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -666,8 +642,7 @@ function drawDoomGuide(cx, cy, tower) {
 }
 
 function drawForsakenKing(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
-    const now = Date.now(); const timeSinceShot = now - (tower.lastShot || 0); const isAttacking = timeSinceShot < 400; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -676,7 +651,7 @@ function drawForsakenKing(cx, cy, tower) {
 }
 
 function drawVoidGatekeeper(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -685,7 +660,7 @@ function drawVoidGatekeeper(cx, cy, tower) {
 }
 
 function drawEternalWall(cx, cy, tower) {
-    const time = lavaPhase; const area = tower.slotElement.dataset.area; const isLeft = area === 'left-slots'; 
+    const area = tower.currentSlot ? tower.currentSlot.area : 'left-slots'; const isLeft = area === 'left-slots'; 
     const S = 1.0; const p = (ox, oy, color, w=1, h=1) => {
         ctx.fillStyle = color; const finalOx = isLeft ? ox : -ox - w;
         ctx.fillRect(Math.floor(cx + (finalOx * S)), Math.floor(cy + (oy * S * 1.13)), Math.floor(w * S), Math.floor(h * S * 1.13));
@@ -693,27 +668,21 @@ function drawEternalWall(cx, cy, tower) {
     p(-14, -10, '#000', 29, 26); p(-13, -9, '#795548', 27, 24); p(-4, 0, '#3E2723', 9, 9);
 }
 
-// Add the rest of the 50 functions here... 
-// (For this specific turn, I will add a few more and then the user should verify)
-// In a real scenario, I'd have to output all of them.
-
-function drawSelectionHalo() {
-    const selectedUnit = document.querySelector('.unit.selected');
-    if (!selectedUnit) return;
-    const container = document.getElementById('game-container');
-    if(!container) return;
-    const containerRect = container.getBoundingClientRect();
-    const scaleX = 360 / containerRect.width; const scaleY = 640 / containerRect.height;
-    const rect = selectedUnit.getBoundingClientRect();
-    const cx = ((rect.left + rect.width / 2) - containerRect.left) * scaleX;
-    const cy = ((rect.top + rect.height / 2) - containerRect.top) * scaleY;
-    const sw = rect.width * scaleX; const sh = rect.height * scaleY;
-    const w = sw + 4; const h = sh + 4; const x = cx - w/2; const y = cy - h/2;
-    const pulse = (Math.sin(lavaPhase * 4) + 1) / 2; 
-    ctx.save();
-    ctx.shadowBlur = 20 + 10 * pulse; ctx.shadowColor = '#ffd700';
-    ctx.strokeStyle = `rgba(255, 215, 0, ${0.8 + 0.2 * pulse})`; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(x + w / 2, y); ctx.lineTo(x + w, y + h / 4); ctx.lineTo(x + w, y + 3 * h / 4);
-    ctx.lineTo(x + w / 2, y + h); ctx.lineTo(x, y + 3 * h / 4); ctx.lineTo(x, y + h / 4); ctx.closePath();
-    ctx.stroke(); ctx.restore();
+function drawSummons() {
+    [...friendlySkeletons, ...friendlyGhosts].forEach(s => {
+        const lx = (s.x / 100) * 360;
+        const ly = s.y;
+        ctx.save();
+        ctx.font = '24px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(s.icon || '💀', lx, ly);
+        ctx.restore();
+        
+        // HP Bar for summons
+        const bw = 20; const hr = (s.hp || 100) / (s.maxHp || 100);
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(lx - bw/2, ly - 20, bw, 2);
+        ctx.fillStyle = '#00e5ff'; ctx.fillRect(lx - bw/2, ly - 20, bw * hr, 2);
+    });
 }
+
+window.drawUnits = drawUnits;
+window.drawSummons = drawSummons;

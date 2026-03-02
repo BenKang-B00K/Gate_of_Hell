@@ -13,10 +13,8 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
 
     // [Particles] Spark particles on hit
     if (typeof spawnParticles === 'function') {
-        const rect = target.element.getBoundingClientRect();
-        const containerRect = document.getElementById('game-container').getBoundingClientRect();
-        const lx = ((rect.left + rect.width / 2) - containerRect.left) * (360 / containerRect.width);
-        const ly = ((rect.top + rect.height / 2) - containerRect.top) * (640 / containerRect.height);
+        const lx = (target.x / 100) * 360;
+        const ly = target.y;
         spawnParticles(lx, ly, target.isBoss ? '#f00' : '#fff', 4);
     }
     if (isTimeFrozen && !ignoreFreeze && !target.isBoss) {
@@ -34,11 +32,6 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
         if (target.hp > 0 && (target.hp / target.maxHp) <= execThreshold) {
             target.hp = 0; // Execute!
         }
-    }
-
-    if (target.hpFill) {
-        const hpPercent = Math.max(0, (target.hp / target.maxHp) * 100);
-        target.hpFill.style.width = `${hpPercent}%`;
     }
 
     // [User Request] Enhanced Damage Text
@@ -63,7 +56,6 @@ function applyDamage(target, amount, sourceTower, isShared = false, ignoreFreeze
         else { 
             const idx = enemies.indexOf(target); 
             if(idx>-1){ 
-                target.element.remove(); 
                 enemies.splice(idx,1); 
                 if (typeof updateStageInfo === 'function') updateStageInfo();
             }
@@ -112,22 +104,10 @@ function handleSpecialAblities(tower, target) {
 
 function resetGameState() {
     if (typeof GameLogger !== 'undefined') GameLogger.warn("🔄 Game State Reset.");
-    // Clear Enemies
-    enemies.forEach(e => { if (e.element) e.element.remove(); });
     enemies = [];
-    
-    // Clear Towers
-    towers.forEach(t => { if (t.element) t.element.remove(); });
     towers = [];
-    
-    // Clear Summons
-    friendlySkeletons.forEach(s => { if (s.element) s.element.remove(); });
     friendlySkeletons = [];
-    friendlyGhosts.forEach(g => { if (g.element) g.element.remove(); });
     friendlyGhosts = [];
-    
-    // Clear Ground Effects
-    groundEffects.forEach(ge => { if (ge.element) ge.element.remove(); });
     groundEffects = [];
     
     // Reset Globals
@@ -161,7 +141,6 @@ function resetGameState() {
     // Reset Sacred Tablet (Unit Info)
     const d = document.getElementById('unit-info');
     if (d && typeof startInfoResetTimer === 'function') {
-        // Force immediate reset of the info panel
         d.innerHTML = `
             <div class="info-default-text" style="font-size:36px; opacity:0.6;">GATE OF HELL</div>
             <div style="color:#555; font-size:24px; margin-top:10px; letter-spacing:8px; font-weight:bold;">SACRED TABLET</div>
@@ -174,7 +153,6 @@ function resetGameState() {
 let gameStarted = false;
 
 function applyShrineBuffs() {
-    // Reset all tower bonuses from shrines first
     towers.forEach(t => { if (!t.isShrine) t.shrineDmgBonus = 0; });
 
     const mastery = (typeof getRelicBonus === 'function') ? getRelicBonus('shrine_mastery') : 0;
@@ -197,8 +175,7 @@ function applyShrineBuffs() {
             return;
         }
 
-        // Logical distance based buffering (cardinal tiles)
-        const rangeThreshold = (mastery > 0) ? 80 : 55; // Expand range if mastery exists
+        const rangeThreshold = (mastery > 0) ? 80 : 55; 
 
         towers.forEach(t => {
             if (t === shrine || t.isShrine) return;
@@ -214,16 +191,13 @@ function applyShrineBuffs() {
 }
 
 function gameLoop() {
-    // Render custom canvas graphics (Road effects, etc.) - ALWAYS render for atmosphere
     if (typeof renderGraphics === 'function') renderGraphics();
 
     if (!gameStarted || isPaused) { requestAnimationFrame(gameLoop); return; }
 
-    // [User Request] Apply Shrine Buffs continuously
     applyShrineBuffs();
 
-    const targetY = 416; // [User Request] Match portal logical boundary
-    gameWidth = gameContainer.offsetWidth;
+    const targetY = 416; 
     const nowTime = Date.now();
 
     if (isTimeFrozen && nowTime > timeFreezeEndTime) {
@@ -234,24 +208,17 @@ function gameLoop() {
 
     enemies.forEach(e => {
         e.isSilenced = false; e.inBlizzard = false; e.inPurgatory = false;
-        if(e.element) e.element.classList.remove('silenced');
         if (e.type === 'betrayer_blade') {
             const cycle = (nowTime % 3000); 
             let shouldBeStealthed = (cycle < 1000);
             
-            // Seer check
             const seers = towers.filter(t => t.data.type === 'seer');
-            const gameW = gameContainer.offsetWidth;
-            const exPx = (e.x / 100) * gameW;
+            const ex = (e.x / 100) * 360;
             const revealed = seers.some(s => {
-                const sRect = s.slotElement.getBoundingClientRect();
-                const sx = sRect.left + sRect.width / 2;
-                const sy = sRect.top + sRect.height / 2;
-                return Math.sqrt(Math.pow(exPx - sx, 2) + Math.pow(e.y - sy, 2)) < 120;
+                return Math.sqrt(Math.pow(ex - s.lx, 2) + Math.pow(e.y - s.ly, 2)) < 120;
             });
             
             e.isStealthed = shouldBeStealthed && !revealed;
-            if (e.element) e.element.style.opacity = e.isStealthed ? 0.4 : 1;
         }
     });
 
@@ -260,25 +227,22 @@ function gameLoop() {
         t.rangeBonus = (typeof getRelicBonus === 'function' ? getRelicBonus('range') : 0) + (typeof getEquipBonus === 'function' ? getEquipBonus('aura_range') : 0);
         t.damageBonus = (typeof getEquipBonus === 'function' ? getEquipBonus('damage') : 0);
 
-        // Apply Cursed SPD Penalty (Portal Energy based)
         const peRatio = portalEnergy / maxPortalEnergy;
-        if (peRatio >= 0.75) t.speedBonus -= 0.2; // -20% speed
-        else if (peRatio >= 0.5) t.speedBonus -= 0.1; // -10% speed
-        else if (peRatio >= 0.3) t.speedBonus -= 0.05; // -5% speed
+        if (peRatio >= 0.75) t.speedBonus -= 0.2; 
+        else if (peRatio >= 0.5) t.speedBonus -= 0.1; 
+        else if (peRatio >= 0.3) t.speedBonus -= 0.05; 
 
         const tx = t.lx;
         const ty = t.ly;
 
-        // Debuffs from enemies
         enemies.forEach(e => {
             if (e.type === 'frost_outcast' && e.hp > 0) {
                 const ex = (e.x / 100) * 360;
                 const dist = Math.sqrt(Math.pow(ex - tx, 2) + Math.pow(e.y - ty, 2));
-                if (dist < 120) t.speedBonus -= 0.2; // 120 logical pixels ~ 360px in 1080p
+                if (dist < 120) t.speedBonus -= 0.2; 
             }
         });
 
-        // Buffs from nearby allies (Tracker, Seer, Commander)
         towers.forEach(other => {
             if (other === t) return;
             const ox = other.lx;
@@ -286,7 +250,7 @@ function gameLoop() {
             const dist = Math.sqrt(Math.pow(ox - tx, 2) + Math.pow(oy - ty, 2));
 
             const relicAuraBonus = (typeof getRelicBonus === 'function' ? getRelicBonus('aura_range') : 0) + (typeof getEquipBonus === 'function' ? getEquipBonus('aura_range') : 0);
-            if (dist < (65 + relicAuraBonus)) { // 65 logical px
+            if (dist < (65 + relicAuraBonus)) { 
                 if (other.data.type === 'tracker') {
                     t.rangeBonus += 30; 
                 } else if (other.data.type === 'seer') {
@@ -301,7 +265,7 @@ function gameLoop() {
 
     for (let i = groundEffects.length - 1; i >= 0; i--) {
         const effect = groundEffects[i];
-        if (nowTime > effect.endTime) { effect.element.remove(); groundEffects.splice(i, 1); continue; }
+        if (nowTime > effect.endTime) { groundEffects.splice(i, 1); continue; }
         if (effect.type === 'seal') {
             enemies.forEach(e => {
                 const ex = (e.x / 100) * 360;
@@ -330,7 +294,6 @@ function gameLoop() {
 
         if (canSpawnMore) {
             if (isBossStage) {
-                // Spawn boss first, then minions until limit - Slower spawn for boss stage
                 if (!bossSpawned || (bossInstance && bossInstance.hp > 0)) {
                     if (timeElapsed || noEnemiesLeft) {
                         spawnWave(); 
@@ -345,28 +308,26 @@ function gameLoop() {
             }
         }
 
-        // Global Stage Progression Check
         const allSpawned = isBossStage ? (currentStageSpawned >= totalStageEnemies || (bossSpawned && !bossInstance)) : (currentStageSpawned >= totalStageEnemies);
         if (allSpawned && enemies.length === 0) {
             if (typeof triggerStageTransition === 'function') triggerStageTransition();
             stage++;
             initStage();
         }
-
     }
 
     for (let i = enemies.length - 1; i >= 0; i--) {
         const enemy = enemies[i];
         if (isTimeFrozen && !enemy.isBoss) continue;
         if (enemy.isBurning) {
-            if (Date.now() > enemy.burnEndTime) { enemy.isBurning = false; if (enemy.element) enemy.element.classList.remove('burning'); }
+            if (Date.now() > enemy.burnEndTime) { enemy.isBurning = false; }
             else { applyDamage(enemy, (enemy.maxHp * 0.01) / 60, null); if (enemy.hp <= 0) continue; }
         }
         if (enemy.isBoarded && enemy.parentBoss && enemy.parentBoss.hp > 0) {
             enemy.y = enemy.parentBoss.y + enemy.offsetY;
             enemy.x = enemy.parentBoss.x + (enemy.offsetX / 3.6);
         } else {
-            if (enemy.isBoarded) { enemy.isBoarded = false; enemy.invincible = false; if(enemy.element) enemy.element.classList.remove('boarded'); }
+            if (enemy.isBoarded) { enemy.isBoarded = false; enemy.invincible = false; }
             enemy.y += enemy.speed;
         }
         
@@ -376,7 +337,6 @@ function gameLoop() {
             const hf = 0.6;
             if (enemy.y < targetY * 0.85) {
                 enemy.x += (enemy.vxSign || 1) * enemy.speed * hf;
-                // Road boundaries (approx 35% to 65% of 1080px for a 340px road)
                 if (enemy.x <= 35) { enemy.x = 35; enemy.vxSign = 1; }
                 else if (enemy.x >= 65) { enemy.x = 65; enemy.vxSign = -1; }
             } else { enemy.x += (targetX - enemy.x) * 0.1; }
@@ -389,13 +349,6 @@ function gameLoop() {
                 baseX += Math.sin(enemy.swayPhase) * 3;
             }
             enemy.x = baseX;
-        }
-
-        if(enemy.element) {
-            enemy.element.style.top = `${enemy.y * 3}px`;
-            enemy.element.style.left = `${enemy.x}%`;
-            enemy.element.style.opacity = enemy.isStealthed ? 0.6 : 1.0;
-            enemy.element.style.transform = `translate(-50%, -50%) scale(1)`; 
         }
 
         if (enemy.y >= targetY) {
@@ -413,7 +366,6 @@ function gameLoop() {
                 return; 
             }
             updateGauges(); 
-            enemy.element.remove(); 
             enemies.splice(i, 1); 
             updateStageInfo(); 
             continue;
@@ -422,53 +374,38 @@ function gameLoop() {
 
     [...friendlySkeletons, ...friendlyGhosts].forEach((summon, index, array) => {
         summon.y -= summon.speed || 1.0;
-        if (summon.element) {
-            summon.element.style.top = `${summon.y * 3}px`;
-            summon.element.style.left = `${summon.x}%`;
-        }
         if (summon.y < -50) {
-            if (summon.element) summon.element.remove();
             if (friendlySkeletons.includes(summon)) friendlySkeletons.splice(friendlySkeletons.indexOf(summon), 1);
             else friendlyGhosts.splice(friendlyGhosts.indexOf(summon), 1);
             return;
         }
-        const summonPxX = (summon.x / 100) * gameWidth;
         const now = Date.now();
         if (now - (summon.lastAttack || 0) > 1000) {
             const target = enemies.find(e => {
-                const exPx = (e.x / 100) * gameWidth;
-                return Math.sqrt(Math.pow(exPx - summonPxX, 2) + Math.pow(e.y - summon.y, 2)) < 40;
+                const ex = (e.x / 100) * 360;
+                const sx = (summon.x / 100) * 360;
+                return Math.sqrt(Math.pow(ex - sx, 2) + Math.pow(e.y - summon.y, 2)) < 40;
             });
             if (target) {
                 const baseDmg = friendlySkeletons.includes(summon) ? 20 : 40;
-                applyDamage(target, baseDmg * (1.0 + relicSummonBonus), null);
+                const summonBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_damage') : 0;
+                applyDamage(target, baseDmg * (1.0 + summonBonus), null);
                 summon.lastAttack = now;
-                if (summon.element) {
-                    summon.element.style.transform = 'translate(-50%, -50%) scale(1.3)';
-                    setTimeout(() => { if(summon.element) summon.element.style.transform = 'translate(-50%, -50%) scale(1)'; }, 200);
-                }
             }
         }
     });
 
     towers.forEach(tower => {
-        const overlay = tower.element.querySelector('.cooldown-overlay');
+        if (tower.isShrine || tower.data.type === 'void_gatekeeper' || tower.isFeared || tower.isFrozenTomb) return;
+        
         let sm = 1.0 + (tower.speedBonus || 0);
         let cd = tower.cooldown / sm;
-        if (overlay) {
-            const elapsed = nowTime - (tower.lastShot || 0);
-            const ratio = Math.min(1, elapsed / cd);
-            overlay.style.background = `conic-gradient(rgba(0, 0, 0, 0.3) ${(1 - ratio) * 360}deg, transparent 0deg)`;
-        }
-        if (tower.isShrine || tower.data.type === 'void_gatekeeper' || tower.isFeared || tower.isFrozenTomb) return;
+        
         if (nowTime - (tower.lastShot || 0) >= cd) {
-            const tr = tower.slotElement.getBoundingClientRect();
-            const tx = tr.left + tr.width / 2;
-            const ty = tr.top + tr.height / 2;
             const inRange = enemies.filter(e => {
                 if (e.hp <= 0 || e.isStealthed) return false;
-                const er = e.element.getBoundingClientRect();
-                const dist = Math.sqrt(Math.pow((er.left + er.width / 2) - tx, 2) + Math.pow((er.top + er.height / 2) - ty, 2));
+                const ex = (e.x / 100) * 360;
+                const dist = Math.sqrt(Math.pow(ex - tower.lx, 2) + Math.pow(e.y - tower.ly, 2));
                 return dist <= (tower.range + (tower.rangeBonus || 0));
             });
             if (inRange.length > 0) {
@@ -478,18 +415,14 @@ function gameLoop() {
         }
     });
 
-    if (typeof renderGraphics === 'function') renderGraphics();
     requestAnimationFrame(gameLoop);
 }
 
 function shoot(tower, target) {
     tower.lastShot = Date.now();
-    
-    // Spawn logical projectile (we'll need to draw these in graphics.js)
     if (typeof spawnProjectile === 'function') {
         spawnProjectile(tower, target);
     } else {
-        // Fallback for damage if projectile system isn't fully ready
         setTimeout(() => {
             if (target && target.hp > 0) {
                 handleHit(tower, target);
@@ -512,15 +445,15 @@ function handleHit(tower, target) {
     handleSpecialAblities(tower, target);
     const relicDmgBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('damage') : 0;
     const shrineDmg = tower.shrineDmgBonus || 0;
-    let finalDamageMultiplier = damageMultiplier * (1.0 + (tower.damageBonus || 0) + relicDmgBonus + shrineDmg);
+    let finalDamageMultiplier = 1.0 * (1.0 + (tower.damageBonus || 0) + relicDmgBonus + shrineDmg);
     
     const relicCritChance = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_chance') : 0;
-    const totalCritChance = critChance + relicCritChance + (tower.data.type === 'vajra' ? 0.2 : 0);
+    const totalCritChance = 0.05 + relicCritChance + (tower.data.type === 'vajra' ? 0.2 : 0);
     let isCritShot = false;
     if (Math.random() < totalCritChance) {
         isCritShot = true;
         const relicCritBonus = (typeof getRelicBonus === 'function') ? getRelicBonus('crit_damage') : 0;
-        const totalCritMultiplier = critMultiplier + relicCritBonus;
+        const totalCritMultiplier = 2.0 + relicCritBonus;
         finalDamageMultiplier *= totalCritMultiplier;
         if (tower.data.type === 'vajra') {
             const nearby = enemies.filter(e => {
@@ -550,21 +483,13 @@ function createDamageText(target, amount, isCrit) {
 }
 
 function createStatusEffectText(x, y, text, type = '') {
-    const div = document.createElement('div');
-    div.className = `status-effect-text ${type.toLowerCase()}`;
-    div.style.left = `${x}px`;
-    div.style.top = `${y - 30}px`;
-    div.innerText = text;
-    gameContainer.appendChild(div);
-    setTimeout(() => div.remove(), 1000);
+    // This could also use spawnFloatingText
+    if (typeof spawnFloatingText === 'function') {
+        spawnFloatingText(text, x, y - 30, '#ffd700', 16);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    gameContainer = document.getElementById('game-container');
-    road = document.getElementById('road');
-    window.gameContainer = gameContainer;
-    window.road = road;
-    
     const startBtn = document.getElementById('start-game-btn');
     const startScreen = document.getElementById('start-screen');
     const unlockModal = document.getElementById('unlock-modal');
@@ -610,9 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gameTutorialContainer) gameTutorialContainer.addEventListener('click', (e) => { if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) syncToggles(!gameTutorialToggle.checked); });
 
         startBtn.addEventListener('click', async () => {
-            // Ensure data is loaded
             await window.gameDataLoaded;
-            
             startScreen.classList.add('shrink-to-info');
             setTimeout(() => {
                 startScreen.style.display = 'none';
@@ -652,17 +575,13 @@ document.addEventListener('DOMContentLoaded', () => {
             let closed = false;
             mods.forEach(m => { const el = document.getElementById(m); if(el && el.style.display === 'flex'){ el.style.display='none'; closed=true; }});
             if (closed) isPaused = false;
-            document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
-            document.querySelectorAll('.card-slot.selected-slot').forEach(s => s.classList.remove('selected-slot'));
             const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
         }
     });
 
     document.addEventListener('mousedown', (e) => {
-        if (!e.target.closest('.unit') && !e.target.closest('.tower-card') && !e.target.closest('.job-btn') && !e.target.closest('.info-promo-btn') && !e.target.closest('.enemy')) {
-            document.querySelectorAll('.unit.selected').forEach(u => u.classList.remove('selected'));
-            document.querySelectorAll('.card-slot.selected-slot').forEach(s => s.classList.remove('selected-slot'));
+        if (!e.target.closest('.tower-card') && !e.target.closest('.job-btn') && !e.target.closest('.info-promo-btn')) {
             const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
         }
