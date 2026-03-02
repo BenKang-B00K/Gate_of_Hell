@@ -7,6 +7,7 @@ canvas {
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    background: rgba(255, 0, 0, 0.2);
 }
 
 body {
