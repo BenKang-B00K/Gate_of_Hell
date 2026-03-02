@@ -541,13 +541,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const tutorialStatus = document.getElementById('tutorial-status');
         const tutorialContainer = document.getElementById('tutorial-toggle-container');
         const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
-        const gameTutorialStatus = document.getElementById('game-tutorial-status');
+        const gameTutorialStatusText = document.getElementById('game-tutorial-status-text');
+        const tutorialToggleBtn = document.getElementById('tutorial-toggle-btn');
 
         const syncToggles = (state) => {
             if (tutorialToggle) tutorialToggle.checked = state;
             if (gameTutorialToggle) gameTutorialToggle.checked = state;
             if (tutorialStatus) tutorialStatus.innerText = state ? 'ON' : 'OFF';
-            if (gameTutorialStatus) gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
+            if (gameTutorialStatusText) gameTutorialStatusText.innerText = state ? 'ON' : 'OFF';
             localStorage.setItem('goh_tutorial_enabled', state);
         };
 
@@ -555,7 +556,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedTutorial !== null) syncToggles(savedTutorial === 'true');
 
         if (tutorialToggle) tutorialToggle.addEventListener('change', () => syncToggles(tutorialToggle.checked));
-        if (gameTutorialToggle) gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked));
+        if (tutorialToggleBtn) {
+            tutorialToggleBtn.onclick = () => {
+                const newState = localStorage.getItem('goh_tutorial_enabled') !== 'true';
+                syncToggles(newState);
+            };
+        }
 
         if (tutorialContainer) tutorialContainer.addEventListener('click', (e) => { if (e.target !== tutorialToggle && !e.target.closest('.slider')) syncToggles(!tutorialToggle.checked); });
 

@@ -291,24 +291,22 @@
         <div id="settings-content" class="modal-content-base">
             <div id="settings-header" class="modal-header-base">📜 [성스러운 두루마리: 설정]</div>
             <div id="settings-body">
-                <div class="settings-item">
-                    <span>튜토리얼 가이드</span>
-                    <div id="game-tutorial-toggle-container">
-                        <label class="switch">
-                            <input type="checkbox" id="game-tutorial-toggle" checked>
-                            <span class="slider round"></span>
-                        </label>
-                        <span id="game-tutorial-status">ON</span>
-                    </div>
-                </div>
+                <!-- Cool Status Text -->
+                <div class="settings-status-text">영적 시간 정지 중 (PAUSED)</div>
+                
                 <div class="settings-divider"></div>
-                <div class="settings-buttons">
-                    <button id="game-pause-btn" class="settings-action-btn">일시정지</button>
-                    <button id="restart-btn-top" class="settings-action-btn" style="color: #ff4500;">퇴마 재시작</button>
+                
+                <div class="settings-action-row">
+                    <button id="tutorial-toggle-btn" class="settings-action-btn">
+                        <span class="icon">📖</span> 튜토리얼: <span id="game-tutorial-status-text">ON</span>
+                    </button>
+                    <button id="restart-btn-top" class="settings-action-btn danger">
+                        <span class="icon">🔄</span> 퇴마 재시작
+                    </button>
                 </div>
             </div>
             <div id="settings-footer">
-                <button id="close-settings-btn" class="modal-close-btn">닫기</button>
+                <button id="close-settings-btn" class="modal-close-btn">기록 닫기 (Close)</button>
             </div>
         </div>
     </div>

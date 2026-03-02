@@ -400,19 +400,64 @@
     font-size: 12px;
 }
 
+.settings-status-text {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 900;
+    color: #00e5ff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 10px 0;
+    text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+    animation: pausePulse 2s infinite alternate;
+}
+
+@keyframes pausePulse {
+    0% { opacity: 0.6; text-shadow: 0 0 5px #00e5ff; }
+    100% { opacity: 1; text-shadow: 0 0 20px #00e5ff, 0 0 30px #008ba3; }
+}
+
+.settings-action-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
 .settings-action-btn {
-    background: #111;
-    color: #aaa;
-    border: 1px solid #333;
-    padding: 10px;
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffd700;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    padding: 10px 5px;
     border-radius: 4px;
     cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 10px;
     font-weight: bold;
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     transition: all 0.2s;
 }
+
+.settings-action-btn:hover {
+    background: rgba(255, 215, 0, 0.1);
+    border-color: #ffd700;
+}
+
+.settings-action-btn.danger {
+    color: #ff4500;
+    border-color: rgba(255, 69, 0, 0.3);
+}
+
+.settings-action-btn.danger:hover {
+    background: rgba(255, 69, 0, 0.1);
+    border-color: #ff4500;
+}
+
+.settings-action-btn .icon { font-size: 14px; }
 
 @keyframes eeriePulse { from { text-shadow: 0 0 10px #f00; } to { text-shadow: 0 0 30px #f00, 0 0 50px #800; } }
 @keyframes modalOminousPulse { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
