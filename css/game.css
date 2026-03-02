@@ -11,17 +11,18 @@
     flex-direction: column;
 }
 
-/* 1. Top Panel (18% height) */
+/* 1. Top Panel (12% height) */
 #top-panel {
-    flex: 0 0 18%;
+    flex: 0 0 12%;
     background: linear-gradient(to bottom, #1a0505, #000);
     border-bottom: 3px solid #441111;
     display: flex;
     flex-direction: column;
-    padding: 15px 25px;
+    padding: 10px 25px;
     box-sizing: border-box;
     z-index: 150;
     position: relative;
+    justify-content: center;
 }
 
 #top-management-row {

@@ -644,6 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const retryBtn = document.getElementById('retry-btn');
     if (retryBtn) retryBtn.onclick = () => window.location.reload();
 
+    /* [DISABLED] Management Logic
     const restartBtnTop = document.getElementById('restart-btn-top');
     const quitModal = document.getElementById('quit-modal');
     const quitConfirm = document.getElementById('quit-confirm-btn');
@@ -655,21 +656,24 @@ document.addEventListener('DOMContentLoaded', () => {
         quitConfirm.onclick = () => window.location.reload();
         quitCancel.onclick = () => { quitModal.style.display = 'none'; isPaused = false; };
     }
+    */
     if (unlockModal) unlockModal.addEventListener('click', () => { unlockModal.style.display = 'none'; isPaused = false; });
     
     if (startBtn && startScreen) {
         const tutorialToggle = document.getElementById('tutorial-toggle');
         const tutorialStatus = document.getElementById('tutorial-status');
         const tutorialContainer = document.getElementById('tutorial-toggle-container');
+        /* [DISABLED]
         const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
         const gameTutorialStatus = document.getElementById('game-tutorial-status');
         const gameTutorialContainer = document.getElementById('game-tutorial-toggle-container');
+        */
 
         const syncToggles = (state) => {
             if (tutorialToggle) tutorialToggle.checked = state;
-            if (gameTutorialToggle) gameTutorialToggle.checked = state;
+            // if (gameTutorialToggle) gameTutorialToggle.checked = state; // [DISABLED]
             if (tutorialStatus) tutorialStatus.innerText = state ? 'ON' : 'OFF';
-            if (gameTutorialStatus) gameTutorialStatus.innerText = state ? 'ON' : 'OFF';
+            // if (gameTutorialStatus) gameTutorialStatus.innerText = state ? 'ON' : 'OFF'; // [DISABLED]
             localStorage.setItem('goh_tutorial_enabled', state);
         };
 
@@ -677,10 +681,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedTutorial !== null) syncToggles(savedTutorial === 'true');
 
         if (tutorialToggle) tutorialToggle.addEventListener('change', () => syncToggles(tutorialToggle.checked));
-        if (gameTutorialToggle) gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked));
+        // if (gameTutorialToggle) gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked)); // [DISABLED]
 
         if (tutorialContainer) tutorialContainer.addEventListener('click', (e) => { if (e.target !== tutorialToggle && !e.target.closest('.slider')) syncToggles(!tutorialToggle.checked); });
-        if (gameTutorialContainer) gameTutorialContainer.addEventListener('click', (e) => { if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) syncToggles(!gameTutorialToggle.checked); });
+        // if (gameTutorialContainer) gameTutorialContainer.addEventListener('click', (e) => { if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) syncToggles(!gameTutorialToggle.checked); }); // [DISABLED]
 
         startBtn.addEventListener('click', () => {
             startScreen.classList.add('shrink-to-info');
@@ -695,6 +699,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /* [DISABLED]
     const pauseBtn = document.getElementById('game-pause-btn');
     const pauseOverlay = document.getElementById('pause-overlay');
     const resumeBtn = document.getElementById('pause-resume-btn');
@@ -713,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pauseBtn.addEventListener('click', togglePause);
         resumeBtn.addEventListener('click', togglePause);
     }
+    */
     gameLoop();
 
     window.addEventListener('keydown', (e) => {
