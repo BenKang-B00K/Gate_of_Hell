@@ -98,8 +98,8 @@
     z-index: 5;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
+    justify-content: flex-start; /* Changed from flex-end to left align */
+    gap: 6px;
     height: 16px;
     min-width: 80px;
 }
