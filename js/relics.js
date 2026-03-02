@@ -68,7 +68,7 @@ function renderRelicsGrid() {
 
         let inner = relicsData[id].icon;
         if (count > 1) {
-            inner += `<div style="position:absolute; bottom:3px; right:6px; font-size:21px; color:#fff; text-shadow:3px 3px 6px #000;">x${count}</div>`;
+            inner += `<div style="position:absolute; bottom:2px; right:4px; font-size:10px; color:#ffd700; font-weight:bold; text-shadow:1px 1px 2px #000;">x${count}</div>`;
         }
         slot.innerHTML += inner;
         
@@ -92,7 +92,7 @@ function renderRelicsGrid() {
     const addSection = (title, ids, color) => {
         if (ids.length === 0) return;
         const header = document.createElement('div');
-        header.style.cssText = `grid-column: 1 / -1; color: ${color}; font-size: 30px; font-weight: bold; margin-top: 30px; border-bottom: 3px solid ${color}; padding-bottom: 6px;`;
+        header.style.cssText = `grid-column: 1 / -1; color: ${color}; font-size: 14px; font-weight: bold; margin-top: 15px; border-bottom: 1px solid ${color}; padding-bottom: 3px;`;
         header.innerText = title;
         grid.appendChild(header);
         ids.forEach(id => grid.appendChild(createSlot(id)));
@@ -113,16 +113,16 @@ function showRelicDetail(id) {
     const count = collectedRelics[id] || 0;
 
     infoPane.innerHTML = `
-        <div class="relic-detail-title">${data.name} ${count > 0 ? '(보유 중)' : '(미획득)'}</div>
-        <div class="relic-detail-effect">${data.effect}</div>
-        <div class="relic-detail-lore">"${data.lore}"</div>
+        <div class="relic-detail-title" style="font-size:16px;">${data.name} ${count > 0 ? '(보유 중)' : '(미획득)'}</div>
+        <div class="relic-detail-effect" style="font-size:11px; color:#0f0;">${data.effect}</div>
+        <div class="relic-detail-lore" style="font-size:10px; color:#888; font-style:italic;">"${data.lore}"</div>
     `;
 }
 
 function renderTotalBonuses() {
     const pane = document.getElementById('relic-bonus-pane');
     if (!pane) return;
-    pane.innerHTML = '<div class="relic-bonus-title">총 유물 보너스</div>';
+    pane.innerHTML = '<div class="relic-bonus-title" style="font-size:14px;">총 유물 보너스</div>';
 
     totalRelicBonuses = {};
     for (let id in collectedRelics) {
@@ -158,7 +158,12 @@ function renderTotalBonuses() {
             } else {
                 dispVal = `+${val.toFixed(0)}`;
             }
-            bonusHtml += `<div class="total-bonus-item"><span>${labels[key]}</span><span class="val">${dispVal}</span></div>`;
+            bonusHtml += `
+                <div class="total-bonus-item" style="display:flex; justify-content:space-between; padding:3px 8px; font-size:10px; background:rgba(255,255,255,0.02); margin-bottom:2px; border-left:2px solid #ff4500;">
+                    <span>${labels[key]}</span>
+                    <span class="val" style="font-weight:bold; color:#ff4500;">${dispVal}</span>
+                </div>
+            `;
         }
     }
     pane.innerHTML += bonusHtml;
@@ -171,7 +176,7 @@ function collectRelic(id) {
 
     if (currentCount < data.maxStack) {
         collectedRelics[id] = currentCount + 1;
-        if (typeof GameLogger !== 'undefined') GameLogger.success(`🏺 Relic Acquired: ${data.name}`);
+        if (typeof GameLogger !== 'undefined') GameLogger.success(`Acquired: ${data.name}`);
         showRelicInfoInPanel(id);
         const notif = document.getElementById('relics-notif');
         if (notif) notif.style.display = 'flex';
@@ -186,10 +191,10 @@ function showRelicInfoInPanel(id) {
     const data = relicsData[id];
     window.infoPanelLockedUntil = Date.now() + 4000;
     d.innerHTML = `
-        <div style="color:#ff4500; font-weight:bold; font-size:39px; margin-bottom:6px;">🏺 유물 발견!</div>
-        <div style="color:#fff; font-size:33px; font-weight:bold; margin-bottom:12px;">${data.icon} ${data.name}</div>
-        <div style="font-size:27px; color:#00ff00; line-height:1.2;">효과: ${data.effect}</div>
-        <div style="color:#555; font-size:25px; margin-top:18px; font-style:italic; line-height:1.2;">"${data.lore}"</div>
+        <div class="unit-info-title" style="color:#ff4500;">🏺 유물 발견!</div>
+        <div style="color:#fff; font-size:12px; font-weight:bold; margin:4px 0;">${data.icon} ${data.name}</div>
+        <div style="font-size:10px; color:#00ff00; line-height:1.2;">효과: ${data.effect}</div>
+        <div class="unit-info-desc" style="-webkit-line-clamp:2;">"${data.lore}"</div>
     `;
     setTimeout(() => { if (Date.now() >= window.infoPanelLockedUntil - 50) { window.infoPanelLockedUntil = 0; if(typeof window.startInfoResetTimer === 'function') window.startInfoResetTimer(); }}, 4050);
 }
@@ -217,7 +222,6 @@ function checkRelicDrop(enemy) {
             } else if (data.dropSource === 'demon' && demons.includes(enemy.type)) {
                 canDrop = true;
             } else if (data.dropSource === 'supreme_boss') {
-                // Extremely rare drop from high demons or boss only
                 if (demons.includes(enemy.type) && Math.random() < 0.05) canDrop = true;
             }
         }
