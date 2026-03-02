@@ -211,42 +211,71 @@
 }
 
 #unit-info {
-    flex: 0 0 55%; /* Force strictly 55% */
+    flex: 0 0 55%;
     background: #050505;
     border: 2px solid #2a2010;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    text-align: center;
-    padding: 6px;
+    justify-content: center;
+    padding: 4px;
     color: #aaa;
     min-width: 0;
-    overflow-y: auto;
+    overflow: hidden; /* Prevent scrollbars in 128px */
 }
 
-.unit-info-title { font-size: 14px !important; color: #ffd700; font-weight: bold; margin-bottom: 2px; }
-.unit-info-stats { border: 1px solid rgba(255,255,255,0.1); padding: 2px 4px; border-radius: 3px; }
-.unit-info-stats span:first-child { font-size: 8px !important; }
-.unit-info-stats span:last-child { font-size: 11px !important; }
-.unit-info-desc { font-size: 9px !important; margin-top: 4px; color: #888; }
+/* Compact Info Layouts */
+.info-row { display: flex; width: 100%; align-items: center; justify-content: center; gap: 4px; margin-bottom: 2px; }
+.info-col { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+
+.unit-info-title { font-size: 12px !important; color: #ffd700; font-weight: bold; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.unit-info-stats { 
+    border: 1px solid rgba(255,255,255,0.1); 
+    padding: 1px 3px; 
+    border-radius: 2px; 
+    background: rgba(255,255,255,0.02);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+}
+.unit-info-stats span:first-child { font-size: 7px !important; color: #888; }
+.unit-info-stats span:last-child { font-size: 10px !important; color: #fff; font-weight: bold; }
+
+.unit-info-desc { 
+    font-size: 8.5px !important; 
+    line-height: 1.1; 
+    color: #999; 
+    margin: 2px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
 
 .info-promo-btn {
-    width: 24px;
-    height: 24px;
-    font-size: 12px;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
     padding: 0;
-    margin: 0 2px;
+    margin: 0 1px;
 }
 
 .info-sacrifice-btn {
-    font-size: 9px;
-    padding: 2px 6px;
-    height: 18px;
+    font-size: 8px;
+    padding: 1px 4px;
+    height: 14px;
+    min-width: 35px;
 }
 
-.master-btn-container { margin-top: 4px; gap: 8px; }
-.master-btn-container span { font-size: 8px !important; }
+.master-btn-container { margin-top: 2px; gap: 4px; display: flex; justify-content: center; }
+.master-btn-container span { font-size: 7.5px !important; margin-top: 1px; }
+
+.info-divider {
+    width: 100%; height: 1px; 
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent); 
+    margin: 2px 0;
+}
 
 .info-default-text {
     font-family: 'Cinzel', serif;
