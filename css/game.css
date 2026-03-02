@@ -1,7 +1,9 @@
 #game-container {
     position: relative;
-    width: 360px;
-    height: 640px;
+    width: 360px; /* Base display width */
+    height: 640px; /* Base display height */
+    max-width: 100vw;
+    max-height: 100vh;
     background: #000;
     margin: auto;
     overflow: hidden;
