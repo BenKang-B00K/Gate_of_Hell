@@ -1,11 +1,8 @@
-/* allies_ui.js - Unified UI System (Info Panel & HUD) */
+/* allies_ui.js - Ultra-Compact Info System */
 
 let infoResetTimer = null;
 let infoPanelLockedUntil = 0;
 
-/**
- * Initializes UI listeners. Logical slots are handled by graphics_env.js and input_handler.js
- */
 function initAllies() {
     attachGlobalListeners();
 }
@@ -14,315 +11,121 @@ let listenersAttached = false;
 function attachGlobalListeners() {
     if (listenersAttached) return;
 
-    // 1. Summon Button
-    const summonBtn = document.getElementById('tower-card');
-    if (summonBtn) {
-        summonBtn.addEventListener('click', () => {
-            if (typeof summonUnit === 'function') summonUnit();
-        });
-        summonBtn.addEventListener('mouseenter', () => {
-            const d = document.getElementById('unit-info');
-            if (d) {
-                const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
-                const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
-                d.innerHTML = `
-                    <div class="unit-info-title">🧙 견습 퇴마사 소환</div>
-                    <div style="display:inline-block; background:#2a2010; color:#fff; padding:1px 6px; border-radius:3px; font-size:9px; font-weight:bold; margin:2px 0;">비용: ${finalTowerCost} SE</div>
-                    <div class="unit-info-desc">성스러운 기운을 모아 새로운 견습 퇴마사를 부릅니다.</div>
-                    <div class="info-divider"></div>
-                    <div style="color:#00ff00; font-size:8.5px; font-weight:bold;">[소환 규칙]</div>
-                    <div style="font-size:8px; color:#aaa;">• 중앙 빈 슬롯 무작위 소환<br>• 비용 5 SE씩 증가 (최대 16명)</div>
-                `;
-                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
-            }
-        });
-    }
+    const d = document.getElementById('unit-info');
+    const updateInfo = (html) => { if(d) { d.innerHTML = html; if (typeof startInfoResetTimer === 'function') startInfoResetTimer(); } };
+
+    // 1. Summon Card
+    document.getElementById('tower-card')?.addEventListener('mouseenter', () => {
+        const cost = Math.max(5, Math.floor(window.towerCost - (typeof getRelicBonus === 'function' ? getRelicBonus('summon_cost_reduction') : 0)));
+        updateInfo(`
+            <div class="unit-info-title">🧙 견습 퇴마사</div>
+            <div style="color:#00ff00; font-size:10px; font-weight:bold; margin:2px 0;">비용: ${cost} SE</div>
+            <div class="unit-info-desc">중앙 슬롯에 무작위 소환됩니다. 소환 시마다 비용이 5 증가합니다.</div>
+        `);
+    });
 
     // 2. Shrine Card
-    const shrineBtn = document.getElementById('shrine-card');
-    if (shrineBtn) {
-        shrineBtn.addEventListener('click', () => {
-            if (typeof summonShrine === 'function') summonShrine();
-        });
-        shrineBtn.addEventListener('mouseenter', () => {
-            const d = document.getElementById('unit-info');
-            if (d) {
-                const cost = window.shrineCost || 100;
-                d.innerHTML = `
-                    <div class="unit-info-title">🕍 성소 건립 (Shrine)</div>
-                    <div style="display:inline-block; background:#002a32; color:#fff; padding:1px 6px; border-radius:3px; font-size:9px; font-weight:bold; margin:2px 0;">비용: ${cost} SE</div>
-                    <div class="unit-info-desc">퇴마사를 보조하는 성스러운 건축물을 세웁니다.</div>
-                    <div class="info-divider"></div>
-                    <div style="color:#ffd700; font-size:8.5px; font-weight:bold;">[건립 규칙]</div>
-                    <div style="font-size:8px; color:#aaa;">• 전용 슬롯에만 건립 가능<br>• 철거 시 1스테이지 디버프 발생</div>
-                `;
-                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
-            }
-        });
-    }
+    document.getElementById('shrine-card')?.addEventListener('mouseenter', () => {
+        updateInfo(`
+            <div class="unit-info-title">🕍 성소 건립</div>
+            <div style="color:#00e5ff; font-size:10px; font-weight:bold; margin:2px 0;">비용: ${window.shrineCost} SE</div>
+            <div class="unit-info-desc">전용 슬롯에 배치하여 주변 아군에게 강력한 공격력 버프를 제공합니다.</div>
+        `);
+    });
 
-    // 3. Purge Button
-    const purgeBtn = document.getElementById('purge-card');
-    if (purgeBtn) {
-        purgeBtn.addEventListener('click', () => {
-            if (typeof window.purgePortal === 'function') window.purgePortal();
-        });
-        purgeBtn.addEventListener('mouseenter', () => {
-            const d = document.getElementById('unit-info');
-            if (d) {
-                d.innerHTML = `
-                    <div class="unit-info-title" style="color:#9400d3;">🔥 공간 정화 (Purge)</div>
-                    <div style="display:inline-block; background:#1a002a; color:#fff; padding:1px 6px; border-radius:3px; font-size:9px; font-weight:bold; margin:2px 0;">비용: 800 SE</div>
-                    <div class="unit-info-desc">에너지를 폭발시켜 포탈 오염도를 50% 제거합니다.</div>
-                    <div class="info-divider"></div>
-                    <div style="color:#ff1744; font-size:8.5px; font-style:italic;">"부정한 기운은 남지 않을 것입니다."</div>
-                `;
-                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
-            }
-        });
-    }
+    // 3. Purge Card
+    document.getElementById('purge-card')?.addEventListener('mouseenter', () => {
+        updateInfo(`
+            <div class="unit-info-title" style="color:#9400d3;">🔥 공간 정화</div>
+            <div style="color:#ff1744; font-size:10px; font-weight:bold; margin:2px 0;">비용: 800 SE</div>
+            <div class="unit-info-desc">즉시 포탈 오염도를 50% 제거합니다. 위기 상황에서 사용하십시오.</div>
+        `);
+    });
 
-    // 4. Relics Button
-    const relicsBtn = document.getElementById('relics-btn');
-    if (relicsBtn) {
-        relicsBtn.addEventListener('mouseenter', () => {
-            const d = document.getElementById('unit-info');
-            if (d) {
-                d.innerHTML = `
-                    <div class="unit-info-title" style="color:#ff4500;">🏺 심연의 유물 (Relics)</div>
-                    <div class="unit-info-desc">악의 존재를 정화하며 얻은 보물들입니다.</div>
-                    <div class="info-divider"></div>
-                    <div style="color:#ff8a80; font-size:8.5px; font-style:italic;">과거의 승리자들이 남긴 유산입니다.</div>
-                `;
-                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
-            }
+    // 4. Relics/Equip/Records (Systems)
+    const sysInfo = {
+        'relics-btn': { t: '🏺 유물', c: '#ff4500', d: '정화 중 획득한 보물로 아군 전체를 영구 강화합니다.' },
+        'equip-btn': { t: '⚔️ 장비', c: '#00e5ff', d: '장착 시 특정 능력치를 대폭 상승시키는 고대의 무구입니다.' },
+        'collections-btn': { t: '📖 도감', c: '#ffd700', d: '지금까지 조우한 악령들과 아군들의 상세 기록을 확인합니다.' }
+    };
+    Object.entries(sysInfo).forEach(([id, info]) => {
+        document.getElementById(id)?.addEventListener('mouseenter', () => {
+            updateInfo(`<div class="unit-info-title" style="color:${info.c};">${info.t}</div><div class="unit-info-desc">${info.d}</div>`);
         });
-    }
-
-    // 5. Equipment Button
-    const equipBtn = document.getElementById('equip-btn');
-    if (equipBtn) {
-        equipBtn.addEventListener('mouseenter', () => {
-            const d = document.getElementById('unit-info');
-            if (d) {
-                d.innerHTML = `
-                    <div class="unit-info-title" style="color:#00e5ff;">⚔️ 신성한 장비 (Equipment)</div>
-                    <div class="unit-info-desc">퇴마사들의 능력을 극대화하는 무구들입니다.</div>
-                    <div class="info-divider"></div>
-                    <div style="color:#80d8ff; font-size:8.5px; font-style:italic;">날카로운 칼날과 정화된 의지.</div>
-                `;
-                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
-            }
-        });
-    }
-
-    // 6. Collections Button
-    const collsBtn = document.getElementById('collections-btn');
-    if (collsBtn) {
-        collsBtn.addEventListener('mouseenter', () => {
-            const d = document.getElementById('unit-info');
-            if (d) {
-                d.innerHTML = `
-                    <div class="unit-info-title" style="color:#ffd700;">📖 성스러운 기록 (Records)</div>
-                    <div class="unit-info-desc">조우한 악의 존재들과 수호자들의 기록입니다.</div>
-                    <div class="info-divider"></div>
-                    <div style="color:#ffecb3; font-size:8.5px; font-style:italic;">지식은 심연을 닫는 열쇠입니다.</div>
-                `;
-                if (typeof startInfoResetTimer === 'function') startInfoResetTimer();
-            }
-        });
-    }
+    });
 
     listenersAttached = true;
 }
 
-function updateSummonButtonState() {
-    const tc = document.getElementById('tower-card');
-    const sw = document.getElementById('summon-warning');
-    const scd = document.getElementById('summon-cost-display');
-    const shc = document.getElementById('shrine-card');
-    const shw = document.getElementById('shrine-warning');
-    const shcd = document.getElementById('shrine-cost-display');
-
-    if (!tc) return;
-
-    const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
-    const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
-    if (scd) scd.innerText = `${finalTowerCost} SE`;
-
-    const isMax = towers.filter(t => !t.isShrine).length >= maxTowers;
-    const isBroke = money < finalTowerCost;
-
-    if (sw) {
-        if (isMax) { sw.innerText = '인원 초과'; sw.style.display = 'block'; }
-        else if (isBroke) { sw.innerText = 'SE 부족'; sw.style.display = 'block'; }
-        else { sw.style.display = 'none'; }
-    }
-    if (isMax || isBroke) tc.classList.add('disabled');
-    else tc.classList.remove('disabled');
-
-    // Shrine State
-    if (shc) {
-        if (shcd) shcd.innerText = `${window.shrineCost} SE`;
-        const isShrineBroke = money < window.shrineCost;
-        if (shw) {
-            if (isShrineBroke) { shw.innerText = 'SE 부족'; shw.style.display = 'block'; }
-            else { shw.style.display = 'none'; }
-        }
-        if (isShrineBroke) shc.classList.add('disabled');
-        else shc.classList.remove('disabled');
-    }
-
-    const pc = document.getElementById('purge-card');
-    const pw = document.getElementById('purge-warning');
-    if (pc && pw) {
-        if (money < 800) { pc.classList.add('disabled'); pw.style.display = 'block'; }
-        else { pc.classList.remove('disabled'); pw.style.display = 'none'; }
-    }
-}
-
 function showUnitInfo(tower) {
-    if (typeof GameLogger !== 'undefined') GameLogger.debug(`🔍 Inspecting: ${tower.data.name}`);
     window.infoPanelLockedUntil = Date.now() + 5000;
-    
     const d = document.getElementById('unit-info');
     if (!d) return;
 
     const data = tower.data;
-    const isShrine = tower.isShrine;
-    const isDemolishing = tower.isDemolishing;
-
-    const formatBonus = (val) => {
-        if (val > 0) return `<span style="color:#00ff00; font-size:7px;">+${val}</span>`;
-        if (val < 0) return `<span style="color:#ff1744; font-size:7px;">${val}</span>`;
-        return "";
-    };
-
+    const formatB = (v) => v > 0 ? `<span style="color:#0f0;font-size:7px;">+${v}</span>` : v < 0 ? `<span style="color:#f00;font-size:7px;">${v}</span>` : "";
     window.lastInspectedTower = tower;
 
-    let contentHtml = '';
-    
-    if (isShrine) {
-        contentHtml = `
-            <div class="info-row">
-                <div class="unit-info-title">${data.name}</div>
-                <button class="info-sacrifice-btn shrine-demo" onclick="triggerSacrificeFromInfo()" ${isDemolishing ? 'disabled' : ''}>
-                    ${isDemolishing ? '철거 중' : '철거'}
-                </button>
-            </div>
-            <div class="info-row">
-                <div class="unit-info-stats" style="flex:1; border-color:#00e5ff;">
-                    <span>EFFECT</span>
-                    <span style="color:${isDemolishing ? '#ff1744' : '#00ff00'}">공격력 ${isDemolishing ? '-20%' : '+20%'}</span>
-                </div>
-            </div>
-            <div class="unit-info-desc">${isDemolishing ? data.demoDesc : data.desc}</div>
+    if (tower.isShrine) {
+        d.innerHTML = `
+            <div class="info-row"><div class="unit-info-title">${data.name}</div>
+            <button class="info-sacrifice-btn shrine-demo" onclick="triggerSacrificeFromInfo()">${tower.isDemolishing ? '철거중' : '철거'}</button></div>
+            <div class="unit-info-stats" style="margin:2px 0; border-color:#00e5ff;"><span style="color:#00e5ff;font-size:9px;">공격력 +20% 시너지</span></div>
+            <div class="unit-info-desc">${tower.isDemolishing ? data.demoDesc : data.desc}</div>
         `;
     } else {
-        const baseDmg = data.damage;
-        const finalDmg = Math.round(baseDmg * (window.damageMultiplier || 1.0) * (1.0 + (tower.damageBonus || 0)));
-        const bonusDmg = finalDmg - baseDmg;
-        const baseRange = data.range;
-        const bonusRange = tower.rangeBonus || 0;
-        const sm = 1.0 + (tower.speedBonus || 0);
-        const baseAS = (1000 / data.cooldown).toFixed(1);
-        const finalAS = (baseAS * sm).toFixed(1);
-        const bonusAS = (finalAS - baseAS).toFixed(1);
-
-        contentHtml = `
-            <div class="info-row">
-                <div class="unit-info-title">${data.name}</div>
-                <button class="info-sacrifice-btn" onclick="triggerSacrificeFromInfo()">타락</button>
+        const dmg = Math.round(data.damage * (window.damageMultiplier || 1) * (1 + (tower.damageBonus || 0)));
+        const as = ((1000 / data.cooldown) * (1 + (tower.speedBonus || 0))).toFixed(1);
+        
+        d.innerHTML = `
+            <div class="info-row"><div class="unit-info-title">${data.name}</div>
+            <button class="info-sacrifice-btn" onclick="triggerSacrificeFromInfo()">타락</button></div>
+            <div class="info-row" style="gap:2px;">
+                <div class="unit-info-stats"><span>⚔️</span><span>${dmg}${formatB(dmg-data.damage)}</span></div>
+                <div class="unit-info-stats"><span>🎯</span><span>${data.range + (tower.rangeBonus||0)}</span></div>
+                <div class="unit-info-stats"><span>⚡</span><span>${as}</span></div>
             </div>
-            <div class="info-row">
-                <div class="unit-info-stats"><span>ATK</span><span>${baseDmg}${formatBonus(bonusDmg)}</span></div>
-                <div class="unit-info-stats"><span>RNG</span><span>${baseRange}${formatBonus(bonusRange)}</span></div>
-                <div class="unit-info-stats"><span>SPD</span><span>${baseAS}${formatBonus(bonusAS)}</span></div>
-            </div>
-            <div class="info-divider"></div>
-        `;
-
-        // Progression area
-        if (data.type === 'apprentice') {
-            contentHtml += `
-                <div class="master-btn-container">
-                    <div class="info-col"><button class="info-promo-btn" onclick="performJobChange('knight', true)">⚔️</button><span>공격</span></div>
-                    <div class="info-col"><button class="info-promo-btn" onclick="performJobChange('chainer', true)">🪄</button><span>지원</span></div>
-                    <div class="info-col"><button class="info-promo-btn" onclick="performJobChange('alchemist', true)">💠</button><span>특수</span></div>
+            ${data.type === 'apprentice' ? `
+                <div class="master-btn-container" style="margin-top:2px;">
+                    <div class="info-col"><button class="info-promo-btn" onclick="performJobChange('knight', true)">⚔️</button></div>
+                    <div class="info-col"><button class="info-promo-btn" onclick="performJobChange('chainer', true)">🪄</button></div>
+                    <div class="info-col"><button class="info-promo-btn" onclick="performJobChange('alchemist', true)">💠</button></div>
                 </div>
-            `;
-        } else if (data.tier === 2) {
-            const paths = [
-                { from: 'knight', to: ['paladin', 'crusader'] },
-                { from: 'fire', to: ['hellfire', 'phoenix'] },
-                { from: 'archer', to: ['voidsniper', 'thousandhand'] },
-                { from: 'chainer', to: ['executor', 'binder'] },
-                { from: 'ice', to: ['absolutezero', 'permafrost'] },
-                { from: 'tracker', to: ['seer', 'commander'] },
-                { from: 'talisman', to: ['grandsealer', 'flamemaster'] },
-                { from: 'monk', to: ['vajra', 'saint'] },
-                { from: 'necromancer', to: ['wraithlord', 'cursedshaman'] },
-                { from: 'guardian', to: ['rampart', 'judgment'] },
-                { from: 'alchemist', to: ['midas', 'philosopher'] },
-                { from: 'mirror', to: ['illusion', 'reflection'] }
-            ];
-            const p = paths.find(x => x.from === data.type);
+            ` : data.tier === 2 ? `
+                <div class="master-btn-container">
+                    <button class="info-promo-btn" style="width:40px;" onclick="performMasterJobChange(window.lastInspectedTower, '${unitTypes.find(u=>u.upgrades?.includes(u.type))?.type}', true)">전직</button>
+                </div>
+            ` : `<div class="unit-info-desc" style="-webkit-line-clamp:2;">${data.desc}</div>`}
+        `;
+        // Quick Fix for Tier 2 upgrades
+        if (data.tier === 2) {
+            const paths = [{f:'knight',t:['paladin','crusader']},{f:'fire',t:['hellfire','phoenix']},{f:'archer',t:['voidsniper','thousandhand']},{f:'chainer',t:['executor','binder']},{f:'ice',t:['absolutezero','permafrost']},{f:'tracker',t:['seer','commander']},{f:'talisman',t:['grandsealer','flamemaster']},{f:'monk',t:['vajra','saint']},{f:'necromancer',t:['wraithlord','cursedshaman']},{f:'guardian',t:['rampart','judgment']},{f:'alchemist',t:['midas','philosopher']},{f:'mirror',t:['illusion','reflection']}];
+            const p = paths.find(x => x.f === data.type);
             if (p) {
-                const u1 = unitTypes.find(u => u.type === p.to[0]);
-                const u2 = unitTypes.find(u => u.type === p.to[1]);
-                contentHtml += `
-                    <div class="master-btn-container">
-                        <div class="info-col"><button class="info-promo-btn" onclick="performMasterJobChange(window.lastInspectedTower, '${u1.type}', true)">${u1.icon}</button><span>${u1.name}</span></div>
-                        <div class="info-col"><button class="info-promo-btn" onclick="performMasterJobChange(window.lastInspectedTower, '${u2.type}', true)">${u2.icon}</button><span>${u2.name}</span></div>
-                    </div>
+                const u1 = unitTypes.find(u => u.type === p.t[0]);
+                const u2 = unitTypes.find(u => u.type === p.t[1]);
+                d.querySelector('.master-btn-container').innerHTML = `
+                    <div class="info-col"><button class="info-promo-btn" onclick="performMasterJobChange(window.lastInspectedTower, '${u1.type}', true)">${u1.icon}</button></div>
+                    <div class="info-col"><button class="info-promo-btn" onclick="performMasterJobChange(window.lastInspectedTower, '${u2.type}', true)">${u2.icon}</button></div>
                 `;
-            } else {
-                contentHtml += `<div class="unit-info-desc">${data.desc}</div>`;
             }
-        } else {
-            contentHtml += `<div class="unit-info-desc">${data.desc}</div>`;
         }
     }
-
-    d.innerHTML = contentHtml;
     startInfoResetTimer();
 }
 
-function triggerSacrificeFromInfo() {
-    if (window.lastInspectedTower) {
-        if (typeof window.confirmSacrifice === 'function') {
-            window.confirmSacrifice(window.lastInspectedTower);
-        }
-    }
-}
-
 function showEnemyInfo(enemy) {
-    if (!enemy) return;
-    if (typeof GameLogger !== 'undefined') GameLogger.debug(`🔍 Inspecting Enemy: ${enemy.data?.name || enemy.type}`);
     window.infoPanelLockedUntil = Date.now() + 5000;
     const d = document.getElementById('unit-info');
     if (!d) return;
-
-    const hp = Math.floor(enemy.hp);
-    const maxHp = Math.floor(enemy.maxHp || hp);
-    const def = enemy.defense || 0;
-
-    const dispName = enemy.data?.name || enemy.type;
-    const dispLore = enemy.data?.lore || "기록 없음";
-    const dispDesc = enemy.desc || "심연의 존재입니다.";
-
+    const hpR = (enemy.hp / enemy.maxHp) * 100;
     d.innerHTML = `
-        <div class="unit-info-title" style="color:#ff4500; text-shadow:0 0 5px #f00;">${dispName}</div>
-        <div class="info-row">
-            <div class="unit-info-stats" style="flex:2; border-color:#ff1744; background:rgba(183,28,28,0.1);">
-                <span>HEALTH</span><span>${hp} / ${maxHp}</span>
-            </div>
-            <div class="unit-info-stats" style="flex:1; border-color:#888;">
-                <span>DEF</span><span>${def}</span>
-            </div>
+        <div class="unit-info-title" style="color:#ff4500;">${enemy.data?.name || enemy.type}</div>
+        <div style="width:100%; height:4px; background:#222; margin:3px 0; border-radius:2px; overflow:hidden;">
+            <div style="width:${hpR}%; height:100%; background:#ff1744;"></div>
         </div>
-        <div class="unit-info-desc" style="color:#ff8a80; -webkit-line-clamp: 1;">${dispDesc}</div>
-        <div style="color:#666; font-size:7.5px; font-style:italic; line-height:1.1; padding:0 5px;">"${dispLore}"</div>
+        <div style="font-size:9px; color:#fff; margin-bottom:2px;">HP: ${Math.floor(enemy.hp)} / DEF: ${enemy.defense || 0}</div>
+        <div class="unit-info-desc" style="-webkit-line-clamp:2;">${enemy.desc || "심연의 존재입니다."}</div>
     `;
     startInfoResetTimer();
 }
@@ -332,21 +135,28 @@ function startInfoResetTimer() {
     infoResetTimer = setTimeout(() => {
         if (Date.now() > infoPanelLockedUntil) {
             const d = document.getElementById('unit-info');
-            if (d) {
-                d.innerHTML = `
-                    <div class="info-default-text">Gate of Hell<br><span style="font-size:10px; opacity:0.8;">Sacred Tablet</span></div>
-                `;
-            }
+            if (d) d.innerHTML = `<div class="info-default-text">Gate of Hell<br>Sacred Tablet</div>`;
         }
     }, 10000);
 }
 
+function updateSummonButtonState() {
+    const tc = document.getElementById('tower-card'), sw = document.getElementById('summon-warning'), scd = document.getElementById('summon-cost-display');
+    const shc = document.getElementById('shrine-card'), shw = document.getElementById('shrine-warning'), shcd = document.getElementById('shrine-cost-display');
+    const pc = document.getElementById('purge-card'), pw = document.getElementById('purge-warning');
+    if (!tc) return;
+    const cost = Math.max(5, Math.floor(window.towerCost - (typeof getRelicBonus === 'function' ? getRelicBonus('summon_cost_reduction') : 0)));
+    if (scd) scd.innerText = `${cost} SE`;
+    const isMax = towers.filter(t => !t.isShrine).length >= maxTowers, isBroke = money < cost;
+    if (sw) { sw.innerText = isMax ? '인원초과' : 'SE부족'; sw.style.display = (isMax || isBroke) ? 'block' : 'none'; }
+    tc.classList.toggle('disabled', isMax || isBroke);
+    if (shc) { if (shcd) shcd.innerText = `${window.shrineCost} SE`; const sBroke = money < window.shrineCost; if (shw) shw.style.display = sBroke ? 'block' : 'none'; shc.classList.toggle('disabled', sBroke); }
+    if (pc && pw) { const pBroke = money < 800; pc.classList.toggle('disabled', pBroke); pw.style.display = pBroke ? 'block' : 'none'; }
+}
+
 function flashResourceError(type) {
     const card = type === 'se' ? document.getElementById('tower-card') : null;
-    if (card) {
-        card.classList.add('error-shake');
-        setTimeout(() => card.classList.remove('error-shake'), 500);
-    }
+    if (card) { card.classList.add('error-shake'); setTimeout(() => card.classList.remove('error-shake'), 500); }
 }
 
 window.initAllies = initAllies;
@@ -355,3 +165,4 @@ window.showUnitInfo = showUnitInfo;
 window.showEnemyInfo = showEnemyInfo;
 window.flashResourceError = flashResourceError;
 window.startInfoResetTimer = startInfoResetTimer;
+window.triggerSacrificeFromInfo = () => { if (window.lastInspectedTower) window.confirmSacrifice(window.lastInspectedTower); };
