@@ -1,4 +1,4 @@
-/* modals.css - All Fullscreen Overlays and Dialogs */
+/* modals.css - Responsive Overlays and Dialogs */
 
 /* Common Overlay Styling */
 .overlay-base {
@@ -7,6 +7,7 @@
     display: flex; justify-content: center; align-items: center;
     backdrop-filter: blur(15px);
     animation: overlayFadeIn 0.2s ease-out forwards;
+    z-index: 1000;
 }
 
 @keyframes overlayFadeIn {
@@ -19,13 +20,13 @@
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.95);
     display: flex; justify-content: center; align-items: center;
-    z-index: 1100; /* [User Request] Critical Modal z=1100 */
+    z-index: 1100;
     backdrop-filter: blur(10px);
     animation: overlayFadeIn 0.2s ease-out;
 }
 
 #sacrifice-content {
-    width: 550px; padding: 40px; text-align: center; position: relative;
+    width: 90%; max-width: 500px; padding: 30px; text-align: center; position: relative;
     background: linear-gradient(145deg, #1a0000, #0a0a0a);
     border: 4px solid #800; border-radius: 30px 30px 10px 10px;
     box-shadow: 0 0 60px rgba(139, 0, 0, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.8);
@@ -34,62 +35,42 @@
 
 #sacrifice-content::before {
     content: "💀 FORBIDDEN RITUAL 💀";
-    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
-    background: #000; padding: 5px 20px; color: #f00;
-    font-family: 'Cinzel', serif; font-size: 18px;
+    position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+    background: #000; padding: 4px 15px; color: #f00;
+    font-family: 'Cinzel', serif; font-size: 14px;
     border: 2px solid #800; border-radius: 5px; letter-spacing: 2px;
     white-space: nowrap;
 }
 
-#sacrifice-header { font-size: 36px; color: #ff1744; font-weight: bold; margin-bottom: 25px; text-shadow: 0 0 15px #f00; text-transform: uppercase; }
-#sacrifice-body { font-size: 24px; color: #ccc; line-height: 1.6; margin-bottom: 40px; font-family: 'Noto Sans KR', sans-serif; }
+#sacrifice-header { font-size: 24px; color: #ff1744; font-weight: bold; margin-bottom: 15px; text-shadow: 0 0 15px #f00; text-transform: uppercase; }
+#sacrifice-body { font-size: 16px; color: #ccc; line-height: 1.5; margin-bottom: 25px; font-family: 'Noto Sans KR', sans-serif; }
 
 #sacrifice-footer {
     display: flex;
-    gap: 20px;
+    gap: 15px;
     justify-content: center;
 }
 
 #sacrifice-confirm-btn, #sacrifice-cancel-btn {
-    padding: 15px 30px;
-    font-size: 20px;
+    padding: 10px 20px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
-    border-radius: 8px;
+    border-radius: 6px;
     font-family: 'Noto Sans KR', sans-serif;
 }
 
-#sacrifice-confirm-btn {
-    background: linear-gradient(to bottom, #800, #300);
-    color: #fff;
-    border: 2px solid #f00;
-}
+#sacrifice-confirm-btn { background: linear-gradient(to bottom, #800, #300); color: #fff; border: 2px solid #f00; }
+#sacrifice-confirm-btn:hover { background: #f00; box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); transform: scale(1.05); }
+#sacrifice-cancel-btn { background: #222; color: #aaa; border: 2px solid #444; }
+#sacrifice-cancel-btn:hover { background: #333; color: #fff; border-color: #888; transform: scale(1.05); }
 
-#sacrifice-confirm-btn:hover {
-    background: #f00;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
-    transform: scale(1.05);
-}
-
-#sacrifice-cancel-btn {
-    background: #222;
-    color: #aaa;
-    border: 2px solid #444;
-}
-
-#sacrifice-cancel-btn:hover {
-    background: #333;
-    color: #fff;
-    border-color: #888;
-    transform: scale(1.05);
-}
-
-/* Unlock Modal (Match Sacred Tablet Style) */
+/* Unlock Modal */
 #unlock-modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.95);
-    z-index: 1100; /* [User Request] Critical Modal z=1100 */
+    z-index: 1100;
     display: flex; justify-content: center; align-items: center;
     backdrop-filter: blur(10px);
 }
@@ -98,10 +79,10 @@
     background: linear-gradient(145deg, #1a1a1a, #050505);
     border: 4px solid #ffd700;
     border-radius: 40px 40px 15px 15px;
-    padding: 40px;
+    padding: 30px;
     text-align: center;
-    width: 600px; /* Aligned with UI density */
-    min-height: 400px;
+    width: 90%; max-width: 500px;
+    min-height: 300px;
     box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), inset 0 0 30px rgba(255, 215, 0, 0.1);
     position: relative;
     animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -114,10 +95,10 @@
 
 .unlock-title {
     font-family: 'Cinzel', serif;
-    font-size: 28px;
+    font-size: 20px;
     font-weight: 900;
-    letter-spacing: 8px;
-    margin-bottom: 25px;
+    letter-spacing: 4px;
+    margin-bottom: 15px;
     text-transform: uppercase;
 }
 
@@ -125,31 +106,31 @@
 .unlock-title.evil { color: #9400d3; text-shadow: 0 0 15px #9400d3; }
 
 #unlock-icon {
-    font-size: 90px;
-    margin: 20px 0;
+    font-size: 60px;
+    margin: 15px 0;
     filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
     display: block;
 }
 
 #unlock-name {
-    font-size: 42px;
+    font-size: 28px;
     font-weight: bold;
     color: #fff;
-    margin-bottom: 12px;
-    letter-spacing: 2px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
 }
 
 #unlock-desc {
-    font-size: 22px;
+    font-size: 16px;
     color: #aaa;
     font-style: italic;
-    line-height: 1.5;
-    padding: 0 30px;
+    line-height: 1.4;
+    padding: 0 20px;
 }
 
 .unlock-hint {
-    margin-top: 35px;
-    font-size: 16px;
+    margin-top: 25px;
+    font-size: 12px;
     color: #444;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -159,28 +140,30 @@
     0% { transform: scale(0.8); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
+
 /* Game Over Screen */
 #game-over-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: radial-gradient(circle, rgba(40, 0, 0, 0.95) 0%, rgba(0, 0, 0, 1) 100%);
-    z-index: 1100; /* [User Request] Critical Modal z=1100 */
+    z-index: 1100;
     display: flex; justify-content: center; align-items: center;
 }
 
-#game-over-title { color: #ff0000; font-size: 84px; animation: eeriePulse 3s infinite alternate; }
+#game-over-content { text-align: center; padding: 20px; }
+#game-over-title { color: #ff0000; font-size: 48px; animation: eeriePulse 3s infinite alternate; text-align: center; margin-bottom: 20px; }
 
 /* Boss Victory Overlay */
 .boss-victory-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: radial-gradient(circle at center, rgba(40, 0, 0, 0.9) 0%, #000 90%);
     display: flex; justify-content: center; align-items: center;
-    z-index: 1100; /* [User Request] Critical Modal z=1100 */
+    z-index: 1100;
     backdrop-filter: blur(15px);
     animation: overlayFadeIn 0.2s ease-out;
 }
 
 .boss-victory-content {
-    text-align: center; width: 100%; padding: 120px 0;
+    text-align: center; width: 100%; padding: 60px 0;
     border-top: 4px solid #ff4500; border-bottom: 4px solid #ff4500;
     background: linear-gradient(90deg, transparent, rgba(139, 0, 0, 0.4), transparent);
 }
@@ -190,16 +173,16 @@
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(0, 0, 0, 0.95);
     display: flex; justify-content: center; align-items: center;
-    z-index: 1000; /* [User Request] Overlay z=1000 */
+    z-index: 1000;
     backdrop-filter: blur(15px);
     animation: overlayFadeIn 0.2s ease-out;
 }
 
 #collections-content {
-    width: 1000px; max-height: 90%; padding: 50px;
+    width: 95%; max-width: 1000px; max-height: 95%; padding: 20px;
     background: linear-gradient(145deg, #1a1a1a, #050505);
-    border: 5px solid #ffd700; border-radius: 50px 50px 20px 20px;
-    display: flex; flex-direction: column; gap: 20px;
+    border: 5px solid #ffd700; border-radius: 30px 30px 15px 15px;
+    display: flex; flex-direction: column; gap: 15px;
     box-shadow: 0 0 100px rgba(255, 215, 0, 0.2), inset 0 0 40px rgba(0, 0, 0, 0.8);
     position: relative;
     border-top: 8px solid #ffd700;
@@ -208,201 +191,53 @@
 #collections-content::before {
     content: "📖 CHRONICLES OF DESTINY 📖";
     position: absolute;
-    top: -45px;
+    top: -35px;
     left: 50%;
     transform: translateX(-50%);
     background: #ffd700;
     color: #000;
-    padding: 8px 40px;
-    border-radius: 15px 15px 0 0;
+    padding: 5px 25px;
+    border-radius: 10px 10px 0 0;
     font-family: 'Cinzel', serif;
-    font-size: 24px;
+    font-size: 16px;
     font-weight: 900;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     white-space: nowrap;
-    box-shadow: 0 -10px 20px rgba(255, 215, 0, 0.4);
-    z-index: 10;
 }
-
-/* End of Collections Header */
 
 #collections-header {
     display: flex; justify-content: space-between; align-items: center;
     border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-    padding-bottom: 25px; margin-bottom: 20px;
+    padding-bottom: 15px;
 }
 
-#collections-tabs { display: flex; gap: 10px; }
+#collections-tabs { display: flex; gap: 8px; }
 
 .col-tab-btn {
-    padding: 15px 40px; font-size: 30px; font-weight: bold;
+    padding: 8px 20px; font-size: 18px; font-weight: bold;
     background: none; color: #888; border: none;
-    border-bottom: 6px solid transparent; cursor: pointer; transition: all 0.3s;
+    border-bottom: 4px solid transparent; cursor: pointer; transition: all 0.3s;
 }
 
-.col-tab-btn.active {
-    color: #ffd700; border-bottom-color: #ffd700;
-    background: rgba(255, 215, 0, 0.1);
-}
+.col-tab-btn.active { color: #ffd700; border-bottom-color: #ffd700; background: rgba(255, 215, 0, 0.1); }
 
-#close-collections {
-    background: none; border: none; color: #ff4500; font-size: 54px;
-    cursor: pointer; font-weight: bold; transition: color 0.2s;
-}
-#close-collections:hover { color: #fff; text-shadow: 0 0 15px #fff; }
+#close-collections { background: none; border: none; color: #ff4500; font-size: 32px; cursor: pointer; font-weight: bold; }
 
-.collections-section { display: none; flex: 1; overflow-y: auto; scrollbar-width: none; }
-.collections-section::-webkit-scrollbar { display: none; }
-.collections-section.active { display: flex; flex-direction: column; gap: 20px; }
+.collections-section { display: none; flex: 1; overflow-y: auto; }
+.collections-section.active { display: flex; flex-direction: column; gap: 15px; }
 
-/* Ghost Section Styles */
-.col-category-nav { display: flex; gap: 10px; margin-bottom: 10px; }
-.col-cat-btn {
-    padding: 10px 20px; font-size: 28px; font-weight: bold;
-    background: #111; color: #aaa; border: 1px solid #333;
-    border-radius: 12px; cursor: pointer; transition: all 0.2s;
-}
-.col-cat-btn.active { background: #333; color: #ffd700; border-color: #ffd700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+.col-category-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+.col-cat-btn { padding: 6px 12px; font-size: 14px; font-weight: bold; background: #111; color: #aaa; border: 1px solid #333; border-radius: 8px; cursor: pointer; }
+.col-cat-btn.active { background: #333; color: #ffd700; border-color: #ffd700; }
 
-.collections-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px;
-    padding: 20px; background: rgba(0,0,0,0.4); border-radius: 15px;
-    border: 1px solid #222;
-}
+.collections-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; padding: 15px; background: rgba(0,0,0,0.4); border-radius: 12px; }
+.col-item { aspect-ratio: 1/1; background: #222; border: 2px solid #333; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 32px; cursor: pointer; }
 
-.col-item {
-    aspect-ratio: 1/1; background: linear-gradient(145deg, #222, #111);
-    border: 2px solid #333; border-radius: 12px;
-    display: flex; justify-content: center; align-items: center;
-    font-size: 50px; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-.col-item:hover { transform: scale(1.1) translateY(-5px); border-color: #ffd700; box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2); }
-.col-item.locked { filter: grayscale(1) brightness(0.2); cursor: not-allowed; }
-
-/* Exorcist Section Styles */
-#exorcist-tree-container {
-    display: flex; flex-direction: column; gap: 10px; padding: 10px;
-    max-height: 550px; overflow-y: auto;
-}
-
-.ex-tree-header-row {
-    display: grid;
-    grid-template-columns: 120px 1fr 40px 1fr 40px 1fr 40px 1fr;
-    gap: 10px;
-    margin-bottom: 10px;
-    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-    padding-bottom: 8px;
-    position: sticky; top: 0; background: #1a1a1a; z-index: 5;
-}
-
-.ex-tree-header {
-    text-align: center; font-family: 'Cinzel', serif; font-size: 18px;
-    font-weight: 900; color: #ffd700; letter-spacing: 2px;
-    border-top: 2px solid rgba(255, 215, 0, 0.3);
-    padding-top: 4px;
-}
-
-.ex-tree-role-group {
-    display: flex; flex-direction: column; gap: 8px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 2px solid rgba(255, 215, 0, 0.2);
-    border-radius: 12px; padding: 10px;
-    margin-bottom: 15px;
-}
-
-.ex-tree-row {
-    display: grid;
-    grid-template-columns: 120px 1fr 40px 1fr 40px 1fr 40px 1fr;
-    align-items: center; gap: 10px;
-}
-
-.ex-role-label {
-    font-family: 'Cinzel', serif; font-size: 16px; font-weight: 900;
-    text-align: right; padding-right: 15px; color: #aaa;
-    text-transform: uppercase;
-}
-.ex-role-label.attack { color: #ff4500; }
-.ex-role-label.support { color: #00e5ff; }
-.ex-role-label.special { color: #ffd700; }
-
-.ex-node {
-    display: flex; flex-direction: column; align-items: center; gap: 2px;
-    cursor: pointer; transition: all 0.2s; width: 100%;
-}
-.ex-node:hover { transform: scale(1.08); }
-.ex-node .icon { font-size: 40px; filter: drop-shadow(0 0 5px rgba(255,215,0,0.3)); }
-.ex-node .icon.locked { filter: grayscale(1) brightness(0.3); }
-.ex-node .name { font-size: 16px; font-weight: bold; color: #ffd700; text-align: center; text-shadow: 0 2px 4px #000; }
-
-/* Deployed Label Style */
-.ex-deployed-badge {
-    margin-top: 2px;
-    font-size: 10px;
-    font-weight: 900;
-    color: #00ff00;
-    background: rgba(0, 255, 0, 0.15);
-    border: 1px solid #00ff00;
-    padding: 1px 6px;
-    border-radius: 4px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    animation: deployedPulse 2s infinite alternate;
-}
-
-@keyframes deployedPulse {
-    from { opacity: 0.6; box-shadow: 0 0 5px rgba(0, 255, 0, 0.2); }
-    to { opacity: 1; box-shadow: 0 0 10px rgba(0, 255, 0, 0.4); }
-}
-
-.ex-arrow {
-    color: #ffd700; font-size: 30px; opacity: 0.5;
-    text-shadow: 0 0 10px #ffd700;
-    animation: arrowPulse 1.5s infinite alternate;
-}
-
-@keyframes arrowPulse {
-    from { opacity: 0.3; transform: translateX(0); }
-    to { opacity: 0.8; transform: translateX(5px); }
-}
-
-/* Updated Details Pane for readability */
-#collection-details {
-    height: 240px; padding: 0; 
-    background: rgba(0, 0, 0, 0.7);
-    border: 3px solid rgba(255, 215, 0, 0.4);
-    border-radius: 20px;
-    display: flex; overflow: hidden;
-    box-shadow: inset 0 0 30px #000;
-}
-
-#col-info-pane {
-    flex: 1; padding: 30px;
-    display: flex; flex-direction: column;
-    justify-content: center;
-    align-items: center; text-align: center; /* [User Request] Center align */
-}
-
-.col-detail-header { display: flex; align-items: center; gap: 30px; margin-bottom: 15px; }
-.col-detail-icon { 
-    font-size: 72px; background: #222; width: 100px; height: 100px;
-    display: flex; justify-content: center; align-items: center;
-    border-radius: 20px; border: 2px solid #444;
-}
-.col-detail-title-group { flex: 1; }
-.col-detail-title { font-size: 42px; font-weight: 900; color: #fff; margin-bottom: 8px; }
-.col-detail-stats { 
-    display: flex; gap: 20px; font-size: 20px; color: #ffd700; 
-    font-family: monospace; font-weight: bold;
-    background: rgba(255,215,0,0.1); padding: 6px 15px; border-radius: 8px;
-}
-
-.col-detail-lore { 
-    font-size: 22px; color: #ccc; line-height: 1.5; 
-    border-left: 5px solid #ffd700; padding-left: 25px;
-    font-style: italic; background: rgba(255,255,255,0.03); 
-    padding: 15px 25px; border-radius: 0 15px 15px 0;
-}
+#collection-details { height: 180px; background: rgba(0, 0, 0, 0.7); border: 2px solid rgba(255, 215, 0, 0.4); border-radius: 15px; display: flex; overflow: hidden; }
+.col-detail-icon { font-size: 48px; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; border-radius: 12px; border: 2px solid #444; margin: 15px; }
+.col-detail-title { font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 5px; }
+.col-detail-stats { display: flex; gap: 10px; font-size: 14px; color: #ffd700; }
+.col-detail-lore { font-size: 14px; color: #ccc; line-height: 1.4; padding: 15px; font-style: italic; flex: 1; }
 
 /* Equipment (장비) Overlay */
 #equip-overlay {
@@ -410,333 +245,36 @@
     background: rgba(0, 0, 0, 0.95);
     display: flex; justify-content: center; align-items: center;
     z-index: 1000; backdrop-filter: blur(15px);
-    animation: overlayFadeIn 0.2s ease-out;
 }
 
 #equip-content {
-    width: 1000px; max-height: 90%; padding: 50px;
+    width: 95%; max-width: 900px; max-height: 90%; padding: 25px;
     background: linear-gradient(145deg, #051015, #000000);
-    border: 5px solid #00e5ff; border-radius: 50px 50px 20px 20px;
-    display: flex; flex-direction: column; gap: 20px;
-    box-shadow: 0 0 100px rgba(0, 229, 255, 0.2), inset 0 0 40px rgba(0, 0, 0, 0.8);
-    position: relative;
-    border-top: 8px solid #00e5ff;
+    border: 5px solid #00e5ff; border-radius: 30px 30px 15px 15px;
+    display: flex; flex-direction: column; gap: 15px;
+    position: relative; border-top: 8px solid #00e5ff;
 }
 
-#equip-content::before {
-    content: "⚔️ ARSENAL OF THE HOLY ⚔️";
-    position: absolute;
-    top: -45px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #00e5ff;
-    color: #000;
-    padding: 8px 40px;
-    border-radius: 15px 15px 0 0;
-    font-family: 'Cinzel', serif;
-    font-size: 24px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    white-space: nowrap;
-    box-shadow: 0 -10px 20px rgba(0, 229, 255, 0.4);
-    z-index: 10;
-}
+#equip-header h2 { color: #00e5ff; margin: 0; font-size: 36px; text-transform: uppercase; letter-spacing: 6px; text-shadow: 0 0 20px rgba(0, 229, 255, 0.8); text-align: center; }
+#close-equip { background: none; border: none; color: #888; font-size: 32px; cursor: pointer; position: absolute; right: 20px; }
 
-#equip-header {
-    display: flex; justify-content: center; align-items: center;
-    border-bottom: 2px solid rgba(0, 229, 255, 0.3);
-    padding-bottom: 25px; margin-bottom: 40px;
-    position: relative;
-}
+.equip-icon { font-size: 48px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); }
+.equip-tier-label { position: absolute; bottom: 5px; font-size: 10px; font-weight: 900; padding: 1px 6px; background: rgba(0,0,0,0.6); }
 
-#equip-header h2 {
-    color: #00e5ff; margin: 0; font-size: 72px; text-transform: uppercase;
-    letter-spacing: 12px; text-shadow: 0 0 30px rgba(0, 229, 255, 0.8); text-align: center;
-}
+#equip-details { margin-top: 20px; min-height: 200px; display: flex; gap: 15px; }
+.equip-bonus-title { color: #00e5ff; font-size: 24px; font-weight: 900; text-align: center; margin-bottom: 15px; }
 
-#close-equip {
-    background: none; border: none; color: #888; font-size: 54px;
-    cursor: pointer; position: absolute; right: 0; transition: color 0.2s;
-}
-#close-equip:hover { color: #fff; text-shadow: 0 0 15px #fff; }
+/* Pause Overlay */
+#pause-content { width: 90%; max-width: 500px; padding: 40px; text-align: center; background: linear-gradient(145deg, #051015, #000); border: 4px solid #00e5ff; border-radius: 30px 30px 10px 10px; }
+#pause-header { font-family: 'Cinzel', serif; font-size: 32px; font-weight: 900; color: #00e5ff; margin-bottom: 20px; letter-spacing: 6px; }
+#pause-body { font-size: 16px; color: #ccc; line-height: 1.5; margin-bottom: 30px; font-style: italic; }
+#pause-resume-btn { padding: 15px 40px; font-size: 18px; font-weight: 900; border-radius: 10px; cursor: pointer; font-family: 'Cinzel', serif; background: #00e5ff; color: #000; border: 2px solid #fff; }
 
-#equip-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
-    padding: 20px; flex: 1; overflow-y: auto; scrollbar-width: none;
-}
-#equip-grid::-webkit-scrollbar { display: none; }
+/* Quit Modal */
+#quit-content { width: 90%; max-width: 500px; padding: 30px; text-align: center; background: linear-gradient(145deg, #1a0000, #050505); border: 4px solid #8b0000; border-radius: 30px 30px 10px 10px; }
+#quit-header { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 900; color: #ff1744; margin-bottom: 20px; letter-spacing: 4px; }
+#quit-body { font-size: 16px; color: #ccc; line-height: 1.5; margin-bottom: 25px; }
+#quit-confirm-btn, #quit-cancel-btn { padding: 10px 25px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; }
 
-.equip-slot {
-    aspect-ratio: 1; 
-    background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
-    border: 2px solid #333;
-    outline: 1px solid rgba(255,255,255,0.05);
-    outline-offset: -6px;
-    border-radius: 12px;
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center;
-    cursor: pointer; 
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative; 
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,0.5);
-    overflow: hidden;
-}
-
-/* Decorative Corner for AA-tier feel */
-.equip-slot::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 20px; height: 20px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
-    pointer-events: none;
-}
-
-.equip-slot:hover { 
-    transform: translateY(-5px); 
-    border-color: #555;
-    background: linear-gradient(145deg, #222, #111);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.7);
-}
-
-.equip-slot.selected { 
-    border-color: #fff; 
-    box-shadow: 0 0 30px rgba(0, 229, 255, 0.3); 
-    transform: scale(1.05);
-    z-index: 5;
-}
-
-.equip-slot.empty { opacity: 0.4; filter: grayscale(0.8); }
-
-/* Tier-based Glows and Borders */
-.equip-slot.tier-1 { border-color: #666; }
-.equip-slot.tier-2 { border-color: #00ff00; box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.1); }
-.equip-slot.tier-3 { border-color: #ff00ff; box-shadow: inset 0 0 20px rgba(255, 0, 255, 0.15); }
-.equip-slot.tier-4 { 
-    border-color: #ffd700; 
-    box-shadow: inset 0 0 25px rgba(255, 215, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.3);
-    animation: gearMasterGlow 3s infinite alternate;
-}
-
-/* Specific Slot Overlays (Armor - Sacred Shield Aura) */
-.equip-slot.armor.tier-2::before {
-    content: ""; position: absolute; width: 100%; height: 100%;
-    background: radial-gradient(circle, rgba(0, 255, 0, 0.1) 0%, transparent 70%);
-    animation: shieldPulse 2s infinite;
-}
-
-/* Magic Circle for Crystal Ball (Mainhand) */
-.equip-slot.mainhand.tier-2::before {
-    content: "";
-    position: absolute;
-    width: 120%; height: 120%;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="45" fill="none" stroke="rgba(0, 229, 255, 0.2)" stroke-width="1" stroke-dasharray="5 5"/></svg>');
-    animation: rotateSacred 10s linear infinite;
-    pointer-events: none;
-}
-
-/* Spiritual Glow for Spellbook (Offhand) */
-.equip-slot.offhand.tier-2 .equip-icon {
-    animation: spiritualFloat 3s infinite alternate ease-in-out;
-}
-
-@keyframes spiritualFloat {
-    from { transform: translateY(0); filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); }
-    to { transform: translateY(-10px); filter: drop-shadow(0 15px 20px rgba(255, 165, 0, 0.4)); }
-}
-
-@keyframes shieldPulse {
-    0% { transform: scale(0.8); opacity: 0.3; }
-    100% { transform: scale(1.2); opacity: 0; }
-}
-
-@keyframes gearMasterGlow {
-    from { filter: brightness(1); border-color: #ffd700; }
-    to { filter: brightness(1.3); border-color: #fff; }
-}
-
-.equip-icon {
-    font-size: 64px;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8));
-    transition: all 0.3s ease;
-    z-index: 2;
-}
-
-/* Shading Techniques by Tier */
-.equip-slot.tier-1 .equip-icon { 
-    filter: grayscale(1) brightness(0.6) contrast(1.2); 
-} /* Rusty/Common Shading */
-
-.equip-slot.tier-2 .equip-icon { 
-    filter: brightness(1.1) contrast(1.1) drop-shadow(0 0 10px rgba(0, 229, 255, 0.5)); 
-} /* Holy/Polished Shading */
-
-.equip-slot.tier-3 .equip-icon { 
-    filter: brightness(1.2) contrast(1.3) sepia(0.3) hue-rotate(-20deg) drop-shadow(0 0 15px rgba(255, 0, 255, 0.6)); 
-} /* Legendary/Magic Shading */
-
-.equip-slot.tier-4 .equip-icon { 
-    filter: brightness(1.4) contrast(1.4) saturate(1.5) drop-shadow(0 0 20px rgba(255, 215, 0, 0.8)); 
-} /* Ancient/Divine Shading */
-
-.equip-slot:hover .equip-icon { transform: scale(1.1); filter: brightness(1.5) contrast(1.2); }
-
-.equip-tier-label {
-    position: absolute; 
-    bottom: 10px; 
-    font-size: 14px; 
-    font-weight: 900;
-    padding: 2px 10px; 
-    border-radius: 4px; 
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    background: rgba(0,0,0,0.6);
-    z-index: 3;
-}
-.tier-1 { color: #aaa; } /* Normal */
-.tier-2 { color: #00ff00; text-shadow: 0 0 5px #00ff00; } /* Holy */
-.tier-3 { color: #ff00ff; text-shadow: 0 0 10px #ff00ff; } /* Legendary */
-.tier-4 { color: #ffd700; text-shadow: 0 0 15px #ffd700; animation: gearGlow 2s infinite alternate; } /* Ancient */
-
-@keyframes gearGlow { from { opacity: 0.7; } to { opacity: 1; filter: brightness(1.5); } }
-
-#equip-details {
-    margin-top: 40px; padding: 0; min-height: 320px;
-    display: flex; gap: 25px; background: transparent;
-}
-
-#equip-info-pane {
-    flex: 0 0 58%; padding: 35px; background: rgba(0, 0, 0, 0.8);
-    border: 3px solid rgba(0, 229, 255, 0.4); border-radius: 20px;
-    display: flex; flex-direction: column; justify-content: center;
-    align-items: center; text-align: center; /* [User Request] Center align */
-    box-shadow: inset 0 0 30px #000; box-sizing: border-box;
-}
-
-#equip-bonus-pane {
-    flex: 1; padding: 30px; background: rgba(0, 15, 20, 0.85);
-    border: 3px solid rgba(0, 229, 255, 0.3); border-radius: 20px;
-    display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: none;
-    box-shadow: inset 0 0 30px #000; box-sizing: border-box;
-}
-
-.equip-bonus-title {
-    color: #00e5ff; font-size: 34px; font-weight: 900; text-align: center;
-    margin-bottom: 25px; text-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
-    letter-spacing: 2px; border-bottom: 2px solid rgba(0, 229, 255, 0.2); padding-bottom: 10px;
-}
-
-/* Animations */
-@keyframes modalOminousPulse {
-    0% { transform: scale(1); box-shadow: 0 0 30px #f00; }
-    100% { transform: scale(1.02); box-shadow: 0 0 60px #800; }
-}
-
-/* Pause Overlay (Time Frozen Theme) */
-#pause-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at center, rgba(0, 30, 60, 0.9) 0%, #000 100%);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 1300; /* Highest priority */
-    backdrop-filter: blur(15px);
-    animation: overlayFadeIn 0.3s ease-out;
-}
-
-#pause-content {
-    width: 600px; padding: 60px; text-align: center;
-    background: linear-gradient(145deg, #051015, #000);
-    border: 4px solid #00e5ff; border-radius: 40px 40px 15px 15px;
-    box-shadow: 0 0 100px rgba(0, 229, 255, 0.3), inset 0 0 30px rgba(0, 0, 0, 0.8);
-    position: relative;
-}
-
-#pause-header {
-    font-family: 'Cinzel', serif;
-    font-size: 42px; font-weight: 900; color: #00e5ff;
-    margin-bottom: 30px; letter-spacing: 10px;
-    text-shadow: 0 0 25px #00e5ff;
-}
-
-#pause-body {
-    font-size: 22px; color: #ccc; line-height: 1.6; margin-bottom: 50px;
-    font-style: italic; letter-spacing: 1px;
-}
-
-#pause-resume-btn {
-    padding: 20px 60px; font-size: 24px; font-weight: 900; border-radius: 15px;
-    cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    font-family: 'Cinzel', serif;
-    background: linear-gradient(135deg, #00e5ff 0%, #008ba3 100%);
-    color: #000; border: 3px solid #fff;
-    box-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
-    text-transform: uppercase; letter-spacing: 4px;
-}
-
-#pause-resume-btn:hover {
-    transform: scale(1.1) translateY(-5px);
-    box-shadow: 0 0 50px #00e5ff, 0 0 20px #fff;
-    filter: brightness(1.2);
-}
-
-#pause-resume-btn:active { transform: scale(0.95); }
-
-/* Quit Modal (Abyssal Theme) */
-#quit-modal {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at center, rgba(60, 0, 0, 0.95) 0%, #000 100%);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 1200;
-    backdrop-filter: blur(20px);
-    animation: overlayFadeIn 0.3s ease-out;
-}
-
-#quit-content {
-    width: 650px; padding: 50px; text-align: center;
-    background: linear-gradient(145deg, #1a0000, #050505);
-    border: 4px solid #8b0000; border-radius: 40px 40px 15px 15px;
-    box-shadow: 0 0 100px rgba(139, 0, 0, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.8);
-    position: relative;
-}
-
-#quit-header {
-    font-family: 'Cinzel', serif;
-    font-size: 32px; font-weight: 900; color: #ff1744;
-    margin-bottom: 30px; letter-spacing: 6px;
-    text-shadow: 0 0 20px #ff1744;
-}
-
-#quit-body {
-    font-size: 20px; color: #ccc; line-height: 1.6; margin-bottom: 40px;
-    font-style: italic;
-}
-
-#quit-footer {
-    display: flex; gap: 20px; justify-content: center;
-}
-
-#quit-confirm-btn, #quit-cancel-btn {
-    padding: 15px 35px; font-size: 20px; font-weight: bold; border-radius: 12px;
-    cursor: pointer; transition: all 0.3s; font-family: 'Malgun Gothic', sans-serif;
-    text-transform: uppercase;
-}
-
-#quit-confirm-btn {
-    background: #222; color: #888; border: 2px solid #444;
-}
-
-#quit-confirm-btn:hover {
-    background: #111; color: #fff; border-color: #fff; transform: scale(1.05);
-}
-
-#quit-cancel-btn {
-    background: linear-gradient(to bottom, #ff1744, #b71c1c);
-    color: #fff; border: 2px solid #ff4500;
-    box-shadow: 0 0 20px rgba(255, 23, 68, 0.4);
-}
-
-#quit-cancel-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 40px rgba(255, 23, 68, 0.8);
-}
+@keyframes eeriePulse { from { text-shadow: 0 0 10px #f00; } to { text-shadow: 0 0 30px #f00, 0 0 50px #800; } }
+@keyframes modalOminousPulse { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
