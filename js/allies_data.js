@@ -113,17 +113,17 @@ function updateGauges() {
     const peRatio = portalEnergy / maxPortalEnergy;
     if (peStatus) {
         if (peRatio >= 0.75) {
-            peStatus.innerText = "저주: 3단계 (지옥의 숨결)";
-            peStatus.style.color = "#ff0000";
+            peStatus.innerHTML = "👁️‍ 저주: 3단계";
+            peStatus.setAttribute('data-level', '3');
         } else if (peRatio >= 0.5) {
-            peStatus.innerText = "저주: 2단계 (심연의 그림자)";
-            peStatus.style.color = "#ff4500";
+            peStatus.innerHTML = "👁️‍ 저주: 2단계";
+            peStatus.setAttribute('data-level', '2');
         } else if (peRatio >= 0.3) {
-            peStatus.innerText = "저주: 1단계 (흐릿한 공포)";
-            peStatus.style.color = "#ffa500";
+            peStatus.innerHTML = "👁️‍ 저주: 1단계";
+            peStatus.setAttribute('data-level', '1');
         } else {
-            peStatus.innerText = "저주: 없음";
-            peStatus.style.color = "#00ff00"; // Green for clean
+            peStatus.innerHTML = "👁️‍ 저주: 없음";
+            peStatus.setAttribute('data-level', '0');
         }
     }
 
