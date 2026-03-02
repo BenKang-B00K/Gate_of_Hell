@@ -13,6 +13,28 @@
     overflow: hidden;
 }
 
+#settings-btn {
+    background: none;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    color: #ffd700;
+    font-size: 16px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+    background: rgba(0,0,0,0.3);
+}
+
+#settings-btn:hover {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    transform: scale(1.1);
+}
+
 #stage-title-central {
     flex: 1;
     text-align: center;

@@ -45,7 +45,7 @@
         <div id="bottom-panel">
             <!-- HUD Area (Top of Bottom Panel) -->
             <div id="hud-top-bar">
-                <button id="restart-btn-top">재시작</button>
+                <button id="settings-btn" title="설정">📜</button>
                 
                 <!-- Thematic Stage Header -->
                 <div id="stage-title-central">
@@ -53,17 +53,7 @@
                     <div class="stage-depth">[Depth: <span id="stage-display">1</span>]</div>
                 </div>
 
-                <div id="top-right-hud">
-                    <div id="game-tutorial-toggle-container">
-                        <span id="game-tutorial-label">TUTORIAL</span>
-                        <label class="switch">
-                            <input type="checkbox" id="game-tutorial-toggle" checked>
-                            <span class="slider round"></span>
-                        </label>
-                        <span id="game-tutorial-status">ON</span>
-                    </div>
-                    <button id="game-pause-btn">PAUSE</button>
-                </div>
+                <div id="top-right-hud" style="width: 40px;"></div> <!-- Spacer to keep title centered -->
             </div>
 
             <!-- Gauges Section -->
@@ -281,6 +271,33 @@
             </div>
             <div id="pause-footer">
                 <button id="pause-resume-btn">퇴마 재개 (Resume)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="overlay-base" style="display: none;">
+        <div id="settings-content" class="modal-content-base">
+            <div id="settings-header" class="modal-header-base">📜 [성스러운 두루마리: 설정]</div>
+            <div id="settings-body">
+                <div class="settings-item">
+                    <span>튜토리얼 가이드</span>
+                    <div id="game-tutorial-toggle-container">
+                        <label class="switch">
+                            <input type="checkbox" id="game-tutorial-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span id="game-tutorial-status">ON</span>
+                    </div>
+                </div>
+                <div class="settings-divider"></div>
+                <div class="settings-buttons">
+                    <button id="game-pause-btn" class="settings-action-btn">일시정지</button>
+                    <button id="restart-btn-top" class="settings-action-btn" style="color: #ff4500;">퇴마 재시작</button>
+                </div>
+            </div>
+            <div id="settings-footer">
+                <button id="close-settings-btn" class="modal-close-btn">닫기</button>
             </div>
         </div>
     </div>

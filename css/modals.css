@@ -10,6 +10,87 @@
     z-index: 1000;
 }
 
+.modal-content-base {
+    background: linear-gradient(145deg, #1a1a1a, #050505);
+    border: 3px solid #ffd700;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(255, 215, 0, 0.1);
+    position: relative;
+}
+
+.modal-header-base {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #ffd700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.modal-close-btn {
+    margin-top: 20px;
+    padding: 10px 30px;
+    background: #222;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+    background: #333;
+    border-color: #ffd700;
+}
+
+/* Settings Modal Specifics */
+.settings-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    color: #ccc;
+    font-size: 16px;
+}
+
+.settings-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+    margin: 15px 0;
+}
+
+.settings-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.settings-action-btn {
+    background: #111;
+    color: #aaa;
+    border: 1px solid #333;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.settings-action-btn:hover {
+    background: #222;
+    border-color: #ffd700;
+    color: #fff;
+}
+
 @keyframes overlayFadeIn {
     from { opacity: 0; transform: scale(1.05); }
     to { opacity: 1; transform: scale(1); }

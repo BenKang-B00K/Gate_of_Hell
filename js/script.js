@@ -500,9 +500,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const quitConfirm = document.getElementById('quit-confirm-btn');
     const quitCancel = document.getElementById('quit-cancel-btn');
 
+    const settingsBtn = document.getElementById('settings-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const closeSettingsBtn = document.getElementById('close-settings-btn');
+
+    if (settingsBtn && settingsModal && closeSettingsBtn) {
+        settingsBtn.onclick = () => {
+            settingsModal.style.display = 'flex';
+            isPaused = true;
+        };
+        closeSettingsBtn.onclick = () => {
+            settingsModal.style.display = 'none';
+            isPaused = false;
+        };
+    }
+
     if (restartBtnTop && quitModal && quitConfirm && quitCancel) {
-        restartBtnTop.innerText = "퇴마 중단";
-        restartBtnTop.onclick = () => { quitModal.style.display = 'flex'; isPaused = true; };
+        restartBtnTop.onclick = () => { 
+            settingsModal.style.display = 'none';
+            quitModal.style.display = 'flex'; 
+            isPaused = true; 
+        };
         quitConfirm.onclick = () => window.location.reload();
         quitCancel.onclick = () => { quitModal.style.display = 'none'; isPaused = false; };
     }
@@ -514,7 +532,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const tutorialContainer = document.getElementById('tutorial-toggle-container');
         const gameTutorialToggle = document.getElementById('game-tutorial-toggle');
         const gameTutorialStatus = document.getElementById('game-tutorial-status');
-        const gameTutorialContainer = document.getElementById('game-tutorial-toggle-container');
 
         const syncToggles = (state) => {
             if (tutorialToggle) tutorialToggle.checked = state;
@@ -531,7 +548,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gameTutorialToggle) gameTutorialToggle.addEventListener('change', () => syncToggles(gameTutorialToggle.checked));
 
         if (tutorialContainer) tutorialContainer.addEventListener('click', (e) => { if (e.target !== tutorialToggle && !e.target.closest('.slider')) syncToggles(!tutorialToggle.checked); });
-        if (gameTutorialContainer) gameTutorialContainer.addEventListener('click', (e) => { if (e.target !== gameTutorialToggle && !e.target.closest('.slider')) syncToggles(!gameTutorialToggle.checked); });
 
         startBtn.addEventListener('click', async () => {
             await window.gameDataLoaded;
@@ -556,6 +572,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const togglePause = () => {
             if (!gameStarted) return;
             isPaused = !isPaused;
+            
+            // If opening from settings, we might need special handling
+            if (settingsModal.style.display === 'flex') {
+                settingsModal.style.display = 'none';
+            }
+
             pauseOverlay.style.display = isPaused ? 'flex' : 'none';
             pauseBtn.innerText = isPaused ? "재개" : "일시정지";
             if (isPaused) {
@@ -570,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            const mods = ['relics-overlay', 'collections-overlay', 'equip-overlay', 'unlock-modal'];
+            const mods = ['relics-overlay', 'collections-overlay', 'equip-overlay', 'unlock-modal', 'settings-modal', 'quit-modal'];
             let closed = false;
             mods.forEach(m => { const el = document.getElementById(m); if(el && el.style.display === 'flex'){ el.style.display='none'; closed=true; }});
             if (closed) isPaused = false;
@@ -580,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('mousedown', (e) => {
-        if (!e.target.closest('.tower-card') && !e.target.closest('.job-btn') && !e.target.closest('.info-promo-btn')) {
+        if (!e.target.closest('.tower-card') && !e.target.closest('.job-btn') && !e.target.closest('.info-promo-btn') && !e.target.closest('#settings-btn')) {
             const ri = document.getElementById('range-indicator'); if (ri) ri.remove();
             const ai = document.getElementById('aura-indicator'); if (ai) ai.remove();
         }
