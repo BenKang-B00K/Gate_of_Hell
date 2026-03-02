@@ -36,18 +36,21 @@
 /* 2. Game Layer (Battle Zone - 60% height) */
 #game-layer {
     flex: 0 0 60%;
-    position: relative;
-    overflow: hidden;
+    display: flex;      /* Added flex for child height matching */
+    flex-direction: column;
+    position: relative; /* Origin (0,0) for all absolute children */
+    overflow: visible;  /* Removed visual isolation (hidden) */
     z-index: 1;
     background: transparent;
 }
 
 #game-layout {
-    height: 100%;
-    display: flex;
+    flex: 1;            /* Matches parent height exactly */
     width: 100%;
+    display: flex;
     position: relative;
-    padding-top: 0;
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
 }
 
