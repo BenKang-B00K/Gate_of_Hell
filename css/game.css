@@ -11,14 +11,14 @@
     flex-direction: column;
 }
 
-/* 1. Top Panel (12% height) */
+/* 1. Top Panel (10% height) */
 #top-panel {
-    flex: 0 0 12%;
+    flex: 0 0 10%;
     background: linear-gradient(to bottom, #1a0505, #000);
     border-bottom: 3px solid #441111;
     display: flex;
     flex-direction: column;
-    padding: 10px 25px;
+    padding: 5px 25px;
     box-sizing: border-box;
     z-index: 150;
     position: relative;
@@ -33,9 +33,9 @@
     margin-bottom: 10px;
 }
 
-/* 2. Game Layer (Battle Zone - Flex remaining space) */
+/* 2. Game Layer (Battle Zone - 60% height) */
 #game-layer {
-    flex: 1;
+    flex: 0 0 60%;
     position: relative;
     overflow: hidden;
     z-index: 1;
