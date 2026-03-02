@@ -58,10 +58,12 @@ function summonTower(targetSlot) {
     const reduction = (typeof getRelicBonus === 'function') ? getRelicBonus('summon_cost_reduction') : 0;
     const finalTowerCost = Math.max(5, Math.floor(window.towerCost - reduction));
 
-    if (money < finalTowerCost || towers.length >= maxTowers) {
+    if (money < finalTowerCost || towers.filter(t => !t.isShrine).length >= maxTowers) {
         if (money < finalTowerCost) {
             if (typeof GameLogger !== 'undefined') GameLogger.warn("❌ Summon failed: Insufficient SE");
             if (typeof flashResourceError === 'function') flashResourceError('se');
+        } else {
+            if (typeof GameLogger !== 'undefined') GameLogger.warn("🚫 Summon failed: Max Unit Limit (16)");
         }
         updateSummonButtonState();
         return;
