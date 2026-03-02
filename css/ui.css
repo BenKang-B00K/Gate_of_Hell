@@ -288,18 +288,6 @@
     justify-content: center;
 }
 
-/* Corner Decors */
-.panel-corner {
-    position: absolute;
-    font-size: 12px;
-    color: #441111;
-    pointer-events: none;
-}
-.panel-corner.tl { top: 2px; left: 2px; }
-.panel-corner.tr { top: 2px; right: 2px; }
-.panel-corner.bl { bottom: 2px; left: 2px; }
-.panel-corner.br { bottom: 2px; right: 2px; }
-
 /* Switch Styling */
 .switch { position: relative; display: inline-block; width: 24px; height: 14px; }
 .switch input { opacity: 0; width: 0; height: 0; }
