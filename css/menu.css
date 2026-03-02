@@ -40,6 +40,7 @@
     filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.6));
     position: relative;
     animation: lavaFlow 3s infinite alternate ease-in-out, lightningStrike 4s infinite;
+    line-height: 0.9; /* Added for multi-line support */
 }
 
 @keyframes lavaFlow {
