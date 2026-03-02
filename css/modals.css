@@ -539,7 +539,7 @@
     border-color: #ff4500;
 }
 
-.settings-action-btn .icon { font-size: 14px; }
+.settings-action-btn span { pointer-events: none; }
 
 @keyframes eeriePulse { from { text-shadow: 0 0 10px #f00; } to { text-shadow: 0 0 30px #f00, 0 0 50px #800; } }
 @keyframes modalOminousPulse { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
